@@ -1,0 +1,12 @@
+/**
+ * Site and sponsor links. Replace placeholders with your real URLs when ready.
+ */
+export const SITE = {
+  repo: "https://github.com/YOUR_ORG/stdout",
+  githubSponsors: "https://github.com/sponsors/cminhho",
+  buyMeACoffee: "https://buymeacoffee.com/chungho",
+} as const;
+
+export const hasAnySponsorLink = () =>
+  !SITE.githubSponsors.includes("YOUR_") &&
+  !SITE.buyMeACoffee.includes("YOUR_");

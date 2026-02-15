@@ -1,0 +1,90 @@
+import { useState, useMemo } from "react";
+import ToolLayout from "@/components/ToolLayout";
+import { useCurrentTool } from "@/hooks/useCurrentTool";
+import PanelHeader from "@/components/PanelHeader";
+import CopyButton from "@/components/CopyButton";
+import { Label } from "@/components/ui/label";
+
+type Base = { label: string; radix: number };
+const bases: Base[] = [
+  { label: "Binary (2)", radix: 2 },
+  { label: "Octal (8)", radix: 8 },
+  { label: "Decimal (10)", radix: 10 },
+  { label: "Hexadecimal (16)", radix: 16 },
+];
+
+const NumberBasePage = () => {
+  const tool = useCurrentTool();
+  const [input, setInput] = useState("");
+  const [fromBase, setFromBase] = useState(10);
+
+  const parsed = useMemo(() => {
+    try {
+      const n = parseInt(input.trim(), fromBase);
+      if (isNaN(n)) return null;
+      return n;
+    } catch {
+      return null;
+    }
+  }, [input, fromBase]);
+
+  const results = useMemo(() => {
+    if (parsed === null) return null;
+    return bases.map((b) => ({ ...b, value: parsed.toString(b.radix).toUpperCase() }));
+  }, [parsed]);
+
+  return (
+    <ToolLayout title={tool?.label ?? "Number Base"} description={tool?.description ?? "Convert numbers between bases (bin, oct, dec, hex)"}>
+      <div className="flex flex-col flex-1 min-h-0 w-full gap-4">
+        <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2 min-w-0 flex-1 max-w-sm">
+            <Label className="text-xs text-muted-foreground shrink-0">Input</Label>
+            <input
+              className="input-compact flex-1 min-w-0 font-mono"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Enter a number..."
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <Label className="text-xs text-muted-foreground shrink-0">From</Label>
+            <div className="flex gap-1">
+              {bases.map((b) => (
+                <button
+                  key={b.radix}
+                  onClick={() => setFromBase(b.radix)}
+                  className={`px-2 py-1 text-xs rounded transition-colors ${
+                    fromBase === b.radix ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {b.radix}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="tool-panel flex flex-col flex-1 min-h-0">
+          <PanelHeader label="Conversions" />
+          <div className="flex-1 min-h-0 overflow-auto mt-3 space-y-2">
+            {results ? (
+              results.map((r) => (
+                <div key={r.radix} className="flex items-center justify-between gap-2 py-1 border-b border-border/50 last:border-0">
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[10px] text-muted-foreground">{r.label}</div>
+                    <div className="text-xs font-mono text-foreground truncate">{r.value}</div>
+                  </div>
+                  <CopyButton text={r.value} />
+                </div>
+              ))
+            ) : (
+              <p className="text-xs text-muted-foreground py-2">Enter a number.</p>
+            )}
+          </div>
+        </div>
+      </div>
+    </ToolLayout>
+  );
+};
+
+export default NumberBasePage;

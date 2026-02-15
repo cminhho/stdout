@@ -1,0 +1,464 @@
+import { useRef, useCallback, useEffect, useState } from "react";
+
+type Language =
+  | "json"
+  | "xml"
+  | "html"
+  | "svg"
+  | "css"
+  | "sql"
+  | "yaml"
+  | "markdown"
+  | "text"
+  | "env"
+  | "csv"
+  | "curl"
+  | "javascript"
+  | "typescript"
+  | "go"
+  | "java"
+  | "kotlin"
+  | "plaintext";
+
+interface CodeEditorProps {
+  value: string;
+  onChange?: (value: string) => void;
+  language?: Language;
+  readOnly?: boolean;
+  placeholder?: string;
+  errorLines?: Set<number>;
+  className?: string;
+  /** When true, editor fills container height (no fixed min/max height) */
+  fillHeight?: boolean;
+  /** Optional key down handler (e.g. for Enter to submit) */
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  /** When false, hides the line number gutter (default true) */
+  showLineNumbers?: boolean;
+  /** When set, renders this content instead of the code textarea (e.g. JSON tree view). Same wrapper/border/scroll. */
+  customContent?: React.ReactNode;
+}
+
+// ── Syntax tokenizers ────────────────────────────────────────────────
+
+interface Token {
+  type: "key" | "string" | "number" | "boolean" | "null" | "bracket" | "punctuation" | "tag" | "attr" | "keyword" | "comment" | "text";
+  value: string;
+}
+
+const tokenizeJson = (line: string): Token[] => {
+  const tokens: Token[] = [];
+  const regex = /("(?:\\.|[^"\\])*")\s*(?=:)|("(?:\\.|[^"\\])*")|([-+]?\d+\.?\d*(?:[eE][+-]?\d+)?)\b|(true|false)\b|(null)\b|([{}[\]])|([,:])|(\/\/.*$)|(\S+)/g;
+  let match: RegExpExecArray | null;
+  let lastIndex = 0;
+
+  while ((match = regex.exec(line)) !== null) {
+    if (match.index > lastIndex) {
+      tokens.push({ type: "text", value: line.slice(lastIndex, match.index) });
+    }
+    if (match[1]) tokens.push({ type: "key", value: match[1] });
+    else if (match[2]) tokens.push({ type: "string", value: match[2] });
+    else if (match[3]) tokens.push({ type: "number", value: match[3] });
+    else if (match[4]) tokens.push({ type: "boolean", value: match[4] });
+    else if (match[5]) tokens.push({ type: "null", value: match[5] });
+    else if (match[6]) tokens.push({ type: "bracket", value: match[6] });
+    else if (match[7]) tokens.push({ type: "punctuation", value: match[7] });
+    else if (match[8]) tokens.push({ type: "comment", value: match[8] });
+    else if (match[9]) tokens.push({ type: "text", value: match[9] });
+    lastIndex = regex.lastIndex;
+  }
+
+  if (lastIndex < line.length) {
+    tokens.push({ type: "text", value: line.slice(lastIndex) });
+  }
+  return tokens;
+};
+
+const tokenizeHtml = (line: string): Token[] => {
+  const tokens: Token[] = [];
+  const regex = /(<!--[\s\S]*?-->)|(<\/?[a-zA-Z][a-zA-Z0-9-]*)|(\s[a-zA-Z-]+)(?==)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(>|\/>)|([^<>"']+)/g;
+  let match: RegExpExecArray | null;
+  let lastIndex = 0;
+  while ((match = regex.exec(line)) !== null) {
+    if (match.index > lastIndex) tokens.push({ type: "text", value: line.slice(lastIndex, match.index) });
+    if (match[1]) tokens.push({ type: "comment", value: match[1] });
+    else if (match[2]) tokens.push({ type: "tag", value: match[2] });
+    else if (match[3]) tokens.push({ type: "attr", value: match[3] });
+    else if (match[4]) tokens.push({ type: "string", value: match[4] });
+    else if (match[5]) tokens.push({ type: "tag", value: match[5] });
+    else if (match[6]) tokens.push({ type: "text", value: match[6] });
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < line.length) tokens.push({ type: "text", value: line.slice(lastIndex) });
+  return tokens;
+};
+
+const tokenizeCss = (line: string): Token[] => {
+  const tokens: Token[] = [];
+  const regex = /(\/\*[\s\S]*?\*\/|\/\/.*$)|([.#@][a-zA-Z_-][\w-]*)|([a-zA-Z-]+)(?=\s*:)|(:\s*)|(["'](?:[^"'\\]|\\.)*["'])|([-+]?\d+\.?\d*(?:px|em|rem|%|vh|vw|s|ms|deg|fr)?)\b|([{}();,])|([^{}"';,:\s]+)/g;
+  let match: RegExpExecArray | null;
+  let lastIndex = 0;
+  while ((match = regex.exec(line)) !== null) {
+    if (match.index > lastIndex) tokens.push({ type: "text", value: line.slice(lastIndex, match.index) });
+    if (match[1]) tokens.push({ type: "comment", value: match[1] });
+    else if (match[2]) tokens.push({ type: "keyword", value: match[2] });
+    else if (match[3]) tokens.push({ type: "attr", value: match[3] });
+    else if (match[4]) tokens.push({ type: "punctuation", value: match[4] });
+    else if (match[5]) tokens.push({ type: "string", value: match[5] });
+    else if (match[6]) tokens.push({ type: "number", value: match[6] });
+    else if (match[7]) tokens.push({ type: "bracket", value: match[7] });
+    else if (match[8]) tokens.push({ type: "text", value: match[8] });
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < line.length) tokens.push({ type: "text", value: line.slice(lastIndex) });
+  return tokens;
+};
+
+const tokenizeSql = (line: string): Token[] => {
+  const tokens: Token[] = [];
+  const sqlKeywords = /\b(SELECT|FROM|WHERE|INSERT|INTO|UPDATE|DELETE|SET|CREATE|ALTER|DROP|TABLE|INDEX|JOIN|LEFT|RIGHT|INNER|OUTER|ON|AND|OR|NOT|IN|IS|NULL|AS|ORDER|BY|GROUP|HAVING|LIMIT|OFFSET|UNION|ALL|DISTINCT|EXISTS|BETWEEN|LIKE|CASE|WHEN|THEN|ELSE|END|BEGIN|COMMIT|ROLLBACK|VALUES|PRIMARY|KEY|FOREIGN|REFERENCES|DEFAULT|CONSTRAINT|CHECK|UNIQUE|INT|VARCHAR|TEXT|BOOLEAN|DATE|TIMESTAMP|FLOAT|DOUBLE|DECIMAL|IF|GRANT|REVOKE|WITH|RECURSIVE|FETCH|CURSOR|DECLARE)\b/gi;
+  const regex = /(--.*$)|(')([^']*)(')|(")([^"]*)(")|\b(\d+\.?\d*)\b|([(),;*=<>!+\-/.])|(\w+)|(\s+)/g;
+  let match: RegExpExecArray | null;
+  let lastIndex = 0;
+  while ((match = regex.exec(line)) !== null) {
+    if (match.index > lastIndex) tokens.push({ type: "text", value: line.slice(lastIndex, match.index) });
+    if (match[1]) tokens.push({ type: "comment", value: match[1] });
+    else if (match[2]) {
+      tokens.push({ type: "string", value: match[2] + match[3] + match[4] });
+    } else if (match[5]) {
+      tokens.push({ type: "string", value: match[5] + match[6] + match[7] });
+    } else if (match[8]) tokens.push({ type: "number", value: match[8] });
+    else if (match[9]) tokens.push({ type: "punctuation", value: match[9] });
+    else if (match[10]) {
+      if (sqlKeywords.test(match[10])) {
+        sqlKeywords.lastIndex = 0;
+        tokens.push({ type: "keyword", value: match[10] });
+      } else {
+        tokens.push({ type: "text", value: match[10] });
+      }
+    } else if (match[11]) tokens.push({ type: "text", value: match[11] });
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < line.length) tokens.push({ type: "text", value: line.slice(lastIndex) });
+  return tokens;
+};
+
+const tokenizeYaml = (line: string): Token[] => {
+  const tokens: Token[] = [];
+  const regex = /(#.*$)|([a-zA-Z_][\w.-]*)(\s*:)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(true|false|yes|no|on|off)\b|(null|~)\b|([-+]?\d+\.?\d*(?:[eE][+-]?\d+)?)\b|(-\s)|([|>][-+]?)|(.+)/g;
+  let match: RegExpExecArray | null;
+  let lastIndex = 0;
+  while ((match = regex.exec(line)) !== null) {
+    if (match.index > lastIndex) tokens.push({ type: "text", value: line.slice(lastIndex, match.index) });
+    if (match[1]) tokens.push({ type: "comment", value: match[1] });
+    else if (match[2]) { tokens.push({ type: "key", value: match[2] }); tokens.push({ type: "punctuation", value: match[3] }); }
+    else if (match[4]) tokens.push({ type: "string", value: match[4] });
+    else if (match[5]) tokens.push({ type: "boolean", value: match[5] });
+    else if (match[6]) tokens.push({ type: "null", value: match[6] });
+    else if (match[7]) tokens.push({ type: "number", value: match[7] });
+    else if (match[8]) tokens.push({ type: "punctuation", value: match[8] });
+    else if (match[9]) tokens.push({ type: "keyword", value: match[9] });
+    else if (match[10]) tokens.push({ type: "text", value: match[10] });
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < line.length) tokens.push({ type: "text", value: line.slice(lastIndex) });
+  return tokens;
+};
+
+const tokenizeXml = tokenizeHtml;
+const tokenizeSvg = tokenizeHtml;
+
+const tokenizeMarkdown = (line: string): Token[] => {
+  const tokens: Token[] = [];
+  if (/^#{1,6}\s/.test(line)) { tokens.push({ type: "keyword", value: line }); return tokens; }
+  if (/^(\*{3}|-{3}|_{3})/.test(line)) { tokens.push({ type: "comment", value: line }); return tokens; }
+  if (/^>\s/.test(line)) { tokens.push({ type: "string", value: line }); return tokens; }
+  if (/^[-*+]\s|^\d+\.\s/.test(line)) {
+    const m = line.match(/^([-*+]\s|\d+\.\s)/);
+    if (m) { tokens.push({ type: "keyword", value: m[0] }); tokens.push({ type: "text", value: line.slice(m[0].length) }); return tokens; }
+  }
+  tokens.push({ type: "text", value: line });
+  return tokens;
+};
+
+const tokenizeEnv = (line: string): Token[] => {
+  if (/^\s*#/.test(line)) return [{ type: "comment", value: line }];
+  const eqIdx = line.indexOf("=");
+  if (eqIdx === -1) return [{ type: "text", value: line }];
+  return [
+    { type: "key", value: line.slice(0, eqIdx) },
+    { type: "punctuation", value: "=" },
+    { type: "string", value: line.slice(eqIdx + 1) },
+  ];
+};
+
+const tokenizeCsv = (line: string): Token[] => {
+  const tokens: Token[] = [];
+  const parts = line.split(",");
+  parts.forEach((part, i) => {
+    if (i > 0) tokens.push({ type: "punctuation", value: "," });
+    if (/^".*"$/.test(part.trim())) tokens.push({ type: "string", value: part });
+    else if (/^[-+]?\d+\.?\d*$/.test(part.trim())) tokens.push({ type: "number", value: part });
+    else tokens.push({ type: "text", value: part });
+  });
+  return tokens;
+};
+
+const tokenizeCode = (line: string): Token[] => {
+  const tokens: Token[] = [];
+  const keywords = /\b(interface|type|class|function|const|let|var|import|export|from|return|if|else|for|while|switch|case|break|continue|new|this|extends|implements|public|private|protected|static|readonly|abstract|async|await|try|catch|throw|finally|void|null|undefined|true|false|struct|func|package|data|val|var|fun|override|companion|object|sealed|enum|int|string|boolean|number|float|double|long|byte|char|short)\b/g;
+  const regex = /(\/\/.*$|\/\*[\s\S]*?\*\/)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)|(\b\d+\.?\d*\b)|([{}[\]().,;:=<>!+\-*/&|?@])|(\w+)|(\s+)/g;
+  let match: RegExpExecArray | null;
+  let lastIndex = 0;
+  while ((match = regex.exec(line)) !== null) {
+    if (match.index > lastIndex) tokens.push({ type: "text", value: line.slice(lastIndex, match.index) });
+    if (match[1]) tokens.push({ type: "comment", value: match[1] });
+    else if (match[2]) tokens.push({ type: "string", value: match[2] });
+    else if (match[3]) tokens.push({ type: "number", value: match[3] });
+    else if (match[4]) tokens.push({ type: "bracket", value: match[4] });
+    else if (match[5]) {
+      if (keywords.test(match[5])) { keywords.lastIndex = 0; tokens.push({ type: "keyword", value: match[5] }); }
+      else tokens.push({ type: "text", value: match[5] });
+    }
+    else if (match[6]) tokens.push({ type: "text", value: match[6] });
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < line.length) tokens.push({ type: "text", value: line.slice(lastIndex) });
+  return tokens;
+};
+
+const tokenizePlain = (line: string): Token[] => [{ type: "text", value: line }];
+
+/** cURL / terminal command: curl, options (-X, -H, -d, -v, -L, -k, --*), quoted strings, HTTP methods, URLs */
+const tokenizeCurl = (line: string): Token[] => {
+  const tokens: Token[] = [];
+  const regex = /(\bcurl\b)|(-[a-zA-Z]|--[a-zA-Z][a-zA-Z0-9-]*)|('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")|(\\\s*$)|(https?:\/\/[^\s'"]+)|(\b(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\b)|(\S+)/g;
+  let match: RegExpExecArray | null;
+  let lastIndex = 0;
+  while ((match = regex.exec(line)) !== null) {
+    if (match.index > lastIndex) {
+      tokens.push({ type: "text", value: line.slice(lastIndex, match.index) });
+    }
+    if (match[1]) tokens.push({ type: "keyword", value: match[1] });
+    else if (match[2]) tokens.push({ type: "keyword", value: match[2] });
+    else if (match[3]) tokens.push({ type: "string", value: match[3] });
+    else if (match[4]) tokens.push({ type: "punctuation", value: match[4] });
+    else if (match[5]) tokens.push({ type: "string", value: match[5] });
+    else if (match[6]) tokens.push({ type: "keyword", value: match[6] });
+    else if (match[7]) tokens.push({ type: "text", value: match[7] });
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < line.length) {
+    tokens.push({ type: "text", value: line.slice(lastIndex) });
+  }
+  return tokens;
+};
+
+const getTokenizer = (lang: Language) => {
+  switch (lang) {
+    case "json": return tokenizeJson;
+    case "html": return tokenizeHtml;
+    case "xml": return tokenizeXml;
+    case "svg": return tokenizeSvg;
+    case "css": return tokenizeCss;
+    case "sql": return tokenizeSql;
+    case "yaml": return tokenizeYaml;
+    case "markdown": return tokenizeMarkdown;
+    case "env": return tokenizeEnv;
+    case "csv": return tokenizeCsv;
+    case "curl": return tokenizeCurl;
+    case "javascript": case "typescript": case "go": case "java": case "kotlin": return tokenizeCode;
+    case "text": case "plaintext": return tokenizePlain;
+    default: return tokenizePlain;
+  }
+};
+
+// ── Token colors (CSS variables) ─────────────────────────────────────
+
+const tokenColors: Record<Token["type"], string> = {
+  key: "hsl(var(--accent))",
+  string: "hsl(var(--code-text))",
+  number: "hsl(35 90% 65%)",
+  boolean: "hsl(280 60% 70%)",
+  null: "hsl(280 60% 70%)",
+  bracket: "hsl(var(--muted-foreground))",
+  punctuation: "hsl(var(--muted-foreground))",
+  tag: "hsl(0 70% 65%)",
+  attr: "hsl(35 90% 65%)",
+  keyword: "hsl(280 60% 70%)",
+  comment: "hsl(var(--muted-foreground) / 0.6)",
+  text: "hsl(var(--foreground))",
+};
+
+// ── Component ────────────────────────────────────────────────────────
+
+const CodeEditor = ({
+  value,
+  onChange,
+  language = "json",
+  readOnly = false,
+  placeholder = "",
+  errorLines,
+  className = "",
+  fillHeight = false,
+  onKeyDown: onKeyDownProp,
+  showLineNumbers = true,
+  customContent,
+}: CodeEditorProps) => {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const highlightRef = useRef<HTMLDivElement>(null);
+  const gutterRef = useRef<HTMLDivElement>(null);
+  const [focused, setFocused] = useState(false);
+
+  const lines = value ? value.split("\n") : [""];
+  const tokenizer = getTokenizer(language);
+
+  const syncScroll = useCallback(() => {
+    const ta = textareaRef.current;
+    const hl = highlightRef.current;
+    const gt = gutterRef.current;
+    if (ta && hl) {
+      hl.scrollTop = ta.scrollTop;
+      hl.scrollLeft = ta.scrollLeft;
+    }
+    if (ta && gt) {
+      gt.scrollTop = ta.scrollTop;
+    }
+  }, []);
+
+  useEffect(() => {
+    const ta = textareaRef.current;
+    if (!ta) return;
+    ta.addEventListener("scroll", syncScroll);
+    return () => ta.removeEventListener("scroll", syncScroll);
+  }, [syncScroll]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Tab") {
+      e.preventDefault();
+      const ta = e.currentTarget;
+      const start = ta.selectionStart;
+      const end = ta.selectionEnd;
+      const newVal = value.slice(0, start) + "  " + value.slice(end);
+      onChange?.(newVal);
+      requestAnimationFrame(() => {
+        ta.selectionStart = ta.selectionEnd = start + 2;
+      });
+    }
+    onKeyDownProp?.(e);
+  };
+
+  const gutterWidth = showLineNumbers ? Math.max(String(lines.length).length * 10 + 16, 36) : 0;
+  const contentPaddingLeft = gutterWidth + 12;
+
+  if (customContent != null) {
+    return (
+      <div
+        className={`code-editor-wrapper relative z-0 rounded-md border overflow-hidden ${fillHeight ? "h-full min-h-0" : ""} ${className}`}
+        style={{
+          background: "hsl(var(--code-bg))",
+          borderColor: "hsl(var(--code-border))",
+          ...(fillHeight ? { height: "100%", minHeight: 0 } : {}),
+        }}
+      >
+        <div
+          className="overflow-auto p-3 font-mono text-xs"
+          style={
+            fillHeight
+              ? { height: "100%", minHeight: 0 }
+              : { minHeight: 200, maxHeight: "88vh" }
+          }
+        >
+          {customContent}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={`code-editor-wrapper relative z-0 rounded-md border overflow-hidden ${focused ? "ring-1 ring-ring" : ""} ${fillHeight ? "h-full min-h-0" : ""} ${className}`}
+      style={{
+        background: "hsl(var(--code-bg))",
+        borderColor: "hsl(var(--code-border))",
+        ...(fillHeight ? { height: "100%", minHeight: 0 } : {}),
+      }}
+    >
+      {showLineNumbers && (
+        <div
+          ref={gutterRef}
+          className="absolute left-0 top-0 bottom-0 select-none overflow-hidden z-[2] pointer-events-none"
+          style={{
+            width: gutterWidth,
+            borderRight: "1px solid hsl(var(--code-border))",
+            background: "hsl(var(--code-bg))",
+          }}
+        >
+          <div className="pt-3 pb-3">
+            {lines.map((_, i) => (
+              <div
+                key={i}
+                className="text-right pr-2 leading-relaxed text-xs font-mono"
+                style={{
+                  height: "1.625em",
+                  color: errorLines?.has(i + 1) ? "hsl(var(--destructive))" : "hsl(var(--muted-foreground) / 0.5)",
+                  fontWeight: errorLines?.has(i + 1) ? 600 : 400,
+                }}
+              >
+                {i + 1}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div
+        ref={highlightRef}
+        aria-hidden
+        className="absolute top-0 bottom-0 right-0 overflow-hidden pointer-events-none z-[1] p-3 font-mono text-xs leading-relaxed whitespace-pre"
+        style={{ left: gutterWidth }}
+      >
+        {lines.map((line, i) => (
+          <div
+            key={i}
+            className="whitespace-pre"
+            style={{
+              height: "1.625em",
+              background: errorLines?.has(i + 1) ? "hsl(var(--destructive) / 0.08)" : "transparent",
+            }}
+          >
+            {line === ""
+              ? "\n"
+              : tokenizer(line).map((token, j) => (
+                  <span key={j} style={{ color: tokenColors[token.type] }}>
+                    {token.value}
+                  </span>
+                ))}
+          </div>
+        ))}
+      </div>
+
+      <textarea
+        ref={textareaRef}
+        value={value}
+        onChange={(e) => onChange?.(e.target.value)}
+        onKeyDown={readOnly ? undefined : handleKeyDown}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        readOnly={readOnly}
+        placeholder={placeholder}
+        spellCheck={false}
+        className="relative z-[3] w-full h-full p-3 font-mono text-xs leading-relaxed bg-transparent border-none outline-none resize-y"
+        style={{
+          paddingLeft: contentPaddingLeft,
+          color: "transparent",
+          caretColor: "hsl(var(--foreground))",
+          ...(fillHeight
+            ? { height: "100%", minHeight: 0, maxHeight: "none" }
+            : { minHeight: 680, maxHeight: "88vh" }),
+        }}
+      />
+    </div>
+  );
+};
+
+export default CodeEditor;

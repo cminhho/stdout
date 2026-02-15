@@ -1,0 +1,281 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root,
+  .dark {
+    --background: 220 20% 7%;
+    --foreground: 210 20% 90%;
+
+    --card: 220 18% 10%;
+    --card-foreground: 210 20% 90%;
+
+    --popover: 220 18% 10%;
+    --popover-foreground: 210 20% 90%;
+
+    --primary: 152 60% 48%;
+    --primary-foreground: 220 20% 7%;
+
+    --secondary: 220 16% 14%;
+    --secondary-foreground: 210 20% 80%;
+
+    --muted: 220 14% 16%;
+    --muted-foreground: 215 15% 55%;
+
+    --accent: 185 60% 45%;
+    --accent-foreground: 220 20% 7%;
+
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 14% 18%;
+    --input: 220 14% 18%;
+    --ring: 152 60% 48%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 220 20% 5%;
+    --sidebar-foreground: 210 15% 65%;
+    --sidebar-primary: 152 60% 48%;
+    --sidebar-primary-foreground: 220 20% 7%;
+    --sidebar-accent: 220 16% 12%;
+    --sidebar-accent-foreground: 210 20% 90%;
+    --sidebar-border: 220 14% 14%;
+    --sidebar-ring: 152 60% 48%;
+
+    --code-bg: 220 20% 8%;
+    --code-border: 220 14% 16%;
+    --code-text: 152 40% 70%;
+
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    --font-sans: 'Inter', system-ui, sans-serif;
+  }
+
+  .light {
+    --background: 0 0% 98%;
+    --foreground: 220 20% 14%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 14%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 14%;
+
+    --primary: 152 60% 38%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 14% 92%;
+    --secondary-foreground: 220 20% 25%;
+
+    --muted: 220 14% 94%;
+    --muted-foreground: 215 15% 45%;
+
+    --accent: 185 55% 40%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 14% 86%;
+    --input: 220 14% 86%;
+    --ring: 152 60% 38%;
+
+    --sidebar-background: 0 0% 97%;
+    --sidebar-foreground: 215 15% 40%;
+    --sidebar-primary: 152 60% 38%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 93%;
+    --sidebar-accent-foreground: 220 20% 14%;
+    --sidebar-border: 220 14% 88%;
+    --sidebar-ring: 152 60% 38%;
+
+    --code-bg: 220 14% 95%;
+    --code-border: 220 14% 88%;
+    --code-text: 152 50% 30%;
+  }
+
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+  }
+
+  code, pre, .font-mono {
+    font-family: var(--font-mono) !important;
+  }
+}
+
+@layer components {
+  .code-block {
+    @apply rounded-md border font-mono text-xs leading-relaxed p-3 overflow-auto;
+    background: hsl(var(--code-bg));
+    border-color: hsl(var(--code-border));
+    color: hsl(var(--code-text));
+  }
+
+  .tool-card {
+    @apply rounded-lg border p-4;
+    background: hsl(var(--card));
+    border-color: hsl(var(--border));
+  }
+
+  .tool-textarea {
+    @apply w-full rounded-md border p-3 font-mono text-xs leading-relaxed focus:outline-none focus:ring-1 focus:ring-ring resize-y;
+    background: hsl(var(--code-bg));
+    border-color: hsl(var(--code-border));
+    color: hsl(var(--foreground));
+    min-height: 280px;
+    max-height: 85vh;
+  }
+
+  /* Tool layout: full width/height wrapper, toolbar on top (fit height), panel takes remainder */
+  .tool-layout-inner {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .tool-layout-content > .tool-toolbar {
+    flex-shrink: 0;
+  }
+
+  .tool-layout-content > .grid {
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+    grid-auto-rows: minmax(0, 1fr);
+  }
+
+  .tool-layout-content > .tool-panel {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .tool-panel {
+    @apply flex flex-col gap-2;
+    width: 100%;
+    min-height: 0;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .tool-panel .tool-textarea,
+  .tool-panel .code-block,
+  .tool-panel .code-editor-wrapper {
+    @apply flex-1;
+    min-height: 0;
+  }
+
+  .tool-panel .code-editor-wrapper textarea {
+    height: 100% !important;
+    min-height: 100% !important;
+  }
+
+  .tool-panel .code-block {
+    @apply overflow-auto;
+  }
+
+  /* Toolbar: top, fit height */
+  .tool-toolbar {
+    @apply flex items-center gap-2 mb-3 flex-wrap flex-shrink-0;
+  }
+
+  .tool-select {
+    @apply h-8 rounded-md border px-2 py-1 text-xs font-medium bg-secondary border-border text-secondary-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors cursor-pointer;
+  }
+
+  /* Compact option inputs for tool pages */
+  .input-compact {
+    @apply h-8 rounded-md border border-input bg-background px-2 py-1 text-xs font-mono ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .tool-select:hover {
+    background: hsl(var(--muted));
+  }
+
+  .tool-checkbox-label {
+    @apply flex items-center gap-1.5 text-xs font-medium text-muted-foreground cursor-pointer select-none transition-colors;
+  }
+
+  .tool-checkbox-label:hover {
+    color: hsl(var(--foreground));
+  }
+
+  .tool-checkbox-label input[type="checkbox"] {
+    @apply rounded;
+    accent-color: hsl(var(--primary));
+  }
+
+  .sidebar-link {
+    @apply flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors;
+    color: hsl(var(--sidebar-foreground));
+  }
+
+  .sidebar-link:hover {
+    background: hsl(var(--sidebar-accent));
+    color: hsl(var(--sidebar-accent-foreground));
+  }
+
+  .sidebar-link.active {
+    background: hsl(var(--primary) / 0.12);
+    color: hsl(var(--primary));
+  }
+
+  .prose-markdown {
+    @apply text-sm leading-relaxed;
+    color: hsl(var(--foreground));
+  }
+
+  .prose-markdown h1, .prose-markdown h2, .prose-markdown h3 {
+    @apply font-semibold mt-6 mb-3;
+    color: hsl(var(--foreground));
+  }
+  .prose-markdown h1 { @apply text-2xl; }
+  .prose-markdown h2 { @apply text-xl; }
+  .prose-markdown h3 { @apply text-lg; }
+  .prose-markdown p { @apply mb-3; }
+  .prose-markdown code {
+    @apply px-1.5 py-0.5 rounded text-xs font-mono;
+    background: hsl(var(--code-bg));
+    color: hsl(var(--code-text));
+  }
+  .prose-markdown pre {
+    @apply p-4 rounded-md my-3 overflow-auto;
+    background: hsl(var(--code-bg));
+  }
+  .prose-markdown pre code {
+    @apply p-0 bg-transparent;
+  }
+  .prose-markdown ul, .prose-markdown ol {
+    @apply ml-5 mb-3;
+  }
+  .prose-markdown ul { @apply list-disc; }
+  .prose-markdown ol { @apply list-decimal; }
+  .prose-markdown li { @apply mb-1; }
+  .prose-markdown blockquote {
+    @apply border-l-4 pl-4 italic my-3;
+    border-color: hsl(var(--primary));
+    color: hsl(var(--muted-foreground));
+  }
+  .prose-markdown a {
+    color: hsl(var(--primary));
+    @apply underline;
+  }
+  .prose-markdown table {
+    @apply w-full border-collapse my-3;
+  }
+  .prose-markdown th, .prose-markdown td {
+    @apply border px-3 py-2 text-left text-sm;
+  }
+  .prose-markdown hr {
+    @apply my-6;
+    border-color: hsl(var(--border));
+  }
+}
