@@ -185,7 +185,7 @@ const readFileAsText = (file: File, encoding: FileEncoding): Promise<string> => 
   });
 };
 
-const JsonFormatter = () => {
+const JsonFormatterPage = () => {
   const tool = useCurrentTool();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { theme } = useSettings();
@@ -481,4 +481,4 @@ const JsonFormatter = () => {
   );
 };
 
-export default JsonFormatter;
+export default JsonFormatterPage;

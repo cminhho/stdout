@@ -8,7 +8,7 @@ import { hashText, type HashAlgorithm } from "@/utils/crypto";
 
 const ALGOS: HashAlgorithm[] = ["SHA-1", "SHA-256", "SHA-384", "SHA-512"];
 
-const HashGenerator = () => {
+const HashGeneratorPage = () => {
   const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const [results, setResults] = useState<Record<string, string>>({});
@@ -54,4 +54,4 @@ const HashGenerator = () => {
   );
 };
 
-export default HashGenerator;
+export default HashGeneratorPage;

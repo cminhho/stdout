@@ -26,7 +26,7 @@ const convertCase = (text: string, type: CaseType): string => {
   }
 };
 
-const TextAnalyzer = () => {
+const TextAnalyzerPage = () => {
   const tool = useCurrentTool();
   const [text, setText] = useState("");
   const [regexPattern, setRegexPattern] = useState("");
@@ -126,4 +126,4 @@ const TextAnalyzer = () => {
   );
 };
 
-export default TextAnalyzer;
+export default TextAnalyzerPage;

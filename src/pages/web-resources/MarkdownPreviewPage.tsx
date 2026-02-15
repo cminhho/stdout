@@ -36,7 +36,7 @@ console.log(hello);
 - [ ] Task pending
 `;
 
-const MarkdownPreview = () => {
+const MarkdownPreviewPage = () => {
   const tool = useCurrentTool();
   const [markdown, setMarkdown] = useState(defaultMd);
   const [showHtml, setShowHtml] = useState(false);
@@ -90,4 +90,4 @@ const MarkdownPreview = () => {
   );
 };
 
-export default MarkdownPreview;
+export default MarkdownPreviewPage;

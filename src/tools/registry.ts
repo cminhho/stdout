@@ -3,7 +3,7 @@ import type { ToolDefinition } from "@/tools/types";
 
 export const tools: ToolDefinition[] = [
     // ─── Formatters ──────────────────────────────────────────
-    { id: "json-formatter", path: "/formatters/json", label: "JSON Formatter", description: "Format, validate & beautify JSON with strict RFC compliance", group: "Formatters", icon: "Braces", component: lazy(() => import("@/pages/formatters/JsonFormatter")) },
+    { id: "json-formatter", path: "/formatters/json", label: "JSON Formatter", description: "Format, validate & beautify JSON with strict RFC compliance", group: "Formatters", icon: "Braces", component: lazy(() => import("@/pages/formatters/JsonFormatterPage")) },
     { id: "xml-formatter", path: "/formatters/xml", label: "XML Formatter", description: "Format and beautify XML documents", group: "Formatters", icon: "FileJson", component: lazy(() => import("@/pages/formatters/XmlFormatterPage")) },
     { id: "html-formatter", path: "/formatters/html", label: "HTML Formatter", description: "Format and beautify HTML code", group: "Formatters", icon: "Code2", component: lazy(() => import("@/pages/formatters/HtmlFormatterPage")) },
     { id: "sql-formatter", path: "/formatters/sql", label: "SQL Formatter", description: "Format and beautify SQL queries", group: "Formatters", icon: "Database", component: lazy(() => import("@/pages/formatters/SqlFormatterPage")) },
@@ -27,7 +27,7 @@ export const tools: ToolDefinition[] = [
     { id: "html-validator", path: "/tools/html-validator", label: "HTML Validator", description: "Validate HTML syntax (parser-based)", group: "Validators", icon: "Code2", component: lazy(() => import("@/pages/validators/HtmlValidatorPage")) },
     { id: "xpath-tester", path: "/tools/xpath-tester", label: "XPath Tester", description: "Run XPath expressions against XML", group: "Validators", icon: "Braces", component: lazy(() => import("@/pages/validators/XpathTesterPage")) },
     { id: "credit-card", path: "/tools/credit-card", label: "Credit Card Generator & Validator", description: "Luhn check and generate test card numbers", group: "Validators", icon: "KeyRound", component: lazy(() => import("@/pages/validators/CreditCardPage")) },
-    { id: "cron-parser", path: "/converters/cron", label: "Cron Parser", description: "Build and parse cron expressions (Quartz-style)", group: "Validators", icon: "Clock", component: lazy(() => import("@/pages/validators/CronBuilder")) },
+    { id: "cron-parser", path: "/converters/cron", label: "Cron Parser", description: "Build and parse cron expressions (Quartz-style)", group: "Validators", icon: "Clock", component: lazy(() => import("@/pages/validators/CronBuilderPage")) },
 
     // ─── Converters ──────────────────────────────────────────
     { id: "json-yaml", path: "/converters/json-yaml", label: "JSON ↔ YAML", description: "Convert between JSON and YAML formats", group: "Converters", icon: "FileJson", component: lazy(() => import("@/pages/converters/JsonYamlPage")) },
@@ -55,14 +55,14 @@ export const tools: ToolDefinition[] = [
     { id: "gzip", path: "/encode/gzip", label: "Gzip", description: "Compress and decompress with Gzip", group: "Encode & Crypto", icon: "Archive", component: lazy(() => import("@/pages/encode/GzipPage")) },
     { id: "certificate", path: "/encode/certificate", label: "Certificate Inspector", description: "Inspect and decode X.509 certificates", group: "Encode & Crypto", icon: "ShieldCheck", component: lazy(() => import("@/pages/encode/CertificatePage")) },
     { id: "file-encoding", path: "/encode/file-encoding", label: "Convert File Encoding", description: "Decode bytes from charset or encode text to UTF-8", group: "Encode & Crypto", icon: "FileCode", component: lazy(() => import("@/pages/encode/FileEncodingPage")) },
-    { id: "hash-generator", path: "/hash", label: "Message Digester", description: "MD5, SHA-1, SHA-256 hashes", group: "Encode & Crypto", icon: "Hash", component: lazy(() => import("@/pages/encode/HashGenerator")) },
+    { id: "hash-generator", path: "/hash", label: "Message Digester", description: "MD5, SHA-1, SHA-256 hashes", group: "Encode & Crypto", icon: "Hash", component: lazy(() => import("@/pages/encode/HashGeneratorPage")) },
     { id: "hmac-generator", path: "/generators/hmac", label: "HMAC Generator", description: "Generate HMAC signatures", group: "Encode & Crypto", icon: "KeySquare", component: lazy(() => import("@/pages/encode/HmacPage")) },
 
     // ─── String Escaper & Utilities ─────────────────────────
     { id: "string-transformer", path: "/text/transform", label: "String Utilities", description: "Convert between camelCase, snake_case, and more", group: "String & Utilities", icon: "Wand2", component: lazy(() => import("@/pages/string-utils/StringTransformerPage")) },
     { id: "list-collator", path: "/text/list-collator", label: "List Collator", description: "Merge, sort, and deduplicate lists", group: "String & Utilities", icon: "List", component: lazy(() => import("@/pages/string-utils/ListCollatorPage")) },
-    { id: "text-analyzer", path: "/text/analyzer", label: "Text Analyzer", description: "Count words, characters, sentences in text", group: "String & Utilities", icon: "Type", component: lazy(() => import("@/pages/string-utils/TextAnalyzer")) },
-    { id: "text-diff", path: "/text/diff", label: "Text Diff", description: "Compare two texts and highlight differences", group: "String & Utilities", icon: "GitCompare", component: lazy(() => import("@/pages/string-utils/TextDiff")) },
+    { id: "text-analyzer", path: "/text/analyzer", label: "Text Analyzer", description: "Count words, characters, sentences in text", group: "String & Utilities", icon: "Type", component: lazy(() => import("@/pages/string-utils/TextAnalyzerPage")) },
+    { id: "text-diff", path: "/text/diff", label: "Text Diff", description: "Compare two texts and highlight differences", group: "String & Utilities", icon: "GitCompare", component: lazy(() => import("@/pages/string-utils/TextDiffPage")) },
     { id: "xml-escape", path: "/text/escape/xml", label: "XML Escape", description: "Escape and unescape XML special characters", group: "String & Utilities", icon: "Code2", component: lazy(() => import("@/pages/string-utils/XmlEscapePage")) },
     { id: "java-escape", path: "/text/escape/java", label: "Java / .NET Escape", description: "Escape string literals for Java and .NET", group: "String & Utilities", icon: "Code2", component: lazy(() => import("@/pages/string-utils/JavaDotNetEscapePage")) },
     { id: "javascript-escape", path: "/text/escape/javascript", label: "JavaScript Escape", description: "Escape JavaScript string literals", group: "String & Utilities", icon: "Code2", component: lazy(() => import("@/pages/string-utils/JavaScriptEscapePage")) },
@@ -74,7 +74,7 @@ export const tools: ToolDefinition[] = [
     { id: "lorem-ipsum", path: "/generators/lorem", label: "Lorem Ipsum", description: "Generate placeholder text", group: "Web Resources", icon: "AlignLeft", component: lazy(() => import("@/pages/web-resources/LoremIpsumPage")) },
     { id: "url-parser", path: "/tools/url-parser", label: "URL Parser", description: "Parse and inspect URL / query string", group: "Web Resources", icon: "Globe", component: lazy(() => import("@/pages/web-resources/UrlParserPage")) },
     { id: "mime-types", path: "/tools/mime-types", label: "List of MIME Types", description: "Reference table of common MIME types", group: "Web Resources", icon: "FileText", component: lazy(() => import("@/pages/web-resources/MimeTypesPage")) },
-    { id: "markdown-preview", path: "/text/markdown", label: "Markdown Preview", description: "Live preview of Markdown with GFM support", group: "Web Resources", icon: "FileText", component: lazy(() => import("@/pages/web-resources/MarkdownPreview")) },
+    { id: "markdown-preview", path: "/text/markdown", label: "Markdown Preview", description: "Live preview of Markdown with GFM support", group: "Web Resources", icon: "FileText", component: lazy(() => import("@/pages/web-resources/MarkdownPreviewPage")) },
 
     // ─── Generators ─────────────────────────────────────────
     { id: "uuid-generator", path: "/generators/uuid", label: "UUID Generator", description: "Generate UUIDs (v1, v4, v7)", group: "Generators", icon: "Fingerprint", component: lazy(() => import("@/pages/generators/UuidPage")) },

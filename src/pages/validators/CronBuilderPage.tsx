@@ -64,7 +64,7 @@ const describeCron = (parts: string[]): string => {
   return descs.join(" ");
 };
 
-const CronBuilder = () => {
+const CronBuilderPage = () => {
   const tool = useCurrentTool();
   const [fields, setFields] = useState<Record<string, string>>({
     minute: "*",
@@ -165,4 +165,4 @@ const CronBuilder = () => {
   );
 };
 
-export default CronBuilder;
+export default CronBuilderPage;

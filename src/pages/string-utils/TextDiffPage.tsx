@@ -5,7 +5,7 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import CopyButton from "@/components/CopyButton";
 
-const TextDiff = () => {
+const TextDiffPage = () => {
   const tool = useCurrentTool();
   const [textA, setTextA] = useState("");
   const [textB, setTextB] = useState("");
@@ -89,4 +89,4 @@ const TextDiff = () => {
   );
 };
 
-export default TextDiff;
+export default TextDiffPage;
