@@ -293,10 +293,13 @@ const JsonFormatterPage = () => {
             <option value="utf-16be">UTF-16 BE</option>
           </select>
         </OptionField>
-        <OptionField label="Indentation level">
+        <OptionField label={INDENT_OPTIONS.find((o) => o.value === indent)?.label ?? String(indent)}>
           <select
             value={indent}
-            onChange={(e) => setIndent(e.target.value as IndentOption)}
+            onChange={(e) => {
+              const v = e.target.value;
+              setIndent((v === "tab" || v === "compact" ? v : Number(v)) as IndentOption);
+            }}
             className="h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0"
           >
             {INDENT_OPTIONS.map((opt) => (
