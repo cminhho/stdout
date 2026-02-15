@@ -6,12 +6,12 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_ORG/stdout.git"
+    "url": "https://github.com/cminhho/stdout.git"
   },
   "bugs": {
-    "url": "https://github.com/YOUR_ORG/stdout/issues"
+    "url": "https://github.com/cminhho/stdout/issues"
   },
-  "homepage": "https://github.com/YOUR_ORG/stdout#readme",
+  "homepage": "https://github.com/cminhho/stdout#readme",
   "keywords": [
     "dev-tools",
     "formatter",

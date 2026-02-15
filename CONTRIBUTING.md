@@ -25,7 +25,7 @@ If you use [git-flow](https://github.com/nvie/gitflow): run `git flow init` (acc
 
 ## How to contribute
 
-- **Bug reports & feature ideas:** Open a [GitHub Issue](https://github.com/YOUR_ORG/stdout/issues). Use the issue templates (Bug report / Feature request) when possible.
+- **Bug reports & feature ideas:** Open a [GitHub Issue](https://github.com/cminhho/stdout/issues). Use the issue templates (Bug report / Feature request) when possible.
 - **Code changes:** Open a Pull Request. Keep PRs focused (one feature/fix per PR when possible). The [PR template](.github/PULL_REQUEST_TEMPLATE.md) will guide you.
 - **New tools:** Add your tool to the right pack in `src/tool-packs/` (see existing entries for structure), implement the page under `src/pages/`, and register in the pack. Core logic should live in `src/core-utils/` when it’s pure logic.
 
