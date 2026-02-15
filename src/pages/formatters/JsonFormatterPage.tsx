@@ -4,7 +4,8 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
-import { Upload, Settings2, AlignLeft, Network, Download } from "lucide-react";
+import { Upload, AlignLeft, Network, Download } from "lucide-react";
+import { ToolOptions, OptionField } from "@/components/ToolOptions";
 import { JsonView, defaultStyles, darkStyles, allExpanded } from "react-json-view-lite";
 import "react-json-view-lite/dist/index.css";
 import { useSettings } from "@/hooks/useSettings";
@@ -261,78 +262,61 @@ const JsonFormatterPage = () => {
       title={tool?.label ?? "JSON Formatter"}
       description={tool?.description ?? "Format, validate & beautify JSON with strict RFC compliance"}
     >
-      {/* Options — compact single row */}
-      <div className="mb-4 rounded-lg border border-border bg-muted/20 overflow-hidden">
-        <button
-          type="button"
-          onClick={() => setOptionsOpen((o) => !o)}
-          className="w-full flex items-center justify-between gap-2 px-3 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
-        >
-          <span className="flex items-center gap-2">
-            <Settings2 className="h-3.5 w-3.5" />
-            Options
-          </span>
-          <span className="text-[10px] opacity-75">{optionsOpen ? "▼" : "▶"}</span>
-        </button>
-        {optionsOpen && (
-          <div className="px-3 py-2.5 border-t border-border/80 flex flex-wrap items-center gap-x-4 gap-y-2">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".json,application/json"
-              className="hidden"
-              onChange={handleFileUpload}
-            />
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              className="h-7 px-2.5 text-xs"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <Upload className="h-3 w-3 mr-1.5" />
-              Upload file
-            </Button>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[11px] text-muted-foreground whitespace-nowrap">Encoding</span>
-              <select
-                value={fileEncoding}
-                onChange={(e) => setFileEncoding(e.target.value as FileEncoding)}
-                className="h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0"
-              >
-                <option value="utf-8">UTF-8</option>
-                <option value="utf-16le">UTF-16 LE</option>
-                <option value="utf-16be">UTF-16 BE</option>
-              </select>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[11px] text-muted-foreground whitespace-nowrap">Indent</span>
-              <select
-                value={indent}
-                onChange={(e) => setIndent(e.target.value as IndentOption)}
-                className="h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0"
-              >
-                {INDENT_OPTIONS.map((opt) => (
-                  <option key={String(opt.value)} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[11px] text-muted-foreground whitespace-nowrap">Style</span>
-              <select
-                value={bracketStyle}
-                onChange={(e) => setBracketStyle(e.target.value as BracketStyle)}
-                className="h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0"
-              >
-                <option value="expanded">Expanded</option>
-                <option value="collapsed">Collapsed</option>
-              </select>
-            </div>
-          </div>
-        )}
-      </div>
+      <ToolOptions open={optionsOpen} onOpenChange={setOptionsOpen}>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json,application/json"
+          className="hidden"
+          onChange={handleFileUpload}
+        />
+        <OptionField label="Upload your JSON file">
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="h-7 px-2.5 text-xs"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <Upload className="h-3 w-3 mr-1.5" />
+            Upload file
+          </Button>
+        </OptionField>
+        <OptionField label="File encoding">
+          <select
+            value={fileEncoding}
+            onChange={(e) => setFileEncoding(e.target.value as FileEncoding)}
+            className="h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0"
+          >
+            <option value="utf-8">UTF-8</option>
+            <option value="utf-16le">UTF-16 LE</option>
+            <option value="utf-16be">UTF-16 BE</option>
+          </select>
+        </OptionField>
+        <OptionField label="Indentation level">
+          <select
+            value={indent}
+            onChange={(e) => setIndent(e.target.value as IndentOption)}
+            className="h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0"
+          >
+            {INDENT_OPTIONS.map((opt) => (
+              <option key={String(opt.value)} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </OptionField>
+        <OptionField label="Bracket style">
+          <select
+            value={bracketStyle}
+            onChange={(e) => setBracketStyle(e.target.value as BracketStyle)}
+            className="h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0"
+          >
+            <option value="expanded">Expanded</option>
+            <option value="collapsed">Collapsed</option>
+          </select>
+        </OptionField>
+      </ToolOptions>
 
       {/* Validation status + Stats */}
       {input.trim() && (
