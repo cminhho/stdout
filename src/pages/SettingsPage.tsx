@@ -24,7 +24,7 @@ const SettingsPage = () => {
   const tool = useCurrentTool();
   const [tab, setTab] = useState<Tab>("general");
   const settings = useSettings();
-  const { tools, edition } = useToolEngine();
+  const { tools } = useToolEngine();
   const [search, setSearch] = useState("");
 
   const filteredTools = search

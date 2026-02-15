@@ -9,4 +9,3 @@ export * from "./crypto";
 export * from "./text";
 export * from "./converters";
 export * from "./beautifier";
-export * from "./fintech";

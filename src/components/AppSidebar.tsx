@@ -9,7 +9,7 @@ import {
   TerminalSquare, FileType, List, KeySquare,
   FileOutput, Image, Scaling, FileArchive, Eye, Paintbrush, Ruler,
   FileUp, Dices, TableProperties, Settings, LetterText, ScrollText,
-  PanelLeftClose, PanelLeftOpen, BookOpen, FileCheck,
+  PanelLeftClose, PanelLeftOpen,
 } from "lucide-react";
 import {
   Tooltip,
@@ -30,7 +30,6 @@ const iconMap: Record<string, React.ElementType> = {
   TerminalSquare, FileType, List, KeySquare,
   FileOutput, Image, Scaling, FileArchive, Eye, Paintbrush, Ruler,
   FileUp, Dices, TableProperties, Settings, LetterText, ScrollText,
-  BookOpen, FileCheck,
 };
 
 // Group icon mapping (order in sidebar follows first occurrence in tool packs)
@@ -45,7 +44,6 @@ const groupIconMap: Record<string, React.ElementType> = {
   "Generators": Shuffle,
   "Image & Media": Image,
   "Networking & Other": TerminalSquare,
-  "Fintech": Calculator,
 };
 
 const getIcon = (name: string) => iconMap[name] || Braces;
