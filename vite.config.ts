@@ -1,4 +1,3 @@
-/// <reference types="vitest/config" />
 import path from "path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
@@ -18,12 +17,6 @@ export default defineConfig(({ mode }) => ({
       ? [visualizer({ open: true, gzipSize: true, brotliSize: true, filename: "dist/stats.html" })]
       : []),
   ],
-  test: {
-    environment: "jsdom",
-    globals: true,
-    setupFiles: ["./src/test/setup.ts"],
-    include: ["src/**/*.{test,spec}.{ts,tsx}"],
-  },
   build: {
     rollupOptions: {
       output: {

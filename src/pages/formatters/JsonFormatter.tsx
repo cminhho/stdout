@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Upload, Settings2, AlignLeft, Network, Download } from "lucide-react";
 import { JsonView, defaultStyles, darkStyles, allExpanded } from "react-json-view-lite";
 import "react-json-view-lite/dist/index.css";
-import { useSettings } from "@/contexts/SettingsContext";
+import { useSettings } from "@/hooks/useSettings";
 
 // ── Strict JSON Validator (RFC 8259 / ECMA-404 compliant) ──────────────────
 

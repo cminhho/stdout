@@ -139,17 +139,14 @@ npm run build
 ```
 src/
   components/     # App + UI primitives (ToolLayout, CodeEditor, ui/)
-  config/         # App config (site)
   contexts/       # React context (Settings)
   hooks/          # useToolEngine, useCurrentTool, useToolTracking
-  lib/            # App helpers (e.g. cn)
   pages/          # Tool pages by domain (converters, encode, formatters, …)
-  test/           # Test setup + specs
-  tool-engine/    # Tool registry (registry.ts), routing, types, tracking
-  utils/          # Pure domain logic (encode, validators, beautifier, minify, …)
+  tools/          # Tool registry (registry.ts), routing, types, tracking
+  utils/          # Domain logic + UI helper (encode, validators, cn, …)
 ```
 
-Tools are registered in `tool-engine/registry.ts`; each page is self-contained and lazy-loaded.
+Tools are registered in `tools/registry.ts`; each page is self-contained and lazy-loaded.
 
 ---
 

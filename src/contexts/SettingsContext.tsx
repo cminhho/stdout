@@ -1,67 +1,13 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { useState, useEffect, ReactNode } from "react";
+import { SettingsContext, loadSettings, saveSettings, type Theme, type SidebarMode } from "./settingsStore";
 
-export type Theme = "dark" | "light" | "system";
-export type SidebarMode = "grouped" | "flat";
-
-interface SettingsState {
-  theme: Theme;
-  sidebarMode: SidebarMode;
-  sidebarCollapsed: boolean;
-  hiddenTools: string[];
-}
-
-interface SettingsContextType extends SettingsState {
-  setTheme: (t: Theme) => void;
-  setSidebarMode: (m: SidebarMode) => void;
-  setSidebarCollapsed: (c: boolean) => void;
-  toggleSidebar: () => void;
-  toggleTool: (path: string) => void;
-  setAllToolsVisible: () => void;
-  isToolVisible: (path: string) => boolean;
-}
-
-const STORAGE_KEY = "stdout-settings";
-
-const defaults: SettingsState = {
-  theme: "light",
-  sidebarMode: "grouped",
-  sidebarCollapsed: false,
-  hiddenTools: [],
-};
-
-const load = (): SettingsState => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw) as Partial<SettingsState>;
-      return {
-        theme: parsed.theme ?? defaults.theme,
-        sidebarMode: parsed.sidebarMode ?? defaults.sidebarMode,
-        sidebarCollapsed: parsed.sidebarCollapsed ?? defaults.sidebarCollapsed,
-        hiddenTools: Array.isArray(parsed.hiddenTools) ? parsed.hiddenTools : defaults.hiddenTools,
-      };
-    }
-  } catch {}
-  return defaults;
-};
-
-const save = (s: SettingsState) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
-};
-
-const SettingsContext = createContext<SettingsContextType | null>(null);
-
-export const useSettings = () => {
-  const ctx = useContext(SettingsContext);
-  if (!ctx) throw new Error("useSettings must be inside SettingsProvider");
-  return ctx;
-};
+export type { Theme, SidebarMode } from "./settingsStore";
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
-  const [state, setState] = useState<SettingsState>(load);
+  const [state, setState] = useState(loadSettings);
 
   useEffect(() => {
-    save(state);
+    saveSettings(state);
   }, [state]);
 
   useEffect(() => {

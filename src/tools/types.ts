@@ -8,7 +8,7 @@ export interface ToolDefinition {
   group: string;
   icon: string;
   tags?: string[];
-  component: LazyExoticComponent<ComponentType<any>> | ComponentType<any>;
+  component: LazyExoticComponent<ComponentType<unknown>> | ComponentType<unknown>;
 }
 
 export interface ToolGroup {

@@ -16,9 +16,9 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useSettings } from "@/contexts/SettingsContext";
+import { useSettings } from "@/hooks/useSettings";
 import { useToolEngine } from "@/hooks/useToolEngine";
-import type { ToolDefinition, ToolGroup } from "@/tool-engine/types";
+import type { ToolDefinition, ToolGroup } from "@/tools/types";
 
 // Icon lookup map
 const iconMap: Record<string, React.ElementType> = {
@@ -48,14 +48,9 @@ const groupIconMap: Record<string, React.ElementType> = {
 
 const getIcon = (name: string) => iconMap[name] || Braces;
 
-/** Truncates long labels to one line; full label in tooltip on hover. */
+/** Truncates long labels to one line when sidebar is expanded (no tooltip; tooltips only when collapsed). */
 const SidebarItemLabel = ({ label }: { label: string }) => (
-  <Tooltip>
-    <TooltipTrigger asChild>
-      <span className="min-w-0 truncate block">{label}</span>
-    </TooltipTrigger>
-    <TooltipContent side="right">{label}</TooltipContent>
-  </Tooltip>
+  <span className="min-w-0 truncate block">{label}</span>
 );
 
 const SidebarGroupSection = ({

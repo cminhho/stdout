@@ -1,5 +1,5 @@
 import { lazy } from "react";
-import type { ToolDefinition } from "@/tool-engine/types";
+import type { ToolDefinition } from "@/tools/types";
 
 export const tools: ToolDefinition[] = [
     // ─── Formatters ──────────────────────────────────────────

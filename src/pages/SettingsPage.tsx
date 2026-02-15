@@ -2,10 +2,11 @@ import { useState } from "react";
 import { Settings, Palette, LayoutList, Info, Wrench, Heart, ExternalLink } from "lucide-react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import { useSettings, Theme, SidebarMode } from "@/contexts/SettingsContext";
+import { useSettings } from "@/hooks/useSettings";
+import { Theme, SidebarMode } from "@/contexts/settingsStore";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import { Checkbox } from "@/components/ui/checkbox";
-import { SITE } from "@/config/site";
+import { SITE } from "@/site";
 
 const themes: { value: Theme; label: string; desc: string }[] = [
   { value: "dark", label: "Dark", desc: "Dark background with light text" },

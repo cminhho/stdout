@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useToolEngine } from "./useToolEngine";
-import { trackingService } from "@/tool-engine/tracking";
+import { trackingService } from "@/tools/tracking";
 
 /**
  * Hook that automatically tracks tool usage based on route changes.

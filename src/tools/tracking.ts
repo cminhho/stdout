@@ -47,7 +47,7 @@ const load = (): TrackingStore => {
       const parsed = JSON.parse(raw) as TrackingStore;
       if (parsed.version === STORE_VERSION) return parsed;
     }
-  } catch {}
+  } catch { /* ignore parse error */ }
   return emptyStore();
 };
 
@@ -58,7 +58,7 @@ const save = (store: TrackingStore) => {
       store.events = store.events.slice(-MAX_EVENTS);
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
-  } catch {}
+  } catch { /* ignore write error */ }
 };
 
 class ToolTrackingService {
