@@ -7,17 +7,17 @@ const xmlMap: Record<string, string> = {
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;",
 };
 
-export function escapeXml(s: string): string {
+function escapeXml(s: string): string {
   return s.replace(/[&<>"']/g, (c) => xmlMap[c] ?? c);
 }
 
-export function unescapeXml(s: string): string {
+function unescapeXml(s: string): string {
   const doc = new DOMParser().parseFromString(s, "text/html");
   return doc.documentElement.textContent ?? s;
 }
 
 // ── Java / .NET (string literal) ─────────────────────────────────────
-export function escapeJavaDotNet(s: string): string {
+function escapeJavaDotNet(s: string): string {
   return s
     .replace(/\\/g, "\\\\")
     .replace(/"/g, '\\"')
@@ -26,12 +26,12 @@ export function escapeJavaDotNet(s: string): string {
     .replace(/\t/g, "\\t");
 }
 
-export function unescapeJavaDotNet(s: string): string {
+function unescapeJavaDotNet(s: string): string {
   return s.replace(/\\(["\\nrt])/g, (_, c) => ({ '"': '"', "\\": "\\", n: "\n", r: "\r", t: "\t" }[c] ?? c));
 }
 
 // ── JavaScript (string literal) ────────────────────────────────────────
-export function escapeJavaScript(s: string): string {
+function escapeJavaScript(s: string): string {
   return s
     .replace(/\\/g, "\\\\")
     .replace(/`/g, "\\`")
@@ -46,32 +46,32 @@ export function escapeJavaScript(s: string): string {
     .replace(/"/g, '\\"');
 }
 
-export function unescapeJavaScript(s: string): string {
+function unescapeJavaScript(s: string): string {
   const map: Record<string, string> = { n: "\n", r: "\r", t: "\t", "\\": "\\", "'": "'", '"': '"', b: "\b", f: "\f", v: "\v" };
   return s.replace(/\\(.)/gs, (_, c) => map[c] ?? c);
 }
 
 // ── JSON (same as JS for string content) ───────────────────────────────
-export const escapeJson = escapeJavaScript;
-export const unescapeJson = unescapeJavaScript;
+const escapeJson = escapeJavaScript;
+const unescapeJson = unescapeJavaScript;
 
 // ── CSV (RFC 4180: double quote and wrap if needed) ─────────────────────
-export function escapeCsv(s: string): string {
+function escapeCsv(s: string): string {
   if (/[",\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
   return s;
 }
 
-export function unescapeCsv(s: string): string {
+function unescapeCsv(s: string): string {
   if (s.startsWith('"') && s.endsWith('"')) return s.slice(1, -1).replace(/""/g, '"');
   return s;
 }
 
 // ── SQL (single quote double for literal) ──────────────────────────────
-export function escapeSql(s: string): string {
+function escapeSql(s: string): string {
   return s.replace(/'/g, "''");
 }
 
-export function unescapeSql(s: string): string {
+function unescapeSql(s: string): string {
   return s.replace(/''/g, "'");
 }
 

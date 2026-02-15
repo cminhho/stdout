@@ -2,7 +2,7 @@
  * XML/HTML validation and XPath evaluation (browser APIs).
  */
 
-export interface XmlValidationResult {
+interface XmlValidationResult {
   valid: boolean;
   error?: string;
 }
@@ -23,7 +23,7 @@ export function validateXml(xmlString: string): XmlValidationResult {
   }
 }
 
-export interface HtmlValidationResult {
+interface HtmlValidationResult {
   valid: boolean;
   error?: string;
 }
@@ -44,7 +44,7 @@ export function validateHtml(htmlString: string): HtmlValidationResult {
   }
 }
 
-export interface XPathResultItem {
+interface XPathResultItem {
   type: string;
   value: string;
 }
