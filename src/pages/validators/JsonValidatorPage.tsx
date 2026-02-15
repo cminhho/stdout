@@ -43,8 +43,8 @@ const JsonValidatorPage = () => {
       const parsed = JSON.parse(input);
       const stats = analyzeJson(parsed);
       return { valid: true, errors: [], stats };
-    } catch (e: any) {
-      const msg = e.message;
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
       return { valid: false, errors: [msg], stats: { keys: 0, depth: 0, arrays: 0, objects: 0, nulls: 0 } };
     }
   }, [input]);

@@ -41,8 +41,8 @@ const RegexTesterPage = () => {
       }
 
       return { matches, error: null };
-    } catch (e: any) {
-      return { matches: [], error: e.message };
+    } catch (e: unknown) {
+      return { matches: [], error: e instanceof Error ? e.message : String(e) };
     }
   }, [pattern, flags, testString]);
 

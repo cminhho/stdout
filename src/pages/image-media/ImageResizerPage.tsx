@@ -97,7 +97,7 @@ const ImageResizerPage = () => {
                   <input type="checkbox" checked={keepRatio} onChange={(e) => setKeepRatio(e.target.checked)} className="accent-primary" />
                   Keep ratio
                 </label>
-                <select value={format} onChange={(e) => setFormat(e.target.value as any)} className="rounded-md border px-2 py-1 text-xs bg-background border-border text-foreground">
+                <select value={format} onChange={(e) => setFormat(e.target.value as "png" | "jpeg" | "webp")} className="rounded-md border px-2 py-1 text-xs bg-background border-border text-foreground">
                   <option value="png">PNG</option>
                   <option value="jpeg">JPEG</option>
                   <option value="webp">WebP</option>

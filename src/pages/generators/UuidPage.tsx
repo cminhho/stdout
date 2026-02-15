@@ -49,7 +49,7 @@ const UuidPage = () => {
       return generateUUIDv1Like();
     });
     const formatted = raw.map((u) => {
-      let result = hyphens ? u : u.replace(/-/g, "");
+      const result = hyphens ? u : u.replace(/-/g, "");
       return uppercase ? result.toUpperCase() : result.toLowerCase();
     });
     setUuids(formatted);

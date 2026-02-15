@@ -143,8 +143,8 @@ const MathCalculatorPage = () => {
     try {
       const result = evaluate(expr);
       setHistory((h) => [{ expr, result: String(result) }, ...h].slice(0, 50));
-    } catch (e: any) {
-      setHistory((h) => [{ expr, result: `Error: ${e.message}` }, ...h].slice(0, 50));
+    } catch (e: unknown) {
+      setHistory((h) => [{ expr, result: `Error: ${e instanceof Error ? e.message : String(e)}` }, ...h].slice(0, 50));
     }
   }, [expr]);
 

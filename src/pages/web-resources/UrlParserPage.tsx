@@ -24,8 +24,8 @@ const UrlParserPage = () => {
         params,
         error: null,
       };
-    } catch (e: any) {
-      return { error: e.message } as any;
+    } catch (e: unknown) {
+      return { error: e instanceof Error ? e.message : String(e) };
     }
   }, [input]);
 

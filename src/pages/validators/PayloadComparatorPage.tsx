@@ -28,14 +28,15 @@ function deepDiff(a: unknown, b: unknown, path = ""): Diff[] {
       else diffs.push(...deepDiff(a[i], b[i], p));
     }
   } else if (typeof a === "object") {
-    const keysA = Object.keys(a as object);
-    const keysB = Object.keys(b as object);
+    const oa = a as Record<string, unknown>, ob = b as Record<string, unknown>;
+    const keysA = Object.keys(oa);
+    const keysB = Object.keys(ob);
     const allKeys = new Set([...keysA, ...keysB]);
     for (const key of allKeys) {
       const p = path ? `${path}.${key}` : key;
-      if (!(key in (a as any))) diffs.push({ path: p, type: "added", newVal: (b as any)[key] });
-      else if (!(key in (b as any))) diffs.push({ path: p, type: "removed", oldVal: (a as any)[key] });
-      else diffs.push(...deepDiff((a as any)[key], (b as any)[key], p));
+      if (!(key in oa)) diffs.push({ path: p, type: "added", newVal: ob[key] });
+      else if (!(key in ob)) diffs.push({ path: p, type: "removed", oldVal: oa[key] });
+      else diffs.push(...deepDiff(oa[key], ob[key], p));
     }
   } else {
     diffs.push({ path: path || "(root)", type: "changed", oldVal: a, newVal: b });
@@ -52,8 +53,8 @@ const PayloadComparatorPage = () => {
     if (!left.trim() || !right.trim()) return null;
     try {
       return { diffs: deepDiff(JSON.parse(left), JSON.parse(right)), error: null };
-    } catch (e: any) {
-      return { diffs: [], error: e.message };
+    } catch (e: unknown) {
+      return { diffs: [], error: e instanceof Error ? e.message : String(e) };
     }
   }, [left, right]);
 

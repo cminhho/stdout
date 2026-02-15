@@ -76,8 +76,8 @@ const MockGeneratorPage = () => {
       const items = Array.from({ length: count }, () => generateFromSchema(parsed));
       setOutput(JSON.stringify(count === 1 ? items[0] : items, null, 2));
       setError("");
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : String(e));
       setOutput("");
     }
   }, [schema, count]);

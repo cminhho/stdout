@@ -27,16 +27,17 @@ function diffObjects(a: unknown, b: unknown, path = ""): DiffEntry[] {
     return entries;
   }
   if (typeA === "object" && a !== null && b !== null) {
-    const keysA = new Set(Object.keys(a as Record<string, unknown>));
-    const keysB = new Set(Object.keys(b as Record<string, unknown>));
+    const oa = a as Record<string, unknown>, ob = b as Record<string, unknown>;
+    const keysA = new Set(Object.keys(oa));
+    const keysB = new Set(Object.keys(ob));
     for (const key of keysB) {
-      if (!keysA.has(key)) entries.push({ path: path ? `${path}.${key}` : key, type: "added", newValue: getType((b as any)[key]) });
+      if (!keysA.has(key)) entries.push({ path: path ? `${path}.${key}` : key, type: "added", newValue: getType(ob[key]) });
     }
     for (const key of keysA) {
-      if (!keysB.has(key)) entries.push({ path: path ? `${path}.${key}` : key, type: "removed", oldValue: getType((a as any)[key]) });
+      if (!keysB.has(key)) entries.push({ path: path ? `${path}.${key}` : key, type: "removed", oldValue: getType(oa[key]) });
     }
     for (const key of keysA) {
-      if (keysB.has(key)) entries.push(...diffObjects((a as any)[key], (b as any)[key], path ? `${path}.${key}` : key));
+      if (keysB.has(key)) entries.push(...diffObjects(oa[key], ob[key], path ? `${path}.${key}` : key));
     }
   } else if (typeA === "array" && Array.isArray(a) && Array.isArray(b)) {
     const maxLen = Math.max(a.length, b.length);
@@ -59,8 +60,8 @@ const SchemaDiffPage = () => {
     if (!left.trim() || !right.trim()) return null;
     try {
       return { diff: diffObjects(JSON.parse(left), JSON.parse(right)), error: null };
-    } catch (e: any) {
-      return { diff: [], error: e.message };
+    } catch (e: unknown) {
+      return { diff: [], error: e instanceof Error ? e.message : String(e) };
     }
   }, [left, right]);
 

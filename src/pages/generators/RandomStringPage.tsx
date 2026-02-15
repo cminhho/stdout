@@ -46,7 +46,7 @@ const RandomStringPage = () => {
       results.push(prefix + str + suffix);
     }
     setStrings(results);
-  }, [length, count, preset, customChars, prefix, suffix, getChars]);
+  }, [length, count, prefix, suffix, getChars]);
 
   const outputText = strings.join("\n");
 

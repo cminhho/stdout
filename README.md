@@ -1,4 +1,4 @@
-# Stdout
+# 🛠️ Stdout - Developer Tools pack
 
 **Your standard output for dev tools.**  
 Format, convert, encode, generate — all in one place.
