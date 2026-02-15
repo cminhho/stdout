@@ -4,7 +4,7 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import CopyButton from "@/components/CopyButton";
-import { luhnCheck, generateCardNumber, CARD_BRANDS } from "@/core-utils/creditcard";
+import { luhnCheck, generateCardNumber, CARD_BRANDS } from "@/utils/creditcard";
 
 const CreditCardPage = () => {
   const tool = useCurrentTool();

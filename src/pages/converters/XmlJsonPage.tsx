@@ -4,7 +4,7 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
-import { xmlToJson, jsonToXml } from "@/core-utils/xmlJson";
+import { xmlToJson, jsonToXml } from "@/utils/xmlJson";
 
 const XmlJsonPage = () => {
   const tool = useCurrentTool();

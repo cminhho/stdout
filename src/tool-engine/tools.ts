@@ -1,4 +1,4 @@
-import { tools as publicTools } from "@/tool-packs/public-pack";
+import { tools as publicTools } from "./registry";
 import type { ToolDefinition, ToolGroup } from "./types";
 
 const tools: ToolDefinition[] = publicTools;

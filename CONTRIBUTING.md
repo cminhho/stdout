@@ -27,7 +27,7 @@ If you use [git-flow](https://github.com/nvie/gitflow): run `git flow init` (acc
 
 - **Bug reports & feature ideas:** Open a [GitHub Issue](https://github.com/cminhho/stdout/issues). Use the issue templates (Bug report / Feature request) when possible.
 - **Code changes:** Open a Pull Request. Keep PRs focused (one feature/fix per PR when possible). The [PR template](.github/PULL_REQUEST_TEMPLATE.md) will guide you.
-- **New tools:** Add your tool to the right pack in `src/tool-packs/` (see existing entries for structure), implement the page under `src/pages/`, and register in the pack. Core logic should live in `src/core-utils/` when it’s pure logic.
+- **New tools:** Register your tool in `src/tool-engine/registry.ts` (see existing entries for structure), implement the page under `src/pages/`, and add the lazy-loaded component to the registry. Core logic should live in `src/utils/` when it’s pure logic.
 
 ## Setup
 
@@ -45,7 +45,7 @@ Run tests: `npm run test`. Lint: `npm run lint`.
 
 - The project uses [EditorConfig](https://editorconfig.org) (`.editorconfig`) for indentation and line endings.
 - TypeScript throughout; follow existing patterns.
-- Prefer pure functions in `core-utils/`; keep UI in components/pages.
+- Prefer pure functions in `utils/`; keep UI in components/pages.
 - Use the shared UI components in `src/components/` and `src/components/ui/`.
 
 ## License

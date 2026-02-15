@@ -4,8 +4,8 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
-import { cssBeautify } from "@/core-utils/beautifier";
-import { cssMinify } from "@/core-utils/minify";
+import { cssBeautify } from "@/utils/beautifier";
+import { cssMinify } from "@/utils/minify";
 
 const CssFormatterPage = () => {
   const tool = useCurrentTool();

@@ -3,7 +3,7 @@ import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
-import { validateXml } from "@/core-utils/validators";
+import { validateXml } from "@/utils/validators";
 
 const XmlValidatorPage = () => {
   const tool = useCurrentTool();

@@ -4,7 +4,7 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
-import { cssBeautify } from "@/core-utils/beautifier";
+import { cssBeautify } from "@/utils/beautifier";
 
 const CssBeautifierPage = () => {
   const tool = useCurrentTool();

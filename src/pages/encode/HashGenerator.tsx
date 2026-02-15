@@ -4,7 +4,7 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import CopyButton from "@/components/CopyButton";
-import { hashText, type HashAlgorithm } from "@/core-utils/crypto";
+import { hashText, type HashAlgorithm } from "@/utils/crypto";
 
 const ALGOS: HashAlgorithm[] = ["SHA-1", "SHA-256", "SHA-384", "SHA-512"];
 

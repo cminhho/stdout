@@ -137,17 +137,19 @@ npm run build
 ## 🛠 Project Structure
 
 ```
-/src
-  /tools
-    js-beautifier
-    js-minifier
-    css-beautifier
-    css-minifier
-  /components
-  /utils
+src/
+  components/     # App + UI primitives (ToolLayout, CodeEditor, ui/)
+  config/         # App config (site)
+  contexts/       # React context (Settings)
+  hooks/          # useToolEngine, useCurrentTool, useToolTracking
+  lib/            # App helpers (e.g. cn)
+  pages/          # Tool pages by domain (converters, encode, formatters, …)
+  test/           # Test setup + specs
+  tool-engine/    # Tool registry (registry.ts), routing, types, tracking
+  utils/          # Pure domain logic (encode, validators, beautifier, minify, …)
 ```
 
-Each tool is designed to be self-contained and independently maintainable.
+Tools are registered in `tool-engine/registry.ts`; each page is self-contained and lazy-loaded.
 
 ---
 

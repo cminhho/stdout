@@ -17,7 +17,7 @@ import {
   decodeBytes,
   encodeToUtf8Bytes,
   bytesToHex,
-} from "@/core-utils/encode";
+} from "@/utils/encode";
 
 const base64ToBytes = (s: string): Uint8Array => {
   const binary = atob(s.replace(/\s/g, ""));

@@ -9,5 +9,5 @@
 
 ## Checklist
 - [ ] Code follows existing style (TypeScript, existing patterns)
-- [ ] Core logic in `core-utils/` when applicable; UI in components/pages
+- [ ] Core logic in `utils/` when applicable; UI in components/pages
 - [ ] Tested locally (`npm run dev`, `npm run test`, `npm run lint`)

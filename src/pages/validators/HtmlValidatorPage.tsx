@@ -3,7 +3,7 @@ import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
-import { validateHtml } from "@/core-utils/validators";
+import { validateHtml } from "@/utils/validators";
 
 const HtmlValidatorPage = () => {
   const tool = useCurrentTool();

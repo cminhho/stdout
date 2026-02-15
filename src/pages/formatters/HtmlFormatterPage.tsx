@@ -4,7 +4,7 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
-import { htmlBeautify } from "@/core-utils/beautifier";
+import { htmlBeautify } from "@/utils/beautifier";
 
 const minifyHtml = (html: string): string =>
   html.replace(/>\s+</g, "><").replace(/\s+/g, " ").trim();

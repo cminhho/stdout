@@ -4,7 +4,7 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Input } from "@/components/ui/input";
-import { evaluateXPath } from "@/core-utils/validators";
+import { evaluateXPath } from "@/utils/validators";
 
 const defaultXml = `<?xml version="1.0"?>
 <books>

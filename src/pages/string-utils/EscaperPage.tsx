@@ -3,7 +3,7 @@ import ToolLayout from "@/components/ToolLayout";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
-import { escapeText, unescapeText, type EscaperType } from "@/core-utils/escaper";
+import { escapeText, unescapeText, type EscaperType } from "@/utils/escaper";
 
 interface EscaperPageProps {
   type: EscaperType;

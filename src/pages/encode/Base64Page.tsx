@@ -4,7 +4,7 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
-import { base64Encode, base64Decode } from "@/core-utils/encode";
+import { base64Encode, base64Decode } from "@/utils/encode";
 
 const Base64Page = () => {
   const tool = useCurrentTool();

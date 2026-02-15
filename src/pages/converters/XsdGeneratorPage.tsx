@@ -3,7 +3,7 @@ import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
-import { xmlToXsd } from "@/core-utils/xsdGenerator";
+import { xmlToXsd } from "@/utils/xsdGenerator";
 
 const sampleXml = `<?xml version="1.0"?>
 <catalog>
