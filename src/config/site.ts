@@ -6,7 +6,3 @@ export const SITE = {
   githubSponsors: "https://github.com/sponsors/cminhho",
   buyMeACoffee: "https://buymeacoffee.com/chungho",
 } as const;
-
-export const hasAnySponsorLink = () =>
-  !SITE.githubSponsors.includes("YOUR_") &&
-  !SITE.buyMeACoffee.includes("YOUR_");

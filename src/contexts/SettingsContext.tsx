@@ -1,12 +1,10 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 export type Theme = "dark" | "light" | "system";
-export type Language = "en";
 export type SidebarMode = "grouped" | "flat";
 
 interface SettingsState {
   theme: Theme;
-  language: Language;
   sidebarMode: SidebarMode;
   sidebarCollapsed: boolean;
   hiddenTools: string[];
@@ -14,7 +12,6 @@ interface SettingsState {
 
 interface SettingsContextType extends SettingsState {
   setTheme: (t: Theme) => void;
-  setLanguage: (l: Language) => void;
   setSidebarMode: (m: SidebarMode) => void;
   setSidebarCollapsed: (c: boolean) => void;
   toggleSidebar: () => void;
@@ -27,7 +24,6 @@ const STORAGE_KEY = "stdout-settings";
 
 const defaults: SettingsState = {
   theme: "light",
-  language: "en",
   sidebarMode: "grouped",
   sidebarCollapsed: false,
   hiddenTools: [],
@@ -36,7 +32,15 @@ const defaults: SettingsState = {
 const load = (): SettingsState => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return { ...defaults, ...JSON.parse(raw) };
+    if (raw) {
+      const parsed = JSON.parse(raw) as Partial<SettingsState>;
+      return {
+        theme: parsed.theme ?? defaults.theme,
+        sidebarMode: parsed.sidebarMode ?? defaults.sidebarMode,
+        sidebarCollapsed: parsed.sidebarCollapsed ?? defaults.sidebarCollapsed,
+        hiddenTools: Array.isArray(parsed.hiddenTools) ? parsed.hiddenTools : defaults.hiddenTools,
+      };
+    }
   } catch {}
   return defaults;
 };
@@ -81,7 +85,6 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   }, [state.theme]);
 
   const setTheme = (theme: Theme) => setState((s) => ({ ...s, theme }));
-  const setLanguage = (language: Language) => setState((s) => ({ ...s, language }));
   const setSidebarMode = (sidebarMode: SidebarMode) => setState((s) => ({ ...s, sidebarMode }));
   const setSidebarCollapsed = (sidebarCollapsed: boolean) => setState((s) => ({ ...s, sidebarCollapsed }));
   const toggleSidebar = () => setState((s) => ({ ...s, sidebarCollapsed: !s.sidebarCollapsed }));
@@ -99,7 +102,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <SettingsContext.Provider
-      value={{ ...state, setTheme, setLanguage, setSidebarMode, setSidebarCollapsed, toggleSidebar, toggleTool, setAllToolsVisible, isToolVisible }}
+      value={{ ...state, setTheme, setSidebarMode, setSidebarCollapsed, toggleSidebar, toggleTool, setAllToolsVisible, isToolVisible }}
     >
       {children}
     </SettingsContext.Provider>

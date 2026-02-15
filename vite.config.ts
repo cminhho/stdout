@@ -30,6 +30,11 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     rollupOptions: {
+      onwarn(warning, warn) {
+        // Terser emits a #__PURE__ comment Rollup doesn't interpret; safe to ignore
+        if (warning.code === "MODULE_LEVEL_DIRECTIVE" && warning.message?.includes("PURE")) return;
+        warn(warning);
+      },
       output: {
         manualChunks(id) {
           if (id.includes("node_modules")) {
@@ -57,7 +62,8 @@ export default defineConfig(({ mode }) => ({
         },
       },
     },
-    chunkSizeWarningLimit: 600,
+    // beautifier (prettier) and minify (terser) are lazy-loaded; large chunks are intentional
+    chunkSizeWarningLimit: 950,
     minify: "esbuild",
     esbuild: mode === "production" ? { drop: ["console", "debugger"] } : undefined,
   },

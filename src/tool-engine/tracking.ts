@@ -8,7 +8,7 @@
  * (input/output, pasted JSON, passwords, URLs, etc.). Any future analytics must follow the same rule.
  */
 
-export interface ToolUsageEvent {
+interface ToolUsageEvent {
   toolId: string;
   path: string;
   timestamp: number;
@@ -16,7 +16,7 @@ export interface ToolUsageEvent {
   duration?: number;
 }
 
-export interface ToolUsageStats {
+interface ToolUsageStats {
   toolId: string;
   path: string;
   totalOpens: number;
@@ -24,7 +24,7 @@ export interface ToolUsageStats {
   lastUsed: number;
 }
 
-export interface TrackingStore {
+interface TrackingStore {
   events: ToolUsageEvent[];
   stats: Record<string, ToolUsageStats>;
   version: number;

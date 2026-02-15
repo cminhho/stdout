@@ -5,7 +5,7 @@ import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { escapeText, unescapeText, type EscaperType } from "@/core-utils/escaper";
 
-export interface EscaperPageProps {
+interface EscaperPageProps {
   type: EscaperType;
   title: string;
   description: string;

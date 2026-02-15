@@ -1,8 +1,6 @@
 import { Suspense } from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import AppSidebar from "@/components/AppSidebar";
@@ -11,8 +9,6 @@ import { useToolTracking } from "@/hooks/useToolTracking";
 import SettingsPage from "@/pages/SettingsPage";
 import NotFound from "@/pages/NotFound";
 import HomePage from "@/pages/HomePage";
-
-const queryClient = new QueryClient();
 
 const ToolRoutes = () => {
   const { tools } = useToolEngine();
@@ -47,20 +43,17 @@ const ToolRoutes = () => {
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <SettingsProvider>
-            <div className="flex min-h-screen">
-              <AppSidebar />
-              <ToolRoutes />
-            </div>
-          </SettingsProvider>
-        </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <TooltipProvider>
+    <Toaster />
+    <BrowserRouter>
+      <SettingsProvider>
+        <div className="flex min-h-screen">
+          <AppSidebar />
+          <ToolRoutes />
+        </div>
+      </SettingsProvider>
+    </BrowserRouter>
+  </TooltipProvider>
 );
 
 export default App;
