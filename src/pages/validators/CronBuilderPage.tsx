@@ -3,7 +3,9 @@ import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { FileCode, Eraser } from "lucide-react";
 
 const FIELDS = ["minute", "hour", "day", "month", "weekday"] as const;
 const LABELS: Record<(typeof FIELDS)[number], string> = {
@@ -91,6 +93,9 @@ const CronBuilderPage = () => {
 
   const applyExample = (expr: string) => setFields(parseExampleToFields(expr));
 
+  const sampleExpression = "* * * * *";
+  const clearExpression = () => setFields(Object.fromEntries(FIELDS.map((f) => [f, "*"])));
+
   return (
     <ToolLayout title={tool?.label ?? "Cron Parser"} description={tool?.description ?? "Build and parse cron expressions (Quartz-style)"}>
       <div className="flex flex-col flex-1 min-h-0 w-full gap-4">
@@ -121,7 +126,22 @@ const CronBuilderPage = () => {
         </div>
 
         <div className="tool-panel flex flex-col flex-1 min-h-0">
-          <PanelHeader label="Expression" text={expression} />
+          <PanelHeader
+            label="Expression"
+            text={expression}
+            extra={
+              <div className="flex items-center gap-2">
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyPreset(sampleExpression)}>
+                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
+                  Sample
+                </Button>
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={clearExpression}>
+                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                  Clear
+                </Button>
+              </div>
+            }
+          />
           <div className="h-[52px] shrink-0">
             <CodeEditor
               value={expression}

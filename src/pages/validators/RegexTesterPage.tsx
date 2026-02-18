@@ -3,7 +3,11 @@ import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
+import { Button } from "@/components/ui/button";
 import CopyButton from "@/components/CopyButton";
+import { FileCode, Eraser } from "lucide-react";
+
+const SAMPLE_TEST_STRING = "Order placed on 2024-01-15\nShipped on 2024-02-20\nDelivered 2024-03-01\nNo date here";
 
 const FLAG_OPTIONS = [
   { flag: "g", label: "Global", desc: "Find all matches" },
@@ -17,7 +21,7 @@ const RegexTesterPage = () => {
   const tool = useCurrentTool();
   const [pattern, setPattern] = useState("(\\d{4})-(\\d{2})-(\\d{2})");
   const [flags, setFlags] = useState("gm");
-  const [testString, setTestString] = useState("Order placed on 2024-01-15\nShipped on 2024-02-20\nDelivered 2024-03-01\nNo date here");
+  const [testString, setTestString] = useState(SAMPLE_TEST_STRING);
 
   const toggleFlag = (f: string) => {
     setFlags((prev) => prev.includes(f) ? prev.replace(f, "") : prev + f);
@@ -123,9 +127,25 @@ const RegexTesterPage = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Test String */}
-          <div className="tool-panel">
-            <PanelHeader label="Test String" text={testString} onClear={() => setTestString("")} />
-            <CodeEditor value={testString} onChange={setTestString} language="text" placeholder="Enter text to test against..." />
+          <div className="tool-panel flex flex-col min-h-0">
+            <PanelHeader
+              label="Test String"
+              extra={
+                <div className="flex items-center gap-2">
+                  <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setTestString(SAMPLE_TEST_STRING)}>
+                    <FileCode className="h-3.5 w-3.5 mr-1.5" />
+                    Sample
+                  </Button>
+                  <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setTestString("")}>
+                    <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                    Clear
+                  </Button>
+                </div>
+              }
+            />
+            <div className="flex-1 min-h-0 flex flex-col">
+              <CodeEditor value={testString} onChange={setTestString} language="text" placeholder="Enter text to test against..." fillHeight />
+            </div>
           </div>
 
           {/* Results */}

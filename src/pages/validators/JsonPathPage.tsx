@@ -6,8 +6,7 @@ import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Upload } from "lucide-react";
-import { ToolOptions, OptionField } from "@/components/ToolOptions";
+import { Upload, FileCode, Eraser } from "lucide-react";
 
 type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
 
@@ -148,7 +147,6 @@ const tokenizePath = (path: string): string[] => {
 const JsonPathPage = () => {
   const tool = useCurrentTool();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [optionsOpen, setOptionsOpen] = useState(true);
   const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
   const [jsonInput, setJsonInput] = useState(SAMPLE_JSON);
   const [pathInput, setPathInput] = useState("$.store.books[*].title");
@@ -183,28 +181,36 @@ const JsonPathPage = () => {
     "$..price",
   ];
 
+  const jsonInputExtra = (
+    <div className="flex items-center gap-2 flex-wrap">
+      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setJsonInput(SAMPLE_JSON)}>
+        <FileCode className="h-3.5 w-3.5 mr-1.5" />
+        Sample
+      </Button>
+      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setJsonInput("")}>
+        <Eraser className="h-3.5 w-3.5 mr-1.5" />
+        Clear
+      </Button>
+      <input ref={fileInputRef} type="file" accept=".json,application/json" className="hidden" onChange={handleFileUpload} />
+      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => fileInputRef.current?.click()}>
+        <Upload className="h-3.5 w-3.5 mr-1.5" />
+        Upload
+      </Button>
+      <select
+        value={fileEncoding}
+        onChange={(e) => setFileEncoding(e.target.value as FileEncoding)}
+        className={selectClass}
+        title="File encoding"
+      >
+        <option value="utf-8">UTF-8</option>
+        <option value="utf-16le">UTF-16 LE</option>
+        <option value="utf-16be">UTF-16 BE</option>
+      </select>
+    </div>
+  );
+
   return (
     <ToolLayout title={tool?.label ?? "JSONPath Tester"} description={tool?.description ?? "Test JSONPath expressions against JSON data"}>
-      <ToolOptions open={optionsOpen} onOpenChange={setOptionsOpen}>
-        <input ref={fileInputRef} type="file" accept=".json,application/json" className="hidden" onChange={handleFileUpload} />
-        <div className="flex flex-col gap-y-2.5 w-full">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <OptionField label="Upload your JSON file">
-              <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs" onClick={() => fileInputRef.current?.click()}>
-                <Upload className="h-3 w-3 mr-1.5" />
-                Upload file
-              </Button>
-            </OptionField>
-            <OptionField label="File encoding">
-              <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
-                <option value="utf-8">UTF-8</option>
-                <option value="utf-16le">UTF-16 LE</option>
-                <option value="utf-16be">UTF-16 BE</option>
-              </select>
-            </OptionField>
-          </div>
-        </div>
-      </ToolOptions>
       <div className="tool-toolbar flex flex-col gap-2 items-start text-left">
         <div className="flex gap-3 items-end w-full">
           <div className="flex-1 min-w-0 max-w-full">
@@ -227,18 +233,18 @@ const JsonPathPage = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
-        <div className="tool-panel flex-1 min-h-0">
-          <PanelHeader label="JSON Input" text={jsonInput} onClear={() => setJsonInput("")} />
-          <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader label="JSON Input" extra={jsonInputExtra} />
+          <div className="flex-1 min-h-0 flex flex-col">
             <CodeEditor value={jsonInput} onChange={setJsonInput} language="json" fillHeight />
           </div>
         </div>
-        <div className="tool-panel flex-1 min-h-0">
+        <div className="tool-panel flex flex-col min-h-0">
           <PanelHeader label="Result" text={result} />
           {error ? (
-            <div className="code-block text-destructive flex-1 overflow-auto">{error}</div>
+            <div className="flex-1 min-h-0 overflow-auto rounded border border-border bg-muted/30 p-3 text-destructive text-sm font-mono">{error}</div>
           ) : (
-            <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+            <div className="flex-1 min-h-0 flex flex-col">
               <CodeEditor value={result} readOnly language="json" placeholder="Result will appear here..." fillHeight />
             </div>
           )}
