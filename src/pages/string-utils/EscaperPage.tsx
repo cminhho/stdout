@@ -3,8 +3,7 @@ import ToolLayout from "@/components/ToolLayout";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
-import { ToolOptions, OptionField } from "@/components/ToolOptions";
+import { FileCode, Eraser, Upload } from "lucide-react";
 import { escapeText, unescapeText, type EscaperType } from "@/utils/escaper";
 
 type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
@@ -36,6 +35,8 @@ const readFileAsText = (file: File, encoding: FileEncoding): Promise<string> => 
 
 const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
 
+const SAMPLE_INPUT = 'Say "Hello" & <world>\nLine 2';
+
 interface EscaperPageProps {
   type: EscaperType;
   title: string;
@@ -46,7 +47,6 @@ interface EscaperPageProps {
 
 const EscaperPage = ({ type, title, description, formatSelector }: EscaperPageProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [optionsOpen, setOptionsOpen] = useState(true);
   const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
@@ -76,43 +76,47 @@ const EscaperPage = ({ type, title, description, formatSelector }: EscaperPagePr
 
   return (
     <ToolLayout title={title} description={description}>
-      <ToolOptions open={optionsOpen} onOpenChange={setOptionsOpen}>
+      <div className="flex flex-wrap items-center gap-2 mb-4 tool-toolbar">
+        {formatSelector && <>{formatSelector}</>}
+        <Button size="sm" onClick={() => run("encode")}>Escape</Button>
+        <Button size="sm" variant="outline" onClick={() => run("decode")}>Unescape</Button>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
         <input ref={fileInputRef} type="file" accept={accept} className="hidden" onChange={handleFileUpload} />
-        <div className="flex flex-col gap-y-2.5 w-full">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <OptionField label="Upload file">
-              <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs" onClick={() => fileInputRef.current?.click()}>
-                <Upload className="h-3 w-3 mr-1.5" />
-                Upload file
-              </Button>
-            </OptionField>
-            <OptionField label="File encoding">
-              <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
-                <option value="utf-8">UTF-8</option>
-                <option value="utf-16le">UTF-16 LE</option>
-                <option value="utf-16be">UTF-16 BE</option>
-              </select>
-            </OptionField>
-            {formatSelector && (
-              <OptionField label="Format">
-                {formatSelector}
-              </OptionField>
-            )}
-          </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <Button size="sm" onClick={() => run("encode")}>Escape</Button>
-            <Button size="sm" variant="outline" onClick={() => run("decode")}>Unescape</Button>
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader
+            label="Input"
+            extra={
+              <div className="flex items-center gap-2">
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => { setInput(SAMPLE_INPUT); setOutput(""); }}>
+                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
+                  Sample
+                </Button>
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => { setInput(""); setOutput(""); }}>
+                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                  Clear
+                </Button>
+                <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs" onClick={() => fileInputRef.current?.click()}>
+                  <Upload className="h-3 w-3 mr-1.5" />
+                  Upload
+                </Button>
+                <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
+                  <option value="utf-8">UTF-8</option>
+                  <option value="utf-16le">UTF-16 LE</option>
+                  <option value="utf-16be">UTF-16 BE</option>
+                </select>
+              </div>
+            }
+          />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor value={input} onChange={setInput} language="text" placeholder="Enter text..." fillHeight />
           </div>
         </div>
-      </ToolOptions>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="tool-panel">
-          <PanelHeader label="Input" text={input} onClear={() => { setInput(""); setOutput(""); }} />
-          <CodeEditor value={input} onChange={setInput} language="text" placeholder="Enter text..." />
-        </div>
-        <div className="tool-panel">
+        <div className="tool-panel flex flex-col min-h-0">
           <PanelHeader label="Output" text={output} />
-          <CodeEditor value={output} readOnly language="text" placeholder="Result..." />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor value={output} readOnly language="text" placeholder="Result..." fillHeight />
+          </div>
         </div>
       </div>
     </ToolLayout>

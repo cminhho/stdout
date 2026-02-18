@@ -5,6 +5,9 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import CopyButton from "@/components/CopyButton";
 import { Button } from "@/components/ui/button";
+import { FileCode, Eraser } from "lucide-react";
+
+const SAMPLE_TEXT = "The quick brown fox jumps over the lazy dog.\nSecond line here.\nThird line.";
 
 type CaseType = "upper" | "lower" | "title" | "sentence" | "camel" | "snake" | "kebab";
 
@@ -101,9 +104,25 @@ const TextAnalyzerPage = () => {
         </div>
       </div>
 
-      <div className="tool-panel">
-        <PanelHeader label="Text Input" text={text} onClear={() => setText("")} />
-        <CodeEditor value={text} onChange={setText} language="text" placeholder="Paste your text here..." />
+      <div className="tool-panel flex flex-col min-h-0 flex-1">
+        <PanelHeader
+          label="Text Input"
+          extra={
+            <div className="flex items-center gap-2">
+              <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setText(SAMPLE_TEXT)}>
+                <FileCode className="h-3.5 w-3.5 mr-1.5" />
+                Sample
+              </Button>
+              <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setText("")}>
+                <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                Clear
+              </Button>
+            </div>
+          }
+        />
+        <div className="flex-1 min-h-0 flex flex-col">
+          <CodeEditor value={text} onChange={setText} language="text" placeholder="Paste your text here..." fillHeight />
+        </div>
       </div>
 
       {regexMatches.length > 0 && (
