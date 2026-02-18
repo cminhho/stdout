@@ -92,14 +92,6 @@ const EnvNetlifyPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? ".env Converter"} description={tool?.description ?? "Convert .env files to Netlify, Docker, YAML formats"}>
-      <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0 mb-3">
-        <span className="text-xs text-muted-foreground">Output format</span>
-        {(["netlify", "docker", "yaml"] as const).map((f) => (
-          <Button key={f} size="sm" variant={format === f ? "default" : "outline"} onClick={() => setFormat(f)} className="h-7 text-xs">
-            {f === "netlify" ? "netlify.toml" : f === "docker" ? "Dockerfile" : "YAML"}
-          </Button>
-        ))}
-      </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
         <div className="tool-panel flex flex-col min-h-0">
           <PanelHeader
@@ -132,7 +124,19 @@ const EnvNetlifyPage = () => {
           </div>
         </div>
         <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="Output" text={output} />
+          <PanelHeader
+            label="Output"
+            text={output}
+            extra={
+              <div className="flex items-center gap-2 flex-wrap">
+                {(["netlify", "docker", "yaml"] as const).map((f) => (
+                  <Button key={f} size="sm" variant={format === f ? "default" : "outline"} onClick={() => setFormat(f)} className="h-7 text-xs">
+                    {f === "netlify" ? "netlify.toml" : f === "docker" ? "Dockerfile" : "YAML"}
+                  </Button>
+                ))}
+              </div>
+            }
+          />
           <div className="flex-1 min-h-0 flex flex-col">
             <CodeEditor value={output} readOnly language={outputLang} placeholder="Output..." fillHeight />
           </div>

@@ -1,8 +1,9 @@
 import { useState, useRef } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
+import PanelHeader from "@/components/PanelHeader";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
+import { Eraser, Upload } from "lucide-react";
 
 const ImageResizerPage = () => {
   const tool = useCurrentTool();
@@ -69,12 +70,30 @@ const ImageResizerPage = () => {
     a.click();
   };
 
+  const clearImage = () => {
+    setImageSrc("");
+    setOrigW(0);
+    setOrigH(0);
+    setWidth(0);
+    setHeight(0);
+  };
+
   return (
     <ToolLayout title={tool?.label ?? "Image Resizer"} description={tool?.description ?? "Resize images with format conversion"}>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <div className="tool-panel">
-          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Upload Image</label>
-          <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-border rounded-md p-6 cursor-pointer hover:border-primary/50 transition-colors" onClick={() => fileRef.current?.click()}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1 min-h-0">
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader
+            label="Upload Image"
+            extra={
+              imageSrc ? (
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={clearImage}>
+                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                  Clear
+                </Button>
+              ) : undefined
+            }
+          />
+          <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-border rounded-md p-6 cursor-pointer hover:border-primary/50 transition-colors min-h-[200px]" onClick={() => fileRef.current?.click()}>
             <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} className="hidden" />
             <Upload className="h-8 w-8 text-muted-foreground mb-2" />
             <p className="text-sm text-muted-foreground">Click to upload</p>
@@ -117,9 +136,9 @@ const ImageResizerPage = () => {
             </div>
           )}
         </div>
-        <div className="tool-panel">
-          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Preview</label>
-          <div className="code-block flex items-center justify-center min-h-[280px] overflow-auto">
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader label="Preview" />
+          <div className="code-block flex flex-1 min-h-0 items-center justify-center overflow-auto">
             <canvas ref={canvasRef} className="max-w-full max-h-[60vh] object-contain" />
           </div>
         </div>

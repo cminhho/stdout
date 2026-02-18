@@ -114,14 +114,6 @@ const CsvXmlPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "CSV → XML"} description={tool?.description ?? "Convert CSV to XML (first row as element names)"}>
-      <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0 mb-3">
-        <span className="text-xs text-muted-foreground">Root</span>
-        <Input value={rootTag} onChange={(e) => setRootTag(e.target.value)} className="h-7 w-24 font-mono rounded border border-input bg-background px-2 text-xs" />
-        <span className="text-xs text-muted-foreground">Row</span>
-        <Input value={rowTag} onChange={(e) => setRowTag(e.target.value)} className="h-7 w-24 font-mono rounded border border-input bg-background px-2 text-xs" />
-        <span className="text-xs text-muted-foreground">Delimiter</span>
-        <Input value={delimiter} onChange={(e) => setDelimiter(e.target.value)} className="h-7 w-12 font-mono rounded border border-input bg-background px-2 text-xs text-center" maxLength={1} />
-      </div>
       {error && <div className="text-sm text-destructive mb-2">⚠ {error}</div>}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
         <div className="tool-panel flex flex-col min-h-0">
@@ -155,7 +147,20 @@ const CsvXmlPage = () => {
           </div>
         </div>
         <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="XML" text={output} />
+          <PanelHeader
+            label="XML"
+            text={output}
+            extra={
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs text-muted-foreground">Root</span>
+                <Input value={rootTag} onChange={(e) => setRootTag(e.target.value)} className="h-7 w-24 font-mono rounded border border-input bg-background px-2 text-xs" />
+                <span className="text-xs text-muted-foreground">Row</span>
+                <Input value={rowTag} onChange={(e) => setRowTag(e.target.value)} className="h-7 w-24 font-mono rounded border border-input bg-background px-2 text-xs" />
+                <span className="text-xs text-muted-foreground">Delim</span>
+                <Input value={delimiter} onChange={(e) => setDelimiter(e.target.value)} className="h-7 w-12 font-mono rounded border border-input bg-background px-2 text-xs text-center" maxLength={1} />
+              </div>
+            }
+          />
           <div className="flex-1 min-h-0 flex flex-col">
             <CodeEditor value={output} readOnly language="xml" placeholder="Result..." fillHeight />
           </div>

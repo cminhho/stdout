@@ -55,43 +55,42 @@ const LoremIpsumPage = () => {
   return (
     <ToolLayout title={tool?.label ?? "Lorem Ipsum"} description={tool?.description ?? "Generate placeholder text"}>
       <div className="flex flex-col flex-1 min-h-0 w-full gap-4">
-        <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0">
-          <div className="flex items-center gap-2">
-            <Label className="text-xs text-muted-foreground shrink-0">Count</Label>
-            <input
-              type="number"
-              min={1}
-              max={100}
-              value={count}
-              onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
-              className="input-compact w-16"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <Label className="text-xs text-muted-foreground shrink-0">Unit</Label>
-            <Select value={unit} onValueChange={(v) => setUnit(v as typeof unit)}>
-              <SelectTrigger className="w-36 h-8"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="paragraphs">Paragraphs</SelectItem>
-                <SelectItem value="sentences">Sentences</SelectItem>
-                <SelectItem value="words">Words</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <Button size="sm" onClick={generate}>Generate</Button>
-        </div>
-
         <div className="tool-panel flex flex-col flex-1 min-h-0">
           <PanelHeader
             label={output ? `${wordCount} words` : "Output"}
             text={output}
             extra={
-              output ? (
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setOutput("")}>
-                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
-                  Clear
-                </Button>
-              ) : undefined
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-1.5">
+                  <Label className="text-xs text-muted-foreground shrink-0">Count</Label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={100}
+                    value={count}
+                    onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
+                    className="h-7 w-14 rounded border border-input bg-background px-2 font-mono text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                  />
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Label className="text-xs text-muted-foreground shrink-0">Unit</Label>
+                  <Select value={unit} onValueChange={(v) => setUnit(v as typeof unit)}>
+                    <SelectTrigger className="h-7 w-32 text-xs"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="paragraphs">Paragraphs</SelectItem>
+                      <SelectItem value="sentences">Sentences</SelectItem>
+                      <SelectItem value="words">Words</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button size="sm" className="h-7 text-xs" onClick={generate}>Generate</Button>
+                {output && (
+                  <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setOutput("")}>
+                    <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                    Clear
+                  </Button>
+                )}
+              </div>
             }
           />
           <div className="flex-1 min-h-0 flex flex-col overflow-hidden">

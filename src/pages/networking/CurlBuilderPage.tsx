@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2 } from "lucide-react";
+import { Eraser, Plus, Trash2 } from "lucide-react";
 
 interface Header {
   key: string;
@@ -201,15 +201,23 @@ const CurlBuilderPage = () => {
         </div>
 
         <div className="flex flex-col flex-1 min-h-0 gap-4">
-          <div className="tool-panel flex-1 min-h-0">
+          <div className="tool-panel flex flex-col flex-1 min-h-0">
             <PanelHeader label="Generated cURL" text={curlCommand} />
             <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
               <CodeEditor value={curlCommand} readOnly language="curl" placeholder="Configure request to generate cURL..." fillHeight />
             </div>
           </div>
 
-          <div className="tool-panel flex-1 min-h-0">
-            <PanelHeader label="Import cURL" text={importInput} onClear={() => setImportInput("")} />
+          <div className="tool-panel flex flex-col flex-1 min-h-0">
+            <PanelHeader
+              label="Import cURL"
+              extra={
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setImportInput("")}>
+                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                  Clear
+                </Button>
+              }
+            />
             <div className="flex flex-col flex-1 min-h-0 overflow-hidden" style={{ minHeight: 120 }}>
               <CodeEditor
                 value={importInput}

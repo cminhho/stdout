@@ -76,39 +76,11 @@ const TextAnalyzerPage = () => {
         </div>
       )}
 
-      {/* Actions */}
-      <div className="flex gap-2 flex-wrap mb-3">
-        <Button size="sm" variant="outline" onClick={sortLines}>Sort Lines</Button>
-        <Button size="sm" variant="outline" onClick={removeDuplicateLines}>Remove Duplicates</Button>
-        <Button size="sm" variant="outline" onClick={reverseLines}>Reverse Lines</Button>
-        <Button size="sm" variant="outline" onClick={() => applyCase("upper")}>UPPER</Button>
-        <Button size="sm" variant="outline" onClick={() => applyCase("lower")}>lower</Button>
-        <Button size="sm" variant="outline" onClick={() => applyCase("title")}>Title</Button>
-        <Button size="sm" variant="outline" onClick={() => applyCase("camel")}>camelCase</Button>
-        <Button size="sm" variant="outline" onClick={() => applyCase("snake")}>snake_case</Button>
-        <Button size="sm" variant="outline" onClick={() => applyCase("kebab")}>kebab-case</Button>
-        <div className="ml-auto flex gap-2 items-center">
-          <input
-            className="rounded-md border px-2.5 py-1.5 font-mono text-xs bg-background border-border text-foreground focus:outline-none focus:ring-1 focus:ring-ring w-40"
-            placeholder="Regex pattern..."
-            value={regexPattern}
-            onChange={(e) => setRegexPattern(e.target.value)}
-          />
-          <input
-            className="w-16 rounded-md border px-2.5 py-1.5 font-mono text-xs bg-background border-border text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-            placeholder="Flags"
-            value={regexFlags}
-            onChange={(e) => setRegexFlags(e.target.value)}
-          />
-          {regexPattern && <span className="text-xs text-muted-foreground">{regexMatches.length} match{regexMatches.length !== 1 ? "es" : ""}</span>}
-        </div>
-      </div>
-
       <div className="tool-panel flex flex-col min-h-0 flex-1">
         <PanelHeader
           label="Text Input"
           extra={
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setText(SAMPLE_TEXT)}>
                 <FileCode className="h-3.5 w-3.5 mr-1.5" />
                 Sample
@@ -117,6 +89,32 @@ const TextAnalyzerPage = () => {
                 <Eraser className="h-3.5 w-3.5 mr-1.5" />
                 Clear
               </Button>
+              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={sortLines}>Sort Lines</Button>
+              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={removeDuplicateLines}>Remove Dupes</Button>
+              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={reverseLines}>Reverse</Button>
+              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("upper")}>UPPER</Button>
+              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("lower")}>lower</Button>
+              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("title")}>Title</Button>
+              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("camel")}>camelCase</Button>
+              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("snake")}>snake_case</Button>
+              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("kebab")}>kebab-case</Button>
+              <input
+                className="h-7 rounded border border-input bg-background px-2 font-mono text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring w-36 min-w-0"
+                placeholder="Regex..."
+                value={regexPattern}
+                onChange={(e) => setRegexPattern(e.target.value)}
+              />
+              <input
+                className="h-7 w-14 rounded border border-input bg-background px-1.5 font-mono text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring text-center min-w-0"
+                placeholder="Flags"
+                value={regexFlags}
+                onChange={(e) => setRegexFlags(e.target.value)}
+              />
+              {regexPattern && (
+                <span className="text-xs text-muted-foreground whitespace-nowrap">
+                  {regexMatches.length} match{regexMatches.length !== 1 ? "es" : ""}
+                </span>
+              )}
             </div>
           }
         />

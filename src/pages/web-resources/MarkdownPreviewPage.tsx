@@ -91,14 +91,6 @@ const MarkdownPreviewPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "Markdown Preview"} description={tool?.description ?? "Live preview of Markdown with GFM support"}>
-      <div className="flex flex-wrap items-center gap-2 mb-4 tool-toolbar">
-        <Button size="sm" variant={showHtml ? "outline" : "default"} onClick={() => setShowHtml(false)} className="h-7 text-xs">
-          Preview
-        </Button>
-        <Button size="sm" variant={showHtml ? "default" : "outline"} onClick={() => setShowHtml(true)} className="h-7 text-xs">
-          HTML
-        </Button>
-      </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
         <input ref={fileInputRef} type="file" accept=".md,.markdown,text/markdown" className="hidden" onChange={handleFileUpload} />
         <div className="tool-panel flex flex-col min-h-0">
@@ -141,6 +133,16 @@ const MarkdownPreviewPage = () => {
           <PanelHeader
             label={showHtml ? "HTML Output" : "Preview"}
             text={showHtml ? getHtml() : markdown}
+            extra={
+              <div className="flex items-center gap-2">
+                <Button size="sm" variant={showHtml ? "outline" : "default"} onClick={() => setShowHtml(false)} className="h-7 text-xs">
+                  Preview
+                </Button>
+                <Button size="sm" variant={showHtml ? "default" : "outline"} onClick={() => setShowHtml(true)} className="h-7 text-xs">
+                  HTML
+                </Button>
+              </div>
+            }
           />
           <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
             {showHtml ? (

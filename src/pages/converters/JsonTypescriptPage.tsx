@@ -229,20 +229,6 @@ const JsonTypescriptPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "JSON → Types"} description={tool?.description ?? "Generate TypeScript types from JSON"}>
-      <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0 mb-3">
-        <span className="text-xs text-muted-foreground">Language</span>
-        <select value={lang} onChange={(e) => setLang(e.target.value as Lang)} className={selectClass}>
-          {langs.map((l) => (
-            <option key={l.value} value={l.value}>{l.label}</option>
-          ))}
-        </select>
-        <span className="text-xs text-muted-foreground">Indent</span>
-        <select value={indent} onChange={(e) => setIndent(Number(e.target.value))} className={selectClass}>
-          <option value={2}>2 spaces</option>
-          <option value={4}>4 spaces</option>
-          <option value={8}>8 spaces</option>
-        </select>
-      </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
         <div className="tool-panel flex flex-col min-h-0">
           <PanelHeader
@@ -275,7 +261,24 @@ const JsonTypescriptPage = () => {
           </div>
         </div>
         <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label={`${currentLang.label} Output`} text={output} />
+          <PanelHeader
+            label={`${currentLang.label} Output`}
+            text={output}
+            extra={
+              <div className="flex items-center gap-2 flex-wrap">
+                <select value={lang} onChange={(e) => setLang(e.target.value as Lang)} className={selectClass}>
+                  {langs.map((l) => (
+                    <option key={l.value} value={l.value}>{l.label}</option>
+                  ))}
+                </select>
+                <select value={indent} onChange={(e) => setIndent(Number(e.target.value))} className={selectClass}>
+                  <option value={2}>2 spaces</option>
+                  <option value={4}>4 spaces</option>
+                  <option value={8}>8 spaces</option>
+                </select>
+              </div>
+            }
+          />
           {error ? (
             <div className="code-block text-destructive flex-1 min-h-0 overflow-auto">{error}</div>
           ) : (

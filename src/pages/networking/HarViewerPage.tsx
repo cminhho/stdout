@@ -1,8 +1,9 @@
 import { useState, useRef, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
+import PanelHeader from "@/components/PanelHeader";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
+import { Eraser, Upload } from "lucide-react";
 
 interface HarEntry {
   startedDateTime: string;
@@ -47,19 +48,40 @@ const HarViewerPage = () => {
     return "text-red-400";
   };
 
+  const clearHar = () => {
+    setEntries([]);
+    setSelected(null);
+    setError("");
+    setFilter("");
+  };
+
   return (
     <ToolLayout title={tool?.label ?? "HAR Viewer"} description={tool?.description ?? "Inspect HAR (HTTP Archive) files"}>
-      <div className="space-y-3">
-        <div className="flex gap-2 items-center">
-          <Button size="xs" onClick={() => fileRef.current?.click()}>
-            <Upload className="mr-1" /> Load HAR
-          </Button>
-          <input ref={fileRef} type="file" accept=".har,.json" onChange={handleFile} className="hidden" />
-          {entries.length > 0 && (
-            <input value={filter} onChange={(e) => setFilter(e.target.value)} placeholder="Filter requests..." className="input-compact flex-1 min-w-0 max-w-xs font-mono" />
-          )}
-          {entries.length > 0 && <span className="text-xs text-muted-foreground">{filtered.length}/{entries.length} requests</span>}
-        </div>
+      <input ref={fileRef} type="file" accept=".har,.json" onChange={handleFile} className="hidden" />
+      <div className="space-y-3 flex flex-col flex-1 min-h-0">
+        <PanelHeader
+          label="HAR File"
+          extra={
+            <div className="flex items-center gap-2">
+              <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => fileRef.current?.click()}>
+                <Upload className="h-3 w-3 mr-1.5" />
+                Load HAR
+              </Button>
+              {entries.length > 0 && (
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={clearHar}>
+                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                  Clear
+                </Button>
+              )}
+              {entries.length > 0 && (
+                <>
+                  <input value={filter} onChange={(e) => setFilter(e.target.value)} placeholder="Filter..." className="input-compact flex-1 min-w-0 max-w-[140px] font-mono h-7" />
+                  <span className="text-xs text-muted-foreground shrink-0">{filtered.length}/{entries.length}</span>
+                </>
+              )}
+            </div>
+          }
+        />
 
         {error && <div className="code-block text-destructive text-xs">⚠ {error}</div>}
 

@@ -4,8 +4,7 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
 import PanelHeader from "@/components/PanelHeader";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
-import { ToolOptions, OptionField } from "@/components/ToolOptions";
+import { FileCode, Eraser, Upload } from "lucide-react";
 
 type ViewMode = "input" | "table";
 type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
@@ -37,10 +36,11 @@ const readFileAsText = (file: File, encoding: FileEncoding): Promise<string> => 
 
 const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
 
+const SAMPLE_CSV = "name,age,city\nAlice,30,NYC\nBob,25,LA\nCarol,28,Chicago";
+
 const CsvViewerPage = () => {
   const tool = useCurrentTool();
   const fileRef = useRef<HTMLInputElement>(null);
-  const [optionsOpen, setOptionsOpen] = useState(true);
   const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
   const [csv, setCsv] = useState("");
   const [delimiter, setDelimiter] = useState(",");
@@ -94,38 +94,15 @@ const CsvViewerPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "CSV Viewer"} description={tool?.description ?? "View and search CSV files in a table"}>
-      <ToolOptions open={optionsOpen} onOpenChange={setOptionsOpen}>
-        <input ref={fileRef} type="file" accept=".csv,.tsv,.txt" className="hidden" onChange={handleFile} />
-        <div className="flex flex-col gap-y-2.5 w-full">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <OptionField label="Upload your CSV file">
-              <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs" onClick={() => fileRef.current?.click()}>
-                <Upload className="h-3 w-3 mr-1.5" />
-                Upload file
-              </Button>
-            </OptionField>
-            <OptionField label="File encoding">
-              <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
-                <option value="utf-8">UTF-8</option>
-                <option value="utf-16le">UTF-16 LE</option>
-                <option value="utf-16be">UTF-16 BE</option>
-              </select>
-            </OptionField>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <OptionField label="Delimiter">
-              <select value={delimiter} onChange={(e) => setDelimiter(e.target.value)} className={selectClass}>
-                <option value=",">Comma (,)</option>
-                <option value="	">Tab</option>
-                <option value=";">Semicolon (;)</option>
-                <option value="|">Pipe (|)</option>
-              </select>
-            </OptionField>
-          </div>
-        </div>
-      </ToolOptions>
+      <input ref={fileRef} type="file" accept=".csv,.tsv,.txt" className="hidden" onChange={handleFile} />
       <div className="flex flex-col flex-1 min-h-0 gap-3">
         <div className="tool-toolbar flex flex-wrap items-center gap-2 text-left">
+          <select value={delimiter} onChange={(e) => setDelimiter(e.target.value)} className={selectClass}>
+            <option value=",">Comma (,)</option>
+            <option value="	">Tab</option>
+            <option value=";">Semicolon (;)</option>
+            <option value="|">Pipe (|)</option>
+          </select>
           {parsed && (
             <>
               <div className="flex rounded-md border border-border overflow-hidden">
@@ -151,9 +128,32 @@ const CsvViewerPage = () => {
         </div>
 
         {(!parsed || viewMode === "input") && (
-          <div className="tool-panel flex-1 min-h-0">
-            <PanelHeader label={parsed ? "CSV Input" : "Or paste CSV"} text={csv} onClear={() => setCsv("")} />
-            <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          <div className="tool-panel flex flex-col flex-1 min-h-0">
+            <PanelHeader
+              label={parsed ? "CSV Input" : "Or paste CSV"}
+              extra={
+                <div className="flex items-center gap-2">
+                  <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setCsv(SAMPLE_CSV)}>
+                    <FileCode className="h-3.5 w-3.5 mr-1.5" />
+                    Sample
+                  </Button>
+                  <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setCsv("")}>
+                    <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                    Clear
+                  </Button>
+                  <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs" onClick={() => fileRef.current?.click()}>
+                    <Upload className="h-3 w-3 mr-1.5" />
+                    Upload
+                  </Button>
+                  <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
+                    <option value="utf-8">UTF-8</option>
+                    <option value="utf-16le">UTF-16 LE</option>
+                    <option value="utf-16be">UTF-16 BE</option>
+                  </select>
+                </div>
+              }
+            />
+            <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
               <CodeEditor value={csv} onChange={setCsv} language="text" placeholder="name,age,city&#10;Alice,30,NYC&#10;Bob,25,LA" fillHeight />
             </div>
           </div>
