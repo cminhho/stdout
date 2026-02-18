@@ -10,15 +10,16 @@ import postcssPlugin from "prettier/plugins/postcss";
 import htmlPlugin from "prettier/plugins/html";
 
 /**
- * Format JavaScript with Prettier. Uses tabWidth for indent.
+ * Format JavaScript with Prettier. Uses tabWidth for indent, or useTabs for tab character.
  * Standalone bundle requires both babel (parser) and estree (AST format) plugins.
  * @throws on parse error (caller should catch and show message).
  */
-export async function jsBeautify(js: string, indentSize = 2): Promise<string> {
+export async function jsBeautify(js: string, indentSize = 2, useTabs = false): Promise<string> {
   return prettier.format(js, {
     parser: "babel",
     plugins: [babelPlugin, estreePlugin],
     tabWidth: indentSize,
+    useTabs,
   });
 }
 
@@ -35,13 +36,14 @@ export async function cssBeautify(css: string, indentSize = 2): Promise<string> 
 }
 
 /**
- * Format HTML with Prettier. Uses tabWidth for indent.
+ * Format HTML with Prettier. Uses tabWidth for indent, or useTabs for tab character.
  * @throws on parse error (caller should catch and show message).
  */
-export async function htmlBeautify(html: string, indentSize = 2): Promise<string> {
+export async function htmlBeautify(html: string, indentSize = 2, useTabs = false): Promise<string> {
   return prettier.format(html, {
     parser: "html",
     plugins: [htmlPlugin],
     tabWidth: indentSize,
+    useTabs,
   });
 }

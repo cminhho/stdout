@@ -1,34 +1,31 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Upload, FileCode, Eraser } from "lucide-react";
-import { htmlBeautify } from "@/utils/beautifier";
-import { validateHtml } from "@/utils/validators";
+import { jsBeautify } from "@/utils/beautifier";
+import { jsMinify } from "@/utils/minify";
 
 type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
 type IndentOption = "2" | "4" | "tab" | "minified";
 
-const SAMPLE_HTML = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Sample</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <div class="container">
-    <header><h1>Hello</h1></header>
-    <main>
-      <p>Edit this HTML and use Beautify or Minify.</p>
-      <ul><li>Item 1</li><li>Item 2</li><li>Item 3</li></ul>
-    </main>
-    <footer><p>&copy; Example</p></footer>
-  </div>
-</body>
-</html>`;
+const SAMPLE_JS = `function greet(name) {
+  return "Hello, " + name + "!";
+}
+
+const users = [
+  { id: 1, name: "Alice" },
+  { id: 2, name: "Bob" },
+];
+
+users.forEach((u) => {
+  console.log(greet(u.name));
+});
+
+export { greet, users };
+`;
 
 const readFileAsText = (file: File, encoding: FileEncoding): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -55,21 +52,16 @@ const readFileAsText = (file: File, encoding: FileEncoding): Promise<string> => 
   });
 };
 
-const minifyHtml = (html: string): string =>
-  html.replace(/>\s+</g, "><").replace(/\s+/g, " ").trim();
-
 const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
 
-const HtmlFormatterPage = () => {
+const JsFormatterPage = () => {
   const tool = useCurrentTool();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [input, setInput] = useState('<div class="container"><h1>Hello</h1><p>World</p><ul><li>Item 1</li><li>Item 2</li></ul></div>');
+  const [input, setInput] = useState("function foo(){const a=1;return a+1;}");
   const [output, setOutput] = useState("");
   const [indentOption, setIndentOption] = useState<IndentOption>("2");
   const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
   const [loading, setLoading] = useState(false);
-
-  const validation = useMemo(() => validateHtml(input), [input]);
 
   useEffect(() => {
     if (!input.trim()) {
@@ -77,15 +69,29 @@ const HtmlFormatterPage = () => {
       return;
     }
     if (indentOption === "minified") {
-      setOutput(minifyHtml(input));
-      return;
+      setLoading(true);
+      setOutput("");
+      let cancelled = false;
+      jsMinify(input)
+        .then((result) => {
+          if (!cancelled) setOutput(result);
+        })
+        .catch((err) => {
+          if (!cancelled) setOutput(`Error: ${err instanceof Error ? err.message : String(err)}`);
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
+      return () => {
+        cancelled = true;
+      };
     }
     setLoading(true);
     setOutput("");
     let cancelled = false;
     const indentNum = indentOption === "tab" ? 2 : Number(indentOption);
     const useTabs = indentOption === "tab";
-    htmlBeautify(input, indentNum, useTabs)
+    jsBeautify(input, indentNum, useTabs)
       .then((formatted) => {
         if (!cancelled) setOutput(formatted);
       })
@@ -114,7 +120,7 @@ const HtmlFormatterPage = () => {
 
   const inputExtra = (
     <div className="flex items-center gap-2 flex-wrap">
-      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput(SAMPLE_HTML)}>
+      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput(SAMPLE_JS)}>
         <FileCode className="h-3.5 w-3.5 mr-1.5" />
         Sample
       </Button>
@@ -125,7 +131,7 @@ const HtmlFormatterPage = () => {
       <input
         ref={fileInputRef}
         type="file"
-        accept=".html,.htm,text/html"
+        accept=".js,.mjs,.cjs,text/javascript"
         className="hidden"
         onChange={handleFileUpload}
       />
@@ -169,19 +175,12 @@ const HtmlFormatterPage = () => {
   );
 
   return (
-    <ToolLayout title={tool?.label ?? "HTML Beautify/Minify/Validate"} description={tool?.description ?? "Beautify, minify & validate HTML"}>
-      {input.trim() && (
-        <div
-          className={`mb-3 rounded-md border px-3 py-2 text-sm ${validation.valid ? "border-green-500/30 bg-green-500/5" : "border-destructive/50 bg-destructive/10"}`}
-        >
-          {validation.valid ? "✓ Valid HTML" : `✗ ${validation.error}`}
-        </div>
-      )}
+    <ToolLayout title={tool?.label ?? "JS Beautifier/Minifier"} description={tool?.description ?? "Beautify or minify JavaScript"}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="Input HTML" extra={inputExtra} />
+          <PanelHeader label="Input" extra={inputExtra} />
           <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor value={input} onChange={setInput} language="html" placeholder="<div>...</div>" fillHeight />
+            <CodeEditor value={input} onChange={setInput} language="javascript" placeholder="Paste JavaScript..." fillHeight />
           </div>
         </div>
         <div className="tool-panel flex flex-col min-h-0">
@@ -190,8 +189,8 @@ const HtmlFormatterPage = () => {
             <CodeEditor
               value={output}
               readOnly
-              language="html"
-              placeholder={loading ? "Formatting…" : "Result will appear here..."}
+              language="javascript"
+              placeholder={loading ? "Processing…" : "Result..."}
               fillHeight
             />
           </div>
@@ -201,4 +200,4 @@ const HtmlFormatterPage = () => {
   );
 };
 
-export default HtmlFormatterPage;
+export default JsFormatterPage;

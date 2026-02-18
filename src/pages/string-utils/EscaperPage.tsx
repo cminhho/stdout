@@ -40,9 +40,11 @@ interface EscaperPageProps {
   type: EscaperType;
   title: string;
   description: string;
+  /** Optional selector (e.g. dropdown) for format/type when used in unified tool */
+  formatSelector?: React.ReactNode;
 }
 
-const EscaperPage = ({ type, title, description }: EscaperPageProps) => {
+const EscaperPage = ({ type, title, description, formatSelector }: EscaperPageProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [optionsOpen, setOptionsOpen] = useState(true);
   const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
@@ -66,7 +68,11 @@ const EscaperPage = ({ type, title, description }: EscaperPageProps) => {
     e.target.value = "";
   };
 
-  const accept = type === "json" ? ".json,application/json,text/plain" : ".csv,text/csv,text/plain";
+  const accept = formatSelector
+    ? ".json,.csv,.xml,.sql,.js,text/plain,application/json,text/csv,text/xml,application/javascript"
+    : type === "json"
+      ? ".json,application/json,text/plain"
+      : ".csv,text/csv,text/plain";
 
   return (
     <ToolLayout title={title} description={description}>
@@ -87,6 +93,11 @@ const EscaperPage = ({ type, title, description }: EscaperPageProps) => {
                 <option value="utf-16be">UTF-16 BE</option>
               </select>
             </OptionField>
+            {formatSelector && (
+              <OptionField label="Format">
+                {formatSelector}
+              </OptionField>
+            )}
           </div>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <Button size="sm" onClick={() => run("encode")}>Escape</Button>

@@ -4,11 +4,22 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
-import { Upload, AlignLeft, Network, Download } from "lucide-react";
-import { ToolOptions, OptionField } from "@/components/ToolOptions";
+import { Upload, AlignLeft, Network, Download, FileCode, Eraser } from "lucide-react";
 import { JsonView, defaultStyles, darkStyles, allExpanded } from "react-json-view-lite";
 import "react-json-view-lite/dist/index.css";
 import { useSettings } from "@/hooks/useSettings";
+
+const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
+
+const SAMPLE_JSON = `{
+  "name": "Sample",
+  "version": "1.0",
+  "items": [
+    { "id": 1, "label": "One" },
+    { "id": 2, "label": "Two" }
+  ],
+  "active": true
+}`;
 
 // ── Strict JSON Validator (RFC 8259 / ECMA-404 compliant) ──────────────────
 
@@ -194,7 +205,6 @@ const JsonFormatterPage = () => {
   const [indent, setIndent] = useState<IndentOption>(4);
   const [bracketStyle, setBracketStyle] = useState<BracketStyle>("expanded");
   const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
-  const [optionsOpen, setOptionsOpen] = useState(true);
   const [resultView, setResultView] = useState<"text" | "tree">("tree");
 
   const isMinified = bracketStyle === "collapsed" || indent === "compact";
@@ -257,69 +267,122 @@ const JsonFormatterPage = () => {
 
   const errorLineSet = new Set(errors.map((e) => e.line));
 
-  return (
-    <ToolLayout
-      title={tool?.label ?? "JSON Formatter"}
-      description={tool?.description ?? "Format, validate & beautify JSON with strict RFC compliance"}
-    >
-      <ToolOptions open={optionsOpen} onOpenChange={setOptionsOpen}>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".json,application/json"
-          className="hidden"
-          onChange={handleFileUpload}
-        />
-        <OptionField label="Upload your JSON file">
+  const inputExtra = (
+    <div className="flex items-center gap-2 flex-wrap">
+      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput(SAMPLE_JSON)}>
+        <FileCode className="h-3.5 w-3.5 mr-1.5" />
+        Sample
+      </Button>
+      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput("")}>
+        <Eraser className="h-3.5 w-3.5 mr-1.5" />
+        Clear
+      </Button>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".json,application/json"
+        className="hidden"
+        onChange={handleFileUpload}
+      />
+      <Button
+        type="button"
+        size="sm"
+        variant="outline"
+        className="h-7 text-xs"
+        onClick={() => fileInputRef.current?.click()}
+      >
+        <Upload className="h-3.5 w-3.5 mr-1.5" />
+        Upload
+      </Button>
+      <select
+        value={fileEncoding}
+        onChange={(e) => setFileEncoding(e.target.value as FileEncoding)}
+        className={selectClass}
+        title="File encoding"
+      >
+        <option value="utf-8">UTF-8</option>
+        <option value="utf-16le">UTF-16 LE</option>
+        <option value="utf-16be">UTF-16 BE</option>
+      </select>
+    </div>
+  );
+
+  const outputExtra = (
+    <div className="flex items-center gap-2 flex-wrap">
+      <select
+        value={indent}
+        onChange={(e) => {
+          const v = e.target.value;
+          setIndent((v === "tab" || v === "compact" ? v : Number(v)) as IndentOption);
+        }}
+        className={selectClass}
+        title="Indentation"
+      >
+        {INDENT_OPTIONS.map((opt) => (
+          <option key={String(opt.value)} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+      <select
+        value={bracketStyle}
+        onChange={(e) => setBracketStyle(e.target.value as BracketStyle)}
+        className={selectClass}
+        title="Bracket style"
+      >
+        <option value="expanded">Expanded</option>
+        <option value="collapsed">Minified</option>
+      </select>
+      {output ? (
+        <>
+          <div className="flex rounded-md border border-input overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setResultView("text")}
+              className={`h-6 px-2 text-xs flex items-center gap-1 ${resultView === "text" ? "bg-primary text-primary-foreground" : "bg-background hover:bg-muted"}`}
+              title="Text view"
+            >
+              <AlignLeft className="h-3 w-3" />
+              Text
+            </button>
+            <button
+              type="button"
+              onClick={() => setResultView("tree")}
+              className={`h-6 px-2 text-xs flex items-center gap-1 ${resultView === "tree" ? "bg-primary text-primary-foreground" : "bg-background hover:bg-muted"}`}
+              title="Tree view"
+            >
+              <Network className="h-3 w-3" />
+              Tree
+            </button>
+          </div>
           <Button
-            type="button"
             size="sm"
             variant="outline"
-            className="h-7 px-2.5 text-xs"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <Upload className="h-3 w-3 mr-1.5" />
-            Upload file
-          </Button>
-        </OptionField>
-        <OptionField label="File encoding">
-          <select
-            value={fileEncoding}
-            onChange={(e) => setFileEncoding(e.target.value as FileEncoding)}
-            className="h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0"
-          >
-            <option value="utf-8">UTF-8</option>
-            <option value="utf-16le">UTF-16 LE</option>
-            <option value="utf-16be">UTF-16 BE</option>
-          </select>
-        </OptionField>
-        <OptionField label={INDENT_OPTIONS.find((o) => o.value === indent)?.label ?? String(indent)}>
-          <select
-            value={indent}
-            onChange={(e) => {
-              const v = e.target.value;
-              setIndent((v === "tab" || v === "compact" ? v : Number(v)) as IndentOption);
+            className="h-7 text-xs"
+            onClick={() => {
+              const blob = new Blob([output], { type: "application/json" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = "output.json";
+              a.click();
+              URL.revokeObjectURL(url);
             }}
-            className="h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0"
+            title="Save as file"
           >
-            {INDENT_OPTIONS.map((opt) => (
-              <option key={String(opt.value)} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </OptionField>
-        <OptionField label="Bracket style">
-          <select
-            value={bracketStyle}
-            onChange={(e) => setBracketStyle(e.target.value as BracketStyle)}
-            className="h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0"
-          >
-            <option value="expanded">Expanded</option>
-            <option value="collapsed">Collapsed</option>
-          </select>
-        </OptionField>
-      </ToolOptions>
+            <Download className="h-3 w-3 mr-1" />
+            Save
+          </Button>
+        </>
+      ) : null}
+    </div>
+  );
+
+  return (
+    <ToolLayout
+      title={tool?.label ?? "JSON Format/Validate"}
+      description={tool?.description ?? "Format, validate & beautify JSON with strict RFC compliance"}
+    >
 
       {/* Validation status + Stats */}
       {input.trim() && (
@@ -369,74 +432,32 @@ const JsonFormatterPage = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Input */}
-        <div className="tool-panel">
-          <PanelHeader label="Input" text={input} onClear={() => setInput("")} />
-          <CodeEditor
-            value={input}
-            onChange={setInput}
-            language="json"
-            placeholder="Copy-paste your JSON here..."
-            errorLines={errorLineSet}
-          />
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader label="Input" extra={inputExtra} />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor
+              value={input}
+              onChange={setInput}
+              language="json"
+              placeholder="Paste JSON here..."
+              errorLines={errorLineSet}
+              fillHeight
+            />
+          </div>
         </div>
 
         {/* Output */}
         <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader
-            label="Result"
-            text={output}
-            extra={
-              output ? (
-                <div className="flex items-center gap-1.5">
-                  <div className="flex rounded-md border border-input overflow-hidden">
-                    <button
-                      type="button"
-                      onClick={() => setResultView("text")}
-                      className={`h-6 px-2 text-xs flex items-center gap-1 ${resultView === "text" ? "bg-primary text-primary-foreground" : "bg-background hover:bg-muted"}`}
-                      title="Text view"
-                    >
-                      <AlignLeft className="h-3 w-3" />
-                      Text
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setResultView("tree")}
-                      className={`h-6 px-2 text-xs flex items-center gap-1 ${resultView === "tree" ? "bg-primary text-primary-foreground" : "bg-background hover:bg-muted"}`}
-                      title="Tree view (collapse/expand)"
-                    >
-                      <Network className="h-3 w-3" />
-                      Tree
-                    </button>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      const blob = new Blob([output], { type: "application/json" });
-                      const url = URL.createObjectURL(blob);
-                      const a = document.createElement("a");
-                      a.href = url;
-                      a.download = "output.json";
-                      a.click();
-                      URL.revokeObjectURL(url);
-                    }}
-                    title="Save as file"
-                  >
-                    <Download className="h-3 w-3 mr-1" />
-                    Save
-                  </Button>
-                </div>
-              ) : undefined
-            }
-          />
-          <CodeEditor
-            key={`result-${resultView}-${indent}-${bracketStyle}`}
-            value={output}
-            readOnly
-            language="json"
-            placeholder="Result will appear here..."
-            fillHeight
-            customContent={
+          <PanelHeader label="Result" text={output} extra={outputExtra} />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor
+              key={`result-${resultView}-${indent}-${bracketStyle}`}
+              value={output}
+              readOnly
+              language="json"
+              placeholder="Result will appear here..."
+              fillHeight
+              customContent={
               resultView === "tree" && parsedData !== undefined && typeof parsedData === "object" && parsedData !== null ? (
                 <div className="flex w-full min-h-full">
                   <div
@@ -461,7 +482,8 @@ const JsonFormatterPage = () => {
                 </div>
               ) : undefined
             }
-          />
+            />
+          </div>
         </div>
       </div>
     </ToolLayout>

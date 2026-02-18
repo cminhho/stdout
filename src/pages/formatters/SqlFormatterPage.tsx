@@ -4,8 +4,7 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
-import { ToolOptions, OptionField } from "@/components/ToolOptions";
+import { Upload, FileCode, Eraser } from "lucide-react";
 
 type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
 type TextMode = "formatted" | "minified";
@@ -101,6 +100,14 @@ const minifySql = (sql: string): string =>
 
 const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
 
+const SAMPLE_SQL = `SELECT u.id, u.name, u.email, COUNT(o.id) AS order_count
+FROM users u
+LEFT JOIN orders o ON u.id = o.user_id
+WHERE u.active = true AND u.created_at > '2024-01-01'
+GROUP BY u.id, u.name, u.email
+ORDER BY order_count DESC
+LIMIT 50`;
+
 const SqlFormatterPage = () => {
   const tool = useCurrentTool();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -113,7 +120,6 @@ const SqlFormatterPage = () => {
   const [identifierCase, setIdentifierCase] = useState<IdentifierCase>("as-is");
   const [dialect, setDialect] = useState<Dialect>("standard");
   const [textMode, setTextMode] = useState<TextMode>("formatted");
-  const [optionsOpen, setOptionsOpen] = useState(true);
 
   const output = useMemo(
     () =>
@@ -135,87 +141,88 @@ const SqlFormatterPage = () => {
     e.target.value = "";
   };
 
+  const inputExtra = (
+    <div className="flex items-center gap-2 flex-wrap">
+      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput(SAMPLE_SQL)}>
+        <FileCode className="h-3.5 w-3.5 mr-1.5" />
+        Sample
+      </Button>
+      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput("")}>
+        <Eraser className="h-3.5 w-3.5 mr-1.5" />
+        Clear
+      </Button>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".sql,text/x-sql,application/sql"
+        className="hidden"
+        onChange={handleFileUpload}
+      />
+      <Button
+        type="button"
+        size="sm"
+        variant="outline"
+        className="h-7 text-xs"
+        onClick={() => fileInputRef.current?.click()}
+      >
+        <Upload className="h-3.5 w-3.5 mr-1.5" />
+        Upload
+      </Button>
+      <select
+        value={fileEncoding}
+        onChange={(e) => setFileEncoding(e.target.value as FileEncoding)}
+        className={selectClass}
+        title="File encoding"
+      >
+        <option value="utf-8">UTF-8</option>
+        <option value="utf-16le">UTF-16 LE</option>
+        <option value="utf-16be">UTF-16 BE</option>
+      </select>
+    </div>
+  );
+
+  const outputExtra = (
+    <div className="flex items-center gap-2 flex-wrap">
+      <select value={indent} onChange={(e) => setIndent(Number(e.target.value))} className={selectClass} title="Indentation">
+        <option value={2}>2 spaces</option>
+        <option value={4}>4 spaces</option>
+        <option value={8}>8 spaces</option>
+      </select>
+      <select value={keywordCase} onChange={(e) => setKeywordCase(e.target.value as KeywordCase)} className={selectClass} title="Keyword case">
+        <option value="upper">Keywords: Upper</option>
+        <option value="lower">Keywords: Lower</option>
+      </select>
+      <select value={identifierCase} onChange={(e) => setIdentifierCase(e.target.value as IdentifierCase)} className={selectClass} title="Identifier case">
+        <option value="as-is">Identifiers: As-is</option>
+        <option value="upper">Identifiers: Upper</option>
+        <option value="lower">Identifiers: Lower</option>
+      </select>
+      <select value={dialect} onChange={(e) => setDialect(e.target.value as Dialect)} className={selectClass} title="Dialect">
+        <option value="standard">Standard SQL</option>
+        <option value="postgresql">PostgreSQL</option>
+        <option value="mysql">MySQL</option>
+      </select>
+      <select value={textMode} onChange={(e) => setTextMode(e.target.value as TextMode)} className={selectClass} title="Mode">
+        <option value="formatted">Formatted</option>
+        <option value="minified">Minified</option>
+      </select>
+    </div>
+  );
+
   return (
     <ToolLayout title={tool?.label ?? "SQL Formatter"} description={tool?.description ?? "Format and beautify SQL queries"}>
-      <ToolOptions open={optionsOpen} onOpenChange={setOptionsOpen}>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".sql,text/x-sql,application/sql"
-          className="hidden"
-          onChange={handleFileUpload}
-        />
-        <div className="flex flex-col gap-y-2.5 w-full">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <OptionField label="Upload your SQL file">
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                className="h-7 px-2.5 text-xs"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <Upload className="h-3 w-3 mr-1.5" />
-                Upload file
-              </Button>
-            </OptionField>
-            <OptionField label="File encoding">
-              <select
-                value={fileEncoding}
-                onChange={(e) => setFileEncoding(e.target.value as FileEncoding)}
-                className={selectClass}
-              >
-                <option value="utf-8">UTF-8</option>
-                <option value="utf-16le">UTF-16 LE</option>
-                <option value="utf-16be">UTF-16 BE</option>
-              </select>
-            </OptionField>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <OptionField label="Indentation level">
-              <select value={indent} onChange={(e) => setIndent(Number(e.target.value))} className={selectClass}>
-                <option value={2}>2 spaces</option>
-                <option value={4}>4 spaces</option>
-                <option value={8}>8 spaces</option>
-              </select>
-            </OptionField>
-            <OptionField label="Change of keywords">
-              <select value={keywordCase} onChange={(e) => setKeywordCase(e.target.value as KeywordCase)} className={selectClass}>
-                <option value="upper">Uppercase</option>
-                <option value="lower">Lowercase</option>
-              </select>
-            </OptionField>
-            <OptionField label="Case of identifiers">
-              <select value={identifierCase} onChange={(e) => setIdentifierCase(e.target.value as IdentifierCase)} className={selectClass}>
-                <option value="as-is">As-is</option>
-                <option value="upper">Uppercase</option>
-                <option value="lower">Lowercase</option>
-              </select>
-            </OptionField>
-            <OptionField label="Dialect">
-              <select value={dialect} onChange={(e) => setDialect(e.target.value as Dialect)} className={selectClass}>
-                <option value="standard">Standard SQL</option>
-                <option value="postgresql">PostgreSQL</option>
-                <option value="mysql">MySQL</option>
-              </select>
-            </OptionField>
-            <OptionField label="Text mode">
-              <select value={textMode} onChange={(e) => setTextMode(e.target.value as TextMode)} className={selectClass}>
-                <option value="formatted">Formatted</option>
-                <option value="minified">Minified</option>
-              </select>
-            </OptionField>
-          </div>
-        </div>
-      </ToolOptions>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="tool-panel">
-          <PanelHeader label="Input SQL" text={input} onClear={() => setInput("")} />
-          <CodeEditor value={input} onChange={setInput} language="sql" placeholder="SELECT * FROM users WHERE ..." />
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader label="Input SQL" extra={inputExtra} />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor value={input} onChange={setInput} language="sql" placeholder="SELECT * FROM users WHERE ..." fillHeight />
+          </div>
         </div>
-        <div className="tool-panel">
-          <PanelHeader label="Output" text={output} />
-          <CodeEditor value={output} readOnly language="sql" placeholder="Result will appear here..." />
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader label="Output" text={output} extra={outputExtra} />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor value={output} readOnly language="sql" placeholder="Result will appear here..." fillHeight />
+          </div>
         </div>
       </div>
     </ToolLayout>
