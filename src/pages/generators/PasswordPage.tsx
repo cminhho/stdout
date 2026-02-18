@@ -5,6 +5,7 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Eraser } from "lucide-react";
 
 const generatePassword = (length: number, opts: { upper: boolean; lower: boolean; digits: boolean; symbols: boolean }): string => {
   let chars = "";
@@ -84,7 +85,18 @@ const PasswordPage = () => {
         </div>
 
         <div className="tool-panel flex flex-col flex-1 min-h-0">
-          <PanelHeader label={passwords.length ? `Password${passwords.length > 1 ? "s" : ""}` : "Password"} text={passwordText} />
+          <PanelHeader
+            label={passwords.length ? `Password${passwords.length > 1 ? "s" : ""}` : "Password"}
+            text={passwordText}
+            extra={
+              passwordText ? (
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setPasswords([])}>
+                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                  Clear
+                </Button>
+              ) : undefined
+            }
+          />
           <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
             <CodeEditor
               value={passwordText}

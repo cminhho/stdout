@@ -6,6 +6,7 @@ import PanelHeader from "@/components/PanelHeader";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Eraser } from "lucide-react";
 
 const WORDS = [
   "lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit",
@@ -81,7 +82,18 @@ const LoremIpsumPage = () => {
         </div>
 
         <div className="tool-panel flex flex-col flex-1 min-h-0">
-          <PanelHeader label={output ? `${wordCount} words` : "Output"} text={output} />
+          <PanelHeader
+            label={output ? `${wordCount} words` : "Output"}
+            text={output}
+            extra={
+              output ? (
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setOutput("")}>
+                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                  Clear
+                </Button>
+              ) : undefined
+            }
+          />
           <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
             <CodeEditor
               value={output}

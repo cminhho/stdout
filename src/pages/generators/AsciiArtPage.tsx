@@ -5,6 +5,9 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { FileCode, Eraser } from "lucide-react";
+
+const SAMPLE_TEXT = "HELLO";
 
 // Simple ASCII art font - each character is 6 lines tall
 const FONT: Record<string, string[]> = {
@@ -66,7 +69,7 @@ const CHAR_MAP: Record<string, string> = {
 
 const AsciiArtPage = () => {
   const tool = useCurrentTool();
-  const [input, setInput] = useState("HELLO");
+  const [input, setInput] = useState(SAMPLE_TEXT);
   const [charStyle, setCharStyle] = useState("block");
   const [spacing, setSpacing] = useState(2);
 
@@ -101,6 +104,14 @@ const AsciiArtPage = () => {
               placeholder="Enter text..."
               maxLength={30}
             />
+            <Button type="button" size="sm" variant="outline" className="h-7 text-xs shrink-0" onClick={() => setInput(SAMPLE_TEXT)}>
+              <FileCode className="h-3.5 w-3.5 mr-1.5" />
+              Sample
+            </Button>
+            <Button type="button" size="sm" variant="outline" className="h-7 text-xs shrink-0" onClick={() => setInput("")}>
+              <Eraser className="h-3.5 w-3.5 mr-1.5" />
+              Clear
+            </Button>
           </div>
           <div className="flex items-center gap-2">
             <Label className="text-xs text-muted-foreground shrink-0">Character</Label>

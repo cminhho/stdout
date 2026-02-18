@@ -1,12 +1,17 @@
 import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
+import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import CopyButton from "@/components/CopyButton";
+import { Button } from "@/components/ui/button";
+import { FileCode, Eraser } from "lucide-react";
+
+const SAMPLE_URL = "https://example.com:8080/api/users?page=1&limit=10&sort=name#section-2";
 
 const UrlParserPage = () => {
   const tool = useCurrentTool();
-  const [input, setInput] = useState("https://example.com:8080/api/users?page=1&limit=10&sort=name#section-2");
+  const [input, setInput] = useState(SAMPLE_URL);
 
   const parsed = useMemo(() => {
     if (!input.trim()) return null;
@@ -43,13 +48,28 @@ const UrlParserPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "URL Parser"} description={tool?.description ?? "Parse and inspect URL / query string"}>
-      <div className="tool-card space-y-4">
-        <div>
-          <label className="text-xs text-muted-foreground mb-1 block">URL</label>
-          <div className="h-10 min-h-0">
+      <div className="flex flex-col gap-4 flex-1 min-h-0">
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader
+            label="URL"
+            extra={
+              <div className="flex items-center gap-2">
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput(SAMPLE_URL)}>
+                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
+                  Sample
+                </Button>
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput("")}>
+                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                  Clear
+                </Button>
+              </div>
+            }
+          />
+          <div className="min-h-[72px] flex flex-col">
             <CodeEditor value={input} onChange={setInput} language="plaintext" placeholder="https://example.com/path?key=value#hash" showLineNumbers={false} fillHeight />
           </div>
         </div>
+        <div className="tool-card space-y-4 flex-1 min-h-0 overflow-auto">
 
         {parsed?.error && <div className="text-sm text-destructive">⚠ {parsed.error}</div>}
 
@@ -91,6 +111,7 @@ const UrlParserPage = () => {
             )}
           </>
         )}
+        </div>
       </div>
     </ToolLayout>
   );

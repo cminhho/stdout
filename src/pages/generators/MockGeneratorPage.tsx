@@ -4,6 +4,7 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
+import { FileCode, Eraser } from "lucide-react";
 
 function randomString(len = 8): string {
   return Array.from(crypto.getRandomValues(new Uint8Array(len)), (b) => b.toString(36)).join("").slice(0, len);
@@ -48,7 +49,7 @@ function generateFromSchema(schema: unknown): unknown {
   return null;
 }
 
-const defaultSchema = `{
+const SAMPLE_SCHEMA = `{
   "id": "uuid",
   "name": "string",
   "email": "email",
@@ -65,7 +66,7 @@ const defaultSchema = `{
 
 const MockGeneratorPage = () => {
   const tool = useCurrentTool();
-  const [schema, setSchema] = useState(defaultSchema);
+  const [schema, setSchema] = useState(SAMPLE_SCHEMA);
   const [count, setCount] = useState(3);
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
@@ -92,7 +93,21 @@ const MockGeneratorPage = () => {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
         <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="Schema Template" text={schema} onClear={() => { setSchema(""); setOutput(""); setError(""); }} />
+          <PanelHeader
+            label="Schema Template"
+            extra={
+              <div className="flex items-center gap-2">
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => { setSchema(SAMPLE_SCHEMA); setOutput(""); setError(""); }}>
+                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
+                  Sample
+                </Button>
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => { setSchema(""); setOutput(""); setError(""); }}>
+                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                  Clear
+                </Button>
+              </div>
+            }
+          />
           <div className="flex-1 min-h-0 flex flex-col">
             <CodeEditor value={schema} onChange={setSchema} language="json" placeholder='{"id": "uuid", "name": "string", ...}' fillHeight />
           </div>

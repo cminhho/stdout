@@ -5,6 +5,7 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Eraser } from "lucide-react";
 
 const charSets = {
   lowercase: "abcdefghijklmnopqrstuvwxyz",
@@ -110,7 +111,18 @@ const RandomStringPage = () => {
         </div>
 
         <div className="tool-panel flex flex-col flex-1 min-h-0">
-          <PanelHeader label={strings.length ? `${strings.length} string${strings.length > 1 ? "s" : ""}` : "Output"} text={outputText} />
+          <PanelHeader
+            label={strings.length ? `${strings.length} string${strings.length > 1 ? "s" : ""}` : "Output"}
+            text={outputText}
+            extra={
+              outputText ? (
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setStrings([])}>
+                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                  Clear
+                </Button>
+              ) : undefined
+            }
+          />
           <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
             <CodeEditor
               value={outputText}

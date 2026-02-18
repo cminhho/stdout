@@ -6,8 +6,7 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
-import { ToolOptions, OptionField } from "@/components/ToolOptions";
+import { FileCode, Eraser, Upload } from "lucide-react";
 
 type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
 
@@ -38,7 +37,7 @@ const readFileAsText = (file: File, encoding: FileEncoding): Promise<string> => 
 
 const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
 
-const defaultMd = `# Markdown Preview
+const SAMPLE_MARKDOWN = `# Markdown Preview
 
 Write your **markdown** here and see it rendered in real-time.
 
@@ -70,9 +69,8 @@ console.log(hello);
 const MarkdownPreviewPage = () => {
   const tool = useCurrentTool();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [optionsOpen, setOptionsOpen] = useState(true);
   const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
-  const [markdown, setMarkdown] = useState(defaultMd);
+  const [markdown, setMarkdown] = useState(SAMPLE_MARKDOWN);
   const [showHtml, setShowHtml] = useState(false);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,39 +91,41 @@ const MarkdownPreviewPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "Markdown Preview"} description={tool?.description ?? "Live preview of Markdown with GFM support"}>
-      <ToolOptions open={optionsOpen} onOpenChange={setOptionsOpen}>
-        <input ref={fileInputRef} type="file" accept=".md,.markdown,text/markdown" className="hidden" onChange={handleFileUpload} />
-        <div className="flex flex-col gap-y-2.5 w-full">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <OptionField label="Upload your Markdown file">
-              <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs" onClick={() => fileInputRef.current?.click()}>
-                <Upload className="h-3 w-3 mr-1.5" />
-                Upload file
-              </Button>
-            </OptionField>
-            <OptionField label="File encoding">
-              <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
-                <option value="utf-8">UTF-8</option>
-                <option value="utf-16le">UTF-16 LE</option>
-                <option value="utf-16be">UTF-16 BE</option>
-              </select>
-            </OptionField>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <OptionField label="View">
-              <Button size="sm" variant={showHtml ? "outline" : "default"} onClick={() => setShowHtml(false)} className="h-7 text-xs">
-                Preview
-              </Button>
-              <Button size="sm" variant={showHtml ? "default" : "outline"} onClick={() => setShowHtml(true)} className="h-7 text-xs">
-                HTML
-              </Button>
-            </OptionField>
-          </div>
-        </div>
-      </ToolOptions>
+      <div className="flex flex-wrap items-center gap-2 mb-4 tool-toolbar">
+        <Button size="sm" variant={showHtml ? "outline" : "default"} onClick={() => setShowHtml(false)} className="h-7 text-xs">
+          Preview
+        </Button>
+        <Button size="sm" variant={showHtml ? "default" : "outline"} onClick={() => setShowHtml(true)} className="h-7 text-xs">
+          HTML
+        </Button>
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+        <input ref={fileInputRef} type="file" accept=".md,.markdown,text/markdown" className="hidden" onChange={handleFileUpload} />
         <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="Markdown" text={markdown} onClear={() => setMarkdown("")} />
+          <PanelHeader
+            label="Markdown"
+            extra={
+              <div className="flex items-center gap-2">
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setMarkdown(SAMPLE_MARKDOWN)}>
+                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
+                  Sample
+                </Button>
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setMarkdown("")}>
+                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                  Clear
+                </Button>
+                <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs" onClick={() => fileInputRef.current?.click()}>
+                  <Upload className="h-3 w-3 mr-1.5" />
+                  Upload
+                </Button>
+                <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
+                  <option value="utf-8">UTF-8</option>
+                  <option value="utf-16le">UTF-16 LE</option>
+                  <option value="utf-16be">UTF-16 BE</option>
+                </select>
+              </div>
+            }
+          />
           <div className="flex-1 min-h-0 flex flex-col">
             <CodeEditor
               value={markdown}
