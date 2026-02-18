@@ -4,6 +4,7 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
+import { FileCode, Eraser } from "lucide-react";
 
 const parsePem = (pem: string) => {
   const lines = pem.trim().split("\n");
@@ -19,6 +20,8 @@ const parsePem = (pem: string) => {
     raw: body,
   };
 };
+
+const SAMPLE_PEM = "-----BEGIN CERTIFICATE-----\nMIIBkTCB+wIJAK...\n-----END CERTIFICATE-----";
 
 const CertificatePage = () => {
   const tool = useCurrentTool();
@@ -43,7 +46,21 @@ const CertificatePage = () => {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
         <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="PEM Input" text={input} onClear={() => { setInput(""); setResult(null); setError(""); }} />
+          <PanelHeader
+            label="PEM Input"
+            extra={
+              <div className="flex items-center gap-2">
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => { setInput(SAMPLE_PEM); setResult(null); setError(""); }}>
+                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
+                  Sample
+                </Button>
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => { setInput(""); setResult(null); setError(""); }}>
+                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                  Clear
+                </Button>
+              </div>
+            }
+          />
           <div className="flex-1 min-h-0 flex flex-col">
             <CodeEditor value={input} onChange={setInput} language="plaintext" placeholder="-----BEGIN CERTIFICATE-----&#10;..." fillHeight />
           </div>

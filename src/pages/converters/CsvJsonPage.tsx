@@ -4,8 +4,7 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
-import { ToolOptions, OptionField } from "@/components/ToolOptions";
+import { Upload, FileCode, Eraser } from "lucide-react";
 
 type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
 
@@ -59,10 +58,12 @@ const jsonToCsv = (json: unknown[]): string => {
   return [headers.join(","), ...rows].join("\n");
 };
 
+const SAMPLE_CSV = "name,age,city\nAlice,30,NYC\nBob,25,LA";
+const SAMPLE_JSON = '[{"name":"Alice","age":30,"city":"NYC"},{"name":"Bob","age":25,"city":"LA"}]';
+
 const CsvJsonPage = () => {
   const tool = useCurrentTool();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [optionsOpen, setOptionsOpen] = useState(true);
   const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<"csv2json" | "json2csv">("csv2json");
@@ -96,59 +97,63 @@ const CsvJsonPage = () => {
   const inputLang = mode === "csv2json" ? "text" as const : "json" as const;
   const outputLang = mode === "csv2json" ? "json" as const : "text" as const;
 
+  const sampleInput = mode === "csv2json" ? SAMPLE_CSV : SAMPLE_JSON;
+
   return (
     <ToolLayout title={tool?.label ?? "CSV ↔ JSON"} description={tool?.description ?? "Convert between CSV and JSON formats"}>
-      <ToolOptions open={optionsOpen} onOpenChange={setOptionsOpen}>
-        <input ref={fileInputRef} type="file" accept=".csv,.json,text/csv,application/json" className="hidden" onChange={handleFileUpload} />
-        <div className="flex flex-col gap-y-2.5 w-full">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <OptionField label="Upload file">
-              <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs" onClick={() => fileInputRef.current?.click()}>
-                <Upload className="h-3 w-3 mr-1.5" />
-                Upload file
-              </Button>
-            </OptionField>
-            <OptionField label="File encoding">
-              <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
-                <option value="utf-8">UTF-8</option>
-                <option value="utf-16le">UTF-16 LE</option>
-                <option value="utf-16be">UTF-16 BE</option>
-              </select>
-            </OptionField>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <Button size="sm" variant={mode === "csv2json" ? "default" : "outline"} onClick={() => setMode("csv2json")}>
-              CSV → JSON
-            </Button>
-            <Button size="sm" variant={mode === "json2csv" ? "default" : "outline"} onClick={() => setMode("json2csv")}>
-              JSON → CSV
-            </Button>
-          </div>
-        </div>
-      </ToolOptions>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="tool-panel">
+      <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0 mb-3">
+        <Button size="sm" variant={mode === "csv2json" ? "default" : "outline"} onClick={() => setMode("csv2json")} className="h-7 text-xs">
+          CSV → JSON
+        </Button>
+        <Button size="sm" variant={mode === "json2csv" ? "default" : "outline"} onClick={() => setMode("json2csv")} className="h-7 text-xs">
+          JSON → CSV
+        </Button>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+        <div className="tool-panel flex flex-col min-h-0">
           <PanelHeader
             label={mode === "csv2json" ? "CSV Input" : "JSON Input"}
-            text={input}
-            onClear={() => setInput("")}
+            extra={
+              <div className="flex items-center gap-2 flex-wrap">
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput(sampleInput)}>
+                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
+                  Sample
+                </Button>
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput("")}>
+                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                  Clear
+                </Button>
+                <input ref={fileInputRef} type="file" accept=".csv,.json,text/csv,application/json" className="hidden" onChange={handleFileUpload} />
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => fileInputRef.current?.click()}>
+                  <Upload className="h-3.5 w-3.5 mr-1.5" />
+                  Upload
+                </Button>
+                <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
+                  <option value="utf-8">UTF-8</option>
+                  <option value="utf-16le">UTF-16 LE</option>
+                  <option value="utf-16be">UTF-16 BE</option>
+                </select>
+              </div>
+            }
           />
-          <CodeEditor
-            value={input}
-            onChange={setInput}
-            language={inputLang}
-            placeholder={mode === "csv2json" ? "name,age,city\nAlice,30,NYC\nBob,25,LA" : '[{"name":"Alice","age":30}]'}
-          />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor
+              value={input}
+              onChange={setInput}
+              language={inputLang}
+              placeholder={mode === "csv2json" ? "name,age,city\nAlice,30,NYC\nBob,25,LA" : '[{"name":"Alice","age":30}]'}
+              fillHeight
+            />
+          </div>
         </div>
-        <div className="tool-panel">
-          <PanelHeader
-            label={mode === "csv2json" ? "JSON Output" : "CSV Output"}
-            text={output}
-          />
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader label={mode === "csv2json" ? "JSON Output" : "CSV Output"} text={output} />
           {error ? (
-            <div className="code-block text-destructive flex-1">{error}</div>
+            <div className="code-block text-destructive flex-1 min-h-0 overflow-auto">{error}</div>
           ) : (
-            <CodeEditor value={output} readOnly language={outputLang} placeholder="Result will appear here..." />
+            <div className="flex-1 min-h-0 flex flex-col">
+              <CodeEditor value={output} readOnly language={outputLang} placeholder="Result will appear here..." fillHeight />
+            </div>
           )}
         </div>
       </div>

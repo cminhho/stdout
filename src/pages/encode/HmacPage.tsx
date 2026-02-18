@@ -5,6 +5,7 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { FileCode, Eraser } from "lucide-react";
 
 type HmacAlgo = "SHA-1" | "SHA-256" | "SHA-384" | "SHA-512";
 const algos: HmacAlgo[] = ["SHA-1", "SHA-256", "SHA-384", "SHA-512"];
@@ -15,6 +16,8 @@ const computeHmac = async (message: string, secret: string, algo: HmacAlgo): Pro
   const sig = await crypto.subtle.sign("HMAC", key, enc.encode(message));
   return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, "0")).join("");
 };
+
+const SAMPLE_MESSAGE = "message to sign";
 
 const HmacPage = () => {
   const tool = useCurrentTool();
@@ -61,7 +64,21 @@ const HmacPage = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
           <div className="tool-panel flex flex-col flex-1 min-h-0">
-            <PanelHeader label="Message" text={message} onClear={() => { setMessage(""); setOutput(""); }} />
+            <PanelHeader
+              label="Message"
+              extra={
+                <div className="flex items-center gap-2">
+                  <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => { setMessage(SAMPLE_MESSAGE); setOutput(""); }}>
+                    <FileCode className="h-3.5 w-3.5 mr-1.5" />
+                    Sample
+                  </Button>
+                  <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => { setMessage(""); setOutput(""); }}>
+                    <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                    Clear
+                  </Button>
+                </div>
+              }
+            />
             <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
               <CodeEditor value={message} onChange={setMessage} language="text" placeholder="Enter message to sign..." fillHeight />
             </div>

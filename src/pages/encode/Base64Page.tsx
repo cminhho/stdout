@@ -4,7 +4,10 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
+import { FileCode, Eraser } from "lucide-react";
 import { base64Encode, base64Decode } from "@/utils/encode";
+
+const SAMPLE_INPUT = "Hello, Base64!";
 
 const Base64Page = () => {
   const tool = useCurrentTool();
@@ -30,7 +33,21 @@ const Base64Page = () => {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
         <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="Input" text={input} onClear={() => { setInput(""); setOutput(""); setError(""); }} />
+          <PanelHeader
+            label="Input"
+            extra={
+              <div className="flex items-center gap-2">
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => { setInput(SAMPLE_INPUT); setOutput(""); setError(""); }}>
+                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
+                  Sample
+                </Button>
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => { setInput(""); setOutput(""); setError(""); }}>
+                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                  Clear
+                </Button>
+              </div>
+            }
+          />
           <div className="flex-1 min-h-0 flex flex-col">
             <CodeEditor value={input} onChange={setInput} language="text" placeholder="Enter text..." fillHeight />
           </div>

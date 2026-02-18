@@ -5,6 +5,7 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { FileCode, Eraser } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -31,6 +32,10 @@ const bytesToBase64 = (bytes: Uint8Array): string => {
   for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
   return btoa(binary);
 };
+
+const SAMPLE_HEX = "48656c6c6f";
+const SAMPLE_BASE64 = "SGVsbG8=";
+const SAMPLE_TEXT = "Hello, UTF-8!";
 
 const FileEncodingPage = () => {
   const tool = useCurrentTool();
@@ -132,12 +137,18 @@ const FileEncodingPage = () => {
         <div className="tool-panel flex flex-col min-h-0">
           <PanelHeader
             label={mode === "decode" ? "Bytes (hex or base64)" : "Text"}
-            text={input}
-            onClear={() => {
-              setInput("");
-              setOutput("");
-              setError("");
-            }}
+            extra={
+              <div className="flex items-center gap-2">
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => { setInput(mode === "decode" ? (bytesFormat === "hex" ? SAMPLE_HEX : SAMPLE_BASE64) : SAMPLE_TEXT); setOutput(""); setError(""); }}>
+                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
+                  Sample
+                </Button>
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => { setInput(""); setOutput(""); setError(""); }}>
+                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                  Clear
+                </Button>
+              </div>
+            }
           />
           <div className="flex-1 min-h-0 flex flex-col">
             <CodeEditor

@@ -5,8 +5,7 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Upload } from "lucide-react";
-import { ToolOptions, OptionField } from "@/components/ToolOptions";
+import { Upload, FileCode, Eraser } from "lucide-react";
 
 type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
 
@@ -82,14 +81,13 @@ function csvToXml(csv: string, rootTag: string, rowTag: string, delimiter: strin
   return out;
 }
 
-const defaultCsv = "name,age,city\nAlice,30,NYC\nBob,25,LA";
+const SAMPLE_CSV = "name,age,city\nAlice,30,NYC\nBob,25,LA";
 
 const CsvXmlPage = () => {
   const tool = useCurrentTool();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [optionsOpen, setOptionsOpen] = useState(true);
   const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
-  const [input, setInput] = useState(defaultCsv);
+  const [input, setInput] = useState(SAMPLE_CSV);
   const [rootTag, setRootTag] = useState("root");
   const [rowTag, setRowTag] = useState("row");
   const [delimiter, setDelimiter] = useState(",");
@@ -116,46 +114,51 @@ const CsvXmlPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "CSV → XML"} description={tool?.description ?? "Convert CSV to XML (first row as element names)"}>
-      <ToolOptions open={optionsOpen} onOpenChange={setOptionsOpen}>
-        <input ref={fileInputRef} type="file" accept=".csv,text/csv" className="hidden" onChange={handleFileUpload} />
-        <div className="flex flex-col gap-y-2.5 w-full">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <OptionField label="Upload your CSV file">
-              <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs" onClick={() => fileInputRef.current?.click()}>
-                <Upload className="h-3 w-3 mr-1.5" />
-                Upload file
-              </Button>
-            </OptionField>
-            <OptionField label="File encoding">
-              <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
-                <option value="utf-8">UTF-8</option>
-                <option value="utf-16le">UTF-16 LE</option>
-                <option value="utf-16be">UTF-16 BE</option>
-              </select>
-            </OptionField>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <OptionField label="Root tag">
-              <Input value={rootTag} onChange={(e) => setRootTag(e.target.value)} className="h-7 w-24 font-mono rounded border border-input bg-background px-2 text-xs" />
-            </OptionField>
-            <OptionField label="Row tag">
-              <Input value={rowTag} onChange={(e) => setRowTag(e.target.value)} className="h-7 w-24 font-mono rounded border border-input bg-background px-2 text-xs" />
-            </OptionField>
-            <OptionField label="Delimiter">
-              <Input value={delimiter} onChange={(e) => setDelimiter(e.target.value)} className="h-7 w-12 font-mono rounded border border-input bg-background px-2 text-xs text-center" maxLength={1} />
-            </OptionField>
-          </div>
-        </div>
-      </ToolOptions>
+      <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0 mb-3">
+        <span className="text-xs text-muted-foreground">Root</span>
+        <Input value={rootTag} onChange={(e) => setRootTag(e.target.value)} className="h-7 w-24 font-mono rounded border border-input bg-background px-2 text-xs" />
+        <span className="text-xs text-muted-foreground">Row</span>
+        <Input value={rowTag} onChange={(e) => setRowTag(e.target.value)} className="h-7 w-24 font-mono rounded border border-input bg-background px-2 text-xs" />
+        <span className="text-xs text-muted-foreground">Delimiter</span>
+        <Input value={delimiter} onChange={(e) => setDelimiter(e.target.value)} className="h-7 w-12 font-mono rounded border border-input bg-background px-2 text-xs text-center" maxLength={1} />
+      </div>
       {error && <div className="text-sm text-destructive mb-2">⚠ {error}</div>}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="tool-panel">
-          <PanelHeader label="CSV" text={input} onClear={() => setInput("")} />
-          <CodeEditor value={input} onChange={setInput} language="text" placeholder="name,age,city\nAlice,30,NYC" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader
+            label="CSV"
+            extra={
+              <div className="flex items-center gap-2 flex-wrap">
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput(SAMPLE_CSV)}>
+                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
+                  Sample
+                </Button>
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput("")}>
+                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                  Clear
+                </Button>
+                <input ref={fileInputRef} type="file" accept=".csv,text/csv" className="hidden" onChange={handleFileUpload} />
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => fileInputRef.current?.click()}>
+                  <Upload className="h-3.5 w-3.5 mr-1.5" />
+                  Upload
+                </Button>
+                <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
+                  <option value="utf-8">UTF-8</option>
+                  <option value="utf-16le">UTF-16 LE</option>
+                  <option value="utf-16be">UTF-16 BE</option>
+                </select>
+              </div>
+            }
+          />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor value={input} onChange={setInput} language="text" placeholder="name,age,city\nAlice,30,NYC" fillHeight />
+          </div>
         </div>
-        <div className="tool-panel">
+        <div className="tool-panel flex flex-col min-h-0">
           <PanelHeader label="XML" text={output} />
-          <CodeEditor value={output} readOnly language="xml" placeholder="Result..." />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor value={output} readOnly language="xml" placeholder="Result..." fillHeight />
+          </div>
         </div>
       </div>
     </ToolLayout>

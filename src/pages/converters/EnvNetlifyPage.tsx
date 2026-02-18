@@ -4,8 +4,7 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
-import { ToolOptions, OptionField } from "@/components/ToolOptions";
+import { Upload, FileCode, Eraser } from "lucide-react";
 
 type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
 
@@ -36,12 +35,13 @@ const readFileAsText = (file: File, encoding: FileEncoding): Promise<string> => 
 
 const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
 
+const SAMPLE_ENV = "# Database\nDB_HOST=localhost\nDB_PORT=5432\nDB_NAME=myapp\nDB_USER=admin\nDB_PASS=secret123\n\n# API Keys\nAPI_KEY=sk_live_abc123\nSECRET_KEY=whsec_xyz";
+
 const EnvNetlifyPage = () => {
   const tool = useCurrentTool();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [optionsOpen, setOptionsOpen] = useState(true);
   const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
-  const [envInput, setEnvInput] = useState('# Database\nDB_HOST=localhost\nDB_PORT=5432\nDB_NAME=myapp\nDB_USER=admin\nDB_PASS=secret123\n\n# API Keys\nAPI_KEY=sk_live_abc123\nSECRET_KEY=whsec_xyz');
+  const [envInput, setEnvInput] = useState(SAMPLE_ENV);
   const [format, setFormat] = useState<"netlify" | "docker" | "yaml">("netlify");
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,43 +92,50 @@ const EnvNetlifyPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? ".env Converter"} description={tool?.description ?? "Convert .env files to Netlify, Docker, YAML formats"}>
-      <ToolOptions open={optionsOpen} onOpenChange={setOptionsOpen}>
-        <input ref={fileInputRef} type="file" accept=".env,.env.*,text/plain" className="hidden" onChange={handleFileUpload} />
-        <div className="flex flex-col gap-y-2.5 w-full">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <OptionField label="Upload your .env file">
-              <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs" onClick={() => fileInputRef.current?.click()}>
-                <Upload className="h-3 w-3 mr-1.5" />
-                Upload file
-              </Button>
-            </OptionField>
-            <OptionField label="File encoding">
-              <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
-                <option value="utf-8">UTF-8</option>
-                <option value="utf-16le">UTF-16 LE</option>
-                <option value="utf-16be">UTF-16 BE</option>
-              </select>
-            </OptionField>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <OptionField label="Output format">
-              {(["netlify", "docker", "yaml"] as const).map((f) => (
-                <Button key={f} size="sm" variant={format === f ? "default" : "outline"} onClick={() => setFormat(f)} className="h-7 text-xs">
-                  {f === "netlify" ? "netlify.toml" : f === "docker" ? "Dockerfile" : "YAML"}
+      <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0 mb-3">
+        <span className="text-xs text-muted-foreground">Output format</span>
+        {(["netlify", "docker", "yaml"] as const).map((f) => (
+          <Button key={f} size="sm" variant={format === f ? "default" : "outline"} onClick={() => setFormat(f)} className="h-7 text-xs">
+            {f === "netlify" ? "netlify.toml" : f === "docker" ? "Dockerfile" : "YAML"}
+          </Button>
+        ))}
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader
+            label=".env Input"
+            extra={
+              <div className="flex items-center gap-2 flex-wrap">
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setEnvInput(SAMPLE_ENV)}>
+                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
+                  Sample
                 </Button>
-              ))}
-            </OptionField>
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setEnvInput("")}>
+                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                  Clear
+                </Button>
+                <input ref={fileInputRef} type="file" accept=".env,.env.*,text/plain" className="hidden" onChange={handleFileUpload} />
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => fileInputRef.current?.click()}>
+                  <Upload className="h-3.5 w-3.5 mr-1.5" />
+                  Upload
+                </Button>
+                <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
+                  <option value="utf-8">UTF-8</option>
+                  <option value="utf-16le">UTF-16 LE</option>
+                  <option value="utf-16be">UTF-16 BE</option>
+                </select>
+              </div>
+            }
+          />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor value={envInput} onChange={setEnvInput} language="env" placeholder="KEY=value" fillHeight />
           </div>
         </div>
-      </ToolOptions>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="tool-panel">
-          <PanelHeader label=".env Input" text={envInput} onClear={() => setEnvInput("")} />
-          <CodeEditor value={envInput} onChange={setEnvInput} language="env" placeholder="KEY=value" />
-        </div>
-        <div className="tool-panel">
+        <div className="tool-panel flex flex-col min-h-0">
           <PanelHeader label="Output" text={output} />
-          <CodeEditor value={output} readOnly language={outputLang} placeholder="Output..." />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor value={output} readOnly language={outputLang} placeholder="Output..." fillHeight />
+          </div>
         </div>
       </div>
     </ToolLayout>

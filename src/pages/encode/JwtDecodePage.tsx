@@ -3,6 +3,8 @@ import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
+import { Button } from "@/components/ui/button";
+import { FileCode, Eraser } from "lucide-react";
 
 const decodeBase64 = (s: string) => decodeURIComponent(escape(atob(s)));
 
@@ -14,6 +16,8 @@ const decodeJwt = (token: string) => {
   const payload = JSON.parse(decodeBase64(fix(parts[1])));
   return { header, payload };
 };
+
+const SAMPLE_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
 const JwtDecodePage = () => {
   const tool = useCurrentTool();
@@ -31,17 +35,35 @@ const JwtDecodePage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "JWT Debugger"} description={tool?.description ?? "Decode and inspect JWT tokens"}>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="tool-panel">
-          <PanelHeader label="JWT Token" text={input} onClear={() => setInput("")} />
-          <CodeEditor value={input} onChange={setInput} language="text" placeholder="eyJhbGciOiJIUzI1NiIs..." />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader
+            label="JWT Token"
+            extra={
+              <div className="flex items-center gap-2">
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput(SAMPLE_JWT)}>
+                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
+                  Sample
+                </Button>
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput("")}>
+                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                  Clear
+                </Button>
+              </div>
+            }
+          />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor value={input} onChange={setInput} language="text" placeholder="eyJhbGciOiJIUzI1NiIs..." fillHeight />
+          </div>
         </div>
-        <div className="tool-panel">
+        <div className="tool-panel flex flex-col min-h-0">
           <PanelHeader label="Decoded" text={output} />
           {error ? (
-            <CodeEditor value={error} readOnly language="text" placeholder="" />
+            <div className="code-block text-destructive flex-1 min-h-0 overflow-auto">{error}</div>
           ) : (
-            <CodeEditor value={output} readOnly language="json" placeholder="Paste a JWT token to auto-decode..." />
+            <div className="flex-1 min-h-0 flex flex-col">
+              <CodeEditor value={output} readOnly language="json" placeholder="Paste a JWT token to auto-decode..." fillHeight />
+            </div>
           )}
         </div>
       </div>

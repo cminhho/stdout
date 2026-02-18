@@ -4,8 +4,7 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
-import { ToolOptions, OptionField } from "@/components/ToolOptions";
+import { Upload, FileCode, Eraser } from "lucide-react";
 
 type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
 
@@ -176,12 +175,7 @@ const langs: { value: Lang; label: string; editorLang: "typescript" | "go" | "ja
   { value: "kotlin", label: "Kotlin", editorLang: "kotlin" },
 ];
 
-const JsonTypescriptPage = () => {
-  const tool = useCurrentTool();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [optionsOpen, setOptionsOpen] = useState(true);
-  const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
-  const [input, setInput] = useState(`{
+const SAMPLE_JSON = `{
   "id": 1,
   "name": "John",
   "email": "john@example.com",
@@ -190,7 +184,13 @@ const JsonTypescriptPage = () => {
     "city": "NYC"
   },
   "tags": ["admin", "user"]
-}`);
+}`;
+
+const JsonTypescriptPage = () => {
+  const tool = useCurrentTool();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
+  const [input, setInput] = useState(SAMPLE_JSON);
   const [lang, setLang] = useState<Lang>("typescript");
   const [indent, setIndent] = useState(2);
 
@@ -229,53 +229,59 @@ const JsonTypescriptPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "JSON → Types"} description={tool?.description ?? "Generate TypeScript types from JSON"}>
-      <ToolOptions open={optionsOpen} onOpenChange={setOptionsOpen}>
-        <input ref={fileInputRef} type="file" accept=".json,application/json" className="hidden" onChange={handleFileUpload} />
-        <div className="flex flex-col gap-y-2.5 w-full">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <OptionField label="Upload your JSON file">
-              <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs" onClick={() => fileInputRef.current?.click()}>
-                <Upload className="h-3 w-3 mr-1.5" />
-                Upload file
-              </Button>
-            </OptionField>
-            <OptionField label="File encoding">
-              <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
-                <option value="utf-8">UTF-8</option>
-                <option value="utf-16le">UTF-16 LE</option>
-                <option value="utf-16be">UTF-16 BE</option>
-              </select>
-            </OptionField>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <OptionField label="Language">
-              <select value={lang} onChange={(e) => setLang(e.target.value as Lang)} className={selectClass}>
-                {langs.map((l) => (
-                  <option key={l.value} value={l.value}>{l.label}</option>
-                ))}
-              </select>
-            </OptionField>
-            <OptionField label="Indentation level">
-              <select value={indent} onChange={(e) => setIndent(Number(e.target.value))} className={selectClass}>
-                <option value={2}>2 spaces</option>
-                <option value={4}>4 spaces</option>
-                <option value={8}>8 spaces</option>
-              </select>
-            </OptionField>
+      <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0 mb-3">
+        <span className="text-xs text-muted-foreground">Language</span>
+        <select value={lang} onChange={(e) => setLang(e.target.value as Lang)} className={selectClass}>
+          {langs.map((l) => (
+            <option key={l.value} value={l.value}>{l.label}</option>
+          ))}
+        </select>
+        <span className="text-xs text-muted-foreground">Indent</span>
+        <select value={indent} onChange={(e) => setIndent(Number(e.target.value))} className={selectClass}>
+          <option value={2}>2 spaces</option>
+          <option value={4}>4 spaces</option>
+          <option value={8}>8 spaces</option>
+        </select>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader
+            label="JSON Input"
+            extra={
+              <div className="flex items-center gap-2 flex-wrap">
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput(SAMPLE_JSON)}>
+                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
+                  Sample
+                </Button>
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput("")}>
+                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                  Clear
+                </Button>
+                <input ref={fileInputRef} type="file" accept=".json,application/json" className="hidden" onChange={handleFileUpload} />
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => fileInputRef.current?.click()}>
+                  <Upload className="h-3.5 w-3.5 mr-1.5" />
+                  Upload
+                </Button>
+                <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
+                  <option value="utf-8">UTF-8</option>
+                  <option value="utf-16le">UTF-16 LE</option>
+                  <option value="utf-16be">UTF-16 BE</option>
+                </select>
+              </div>
+            }
+          />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor value={input} onChange={setInput} language="json" fillHeight />
           </div>
         </div>
-      </ToolOptions>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="tool-panel">
-          <PanelHeader label="JSON Input" text={input} onClear={() => setInput("")} />
-          <CodeEditor value={input} onChange={setInput} language="json" />
-        </div>
-        <div className="tool-panel">
+        <div className="tool-panel flex flex-col min-h-0">
           <PanelHeader label={`${currentLang.label} Output`} text={output} />
           {error ? (
-            <div className="code-block text-destructive flex-1">{error}</div>
+            <div className="code-block text-destructive flex-1 min-h-0 overflow-auto">{error}</div>
           ) : (
-            <CodeEditor value={output} readOnly language={currentLang.editorLang} placeholder="Result will appear here..." />
+            <div className="flex-1 min-h-0 flex flex-col">
+              <CodeEditor value={output} readOnly language={currentLang.editorLang} placeholder="Result will appear here..." fillHeight />
+            </div>
           )}
         </div>
       </div>

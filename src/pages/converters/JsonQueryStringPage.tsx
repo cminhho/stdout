@@ -4,8 +4,7 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
-import { ToolOptions, OptionField } from "@/components/ToolOptions";
+import { Upload, FileCode, Eraser } from "lucide-react";
 
 type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
 
@@ -53,12 +52,14 @@ const flatten = (obj: unknown, prefix = ""): [string, string][] => {
   return pairs;
 };
 
+const SAMPLE_JSON = '{\n  "page": 1,\n  "limit": 20,\n  "filter": "active",\n  "sort": "name"\n}';
+const SAMPLE_QS = "page=1&limit=20&filter=active&sort=name";
+
 const JsonQueryStringPage = () => {
   const tool = useCurrentTool();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [optionsOpen, setOptionsOpen] = useState(true);
   const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
-  const [input, setInput] = useState('{\n  "page": 1,\n  "limit": 20,\n  "filter": "active",\n  "sort": "name"\n}');
+  const [input, setInput] = useState(SAMPLE_JSON);
   const [mode, setMode] = useState<"toQs" | "toJson">("toQs");
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,51 +94,57 @@ const JsonQueryStringPage = () => {
   const inputLang = mode === "toQs" ? "json" as const : "text" as const;
   const outputLang = mode === "toQs" ? "text" as const : "json" as const;
 
+  const sampleInput = mode === "toQs" ? SAMPLE_JSON : SAMPLE_QS;
+
   return (
     <ToolLayout title={tool?.label ?? "JSON ↔ Query String"} description={tool?.description ?? "Convert between JSON and URL query strings"}>
-      <ToolOptions open={optionsOpen} onOpenChange={setOptionsOpen}>
-        <input ref={fileInputRef} type="file" accept=".json,application/json,text/plain" className="hidden" onChange={handleFileUpload} />
-        <div className="flex flex-col gap-y-2.5 w-full">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <OptionField label="Upload file">
-              <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs" onClick={() => fileInputRef.current?.click()}>
-                <Upload className="h-3 w-3 mr-1.5" />
-                Upload file
-              </Button>
-            </OptionField>
-            <OptionField label="File encoding">
-              <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
-                <option value="utf-8">UTF-8</option>
-                <option value="utf-16le">UTF-16 LE</option>
-                <option value="utf-16be">UTF-16 BE</option>
-              </select>
-            </OptionField>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <Button size="sm" variant={mode === "toQs" ? "default" : "outline"} onClick={() => setMode("toQs")}>
-              JSON → Query String
-            </Button>
-            <Button size="sm" variant={mode === "toJson" ? "default" : "outline"} onClick={() => setMode("toJson")}>
-              Query String → JSON
-            </Button>
-          </div>
-        </div>
-      </ToolOptions>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="tool-panel">
+      <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0 mb-3">
+        <Button size="sm" variant={mode === "toQs" ? "default" : "outline"} onClick={() => setMode("toQs")} className="h-7 text-xs">
+          JSON → Query String
+        </Button>
+        <Button size="sm" variant={mode === "toJson" ? "default" : "outline"} onClick={() => setMode("toJson")} className="h-7 text-xs">
+          Query String → JSON
+        </Button>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+        <div className="tool-panel flex flex-col min-h-0">
           <PanelHeader
             label={mode === "toQs" ? "JSON Input" : "Query String Input"}
-            text={input}
-            onClear={() => setInput("")}
+            extra={
+              <div className="flex items-center gap-2 flex-wrap">
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput(sampleInput)}>
+                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
+                  Sample
+                </Button>
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput("")}>
+                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                  Clear
+                </Button>
+                <input ref={fileInputRef} type="file" accept=".json,application/json,text/plain" className="hidden" onChange={handleFileUpload} />
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => fileInputRef.current?.click()}>
+                  <Upload className="h-3.5 w-3.5 mr-1.5" />
+                  Upload
+                </Button>
+                <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
+                  <option value="utf-8">UTF-8</option>
+                  <option value="utf-16le">UTF-16 LE</option>
+                  <option value="utf-16be">UTF-16 BE</option>
+                </select>
+              </div>
+            }
           />
-          <CodeEditor value={input} onChange={setInput} language={inputLang} />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor value={input} onChange={setInput} language={inputLang} fillHeight />
+          </div>
         </div>
-        <div className="tool-panel">
+        <div className="tool-panel flex flex-col min-h-0">
           <PanelHeader label="Output" text={output} />
           {error ? (
-            <div className="code-block text-destructive flex-1">{error}</div>
+            <div className="code-block text-destructive flex-1 min-h-0 overflow-auto">{error}</div>
           ) : (
-            <CodeEditor value={output} readOnly language={outputLang} placeholder="Result will appear here..." />
+            <div className="flex-1 min-h-0 flex flex-col">
+              <CodeEditor value={output} readOnly language={outputLang} placeholder="Result will appear here..." fillHeight />
+            </div>
           )}
         </div>
       </div>

@@ -4,8 +4,7 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
-import { ToolOptions, OptionField } from "@/components/ToolOptions";
+import { Upload, FileCode, Eraser } from "lucide-react";
 
 type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
 
@@ -56,7 +55,6 @@ const XsltTransformerPage = () => {
   const tool = useCurrentTool();
   const xmlInputRef = useRef<HTMLInputElement>(null);
   const xsltInputRef = useRef<HTMLInputElement>(null);
-  const [optionsOpen, setOptionsOpen] = useState(true);
   const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
   const [xml, setXml] = useState(defaultXml);
   const [xslt, setXslt] = useState(defaultXslt);
@@ -92,48 +90,58 @@ const XsltTransformerPage = () => {
     }
   }, [xml, xslt]);
 
+  const inputExtra = (onSample: () => void, onClear: () => void, inputRef: React.RefObject<HTMLInputElement | null>, onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void, accept: string) => (
+    <div className="flex items-center gap-2 flex-wrap">
+      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={onSample}>
+        <FileCode className="h-3.5 w-3.5 mr-1.5" />
+        Sample
+      </Button>
+      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={onClear}>
+        <Eraser className="h-3.5 w-3.5 mr-1.5" />
+        Clear
+      </Button>
+      <input ref={inputRef} type="file" accept={accept} className="hidden" onChange={onUpload} />
+      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => inputRef.current?.click()}>
+        <Upload className="h-3.5 w-3.5 mr-1.5" />
+        Upload
+      </Button>
+      <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
+        <option value="utf-8">UTF-8</option>
+        <option value="utf-16le">UTF-16 LE</option>
+        <option value="utf-16be">UTF-16 BE</option>
+      </select>
+    </div>
+  );
+
   return (
     <ToolLayout title={tool?.label ?? "XSLT Transformer"} description={tool?.description ?? "Transform XML using XSLT stylesheet"}>
-      <ToolOptions open={optionsOpen} onOpenChange={setOptionsOpen}>
-        <input ref={xmlInputRef} type="file" accept=".xml,application/xml,text/xml" className="hidden" onChange={handleXmlUpload} />
-        <input ref={xsltInputRef} type="file" accept=".xsl,.xslt,application/xml,text/xml" className="hidden" onChange={handleXsltUpload} />
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-          <OptionField label="Upload XML file">
-            <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs" onClick={() => xmlInputRef.current?.click()}>
-              <Upload className="h-3 w-3 mr-1.5" />
-              Upload file
-            </Button>
-          </OptionField>
-          <OptionField label="Upload XSLT file">
-            <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs" onClick={() => xsltInputRef.current?.click()}>
-              <Upload className="h-3 w-3 mr-1.5" />
-              Upload file
-            </Button>
-          </OptionField>
-          <OptionField label="File encoding">
-            <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
-              <option value="utf-8">UTF-8</option>
-              <option value="utf-16le">UTF-16 LE</option>
-              <option value="utf-16be">UTF-16 BE</option>
-            </select>
-          </OptionField>
-        </div>
-      </ToolOptions>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="tool-panel">
-          <PanelHeader label="XML Input" text={xml} onClear={() => setXml("")} />
-          <CodeEditor value={xml} onChange={setXml} language="xml" placeholder="XML document..." />
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader
+            label="XML Input"
+            extra={inputExtra(() => setXml(defaultXml), () => setXml(""), xmlInputRef, handleXmlUpload, ".xml,application/xml,text/xml")}
+          />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor value={xml} onChange={setXml} language="xml" placeholder="XML document..." fillHeight />
+          </div>
         </div>
-        <div className="tool-panel">
-          <PanelHeader label="XSLT Stylesheet" text={xslt} onClear={() => setXslt("")} />
-          <CodeEditor value={xslt} onChange={setXslt} language="xml" placeholder="XSLT..." />
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader
+            label="XSLT Stylesheet"
+            extra={inputExtra(() => setXslt(defaultXslt), () => setXslt(""), xsltInputRef, handleXsltUpload, ".xsl,.xslt,application/xml,text/xml")}
+          />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor value={xslt} onChange={setXslt} language="xml" placeholder="XSLT..." fillHeight />
+          </div>
         </div>
       </div>
-      <div className="mt-4">
-        {error && <div className="text-sm text-destructive mb-2">Error: {error}</div>}
-        <div className="tool-panel">
+      <div className="mt-4 flex flex-col min-h-0 flex-1">
+        {error && <div className="text-sm text-destructive mb-2 shrink-0">Error: {error}</div>}
+        <div className="tool-panel flex flex-col min-h-0 flex-1">
           <PanelHeader label="Transformed Output" text={output} />
-          <CodeEditor value={output} readOnly language="xml" placeholder="Result..." />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor value={output} readOnly language="xml" placeholder="Result..." fillHeight />
+          </div>
         </div>
       </div>
     </ToolLayout>
