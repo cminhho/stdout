@@ -35,11 +35,11 @@ const ValidationErrorList = ({
             </span>
             <span className="text-foreground">{err.message}</span>
           </div>
-          {err.snippet != null && err.snippet !== "" && (
+          {err.snippet != null && err.snippet !== "" ? (
             <pre className="font-mono text-muted-foreground text-[10px] bg-muted/50 rounded px-2 py-1 overflow-x-auto">
               {err.snippet}
             </pre>
-          )}
+          ) : null}
         </div>
       ))}
     </div>

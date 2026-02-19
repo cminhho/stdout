@@ -7,7 +7,8 @@ import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 import { ClearButton, SampleButton, SaveButton } from "@/components/ToolActionButtons";
 import ValidationErrorList from "@/components/ValidationErrorList";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import { JSON_FORMATTER_SAMPLE, processJsonInput } from "@/utils/jsonFormatter";
+import { processJsonInput } from "@/utils/jsonFormat";
+import { JSON_FORMATTER_SAMPLE } from "@/utils/samples/jsonFormatter";
 
 const JsonFormatterPage = () => {
   const tool = useCurrentTool();
@@ -29,15 +30,14 @@ const JsonFormatterPage = () => {
 
   return (
     <ToolLayout title={tool?.label} description={tool?.description}>
-      {hasValidationErrors && (
+      {hasValidationErrors ? (
         <div className="mb-3">
           <ValidationErrorList errors={validationErrors} />
         </div>
-      )}
+      ) : null}
       <ResizableTwoPanel
         defaultInputPercent={50}
         input={{
-          title: "Input",
           toolbar: (
             <>
               <SampleButton onClick={loadSample} />
@@ -57,7 +57,6 @@ const JsonFormatterPage = () => {
           ),
         }}
         output={{
-          title: "Output",
           copyText: formattedJson,
           toolbar: (
             <>

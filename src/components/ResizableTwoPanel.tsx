@@ -74,6 +74,9 @@ function useResize(
   return { containerRef, inputPercent, onResizerMouseDown };
 }
 
+const DEFAULT_INPUT_TITLE = "Input";
+const DEFAULT_OUTPUT_TITLE = "Output";
+
 /**
  * Props for one tool pane (input or output).
  * Use `customHeader` to replace the whole header; otherwise use `title` + optional `toolbar`, `copyText`, `onClear`.
@@ -81,8 +84,8 @@ function useResize(
 export interface PaneProps {
   /** Custom header; when set, title/toolbar/copyText/onClear are ignored */
   customHeader?: React.ReactNode;
-  /** Pane title in default header (e.g. "Input", "Output") */
-  title: string;
+  /** Pane title in default header; defaults to "Input" / "Output" per pane when omitted */
+  title?: string;
   /** Toolbar actions in default header (Sample, Clear, Indent, Save, etc.) */
   toolbar?: React.ReactNode;
   /** Text for the copy-to-clipboard button in default header */
@@ -161,7 +164,7 @@ const ResizableTwoPanel = ({
       className={cn("flex flex-col lg:flex-row flex-1 min-h-0 w-full gap-4 lg:gap-0", className)}
     >
       <Pane
-        pane={input}
+        pane={{ ...input, title: input.title ?? DEFAULT_INPUT_TITLE }}
         className="min-w-0 flex-1 lg:flex-none lg:shrink-0"
         style={isLg ? { width: `${inputPercent}%`, minWidth: 120 } : undefined}
       />
@@ -178,7 +181,7 @@ const ResizableTwoPanel = ({
         <div className="w-0.5 h-8 rounded-full bg-border" />
       </div>
 
-      <Pane pane={output} className="flex-1 min-w-0 lg:min-h-0" />
+      <Pane pane={{ ...output, title: output.title ?? DEFAULT_OUTPUT_TITLE }} className="flex-1 min-w-0 lg:min-h-0" />
     </div>
   );
 };
