@@ -2,12 +2,12 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import PanelHeader from "@/components/PanelHeader";
 import { cn } from "@/utils/cn";
 
-const RESIZER_WIDTH = 20;
-const MIN_LEFT_PCT = 20;
-const MAX_LEFT_PCT = 80;
-const DEFAULT_LEFT_PCT = 50;
+const DEFAULT_RESIZER_WIDTH = 20;
+const DEFAULT_MIN_PRIMARY_PERCENT = 20;
+const DEFAULT_MAX_PRIMARY_PERCENT = 80;
+const DEFAULT_PRIMARY_PERCENT = 50;
 
-const RESIZER_CLASS =
+const RESIZER_BASE_CLASS =
   "hidden lg:flex shrink-0 flex-col items-center justify-center cursor-col-resize select-none";
 
 const PANEL_BODY_CLASS = "flex-1 min-h-0 flex flex-col overflow-hidden";
@@ -28,16 +28,23 @@ function clamp(min: number, max: number, value: number): number {
   return Math.min(max, Math.max(min, value));
 }
 
-function useResize(defaultLeftPct: number) {
+function useResize(
+  initialPrimaryPercent: number,
+  minPrimaryPercent: number,
+  maxPrimaryPercent: number
+) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [leftPct, setLeftPct] = useState(defaultLeftPct);
+  const [primaryPercent, setPrimaryPercent] = useState(initialPrimaryPercent);
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!containerRef.current) return;
-    const { width, left } = containerRef.current.getBoundingClientRect();
-    const pct = ((e.clientX - left) / width) * 100;
-    setLeftPct(clamp(MIN_LEFT_PCT, MAX_LEFT_PCT, pct));
-  }, []);
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!containerRef.current) return;
+      const { width, left } = containerRef.current.getBoundingClientRect();
+      const pct = ((e.clientX - left) / width) * 100;
+      setPrimaryPercent(clamp(minPrimaryPercent, maxPrimaryPercent, pct));
+    },
+    [minPrimaryPercent, maxPrimaryPercent]
+  );
 
   const handleMouseUp = useCallback(() => {
     document.removeEventListener("mousemove", handleMouseMove);
@@ -64,82 +71,114 @@ function useResize(defaultLeftPct: number) {
     };
   }, [handleMouseMove, handleMouseUp]);
 
-  return { containerRef, leftPct, onResizerMouseDown };
+  return { containerRef, primaryPercent, onResizerMouseDown };
 }
 
-export interface PanelSlotProps {
+/**
+ * Props for one pane in the split layout.
+ * Use `header` for a custom header; otherwise use `label` + optional `extra`, `text`, `onClear` for the default PanelHeader.
+ */
+export interface PaneProps {
+  /** Custom header; when set, label/extra/text/onClear are ignored */
+  header?: React.ReactNode;
+  /** Pane title (default header) */
   label: string;
+  /** Actions in default header (e.g. buttons) */
   extra?: React.ReactNode;
+  /** Text for copy button in default header */
   text?: string;
+  /** Clear button in default header */
   onClear?: () => void;
+  /** Pane body */
   children: React.ReactNode;
 }
 
 export interface ResizableTwoPanelProps {
-  left: PanelSlotProps;
-  right: PanelSlotProps;
-  defaultLeftPct?: number;
+  /** First (leading) pane – left in LTR */
+  primary: PaneProps;
+  /** Second (trailing) pane – right in LTR */
+  secondary: PaneProps;
+  /** Initial size of primary pane in percent (20–80) */
+  defaultPrimaryPercent?: number;
+  /** Min size of primary pane in percent */
+  minPrimaryPercent?: number;
+  /** Max size of primary pane in percent */
+  maxPrimaryPercent?: number;
+  /** Resizer grip width in px */
+  resizerWidth?: number;
   className?: string;
 }
 
-function PanelSlot({
-  slot,
+function Pane({
+  pane,
   className,
   style,
 }: {
-  slot: PanelSlotProps;
+  pane: PaneProps;
   className?: string;
   style?: React.CSSProperties;
 }) {
   return (
     <div className={cn("tool-panel flex flex-col min-h-0 overflow-hidden", className)} style={style}>
-      <PanelHeader
-        label={slot.label}
-        text={slot.text}
-        onClear={slot.onClear}
-        extra={slot.extra}
-      />
-      <div className={PANEL_BODY_CLASS}>{slot.children}</div>
+      {pane.header !== undefined ? (
+        pane.header
+      ) : (
+        <PanelHeader
+          label={pane.label}
+          text={pane.text}
+          onClear={pane.onClear}
+          extra={pane.extra}
+        />
+      )}
+      <div className={PANEL_BODY_CLASS}>{pane.children}</div>
     </div>
   );
 }
 
 /**
- * Two-panel layout with draggable resizer. Uses PanelHeader per side; resize by dragging the divider.
+ * Resizable two-pane layout (split pane). Drag the divider to resize the primary pane.
+ * Stacks vertically below lg breakpoint; side-by-side with resizer on lg+.
  */
 const ResizableTwoPanel = ({
-  left,
-  right,
-  defaultLeftPct = DEFAULT_LEFT_PCT,
+  primary,
+  secondary,
+  defaultPrimaryPercent = DEFAULT_PRIMARY_PERCENT,
+  minPrimaryPercent = DEFAULT_MIN_PRIMARY_PERCENT,
+  maxPrimaryPercent = DEFAULT_MAX_PRIMARY_PERCENT,
+  resizerWidth = DEFAULT_RESIZER_WIDTH,
   className,
 }: ResizableTwoPanelProps) => {
   const isLg = useIsLg();
-  const { containerRef, leftPct, onResizerMouseDown } = useResize(defaultLeftPct);
+  const { containerRef, primaryPercent, onResizerMouseDown } = useResize(
+    defaultPrimaryPercent,
+    minPrimaryPercent,
+    maxPrimaryPercent
+  );
 
   return (
     <div
       ref={containerRef}
       className={cn("flex flex-col lg:flex-row flex-1 min-h-0 w-full gap-4 lg:gap-0", className)}
     >
-      <PanelSlot
-        slot={left}
+      <Pane
+        pane={primary}
         className="min-w-0 flex-1 lg:flex-none lg:shrink-0"
-        style={isLg ? { width: `${leftPct}%`, minWidth: 120 } : undefined}
+        style={isLg ? { width: `${primaryPercent}%`, minWidth: 120 } : undefined}
       />
 
       <div
         role="separator"
         aria-orientation="vertical"
-        aria-valuenow={leftPct}
+        aria-valuenow={primaryPercent}
         tabIndex={0}
         onMouseDown={onResizerMouseDown}
-        className={RESIZER_CLASS}
-        style={{ width: RESIZER_WIDTH, minWidth: RESIZER_WIDTH }}
+        className={RESIZER_BASE_CLASS}
+        style={{ width: resizerWidth, minWidth: resizerWidth }}
       >
         <div className="w-0.5 h-8 rounded-full bg-border" />
       </div>
 
-      <PanelSlot slot={right} className="flex-1 min-w-0 lg:min-h-0" />
+      <Pane pane={secondary} className="flex-1 min-w-0 lg:min-h-0" />
     </div>
   );
 };

@@ -447,11 +447,12 @@ const CodeEditor = ({
         readOnly={readOnly}
         placeholder={placeholder}
         spellCheck={false}
-        className="relative z-[3] w-full h-full p-3 font-mono text-xs leading-relaxed bg-transparent border-none outline-none resize-y"
+        className="relative z-[3] w-full h-full p-3 font-mono text-xs leading-relaxed bg-transparent border-none outline-none resize-y overflow-auto"
         style={{
           paddingLeft: contentPaddingLeft,
           color: "transparent",
           caretColor: "hsl(var(--foreground))",
+          whiteSpace: "pre",
           ...(fillHeight
             ? { height: "100%", minHeight: 0, maxHeight: "none" }
             : { minHeight: 680, maxHeight: "88vh" }),

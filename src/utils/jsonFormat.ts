@@ -2,18 +2,16 @@
  * JSON validation (RFC 8259), formatting, and stats. Single place for JSON tool logic.
  */
 
+import type { ParseError } from "@/utils/validationTypes";
+
 export type JsonIndentOption = 2 | 3 | 4 | 8 | "tab" | "minified";
 
-export interface ValidationError {
-  line: number;
-  column: number;
-  message: string;
-  snippet: string;
-}
+/** @deprecated Use ParseError from @/utils/validationTypes */
+export type ValidationError = ParseError;
 
 export interface JsonProcessResult {
   output: string;
-  errors: ValidationError[];
+  errors: ParseError[];
   stats: { keys: number; depth: number; arrays: number; objects: number; size: string } | null;
   isValid: boolean | null;
   parsedData: unknown;
@@ -38,8 +36,8 @@ function getSnippet(lines: string[], lineNum: number) {
   return l.length > 80 ? l.slice(0, 80) + "…" : l;
 }
 
-function strictValidateJson(input: string): { valid: boolean; errors: ValidationError[]; parsed?: unknown } {
-  const errors: ValidationError[] = [];
+function strictValidateJson(input: string): { valid: boolean; errors: ParseError[]; parsed?: unknown } {
+  const errors: ParseError[] = [];
   const lines = input.split("\n");
 
   const trailingCommaRegex = /,\s*([}\]])/g;
@@ -159,7 +157,7 @@ function indentToSpace(indent: JsonIndentOption): string | number | undefined {
 export function processJsonInput(input: string, indent: JsonIndentOption): JsonProcessResult {
   const empty = {
     output: "",
-    errors: [] as ValidationError[],
+    errors: [] as ParseError[],
     stats: null,
     isValid: null,
     parsedData: undefined as unknown,
