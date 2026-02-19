@@ -1,12 +1,9 @@
 import { useMemo, useState } from "react";
 import CodeEditor from "@/components/CodeEditor";
-import FileUploadButton from "@/components/FileUploadButton";
-import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
-import ResizableTwoPanel from "@/components/ResizableTwoPanel";
-import { ClearButton, SampleButton, SaveButton } from "@/components/ToolActionButtons";
-import ToolLayout from "@/components/ToolLayout";
-import ValidationErrorList from "@/components/ValidationErrorList";
+import type { IndentOption } from "@/components/IndentSelect";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
+import { useErrorLineSet } from "@/hooks/useErrorLineSet";
 import { singleErrorToParseErrors } from "@/utils/validationTypes";
 import { validateXml } from "@/utils/validators";
 import { formatXml, minifyXml } from "@/utils/xmlFormat";
@@ -37,10 +34,7 @@ const XmlFormatterPage = () => {
     () => (validation.valid || !validation.error ? [] : singleErrorToParseErrors(validation.error)),
     [validation]
   );
-  const errorLineSet = useMemo(
-    () => new Set(validationErrors.map((e) => e.line)),
-    [validationErrors]
-  );
+  const errorLineSet = useErrorLineSet(validationErrors);
 
   const output = useMemo(() => {
     if (!input.trim()) return "";
@@ -50,61 +44,49 @@ const XmlFormatterPage = () => {
     return formatXml(input, indentNum, useTabs);
   }, [input, indentOption]);
 
-  const loadSample = () => setInput(SAMPLE_XML);
-  const clearInput = () => setInput("");
-  const hasValidationErrors = validationErrors.length > 0;
-
   return (
-    <ToolLayout title={tool?.label ?? "XML Format/Validate"} description={tool?.description ?? "Beautify, minify & validate XML"}>
-      {hasValidationErrors ? (
-        <div className="mb-3">
-          <ValidationErrorList errors={validationErrors} />
-        </div>
-      ) : null}
-      <ResizableTwoPanel
-        defaultInputPercent={50}
-        input={{
-          toolbar: (
-            <>
-              <SampleButton onClick={loadSample} />
-              <ClearButton onClick={clearInput} />
-              <FileUploadButton accept=".xml,application/xml,text/xml" onText={setInput} />
-            </>
-          ),
-          children: (
-            <CodeEditor
-              value={input}
-              onChange={setInput}
-              language="xml"
-              placeholder='<?xml version="1.0"?>...'
-              errorLines={errorLineSet}
-              fillHeight
-            />
-          ),
-        }}
-        output={{
-          copyText: output,
-          toolbar: (
-            <>
-              <IndentSelect value={indentOption} onChange={setIndentOption} />
-              {output ? (
-                <SaveButton content={output} filename="output.xml" mimeType="application/xml" />
-              ) : null}
-            </>
-          ),
-          children: (
-            <CodeEditor
-              key={`result-${indentOption}`}
-              value={output}
-              readOnly
-              language="xml"
-              placeholder="Result will appear here..."
-              fillHeight
-            />
-          ),
-        }}
-      />
-    </ToolLayout>
+    <TwoPanelToolLayout
+      tool={tool}
+      validationErrors={validationErrors}
+      inputPane={{
+        inputToolbar: {
+          onSample: () => setInput(SAMPLE_XML),
+          setInput: setInput,
+          fileAccept: ".xml,application/xml,text/xml",
+          onFileText: setInput,
+        },
+        children: (
+          <CodeEditor
+            value={input}
+            onChange={setInput}
+            language="xml"
+            placeholder='<?xml version="1.0"?>...'
+            errorLines={errorLineSet}
+            fillHeight
+          />
+        ),
+      }}
+      outputPane={{
+        copyText: output,
+        outputToolbar: {
+          indent: indentOption,
+          onIndentChange: setIndentOption,
+          outputContent: output,
+          outputFilename: "output.xml",
+          outputMimeType: "application/xml",
+        },
+        children: (
+          <CodeEditor
+            key={`result-${indentOption}`}
+            value={output}
+            readOnly
+            language="xml"
+            placeholder="Result will appear here..."
+            fillHeight
+          />
+        ),
+      }}
+    />
   );
 };
 

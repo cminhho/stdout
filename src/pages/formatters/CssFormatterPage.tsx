@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react";
 import CodeEditor from "@/components/CodeEditor";
-import FileUploadButton from "@/components/FileUploadButton";
-import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
-import ResizableTwoPanel from "@/components/ResizableTwoPanel";
-import { ClearButton, SampleButton, SaveButton } from "@/components/ToolActionButtons";
-import ToolLayout from "@/components/ToolLayout";
+import type { IndentOption } from "@/components/IndentSelect";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { cssBeautify } from "@/utils/beautifier";
 import { cssMinify } from "@/utils/minify";
@@ -51,48 +48,42 @@ const CssFormatterPage = () => {
     };
   }, [input, indentOption]);
 
-  const loadSample = () => setInput(SAMPLE_CSS);
-  const clearInput = () => setInput("");
-
   return (
-    <ToolLayout title={tool?.label ?? "CSS Beautifier/Minifier"} description={tool?.description ?? "Beautify or minify CSS"}>
-      <ResizableTwoPanel
-        defaultInputPercent={50}
-        input={{
-          toolbar: (
-            <>
-              <SampleButton onClick={loadSample} />
-              <ClearButton onClick={clearInput} />
-              <FileUploadButton accept=".css,text/css" onText={setInput} />
-            </>
-          ),
-          children: (
-            <CodeEditor value={input} onChange={setInput} language="css" placeholder="body { margin: 0; }" fillHeight />
-          ),
-        }}
-        output={{
-          copyText: output,
-          toolbar: (
-            <>
-              <IndentSelect value={indentOption} onChange={setIndentOption} includeTab={false} />
-              {output ? (
-                <SaveButton content={output} filename="output.css" mimeType="text/css" />
-              ) : null}
-            </>
-          ),
-          children: (
-            <CodeEditor
-              key={`result-${indentOption}`}
-              value={output}
-              readOnly
-              language="css"
-              placeholder={loading ? "Formatting…" : "Result will appear here..."}
-              fillHeight
-            />
-          ),
-        }}
-      />
-    </ToolLayout>
+    <TwoPanelToolLayout
+      tool={tool}
+      inputPane={{
+        inputToolbar: {
+          onSample: () => setInput(SAMPLE_CSS),
+          setInput: setInput,
+          fileAccept: ".css,text/css",
+          onFileText: setInput,
+        },
+        children: (
+          <CodeEditor value={input} onChange={setInput} language="css" placeholder="body { margin: 0; }" fillHeight />
+        ),
+      }}
+      outputPane={{
+        copyText: output,
+        outputToolbar: {
+          indent: indentOption,
+          onIndentChange: setIndentOption,
+          outputContent: output,
+          outputFilename: "output.css",
+          outputMimeType: "text/css",
+          indentIncludeTab: false,
+        },
+        children: (
+          <CodeEditor
+            key={`result-${indentOption}`}
+            value={output}
+            readOnly
+            language="css"
+            placeholder={loading ? "Formatting…" : "Result will appear here..."}
+            fillHeight
+          />
+        ),
+      }}
+    />
   );
 };
 

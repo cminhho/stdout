@@ -6,6 +6,25 @@ import type { ParseError } from "@/utils/validationTypes";
 
 export type JsonIndentOption = 2 | 3 | 4 | 8 | "tab" | "minified";
 
+/** Default indent for JSON formatter (spaces). */
+export const DEFAULT_JSON_INDENT: JsonIndentOption = 4;
+
+/** File input accept for JSON (formatter/validator/converters). */
+export const JSON_FILE_ACCEPT = ".json,application/json";
+
+/** Default output filename for JSON formatter. */
+export const JSON_OUTPUT_FILENAME = "output.json";
+
+/** MIME type for JSON. */
+export const JSON_MIME_TYPE = "application/json";
+
+/** Default placeholders for JSON formatter panes. */
+export const JSON_INPUT_PLACEHOLDER = "Paste JSON here...";
+export const JSON_OUTPUT_PLACEHOLDER = "Result will appear here...";
+
+/** CodeEditor language value for JSON. */
+export const JSON_LANGUAGE = "json";
+
 /** @deprecated Use ParseError from @/utils/validationTypes */
 export type ValidationError = ParseError;
 

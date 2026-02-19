@@ -2,9 +2,8 @@ import { useState, useMemo } from "react";
 import CodeEditor from "@/components/CodeEditor";
 import FileUploadButton from "@/components/FileUploadButton";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
-import ResizableTwoPanel from "@/components/ResizableTwoPanel";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { ClearButton, SampleButton, SaveButton } from "@/components/ToolActionButtons";
-import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 
 const SQL_KEYWORDS = [
@@ -107,53 +106,52 @@ const SqlFormatterPage = () => {
   const clearInput = () => setInput("");
 
   return (
-    <ToolLayout title={tool?.label ?? "SQL Formatter"} description={tool?.description ?? "Format and beautify SQL queries"}>
-      <ResizableTwoPanel
-        defaultInputPercent={50}
-        input={{
-          toolbar: (
-            <>
-              <SampleButton onClick={loadSample} />
-              <ClearButton onClick={clearInput} />
-              <FileUploadButton accept=".sql,text/x-sql,application/sql" onText={setInput} />
-              <select value={dialect} onChange={(e) => setDialect(e.target.value as Dialect)} className={selectClass} title="Dialect">
-                <option value="standard">Standard</option>
-                <option value="mysql">MySQL</option>
-                <option value="mariadb">MariaDB</option>
-                <option value="postgresql">PostgreSQL</option>
-                <option value="plsql">PL/SQL</option>
-              </select>
-            </>
-          ),
-          children: (
-            <CodeEditor value={input} onChange={setInput} language="sql" placeholder="SELECT * FROM users WHERE ..." fillHeight />
-          ),
-        }}
-        output={{
-          copyText: output,
-          toolbar: (
-            <>
-              <select value={keywordCase} onChange={(e) => setKeywordCase(e.target.value as KeywordCase)} className={selectClass} title="Keyword case">
-                <option value="upper">Keywords: Upper</option>
-                <option value="lower">Keywords: Lower</option>
-              </select>
-              <select value={identifierCase} onChange={(e) => setIdentifierCase(e.target.value as IdentifierCase)} className={selectClass} title="Identifier case">
-                <option value="as-is">Identifiers: As-is</option>
-                <option value="upper">Identifiers: Upper</option>
-                <option value="lower">Identifiers: Lower</option>
-              </select>
-              <IndentSelect value={indent} onChange={setIndent} className={selectClass} />
-              {output ? (
-                <SaveButton content={output} filename="output.sql" mimeType="application/sql" />
-              ) : null}
-            </>
-          ),
-          children: (
-            <CodeEditor key={`result-${indent}-${dialect}-${keywordCase}-${identifierCase}`} value={output} readOnly language="sql" placeholder="Result will appear here..." fillHeight />
-          ),
-        }}
-      />
-    </ToolLayout>
+    <TwoPanelToolLayout
+      tool={tool}
+      inputPane={{
+        toolbar: (
+          <>
+            <SampleButton onClick={loadSample} />
+            <ClearButton onClick={clearInput} />
+            <FileUploadButton accept=".sql,text/x-sql,application/sql" onText={setInput} />
+            <select value={dialect} onChange={(e) => setDialect(e.target.value as Dialect)} className={selectClass} title="Dialect">
+              <option value="standard">Standard</option>
+              <option value="mysql">MySQL</option>
+              <option value="mariadb">MariaDB</option>
+              <option value="postgresql">PostgreSQL</option>
+              <option value="plsql">PL/SQL</option>
+            </select>
+          </>
+        ),
+        onClear: clearInput,
+        children: (
+          <CodeEditor value={input} onChange={setInput} language="sql" placeholder="SELECT * FROM users WHERE ..." fillHeight />
+        ),
+      }}
+      outputPane={{
+        copyText: output,
+        toolbar: (
+          <>
+            <select value={keywordCase} onChange={(e) => setKeywordCase(e.target.value as KeywordCase)} className={selectClass} title="Keyword case">
+              <option value="upper">Keywords: Upper</option>
+              <option value="lower">Keywords: Lower</option>
+            </select>
+            <select value={identifierCase} onChange={(e) => setIdentifierCase(e.target.value as IdentifierCase)} className={selectClass} title="Identifier case">
+              <option value="as-is">Identifiers: As-is</option>
+              <option value="upper">Identifiers: Upper</option>
+              <option value="lower">Identifiers: Lower</option>
+            </select>
+            <IndentSelect value={indent} onChange={setIndent} className={selectClass} />
+            {output ? (
+              <SaveButton content={output} filename="output.sql" mimeType="application/sql" />
+            ) : null}
+          </>
+        ),
+        children: (
+          <CodeEditor key={`result-${indent}-${dialect}-${keywordCase}-${identifierCase}`} value={output} readOnly language="sql" placeholder="Result will appear here..." fillHeight />
+        ),
+      }}
+    />
   );
 };
 

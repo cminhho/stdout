@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react";
 import CodeEditor from "@/components/CodeEditor";
-import FileUploadButton from "@/components/FileUploadButton";
-import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
-import ResizableTwoPanel from "@/components/ResizableTwoPanel";
-import { ClearButton, SampleButton, SaveButton } from "@/components/ToolActionButtons";
-import ToolLayout from "@/components/ToolLayout";
+import type { IndentOption } from "@/components/IndentSelect";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { jsBeautify } from "@/utils/beautifier";
 import { jsMinify } from "@/utils/minify";
@@ -75,48 +72,41 @@ const JsFormatterPage = () => {
     };
   }, [input, indentOption]);
 
-  const loadSample = () => setInput(SAMPLE_JS);
-  const clearInput = () => setInput("");
-
   return (
-    <ToolLayout title={tool?.label ?? "JS Beautifier/Minifier"} description={tool?.description ?? "Beautify or minify JavaScript"}>
-      <ResizableTwoPanel
-        defaultInputPercent={50}
-        input={{
-          toolbar: (
-            <>
-              <SampleButton onClick={loadSample} />
-              <ClearButton onClick={clearInput} />
-              <FileUploadButton accept=".js,.mjs,.cjs,text/javascript" onText={setInput} />
-            </>
-          ),
-          children: (
-            <CodeEditor value={input} onChange={setInput} language="javascript" placeholder="Paste JavaScript..." fillHeight />
-          ),
-        }}
-        output={{
-          copyText: output,
-          toolbar: (
-            <>
-              <IndentSelect value={indentOption} onChange={setIndentOption} />
-              {output ? (
-                <SaveButton content={output} filename="output.js" mimeType="text/javascript" />
-              ) : null}
-            </>
-          ),
-          children: (
-            <CodeEditor
-              key={`result-${indentOption}`}
-              value={output}
-              readOnly
-              language="javascript"
-              placeholder={loading ? "Processing…" : "Result..."}
-              fillHeight
-            />
-          ),
-        }}
-      />
-    </ToolLayout>
+    <TwoPanelToolLayout
+      tool={tool}
+      inputPane={{
+        inputToolbar: {
+          onSample: () => setInput(SAMPLE_JS),
+          setInput: setInput,
+          fileAccept: ".js,.mjs,.cjs,text/javascript",
+          onFileText: setInput,
+        },
+        children: (
+          <CodeEditor value={input} onChange={setInput} language="javascript" placeholder="Paste JavaScript..." fillHeight />
+        ),
+      }}
+      outputPane={{
+        copyText: output,
+        outputToolbar: {
+          indent: indentOption,
+          onIndentChange: setIndentOption,
+          outputContent: output,
+          outputFilename: "output.js",
+          outputMimeType: "text/javascript",
+        },
+        children: (
+          <CodeEditor
+            key={`result-${indentOption}`}
+            value={output}
+            readOnly
+            language="javascript"
+            placeholder={loading ? "Processing…" : "Result..."}
+            fillHeight
+          />
+        ),
+      }}
+    />
   );
 };
 
