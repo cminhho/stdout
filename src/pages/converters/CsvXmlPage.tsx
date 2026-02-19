@@ -1,121 +1,41 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Upload, FileCode, Eraser } from "lucide-react";
+import FileUploadButton from "@/components/FileUploadButton";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
-
-type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
-
-const readFileAsText = (file: File, encoding: FileEncoding): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result;
-      if (typeof result === "string") {
-        resolve(result);
-        return;
-      }
-      if (result instanceof ArrayBuffer) {
-        const enc = encoding === "utf-16le" ? "utf-16le" : encoding === "utf-16be" ? "utf-16be" : "utf-8";
-        resolve(new TextDecoder(enc).decode(result));
-        return;
-      }
-      reject(new Error("Failed to read file"));
-    };
-    reader.onerror = () => reject(reader.error);
-    if (encoding === "utf-8") {
-      reader.readAsText(file, "UTF-8");
-    } else {
-      reader.readAsArrayBuffer(file);
-    }
-  });
-};
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+import { Input } from "@/components/ui/input";
+import {
+  csvToXml,
+  CSV_XML_FILE_ACCEPT,
+  CSV_XML_SAMPLE_CSV,
+  CSV_XML_PLACEHOLDER_CSV,
+  CSV_XML_PLACEHOLDER_OUTPUT,
+} from "@/utils/csvXml";
 
 const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
 
-function csvToRows(csv: string, delimiter: string): string[][] {
-  const lines = csv.trim().split("\n");
-  if (lines.length === 0) return [];
-  return lines.map((line) => {
-    const row: string[] = [];
-    let current = "";
-    let inQuotes = false;
-    for (let i = 0; i < line.length; i++) {
-      const c = line[i];
-      if (c === '"') {
-        inQuotes = !inQuotes;
-      } else if (inQuotes) {
-        if (c === '"' && line[i + 1] === '"') { current += '"'; i++; }
-        else current += c;
-      } else if (c === delimiter) {
-        row.push(current.trim());
-        current = "";
-      } else {
-        current += c;
-      }
-    }
-    row.push(current.trim());
-    return row;
-  });
-}
-
-function csvToXml(csv: string, rootTag: string, rowTag: string, delimiter: string, indentOption: IndentOption): string {
-  const rows = csvToRows(csv, delimiter);
-  if (rows.length < 2) return '<?xml version="1.0"?>\n<' + rootTag + "/>";
-  const headers = rows[0];
-  const minified = indentOption === "minified";
-  const indentStr = minified ? "" : indentOption === "tab" ? "\t" : " ".repeat(indentOption as number);
-  const nl = minified ? "" : "\n";
-  let out = '<?xml version="1.0"?>' + nl + "<" + rootTag + ">" + nl;
-  for (let r = 1; r < rows.length; r++) {
-    const row = rows[r];
-    out += (minified ? "" : indentStr) + "<" + rowTag + ">" + nl;
-    for (let c = 0; c < headers.length; c++) {
-      const tag = headers[c].replace(/[^a-zA-Z0-9_-]/g, "_") || "col" + c;
-      const val = (row[c] ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-      out += (minified ? "" : indentStr + indentStr) + "<" + tag + ">" + val + "</" + tag + ">" + nl;
-    }
-    out += (minified ? "" : indentStr) + "</" + rowTag + ">" + nl;
-  }
-  out += "</" + rootTag + ">";
-  return out;
-}
-
-const SAMPLE_CSV = "name,age,city\nAlice,30,NYC\nBob,25,LA";
-
 const CsvXmlPage = () => {
   const tool = useCurrentTool();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
-  const [input, setInput] = useState(SAMPLE_CSV);
+  const [input, setInput] = useState("");
   const [rootTag, setRootTag] = useState("root");
   const [rowTag, setRowTag] = useState("row");
   const [delimiter, setDelimiter] = useState(",");
   const [indent, setIndent] = useState<IndentOption>(2);
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      setInput(await readFileAsText(file, fileEncoding));
-    } catch {
-      setInput("");
-    }
-    e.target.value = "";
-  };
-
-  const { output, error } = useMemo(() => {
-    if (!input.trim()) return { output: "", error: "" };
-    try {
-      return { output: csvToXml(input, rootTag, rowTag, delimiter, indent), error: "" };
-    } catch (e) {
-      return { output: "", error: (e as Error).message };
-    }
-  }, [input, rootTag, rowTag, delimiter, indent]);
+  const { output, error } = useMemo(
+    () => {
+      if (!input.trim()) return { output: "", error: "" };
+      try {
+        return { output: csvToXml(input, rootTag, rowTag, delimiter, indent), error: "" };
+      } catch (e) {
+        return { output: "", error: (e as Error).message };
+      }
+    },
+    [input, rootTag, rowTag, delimiter, indent]
+  );
 
   return (
     <ToolLayout title={tool?.label ?? "CSV → XML"} description={tool?.description ?? "Convert CSV to XML (first row as element names)"}>
@@ -126,29 +46,14 @@ const CsvXmlPage = () => {
             label="CSV"
             extra={
               <div className="flex items-center gap-2 flex-wrap">
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput(SAMPLE_CSV)}>
-                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
-                  Sample
-                </Button>
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput("")}>
-                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
-                  Clear
-                </Button>
-                <input ref={fileInputRef} type="file" accept=".csv,text/csv" className="hidden" onChange={handleFileUpload} />
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => fileInputRef.current?.click()}>
-                  <Upload className="h-3.5 w-3.5 mr-1.5" />
-                  Upload
-                </Button>
-                <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
-                  <option value="utf-8">UTF-8</option>
-                  <option value="utf-16le">UTF-16 LE</option>
-                  <option value="utf-16be">UTF-16 BE</option>
-                </select>
+                <SampleButton onClick={() => setInput(CSV_XML_SAMPLE_CSV)} />
+                <ClearButton onClick={() => setInput("")} />
+                <FileUploadButton accept={CSV_XML_FILE_ACCEPT} onText={setInput} />
               </div>
             }
           />
           <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor value={input} onChange={setInput} language="text" placeholder="name,age,city\nAlice,30,NYC" fillHeight />
+            <CodeEditor value={input} onChange={setInput} language="text" placeholder={CSV_XML_PLACEHOLDER_CSV} fillHeight />
           </div>
         </div>
         <div className="tool-panel flex flex-col min-h-0">
@@ -168,7 +73,7 @@ const CsvXmlPage = () => {
             }
           />
           <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor value={output} readOnly language="xml" placeholder="Result..." fillHeight />
+            <CodeEditor value={output} readOnly language="xml" placeholder={CSV_XML_PLACEHOLDER_OUTPUT} fillHeight />
           </div>
         </div>
       </div>

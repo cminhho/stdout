@@ -1,53 +1,21 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CopyButton from "@/components/CopyButton";
-
-const units: Record<string, Record<string, (val: number, base: number) => number>> = {
-  px: {
-    rem: (v, base) => v / base,
-    em: (v, base) => v / base,
-    pt: (v) => v * 0.75,
-    vw: (v) => (v / window.innerWidth) * 100,
-    vh: (v) => (v / window.innerHeight) * 100,
-    "%": (v) => v,
-    cm: (v) => v / 37.7953,
-    mm: (v) => v / 3.77953,
-    in: (v) => v / 96,
-  },
-};
-
-const allUnits = ["px", "rem", "em", "pt", "vw", "vh", "%", "cm", "mm", "in"];
+import { CSS_UNITS_LIST, CSS_UNITS_DEFAULT_BASE, convertToAllUnits } from "@/utils/cssUnits";
 
 const CssUnitsPage = () => {
   const tool = useCurrentTool();
   const [value, setValue] = useState("16");
   const [fromUnit, setFromUnit] = useState("px");
-  const [baseFontSize, setBaseFontSize] = useState(16);
+  const [baseFontSize, setBaseFontSize] = useState(CSS_UNITS_DEFAULT_BASE);
 
   const numVal = parseFloat(value) || 0;
-
-  const toPx = (): number => {
-    switch (fromUnit) {
-      case "px": return numVal;
-      case "rem": case "em": return numVal * baseFontSize;
-      case "pt": return numVal / 0.75;
-      case "vw": return (numVal / 100) * window.innerWidth;
-      case "vh": return (numVal / 100) * window.innerHeight;
-      case "%": return numVal;
-      case "cm": return numVal * 37.7953;
-      case "mm": return numVal * 3.77953;
-      case "in": return numVal * 96;
-      default: return numVal;
-    }
-  };
-
-  const pxVal = toPx();
-  const results = allUnits.filter((u) => u !== fromUnit).map((u) => {
-    const converter = units.px?.[u];
-    const converted = converter ? converter(pxVal, baseFontSize) : pxVal;
-    return { unit: u, value: Number(converted.toFixed(4)) };
-  });
+  const viewport = useMemo(() => ({ width: window.innerWidth, height: window.innerHeight }), []);
+  const results = useMemo(
+    () => convertToAllUnits(numVal, fromUnit, baseFontSize, viewport),
+    [numVal, fromUnit, baseFontSize, viewport]
+  );
 
   return (
     <ToolLayout title={tool?.label ?? "CSS Units"} description={tool?.description ?? "Convert between CSS units (px, rem, em, vw)"}>
@@ -61,12 +29,14 @@ const CssUnitsPage = () => {
             <div>
               <label className="text-xs text-muted-foreground block mb-1">From</label>
               <select value={fromUnit} onChange={(e) => setFromUnit(e.target.value)} className="tool-select">
-                {allUnits.map((u) => <option key={u} value={u}>{u}</option>)}
+                {CSS_UNITS_LIST.map((u) => (
+                <option key={u} value={u}>{u}</option>
+              ))}
               </select>
             </div>
             <div>
               <label className="text-xs text-muted-foreground block mb-1">Base font-size</label>
-              <input type="number" value={baseFontSize} onChange={(e) => setBaseFontSize(Number(e.target.value) || 16)} className="input-compact w-16" />
+              <input type="number" value={baseFontSize} onChange={(e) => setBaseFontSize(Number(e.target.value) || CSS_UNITS_DEFAULT_BASE)} className="input-compact w-16" />
               <span className="text-xs text-muted-foreground ml-1">px</span>
             </div>
           </div>

@@ -2,6 +2,13 @@
  * XML to JSON and JSON to XML (attributes in @, text in #text).
  */
 
+export const XML_JSON_FILE_ACCEPT = ".xml,.json,application/xml,application/json";
+export const XML_JSON_SAMPLE_XML = '<root><item id="1">Alpha</item><item id="2">Beta</item></root>';
+export const XML_JSON_SAMPLE_JSON = '{"root":{"item":[{"@id":"1","#text":"Alpha"},{"@id":"2","#text":"Beta"}]}}';
+export const XML_JSON_PLACEHOLDER_XML = "<root>...</root>";
+export const XML_JSON_PLACEHOLDER_JSON = "{}";
+export const XML_JSON_PLACEHOLDER_OUTPUT = "Result...";
+
 function domToObj(node: Node): unknown {
   if (node.nodeType === 3) {
     const t = (node as Text).textContent;

@@ -6,27 +6,7 @@ import CopyButton from "@/components/CopyButton";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
-
-const formatDate = (d: Date) => [
-  { label: "ISO 8601", value: d.toISOString() },
-  { label: "UTC", value: d.toUTCString() },
-  { label: "Local", value: d.toLocaleString() },
-  { label: "Unix (s)", value: String(Math.floor(d.getTime() / 1000)) },
-  { label: "Unix (ms)", value: String(d.getTime()) },
-  { label: "Date", value: d.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" }) },
-  { label: "Time", value: d.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit", second: "2-digit" }) },
-  { label: "Relative", value: getRelative(d) },
-];
-
-function getRelative(d: Date) {
-  const diff = Date.now() - d.getTime();
-  const abs = Math.abs(diff);
-  const suffix = diff > 0 ? "ago" : "from now";
-  if (abs < 60000) return `${Math.floor(abs / 1000)}s ${suffix}`;
-  if (abs < 3600000) return `${Math.floor(abs / 60000)}m ${suffix}`;
-  if (abs < 86400000) return `${Math.floor(abs / 3600000)}h ${suffix}`;
-  return `${Math.floor(abs / 86400000)}d ${suffix}`;
-}
+import { formatDateRows, unixToDate, isoToDate, getCommonRefs, setCurrentTimeValues } from "@/utils/timestamp";
 
 const TimestampPage = () => {
   const tool = useCurrentTool();
@@ -43,36 +23,17 @@ const TimestampPage = () => {
     return () => clearInterval(intervalRef.current);
   }, [live]);
 
-  const convertedFromUnix = useMemo(() => {
-    if (!unix.trim()) return null;
-    const ts = Number(unix);
-    if (isNaN(ts)) return null;
-    const ms = unix.length <= 10 ? ts * 1000 : ts;
-    const d = new Date(ms);
-    if (isNaN(d.getTime())) return null;
-    return d;
-  }, [unix]);
-
-  const convertedFromIso = useMemo(() => {
-    if (!iso.trim()) return null;
-    const d = new Date(iso);
-    if (isNaN(d.getTime())) return null;
-    return d;
-  }, [iso]);
+  const convertedFromUnix = useMemo(() => unixToDate(unix), [unix]);
+  const convertedFromIso = useMemo(() => isoToDate(iso), [iso]);
 
   const setCurrentTime = useCallback(() => {
-    const n = Date.now();
+    const { now: n, unix: u, iso: i } = setCurrentTimeValues();
     setNow(n);
-    setUnix(String(Math.floor(n / 1000)));
-    setIso(new Date(n).toISOString());
+    setUnix(u);
+    setIso(i);
   }, []);
 
-  const commonRefs = useMemo(() => [
-    { label: "Y2K", ts: 946684800 },
-    { label: "Unix Epoch", ts: 0 },
-    { label: "1h ago", ts: Math.floor(Date.now() / 1000) - 3600 },
-    { label: "24h ago", ts: Math.floor(Date.now() / 1000) - 86400 },
-  ], []);
+  const commonRefs = useMemo(() => getCommonRefs(), []);
 
   return (
     <ToolLayout title={tool?.label ?? "Epoch Timestamp"} description={tool?.description ?? "Convert between Unix timestamps and dates"}>
@@ -117,7 +78,7 @@ const TimestampPage = () => {
             </div>
             <div className="flex-1 min-h-0 overflow-auto mt-3 space-y-2">
               {convertedFromUnix ? (
-                formatDate(convertedFromUnix).map((f) => (
+                formatDateRows(convertedFromUnix).map((f) => (
                   <div key={f.label} className="flex items-center justify-between gap-2 py-1 border-b border-border/50 last:border-0">
                     <div className="min-w-0 flex-1">
                       <div className="text-[10px] text-muted-foreground">{f.label}</div>
@@ -144,7 +105,7 @@ const TimestampPage = () => {
             </div>
             <div className="flex-1 min-h-0 overflow-auto mt-3 space-y-2">
               {convertedFromIso ? (
-                formatDate(convertedFromIso).map((f) => (
+                formatDateRows(convertedFromIso).map((f) => (
                   <div key={f.label} className="flex items-center justify-between gap-2 py-1 border-b border-border/50 last:border-0">
                     <div className="min-w-0 flex-1">
                       <div className="text-[10px] text-muted-foreground">{f.label}</div>

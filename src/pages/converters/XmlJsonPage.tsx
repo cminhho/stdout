@@ -1,48 +1,30 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
-import { Button } from "@/components/ui/button";
-import { Upload, FileCode, Eraser } from "lucide-react";
-import { xmlToJson, jsonToXml } from "@/utils/xmlJson";
+import FileUploadButton from "@/components/FileUploadButton";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
-
-const readFileAsText = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result;
-      if (typeof result === "string") resolve(result);
-      else reject(new Error("Failed to read file"));
-    };
-    reader.onerror = () => reject(reader.error);
-    reader.readAsText(file, "UTF-8");
-  });
-};
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+import { Button } from "@/components/ui/button";
+import {
+  xmlToJson,
+  jsonToXml,
+  XML_JSON_FILE_ACCEPT,
+  XML_JSON_SAMPLE_XML,
+  XML_JSON_SAMPLE_JSON,
+  XML_JSON_PLACEHOLDER_XML,
+  XML_JSON_PLACEHOLDER_JSON,
+  XML_JSON_PLACEHOLDER_OUTPUT,
+} from "@/utils/xmlJson";
 
 const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
 
-const SAMPLE_XML = "<root><item id=\"1\">Alpha</item><item id=\"2\">Beta</item></root>";
-const SAMPLE_JSON = "{\"root\":{\"item\":[{\"@id\":\"1\",\"#text\":\"Alpha\"},{\"@id\":\"2\",\"#text\":\"Beta\"}]}}";
-
 const XmlJsonPage = () => {
   const tool = useCurrentTool();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [mode, setMode] = useState<"xml2json" | "json2xml">("xml2json");
   const [input, setInput] = useState("");
   const [indent, setIndent] = useState<IndentOption>(2);
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      setInput(await readFileAsText(file));
-    } catch {
-      setInput("");
-    }
-    e.target.value = "";
-  };
 
   const { output, error } = useMemo(() => {
     if (!input.trim()) return { output: "", error: "" };
@@ -59,13 +41,20 @@ const XmlJsonPage = () => {
     }
   }, [input, mode, indent]);
 
-  const sampleInput = mode === "xml2json" ? SAMPLE_XML : SAMPLE_JSON;
+  const sampleInput = mode === "xml2json" ? XML_JSON_SAMPLE_XML : XML_JSON_SAMPLE_JSON;
+  const inputPlaceholder = mode === "xml2json" ? XML_JSON_PLACEHOLDER_XML : XML_JSON_PLACEHOLDER_JSON;
+  const inputLang = mode === "xml2json" ? "xml" : "json";
+  const outputLang = mode === "xml2json" ? "json" : "xml";
 
   return (
     <ToolLayout title={tool?.label ?? "XML ↔ JSON"} description={tool?.description ?? "Convert between XML and JSON"}>
       <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0 mb-3">
-        <Button size="sm" variant={mode === "xml2json" ? "default" : "outline"} onClick={() => setMode("xml2json")} className="h-7 text-xs">XML → JSON</Button>
-        <Button size="sm" variant={mode === "json2xml" ? "default" : "outline"} onClick={() => setMode("json2xml")} className="h-7 text-xs">JSON → XML</Button>
+        <Button size="sm" variant={mode === "xml2json" ? "default" : "outline"} onClick={() => setMode("xml2json")} className="h-7 text-xs">
+          XML → JSON
+        </Button>
+        <Button size="sm" variant={mode === "json2xml" ? "default" : "outline"} onClick={() => setMode("json2xml")} className="h-7 text-xs">
+          JSON → XML
+        </Button>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
         <div className="tool-panel flex flex-col min-h-0">
@@ -73,24 +62,14 @@ const XmlJsonPage = () => {
             label={mode === "xml2json" ? "XML" : "JSON"}
             extra={
               <div className="flex items-center gap-2 flex-wrap">
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput(sampleInput)}>
-                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
-                  Sample
-                </Button>
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput("")}>
-                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
-                  Clear
-                </Button>
-                <input ref={fileInputRef} type="file" accept=".xml,.json,application/xml,application/json" className="hidden" onChange={handleFileUpload} />
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => fileInputRef.current?.click()}>
-                  <Upload className="h-3.5 w-3.5 mr-1.5" />
-                  Upload
-                </Button>
+                <SampleButton onClick={() => setInput(sampleInput)} />
+                <ClearButton onClick={() => setInput("")} />
+                <FileUploadButton accept={XML_JSON_FILE_ACCEPT} onText={setInput} />
               </div>
             }
           />
           <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor value={input} onChange={setInput} language={mode === "xml2json" ? "xml" : "json"} placeholder={mode === "xml2json" ? "<root>...</root>" : "{}"} fillHeight />
+            <CodeEditor value={input} onChange={setInput} language={inputLang} placeholder={inputPlaceholder} fillHeight />
           </div>
         </div>
         <div className="tool-panel flex flex-col min-h-0">
@@ -101,7 +80,7 @@ const XmlJsonPage = () => {
           />
           {error && <div className="text-sm text-destructive mb-2 shrink-0">{error}</div>}
           <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor value={output} readOnly language={mode === "xml2json" ? "json" : "xml"} placeholder="Result..." fillHeight />
+            <CodeEditor value={output} readOnly language={outputLang} placeholder={XML_JSON_PLACEHOLDER_OUTPUT} fillHeight />
           </div>
         </div>
       </div>

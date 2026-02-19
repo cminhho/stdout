@@ -2,6 +2,17 @@
  * Infer a minimal XSD from XML (element names and attributes).
  */
 
+export const XSD_GENERATOR_FILE_ACCEPT = ".xml,application/xml,text/xml";
+export const XSD_GENERATOR_SAMPLE_XML = `<?xml version="1.0"?>
+<catalog>
+  <book id="1">
+    <title>Alpha</title>
+    <year>2020</year>
+  </book>
+</catalog>`;
+export const XSD_GENERATOR_PLACEHOLDER_INPUT = "Paste XML...";
+export const XSD_GENERATOR_PLACEHOLDER_OUTPUT = "Click Generate...";
+
 interface ElemInfo {
   attrs: Set<string>;
   children: Map<string, ElemInfo>;
