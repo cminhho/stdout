@@ -5,6 +5,8 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Upload, FileCode, Eraser } from "lucide-react";
+import { formatXml, minifyXml } from "@/utils/xmlFormat";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 
 const readFileAsText = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -43,6 +45,7 @@ const XsltTransformerPage = () => {
   const xsltInputRef = useRef<HTMLInputElement>(null);
   const [xml, setXml] = useState(defaultXml);
   const [xslt, setXslt] = useState(defaultXslt);
+  const [indent, setIndent] = useState<IndentOption>(2);
 
   const handleXmlUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -69,11 +72,19 @@ const XsltTransformerPage = () => {
   const { output, error } = useMemo(() => {
     if (!xml.trim() || !xslt.trim()) return { output: "", error: "" };
     try {
-      return { output: transformWithXslt(xml, xslt), error: "" };
+      let out = transformWithXslt(xml, xslt);
+      if (out.trim().startsWith("<")) {
+        if (indent === "minified") out = minifyXml(out);
+        else {
+          const indentNum = indent === "tab" ? 2 : (indent as number);
+          out = formatXml(out, indentNum, indent === "tab");
+        }
+      }
+      return { output: out, error: "" };
     } catch (e) {
       return { output: "", error: (e as Error).message };
     }
-  }, [xml, xslt]);
+  }, [xml, xslt, indent]);
 
   const inputExtra = (onSample: () => void, onClear: () => void, inputRef: React.RefObject<HTMLInputElement | null>, onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void, accept: string) => (
     <div className="flex items-center gap-2 flex-wrap">
@@ -118,7 +129,7 @@ const XsltTransformerPage = () => {
       <div className="mt-4 flex flex-col min-h-0 flex-1">
         {error && <div className="text-sm text-destructive mb-2 shrink-0">Error: {error}</div>}
         <div className="tool-panel flex flex-col min-h-0 flex-1">
-          <PanelHeader label="Transformed Output" text={output} />
+          <PanelHeader label="Transformed Output" text={output} extra={<IndentSelect value={indent} onChange={setIndent} className={selectClass} />} />
           <div className="flex-1 min-h-0 flex flex-col">
             <CodeEditor value={output} readOnly language="xml" placeholder="Result..." fillHeight />
           </div>

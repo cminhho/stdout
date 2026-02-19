@@ -5,6 +5,9 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { FileCode, Eraser } from "lucide-react";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
+
+const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
 
 const decodeBase64 = (s: string) => decodeURIComponent(escape(atob(s)));
 
@@ -22,16 +25,18 @@ const SAMPLE_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODk
 const JwtDecodePage = () => {
   const tool = useCurrentTool();
   const [input, setInput] = useState("");
+  const [indent, setIndent] = useState<IndentOption>(2);
 
   const { output, error } = useMemo(() => {
     if (!input.trim()) return { output: "", error: "" };
     try {
       const result = decodeJwt(input);
-      return { output: JSON.stringify(result, null, 2), error: "" };
+      const space = indent === "minified" ? undefined : indent === "tab" ? "\t" : (indent as number);
+      return { output: JSON.stringify(result, null, space), error: "" };
     } catch (e) {
       return { output: "", error: (e as Error).message };
     }
-  }, [input]);
+  }, [input, indent]);
 
   return (
     <ToolLayout title={tool?.label ?? "JWT Debugger"} description={tool?.description ?? "Decode and inspect JWT tokens"}>
@@ -57,7 +62,7 @@ const JwtDecodePage = () => {
           </div>
         </div>
         <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="Decoded" text={output} />
+          <PanelHeader label="Decoded" text={output} extra={<IndentSelect value={indent} onChange={setIndent} className={selectClass} />} />
           {error ? (
             <div className="code-block text-destructive flex-1 min-h-0 overflow-auto">{error}</div>
           ) : (

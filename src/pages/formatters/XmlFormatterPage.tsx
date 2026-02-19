@@ -6,6 +6,7 @@ import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Upload, FileCode, Eraser } from "lucide-react";
 import { validateXml } from "@/utils/validators";
+import { formatXml, minifyXml } from "@/utils/xmlFormat";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 
 const SAMPLE_XML = `<?xml version="1.0" encoding="UTF-8"?>
@@ -34,27 +35,6 @@ const readFileAsText = (file: File): Promise<string> => {
     reader.readAsText(file, "UTF-8");
   });
 };
-
-const formatXml = (xml: string, indent = 2, useTabs = false): string => {
-  const indentStr = useTabs ? "\t" : " ".repeat(indent);
-  let formatted = "";
-  let level = 0;
-  const nodes = xml.replace(/>\s*</g, ">\n<").split("\n");
-  for (const node of nodes) {
-    const trimmed = node.trim();
-    if (!trimmed) continue;
-    if (trimmed.startsWith("</")) { level = Math.max(0, level - 1); formatted += indentStr.repeat(level) + trimmed + "\n"; }
-    else if (trimmed.startsWith("<?") || trimmed.startsWith("<!")) { formatted += indentStr.repeat(level) + trimmed + "\n"; }
-    else if (trimmed.endsWith("/>")) { formatted += indentStr.repeat(level) + trimmed + "\n"; }
-    else if (trimmed.match(/<[^/][^>]*>[^<]*<\/[^>]+>$/)) { formatted += indentStr.repeat(level) + trimmed + "\n"; }
-    else if (trimmed.startsWith("<")) { formatted += indentStr.repeat(level) + trimmed + "\n"; level++; }
-    else { formatted += indentStr.repeat(level) + trimmed + "\n"; }
-  }
-  return formatted.trimEnd();
-};
-
-const minifyXml = (xml: string): string =>
-  xml.replace(/>\s+</g, "><").replace(/\s+/g, " ").trim();
 
 const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
 

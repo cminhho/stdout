@@ -5,6 +5,7 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Upload, FileCode, Eraser } from "lucide-react";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 
 const readFileAsText = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -21,8 +22,8 @@ const readFileAsText = (file: File): Promise<string> => {
 
 const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
 
-const jsonToYaml = (obj: unknown, indent = 0): string => {
-  const pad = "  ".repeat(indent);
+const jsonToYaml = (obj: unknown, depth = 0, spacesPerLevel = 2): string => {
+  const pad = " ".repeat(spacesPerLevel * depth);
   if (obj === null) return "null";
   if (typeof obj === "boolean" || typeof obj === "number") return String(obj);
   if (typeof obj === "string") {
@@ -34,7 +35,7 @@ const jsonToYaml = (obj: unknown, indent = 0): string => {
   if (Array.isArray(obj)) {
     if (obj.length === 0) return "[]";
     return obj.map((item) => {
-      const val = jsonToYaml(item, indent + 1);
+      const val = jsonToYaml(item, depth + 1, spacesPerLevel);
       if (typeof item === "object" && item !== null) {
         return `${pad}- ${val.trimStart()}`;
       }
@@ -45,7 +46,7 @@ const jsonToYaml = (obj: unknown, indent = 0): string => {
     const entries = Object.entries(obj as Record<string, unknown>);
     if (entries.length === 0) return "{}";
     return entries.map(([key, val]) => {
-      const yamlVal = jsonToYaml(val, indent + 1);
+      const yamlVal = jsonToYaml(val, depth + 1, spacesPerLevel);
       if (typeof val === "object" && val !== null && !Array.isArray(val)) {
         return `${pad}${key}:\n${yamlVal}`;
       }
@@ -64,6 +65,7 @@ const JsonYamlPage = () => {
   const tool = useCurrentTool();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [input, setInput] = useState("");
+  const [indent, setIndent] = useState<IndentOption>(2);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -76,15 +78,16 @@ const JsonYamlPage = () => {
     e.target.value = "";
   };
 
+  const spacesPerLevel = typeof indent === "number" ? indent : 2;
   const { output, error } = useMemo(() => {
     if (!input.trim()) return { output: "", error: "" };
     try {
       const parsed = JSON.parse(input);
-      return { output: jsonToYaml(parsed), error: "" };
+      return { output: jsonToYaml(parsed, 0, spacesPerLevel), error: "" };
     } catch (e) {
       return { output: "", error: (e as Error).message };
     }
-  }, [input]);
+  }, [input, spacesPerLevel]);
 
   return (
     <ToolLayout title={tool?.label ?? "JSON ↔ YAML"} description={tool?.description ?? "Convert between JSON and YAML formats"}>
@@ -115,7 +118,20 @@ const JsonYamlPage = () => {
           </div>
         </div>
         <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="YAML Output" text={output} />
+          <PanelHeader
+            label="YAML Output"
+            text={output}
+            extra={
+              <IndentSelect
+                value={indent}
+                onChange={setIndent}
+                spaceOptions={[2, 4]}
+                includeTab={false}
+                includeMinified={false}
+                className={selectClass}
+              />
+            }
+          />
           {error ? (
             <div className="code-block text-destructive flex-1 min-h-0 overflow-auto">{error}</div>
           ) : (

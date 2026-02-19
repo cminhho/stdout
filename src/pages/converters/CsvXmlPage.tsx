@@ -6,6 +6,7 @@ import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Upload, FileCode, Eraser } from "lucide-react";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 
 type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
 
@@ -62,20 +63,23 @@ function csvToRows(csv: string, delimiter: string): string[][] {
   });
 }
 
-function csvToXml(csv: string, rootTag: string, rowTag: string, delimiter: string): string {
+function csvToXml(csv: string, rootTag: string, rowTag: string, delimiter: string, indentOption: IndentOption): string {
   const rows = csvToRows(csv, delimiter);
   if (rows.length < 2) return '<?xml version="1.0"?>\n<' + rootTag + "/>";
   const headers = rows[0];
-  let out = '<?xml version="1.0"?>\n<' + rootTag + ">\n";
+  const minified = indentOption === "minified";
+  const indentStr = minified ? "" : indentOption === "tab" ? "\t" : " ".repeat(indentOption as number);
+  const nl = minified ? "" : "\n";
+  let out = '<?xml version="1.0"?>' + nl + "<" + rootTag + ">" + nl;
   for (let r = 1; r < rows.length; r++) {
     const row = rows[r];
-    out += "  <" + rowTag + ">\n";
+    out += (minified ? "" : indentStr) + "<" + rowTag + ">" + nl;
     for (let c = 0; c < headers.length; c++) {
       const tag = headers[c].replace(/[^a-zA-Z0-9_-]/g, "_") || "col" + c;
       const val = (row[c] ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-      out += "    <" + tag + ">" + val + "</" + tag + ">\n";
+      out += (minified ? "" : indentStr + indentStr) + "<" + tag + ">" + val + "</" + tag + ">" + nl;
     }
-    out += "  </" + rowTag + ">\n";
+    out += (minified ? "" : indentStr) + "</" + rowTag + ">" + nl;
   }
   out += "</" + rootTag + ">";
   return out;
@@ -91,6 +95,7 @@ const CsvXmlPage = () => {
   const [rootTag, setRootTag] = useState("root");
   const [rowTag, setRowTag] = useState("row");
   const [delimiter, setDelimiter] = useState(",");
+  const [indent, setIndent] = useState<IndentOption>(2);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -106,11 +111,11 @@ const CsvXmlPage = () => {
   const { output, error } = useMemo(() => {
     if (!input.trim()) return { output: "", error: "" };
     try {
-      return { output: csvToXml(input, rootTag, rowTag, delimiter), error: "" };
+      return { output: csvToXml(input, rootTag, rowTag, delimiter, indent), error: "" };
     } catch (e) {
       return { output: "", error: (e as Error).message };
     }
-  }, [input, rootTag, rowTag, delimiter]);
+  }, [input, rootTag, rowTag, delimiter, indent]);
 
   return (
     <ToolLayout title={tool?.label ?? "CSV → XML"} description={tool?.description ?? "Convert CSV to XML (first row as element names)"}>
@@ -152,6 +157,7 @@ const CsvXmlPage = () => {
             text={output}
             extra={
               <div className="flex items-center gap-2 flex-wrap">
+                <IndentSelect value={indent} onChange={setIndent} className={selectClass} />
                 <span className="text-xs text-muted-foreground">Root</span>
                 <Input value={rootTag} onChange={(e) => setRootTag(e.target.value)} className="h-7 w-24 font-mono rounded border border-input bg-background px-2 text-xs" />
                 <span className="text-xs text-muted-foreground">Row</span>

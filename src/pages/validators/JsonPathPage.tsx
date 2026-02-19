@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Upload, FileCode, Eraser } from "lucide-react";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 
 const readFileAsText = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -135,6 +136,7 @@ const JsonPathPage = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [jsonInput, setJsonInput] = useState(SAMPLE_JSON);
   const [pathInput, setPathInput] = useState("$.store.books[*].title");
+  const [indent, setIndent] = useState<IndentOption>(2);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -147,15 +149,16 @@ const JsonPathPage = () => {
     e.target.value = "";
   };
 
+  const space = indent === "minified" ? undefined : indent === "tab" ? "\t" : (indent as number);
   const { result, error } = useMemo(() => {
     try {
       const obj = JSON.parse(jsonInput);
       const res = evaluateJsonPath(obj, pathInput);
-      return { result: JSON.stringify(res.length === 1 ? res[0] : res, null, 2), error: null };
+      return { result: JSON.stringify(res.length === 1 ? res[0] : res, null, space), error: null };
     } catch (e) {
       return { result: "", error: (e as Error).message };
     }
-  }, [jsonInput, pathInput]);
+  }, [jsonInput, pathInput, space]);
 
   const examples = [
     "$.store.name",
@@ -215,7 +218,7 @@ const JsonPathPage = () => {
           </div>
         </div>
         <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="Result" text={result} />
+          <PanelHeader label="Result" text={result} extra={<IndentSelect value={indent} onChange={setIndent} className={selectClass} />} />
           {error ? (
             <div className="flex-1 min-h-0 overflow-auto rounded border border-border bg-muted/30 p-3 text-destructive text-sm font-mono">{error}</div>
           ) : (

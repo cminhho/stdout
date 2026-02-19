@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { FileCode, Eraser } from "lucide-react";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
+
+const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
 
 const parsePem = (pem: string) => {
   const lines = pem.trim().split("\n");
@@ -28,6 +31,13 @@ const CertificatePage = () => {
   const [input, setInput] = useState("");
   const [result, setResult] = useState<ReturnType<typeof parsePem> | null>(null);
   const [error, setError] = useState("");
+  const [indent, setIndent] = useState<IndentOption>(2);
+
+  const displayJson = useMemo(() => {
+    if (!result) return "";
+    const space = indent === "minified" ? undefined : indent === "tab" ? "\t" : (indent as number);
+    return JSON.stringify({ ...result, raw: result.raw ? "(base64 omitted)" : undefined }, null, space);
+  }, [result, indent]);
 
   const decode = () => {
     try {
@@ -66,11 +76,15 @@ const CertificatePage = () => {
           </div>
         </div>
         <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="Info" text={result ? JSON.stringify(result, null, 2) : ""} />
+          <PanelHeader
+            label="Info"
+            text={displayJson}
+            extra={result ? <IndentSelect value={indent} onChange={setIndent} className={selectClass} /> : undefined}
+          />
           {error && <div className="code-block text-destructive text-xs shrink-0">⚠ {error}</div>}
           <div className="flex-1 min-h-0 flex flex-col">
             <CodeEditor
-              value={result ? JSON.stringify({ ...result, raw: result.raw ? "(base64 omitted)" : undefined }, null, 2) : ""}
+              value={displayJson}
               readOnly
               language="json"
               placeholder="Paste a PEM certificate and click Decode..."

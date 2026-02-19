@@ -5,6 +5,7 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Upload, FileCode, Eraser } from "lucide-react";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 
 const readFileAsText = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -46,6 +47,7 @@ const JsonQueryStringPage = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [input, setInput] = useState(SAMPLE_JSON);
   const [mode, setMode] = useState<"toQs" | "toJson">("toQs");
+  const [indent, setIndent] = useState<IndentOption>(2);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -69,12 +71,13 @@ const JsonQueryStringPage = () => {
         const params = new URLSearchParams(input.trim());
         const obj: Record<string, string> = {};
         params.forEach((v, k) => { obj[k] = v; });
-        return { output: JSON.stringify(obj, null, 2), error: "" };
+        const space = indent === "minified" ? undefined : indent === "tab" ? "\t" : (indent as number);
+        return { output: JSON.stringify(obj, null, space), error: "" };
       }
     } catch (e) {
       return { output: "", error: (e as Error).message };
     }
-  }, [input, mode]);
+  }, [input, mode, indent]);
 
   const inputLang = mode === "toQs" ? "json" as const : "text" as const;
   const outputLang = mode === "toQs" ? "text" as const : "json" as const;
@@ -118,7 +121,11 @@ const JsonQueryStringPage = () => {
           </div>
         </div>
         <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="Output" text={output} />
+          <PanelHeader
+            label="Output"
+            text={output}
+            extra={mode === "toJson" ? <IndentSelect value={indent} onChange={setIndent} className={selectClass} /> : undefined}
+          />
           {error ? (
             <div className="code-block text-destructive flex-1 min-h-0 overflow-auto">{error}</div>
           ) : (

@@ -5,6 +5,7 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Upload, FileCode, Eraser } from "lucide-react";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 
 type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
 
@@ -67,6 +68,7 @@ const CsvJsonPage = () => {
   const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<"csv2json" | "json2csv">("csv2json");
+  const [indent, setIndent] = useState<IndentOption>(2);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -83,7 +85,8 @@ const CsvJsonPage = () => {
     if (!input.trim()) return { output: "", error: "" };
     try {
       if (mode === "csv2json") {
-        return { output: JSON.stringify(csvToJson(input), null, 2), error: "" };
+        const space = indent === "minified" ? undefined : indent === "tab" ? "\t" : (indent as number);
+        return { output: JSON.stringify(csvToJson(input), null, space), error: "" };
       } else {
         const parsed = JSON.parse(input);
         if (!Array.isArray(parsed)) throw new Error("Input must be a JSON array");
@@ -92,7 +95,7 @@ const CsvJsonPage = () => {
     } catch (e) {
       return { output: "", error: (e as Error).message };
     }
-  }, [input, mode]);
+  }, [input, mode, indent]);
 
   const inputLang = mode === "csv2json" ? "text" as const : "json" as const;
   const outputLang = mode === "csv2json" ? "json" as const : "text" as const;
@@ -147,7 +150,11 @@ const CsvJsonPage = () => {
           </div>
         </div>
         <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label={mode === "csv2json" ? "JSON Output" : "CSV Output"} text={output} />
+          <PanelHeader
+            label={mode === "csv2json" ? "JSON Output" : "CSV Output"}
+            text={output}
+            extra={mode === "csv2json" ? <IndentSelect value={indent} onChange={setIndent} className={selectClass} /> : undefined}
+          />
           {error ? (
             <div className="code-block text-destructive flex-1 min-h-0 overflow-auto">{error}</div>
           ) : (

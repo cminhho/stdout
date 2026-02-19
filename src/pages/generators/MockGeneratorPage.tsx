@@ -1,10 +1,13 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { FileCode, Eraser } from "lucide-react";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
+
+const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
 
 function randomString(len = 8): string {
   return Array.from(crypto.getRandomValues(new Uint8Array(len)), (b) => b.toString(36)).join("").slice(0, len);
@@ -70,18 +73,32 @@ const MockGeneratorPage = () => {
   const [count, setCount] = useState(3);
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
+  const [indent, setIndent] = useState<IndentOption>(2);
 
   const generate = useCallback(() => {
     try {
       const parsed = JSON.parse(schema);
       const items = Array.from({ length: count }, () => generateFromSchema(parsed));
-      setOutput(JSON.stringify(count === 1 ? items[0] : items, null, 2));
+      const space = indent === "minified" ? undefined : indent === "tab" ? "\t" : (indent as number);
+      setOutput(JSON.stringify(count === 1 ? items[0] : items, null, space));
       setError("");
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : String(e));
       setOutput("");
     }
-  }, [schema, count]);
+  }, [schema, count, indent]);
+
+  // When indent changes, re-format existing output so user doesn't need to click Generate again
+  useEffect(() => {
+    if (!output.trim()) return;
+    try {
+      const parsed = JSON.parse(output);
+      const space = indent === "minified" ? undefined : indent === "tab" ? "\t" : (indent as number);
+      setOutput(JSON.stringify(parsed, null, space));
+    } catch {
+      // output is not valid JSON (e.g. user pasted something), leave as-is
+    }
+  }, [indent]);
 
   return (
     <ToolLayout title={tool?.label ?? "Mock Payload"} description={tool?.description ?? "Generate mock JSON data from a schema"}>
@@ -114,7 +131,8 @@ const MockGeneratorPage = () => {
             label="Output"
             text={output}
             extra={
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <IndentSelect value={indent} onChange={setIndent} className={selectClass} />
                 <label className="text-xs text-muted-foreground shrink-0">Count</label>
                 <input
                   type="number"

@@ -6,6 +6,7 @@ import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Upload, FileCode, Eraser } from "lucide-react";
 import { xmlToJson, jsonToXml } from "@/utils/xmlJson";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 
 const readFileAsText = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -30,6 +31,7 @@ const XmlJsonPage = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [mode, setMode] = useState<"xml2json" | "json2xml">("xml2json");
   const [input, setInput] = useState("");
+  const [indent, setIndent] = useState<IndentOption>(2);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -47,14 +49,15 @@ const XmlJsonPage = () => {
     try {
       if (mode === "xml2json") {
         const obj = xmlToJson(input);
-        return { output: JSON.stringify(obj, null, 2), error: "" };
+        const space = indent === "minified" ? undefined : indent === "tab" ? "\t" : (indent as number);
+        return { output: JSON.stringify(obj, null, space), error: "" };
       }
       const parsed = JSON.parse(input);
       return { output: jsonToXml(parsed, "root"), error: "" };
     } catch (e) {
       return { output: "", error: (e as Error).message };
     }
-  }, [input, mode]);
+  }, [input, mode, indent]);
 
   const sampleInput = mode === "xml2json" ? SAMPLE_XML : SAMPLE_JSON;
 
@@ -91,7 +94,11 @@ const XmlJsonPage = () => {
           </div>
         </div>
         <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label={mode === "xml2json" ? "JSON" : "XML"} text={output} />
+          <PanelHeader
+            label={mode === "xml2json" ? "JSON" : "XML"}
+            text={output}
+            extra={mode === "xml2json" ? <IndentSelect value={indent} onChange={setIndent} className={selectClass} /> : undefined}
+          />
           {error && <div className="text-sm text-destructive mb-2 shrink-0">{error}</div>}
           <div className="flex-1 min-h-0 flex flex-col">
             <CodeEditor value={output} readOnly language={mode === "xml2json" ? "json" : "xml"} placeholder="Result..." fillHeight />

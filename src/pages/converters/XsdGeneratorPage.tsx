@@ -6,6 +6,8 @@ import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Upload, FileCode, Eraser } from "lucide-react";
 import { xmlToXsd } from "@/utils/xsdGenerator";
+import { formatXml, minifyXml } from "@/utils/xmlFormat";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 
 const readFileAsText = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -34,6 +36,7 @@ const XsdGeneratorPage = () => {
   const tool = useCurrentTool();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [input, setInput] = useState(sampleXml);
+  const [indent, setIndent] = useState<IndentOption>(2);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -49,11 +52,15 @@ const XsdGeneratorPage = () => {
   const { out, err } = useMemo(() => {
     if (!input.trim()) return { out: "", err: "" };
     try {
-      return { out: xmlToXsd(input), err: "" };
+      const raw = xmlToXsd(input);
+      if (indent === "minified") return { out: minifyXml(raw), err: "" };
+      const indentNum = indent === "tab" ? 2 : (indent as number);
+      const useTabs = indent === "tab";
+      return { out: formatXml(raw, indentNum, useTabs), err: "" };
     } catch (e) {
       return { out: "", err: (e as Error).message };
     }
-  }, [input]);
+  }, [input, indent]);
 
   const output = out;
   const error = err;
@@ -88,7 +95,7 @@ const XsdGeneratorPage = () => {
           </div>
         </div>
         <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="XSD Output" text={output} />
+          <PanelHeader label="XSD Output" text={output} extra={<IndentSelect value={indent} onChange={setIndent} className={selectClass} />} />
           <div className="flex-1 min-h-0 flex flex-col">
             <CodeEditor value={output} readOnly language="xml" placeholder="Click Generate..." fillHeight />
           </div>
