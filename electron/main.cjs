@@ -18,7 +18,9 @@ function createWindow() {
     win.loadURL("http://localhost:8080");
     win.webContents.openDevTools();
   } else {
-    win.loadFile(path.join(__dirname, "../dist/index.html"));
+    const indexPath = path.join(__dirname, "../dist/index.html").replace(/\\/g, "/");
+    const fileUrl = indexPath.startsWith("/") ? `file://${indexPath}#/` : `file:///${indexPath}#/`;
+    win.loadURL(fileUrl);
   }
 }
 

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import AppSidebar from "@/components/AppSidebar";
 import { useToolEngine } from "@/hooks/useToolEngine";
@@ -55,17 +55,20 @@ const ToolRoutes = () => {
   );
 };
 
+/** Use HashRouter under file: protocol (Electron) so routes work; BrowserRouter for web. */
+const Router = window.location.protocol === "file:" ? HashRouter : BrowserRouter;
+
 const App = () => (
   <TooltipProvider>
     <Toaster />
-    <BrowserRouter>
+    <Router>
       <SettingsProvider>
         <div className="flex min-h-screen">
           <AppSidebar />
           <ToolRoutes />
         </div>
       </SettingsProvider>
-    </BrowserRouter>
+    </Router>
   </TooltipProvider>
 );
 
