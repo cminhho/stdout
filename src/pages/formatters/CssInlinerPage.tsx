@@ -1,69 +1,57 @@
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import CodeEditor from "@/components/CodeEditor";
 import FileUploadButton from "@/components/FileUploadButton";
 import PanelHeader from "@/components/PanelHeader";
 import { ClearButton, SampleButton, SaveButton } from "@/components/ToolActionButtons";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-
-const SAMPLE_HTML = `<div class="container">
-  <h1 class="title">Hello World</h1>
-  <p class="text">This is a paragraph.</p>
-</div>`;
-
-const SAMPLE_CSS = `.container { padding: 20px; background-color: #f5f5f5; }
-.title { color: #333; font-size: 24px; font-weight: bold; }
-.text { color: #666; font-size: 14px; line-height: 1.6; }`;
-
-const inlineCss = (html: string, css: string): string => {
-  const rules: { selector: string; props: string }[] = [];
-  const ruleRegex = /([^{]+)\{([^}]+)\}/g;
-  let match;
-  while ((match = ruleRegex.exec(css)) !== null) {
-    rules.push({ selector: match[1].trim(), props: match[2].trim() });
-  }
-
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, "text/html");
-
-  for (const rule of rules) {
-    try {
-      const els = doc.querySelectorAll(rule.selector);
-      els.forEach((el) => {
-        const existing = el.getAttribute("style") || "";
-        el.setAttribute("style", existing ? `${existing}; ${rule.props}` : rule.props);
-      });
-    } catch {
-      // Invalid selector, skip
-    }
-  }
-
-  return doc.body.innerHTML;
-};
+import {
+  CSS_INLINER_CSS_ACCEPT,
+  CSS_INLINER_CSS_PLACEHOLDER,
+  CSS_INLINER_CSS_SAMPLE,
+  CSS_INLINER_HTML_ACCEPT,
+  CSS_INLINER_HTML_PLACEHOLDER,
+  CSS_INLINER_HTML_SAMPLE,
+  CSS_INLINER_OUTPUT_FILENAME,
+  CSS_INLINER_OUTPUT_MIME_TYPE,
+  inlineCss,
+} from "@/utils/cssInliner";
 
 const CssInlinerPage = () => {
   const tool = useCurrentTool();
-  const [html, setHtml] = useState(SAMPLE_HTML);
-  const [css, setCss] = useState(SAMPLE_CSS);
+  const [html, setHtml] = useState("");
+  const [css, setCss] = useState("");
 
-  const output = useMemo(() => (html.trim() && css.trim() ? inlineCss(html, css) : ""), [html, css]);
+  const output = useMemo(
+    () => (html.trim() && css.trim() ? inlineCss(html, css) : ""),
+    [html, css]
+  );
 
   return (
-    <ToolLayout title={tool?.label ?? "CSS Inliner (Email)"} description={tool?.description ?? "Inline CSS styles into HTML for email templates"}>
+    <ToolLayout
+      title={tool?.label ?? "CSS Inliner (Email)"}
+      description={tool?.description ?? "Inline CSS styles into HTML for email templates"}
+    >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div className="tool-panel flex flex-col min-h-0">
           <PanelHeader
             label="HTML"
             extra={
               <>
-                <SampleButton onClick={() => setHtml(SAMPLE_HTML)} />
+                <SampleButton onClick={() => setHtml(CSS_INLINER_HTML_SAMPLE)} />
                 <ClearButton onClick={() => setHtml("")} />
-                <FileUploadButton accept=".html,.htm,text/html" onText={setHtml} />
+                <FileUploadButton accept={CSS_INLINER_HTML_ACCEPT} onText={setHtml} />
               </>
             }
           />
           <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor value={html} onChange={setHtml} language="html" placeholder='<div class="container">...</div>' fillHeight />
+            <CodeEditor
+              value={html}
+              onChange={setHtml}
+              language="html"
+              placeholder={CSS_INLINER_HTML_PLACEHOLDER}
+              fillHeight
+            />
           </div>
         </div>
         <div className="tool-panel flex flex-col min-h-0">
@@ -71,14 +59,20 @@ const CssInlinerPage = () => {
             label="CSS"
             extra={
               <>
-                <SampleButton onClick={() => setCss(SAMPLE_CSS)} />
+                <SampleButton onClick={() => setCss(CSS_INLINER_CSS_SAMPLE)} />
                 <ClearButton onClick={() => setCss("")} />
-                <FileUploadButton accept=".css,text/css" onText={setCss} />
+                <FileUploadButton accept={CSS_INLINER_CSS_ACCEPT} onText={setCss} />
               </>
             }
           />
           <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor value={css} onChange={setCss} language="css" placeholder=".class { prop: value; }" fillHeight />
+            <CodeEditor
+              value={css}
+              onChange={setCss}
+              language="css"
+              placeholder={CSS_INLINER_CSS_PLACEHOLDER}
+              fillHeight
+            />
           </div>
         </div>
       </div>
@@ -87,7 +81,13 @@ const CssInlinerPage = () => {
           <PanelHeader
             label="Inlined HTML"
             text={output}
-            extra={<SaveButton content={output} filename="inlined.html" mimeType="text/html" />}
+            extra={
+              <SaveButton
+                content={output}
+                filename={CSS_INLINER_OUTPUT_FILENAME}
+                mimeType={CSS_INLINER_OUTPUT_MIME_TYPE}
+              />
+            }
           />
           <div className="flex-1 min-h-0 flex flex-col">
             <CodeEditor value={output} readOnly language="html" placeholder="" fillHeight />
