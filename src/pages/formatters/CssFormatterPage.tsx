@@ -8,31 +8,18 @@ import { Upload, FileCode, Eraser } from "lucide-react";
 import { cssBeautify } from "@/utils/beautifier";
 import { cssMinify } from "@/utils/minify";
 
-type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
 type IndentOption = "2" | "4" | "8" | "minified";
 
-const readFileAsText = (file: File, encoding: FileEncoding): Promise<string> => {
+const readFileAsText = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result;
-      if (typeof result === "string") {
-        resolve(result);
-        return;
-      }
-      if (result instanceof ArrayBuffer) {
-        const enc = encoding === "utf-16le" ? "utf-16le" : encoding === "utf-16be" ? "utf-16be" : "utf-8";
-        resolve(new TextDecoder(enc).decode(result));
-        return;
-      }
-      reject(new Error("Failed to read file"));
+      if (typeof result === "string") resolve(result);
+      else reject(new Error("Failed to read file"));
     };
     reader.onerror = () => reject(reader.error);
-    if (encoding === "utf-8") {
-      reader.readAsText(file, "UTF-8");
-    } else {
-      reader.readAsArrayBuffer(file);
-    }
+    reader.readAsText(file, "UTF-8");
   });
 };
 
@@ -47,7 +34,6 @@ const SAMPLE_CSS = `body { margin: 0; padding: 0; font-family: sans-serif; }
 const CssFormatterPage = () => {
   const tool = useCurrentTool();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
   const [input, setInput] = useState("body{margin:0;padding:0;font-family:sans-serif}.container{max-width:1200px;margin:0 auto;padding:20px}.header{background:#333;color:#fff;padding:10px 20px}");
   const [output, setOutput] = useState("");
   const [indentOption, setIndentOption] = useState<IndentOption>("2");
@@ -84,7 +70,7 @@ const CssFormatterPage = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
-      const text = await readFileAsText(file, fileEncoding);
+      const text = await readFileAsText(file);
       setInput(text);
     } catch {
       setInput("");
@@ -119,16 +105,6 @@ const CssFormatterPage = () => {
         <Upload className="h-3.5 w-3.5 mr-1.5" />
         Upload
       </Button>
-      <select
-        value={fileEncoding}
-        onChange={(e) => setFileEncoding(e.target.value as FileEncoding)}
-        className={selectClass}
-        title="File encoding"
-      >
-        <option value="utf-8">UTF-8</option>
-        <option value="utf-16le">UTF-16 LE</option>
-        <option value="utf-16be">UTF-16 BE</option>
-      </select>
     </div>
   );
 

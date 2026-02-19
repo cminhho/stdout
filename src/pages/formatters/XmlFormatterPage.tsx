@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Upload, FileCode, Eraser } from "lucide-react";
 import { validateXml } from "@/utils/validators";
 
-type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
 type IndentOption = "2" | "4" | "tab" | "minified";
 
 const SAMPLE_XML = `<?xml version="1.0" encoding="UTF-8"?>
@@ -24,28 +23,16 @@ const SAMPLE_XML = `<?xml version="1.0" encoding="UTF-8"?>
   </book>
 </catalog>`;
 
-const readFileAsText = (file: File, encoding: FileEncoding): Promise<string> => {
+const readFileAsText = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result;
-      if (typeof result === "string") {
-        resolve(result);
-        return;
-      }
-      if (result instanceof ArrayBuffer) {
-        const enc = encoding === "utf-16le" ? "utf-16le" : encoding === "utf-16be" ? "utf-16be" : "utf-8";
-        resolve(new TextDecoder(enc).decode(result));
-        return;
-      }
-      reject(new Error("Failed to read file"));
+      if (typeof result === "string") resolve(result);
+      else reject(new Error("Failed to read file"));
     };
     reader.onerror = () => reject(reader.error);
-    if (encoding === "utf-8") {
-      reader.readAsText(file, "UTF-8");
-    } else {
-      reader.readAsArrayBuffer(file);
-    }
+    reader.readAsText(file, "UTF-8");
   });
 };
 
@@ -77,7 +64,6 @@ const XmlFormatterPage = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [input, setInput] = useState('<?xml version="1.0"?><catalog><book id="1"><title>XML Guide</title><author>John</author><price>29.99</price></book><book id="2"><title>Advanced XML</title><author>Jane</author><price>39.99</price></book></catalog>');
   const [indentOption, setIndentOption] = useState<IndentOption>("2");
-  const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
 
   const validation = useMemo(() => validateXml(input), [input]);
 
@@ -93,7 +79,7 @@ const XmlFormatterPage = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
-      const text = await readFileAsText(file, fileEncoding);
+      const text = await readFileAsText(file);
       setInput(text);
     } catch {
       setInput("");
@@ -128,16 +114,6 @@ const XmlFormatterPage = () => {
         <Upload className="h-3.5 w-3.5 mr-1.5" />
         Upload
       </Button>
-      <select
-        value={fileEncoding}
-        onChange={(e) => setFileEncoding(e.target.value as FileEncoding)}
-        className={selectClass}
-        title="File encoding"
-      >
-        <option value="utf-8">UTF-8</option>
-        <option value="utf-16le">UTF-16 LE</option>
-        <option value="utf-16be">UTF-16 BE</option>
-      </select>
     </div>
   );
 

@@ -6,8 +6,6 @@ import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Upload, FileCode, Eraser } from "lucide-react";
 
-type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
-
 const SAMPLE_HTML = `<div class="container">
   <h1 class="title">Hello World</h1>
   <p class="text">This is a paragraph.</p>
@@ -17,28 +15,16 @@ const SAMPLE_CSS = `.container { padding: 20px; background-color: #f5f5f5; }
 .title { color: #333; font-size: 24px; font-weight: bold; }
 .text { color: #666; font-size: 14px; line-height: 1.6; }`;
 
-const readFileAsText = (file: File, encoding: FileEncoding): Promise<string> => {
+const readFileAsText = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result;
-      if (typeof result === "string") {
-        resolve(result);
-        return;
-      }
-      if (result instanceof ArrayBuffer) {
-        const enc = encoding === "utf-16le" ? "utf-16le" : encoding === "utf-16be" ? "utf-16be" : "utf-8";
-        resolve(new TextDecoder(enc).decode(result));
-        return;
-      }
-      reject(new Error("Failed to read file"));
+      if (typeof result === "string") resolve(result);
+      else reject(new Error("Failed to read file"));
     };
     reader.onerror = () => reject(reader.error);
-    if (encoding === "utf-8") {
-      reader.readAsText(file, "UTF-8");
-    } else {
-      reader.readAsArrayBuffer(file);
-    }
+    reader.readAsText(file, "UTF-8");
   });
 };
 
@@ -74,7 +60,6 @@ const CssInlinerPage = () => {
   const tool = useCurrentTool();
   const htmlInputRef = useRef<HTMLInputElement>(null);
   const cssInputRef = useRef<HTMLInputElement>(null);
-  const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
   const [html, setHtml] = useState(SAMPLE_HTML);
   const [css, setCss] = useState(SAMPLE_CSS);
 
@@ -84,7 +69,7 @@ const CssInlinerPage = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
-      setHtml(await readFileAsText(file, fileEncoding));
+      setHtml(await readFileAsText(file));
     } catch {
       setHtml("");
     }
@@ -95,7 +80,7 @@ const CssInlinerPage = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
-      setCss(await readFileAsText(file, fileEncoding));
+      setCss(await readFileAsText(file));
     } catch {
       setCss("");
     }
@@ -117,16 +102,6 @@ const CssInlinerPage = () => {
         <Upload className="h-3.5 w-3.5 mr-1.5" />
         Upload
       </Button>
-      <select
-        value={fileEncoding}
-        onChange={(e) => setFileEncoding(e.target.value as FileEncoding)}
-        className={selectClass}
-        title="File encoding"
-      >
-        <option value="utf-8">UTF-8</option>
-        <option value="utf-16le">UTF-16 LE</option>
-        <option value="utf-16be">UTF-16 BE</option>
-      </select>
     </div>
   );
 
@@ -145,16 +120,6 @@ const CssInlinerPage = () => {
         <Upload className="h-3.5 w-3.5 mr-1.5" />
         Upload
       </Button>
-      <select
-        value={fileEncoding}
-        onChange={(e) => setFileEncoding(e.target.value as FileEncoding)}
-        className={selectClass}
-        title="File encoding"
-      >
-        <option value="utf-8">UTF-8</option>
-        <option value="utf-16le">UTF-16 LE</option>
-        <option value="utf-16be">UTF-16 BE</option>
-      </select>
     </div>
   );
 

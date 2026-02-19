@@ -8,30 +8,16 @@ import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { FileCode, Eraser, Upload } from "lucide-react";
 
-type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
-
-const readFileAsText = (file: File, encoding: FileEncoding): Promise<string> => {
+const readFileAsText = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result;
-      if (typeof result === "string") {
-        resolve(result);
-        return;
-      }
-      if (result instanceof ArrayBuffer) {
-        const enc = encoding === "utf-16le" ? "utf-16le" : encoding === "utf-16be" ? "utf-16be" : "utf-8";
-        resolve(new TextDecoder(enc).decode(result));
-        return;
-      }
-      reject(new Error("Failed to read file"));
+      if (typeof result === "string") resolve(result);
+      else reject(new Error("Failed to read file"));
     };
     reader.onerror = () => reject(reader.error);
-    if (encoding === "utf-8") {
-      reader.readAsText(file, "UTF-8");
-    } else {
-      reader.readAsArrayBuffer(file);
-    }
+    reader.readAsText(file, "UTF-8");
   });
 };
 
@@ -69,7 +55,6 @@ console.log(hello);
 const MarkdownPreviewPage = () => {
   const tool = useCurrentTool();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
   const [markdown, setMarkdown] = useState(SAMPLE_MARKDOWN);
   const [showHtml, setShowHtml] = useState(false);
 
@@ -77,7 +62,7 @@ const MarkdownPreviewPage = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
-      setMarkdown(await readFileAsText(file, fileEncoding));
+      setMarkdown(await readFileAsText(file));
     } catch {
       setMarkdown("");
     }
@@ -110,11 +95,6 @@ const MarkdownPreviewPage = () => {
                   <Upload className="h-3 w-3 mr-1.5" />
                   Upload
                 </Button>
-                <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
-                  <option value="utf-8">UTF-8</option>
-                  <option value="utf-16le">UTF-16 LE</option>
-                  <option value="utf-16be">UTF-16 BE</option>
-                </select>
               </div>
             }
           />
