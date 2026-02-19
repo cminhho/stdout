@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import CodeEditor from "@/components/CodeEditor";
 import FileUploadButton from "@/components/FileUploadButton";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
@@ -39,9 +39,9 @@ export interface DefaultOutputToolbarConfig {
   /**
    * When provided, layout calls format(inputValue, resolvedIndent) and uses result.output for output
    * content/editor and result.errors for validationErrors (when validationErrors prop is omitted).
-   * Enables fully internal indent + format; parent does not need indent state.
+   * Sync or async (Promise<FormatResult>); when async, layout shows loading placeholder.
    */
-  format?: (input: string, indent: IndentOption) => FormatResult;
+  format?: (input: string, indent: IndentOption) => FormatResult | Promise<FormatResult>;
   outputContent?: string;
   outputFilename?: string;
   outputMimeType?: string;
@@ -186,6 +186,7 @@ export interface OutputPaneDerived {
   outputContent: string;
   outputEditorValue: string;
   outputKey: IndentOption;
+  loading?: boolean;
 }
 
 function buildOutputPaneProps(
@@ -217,6 +218,7 @@ function buildOutputPaneProps(
     ) : undefined);
 
   const outputKey = derived?.outputKey ?? config.outputEditor?.outputKey ?? indentControl?.resolvedIndent;
+  const outputPlaceholder = derived?.loading ? "Formatting…" : config.outputEditor?.placeholder;
   const children =
     config.children ??
     (config.outputEditor ? (
@@ -225,7 +227,7 @@ function buildOutputPaneProps(
         value={editorValue ?? ""}
         readOnly
         language={config.outputEditor.language as never}
-        placeholder={config.outputEditor.placeholder}
+        placeholder={outputPlaceholder}
         fillHeight
       />
     ) : undefined);
@@ -280,19 +282,57 @@ const TwoPanelToolLayout = ({
       : undefined;
 
   const inputValue = inputPane.inputEditor?.value ?? "";
-  const formatResult = useMemo(
-    () => (ot?.format ? ot.format(inputValue, resolvedIndent) : null),
-    [inputValue, resolvedIndent, ot?.format]
-  );
+  const syncFormatResult = useMemo(() => {
+    if (!ot?.format) return null;
+    const r = ot.format(inputValue, resolvedIndent);
+    if (r != null && typeof (r as Promise<FormatResult>).then === "function") return null;
+    return r as FormatResult;
+  }, [inputValue, resolvedIndent, ot?.format]);
+
+  const [asyncFormatResult, setAsyncFormatResult] = useState<FormatResult | null>(null);
+  const [formatLoading, setFormatLoading] = useState(false);
+  useEffect(() => {
+    if (!ot?.format) {
+      setAsyncFormatResult(null);
+      setFormatLoading(false);
+      return;
+    }
+    const r = ot.format(inputValue, resolvedIndent);
+    if (r == null) return;
+    if (typeof (r as Promise<FormatResult>).then === "function") {
+      setFormatLoading(true);
+      let cancelled = false;
+      (r as Promise<FormatResult>)
+        .then(
+          (res) => {
+            if (!cancelled) {
+              setAsyncFormatResult(res);
+              setFormatLoading(false);
+            }
+          },
+          () => {
+            if (!cancelled) setFormatLoading(false);
+          }
+        );
+      return () => {
+        cancelled = true;
+      };
+    }
+    setAsyncFormatResult(null);
+    setFormatLoading(false);
+  }, [inputValue, resolvedIndent, ot?.format]);
+
+  const formatResult = syncFormatResult ?? asyncFormatResult;
   const effectiveValidationErrors = validationErrors ?? formatResult?.errors ?? [];
   const showValidationListResolved =
     showValidationErrors && (effectiveValidationErrors?.length ?? 0) > 0;
   const derived: OutputPaneDerived | undefined =
-    formatResult && ot?.format
+    ot?.format
       ? {
-          outputContent: formatResult.output,
-          outputEditorValue: formatResult.output,
+          outputContent: formatResult?.output ?? "",
+          outputEditorValue: formatResult?.output ?? "",
           outputKey: resolvedIndent,
+          loading: formatLoading,
         }
       : undefined;
 

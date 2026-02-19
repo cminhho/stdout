@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import CodeEditor from "@/components/CodeEditor";
+import { useState } from "react";
 import type { IndentOption } from "@/components/IndentSelect";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import type { FormatResult } from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { jsBeautify } from "@/utils/beautifier";
 import { jsMinify } from "@/utils/minify";
@@ -22,55 +22,29 @@ users.forEach((u) => {
 export { greet, users };
 `;
 
+const DEFAULT_INPUT = "function foo(){const a=1;return a+1;}";
+
+function formatJs(input: string, indent: IndentOption): Promise<FormatResult> {
+  if (!input.trim()) return Promise.resolve({ output: "" });
+  if (indent === "minified") {
+    return jsMinify(input)
+      .then((output) => ({ output }))
+      .catch((err) => ({
+        output: `Error: ${err instanceof Error ? err.message : String(err)}`,
+      }));
+  }
+  const indentNum = indent === "tab" ? 2 : (indent as number);
+  const useTabs = indent === "tab";
+  return jsBeautify(input, indentNum, useTabs)
+    .then((output) => ({ output }))
+    .catch((err) => ({
+      output: `Error: ${err instanceof Error ? err.message : String(err)}`,
+    }));
+}
+
 const JsFormatterPage = () => {
   const tool = useCurrentTool();
-  const [input, setInput] = useState("function foo(){const a=1;return a+1;}");
-  const [output, setOutput] = useState("");
-  const [indentOption, setIndentOption] = useState<IndentOption>(2);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (!input.trim()) {
-      setOutput("");
-      return;
-    }
-    if (indentOption === "minified") {
-      setLoading(true);
-      setOutput("");
-      let cancelled = false;
-      jsMinify(input)
-        .then((result) => {
-          if (!cancelled) setOutput(result);
-        })
-        .catch((err) => {
-          if (!cancelled) setOutput(`Error: ${err instanceof Error ? err.message : String(err)}`);
-        })
-        .finally(() => {
-          if (!cancelled) setLoading(false);
-        });
-      return () => {
-        cancelled = true;
-      };
-    }
-    setLoading(true);
-    setOutput("");
-    let cancelled = false;
-    const indentNum = indentOption === "tab" ? 2 : (indentOption as number);
-    const useTabs = indentOption === "tab";
-    jsBeautify(input, indentNum, useTabs)
-      .then((formatted) => {
-        if (!cancelled) setOutput(formatted);
-      })
-      .catch((err) => {
-        if (!cancelled) setOutput(`Error: ${err instanceof Error ? err.message : String(err)}`);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [input, indentOption]);
+  const [input, setInput] = useState(DEFAULT_INPUT);
 
   return (
     <TwoPanelToolLayout
@@ -78,33 +52,28 @@ const JsFormatterPage = () => {
       inputPane={{
         inputToolbar: {
           onSample: () => setInput(SAMPLE_JS),
-          setInput: setInput,
+          setInput,
           fileAccept: ".js,.mjs,.cjs,text/javascript",
           onFileText: setInput,
         },
-        children: (
-          <CodeEditor value={input} onChange={setInput} language="javascript" placeholder="Paste JavaScript..." fillHeight />
-        ),
+        inputEditor: {
+          value: input,
+          onChange: setInput,
+          language: "javascript",
+          placeholder: "Paste JavaScript...",
+        },
       }}
       outputPane={{
-        copyText: output,
         outputToolbar: {
-          indent: indentOption,
-          onIndentChange: setIndentOption,
-          outputContent: output,
+          format: formatJs,
           outputFilename: "output.js",
           outputMimeType: "text/javascript",
         },
-        children: (
-          <CodeEditor
-            key={`result-${indentOption}`}
-            value={output}
-            readOnly
-            language="javascript"
-            placeholder={loading ? "Processing…" : "Result..."}
-            fillHeight
-          />
-        ),
+        outputEditor: {
+          value: "",
+          language: "javascript",
+          placeholder: "Result...",
+        },
       }}
     />
   );

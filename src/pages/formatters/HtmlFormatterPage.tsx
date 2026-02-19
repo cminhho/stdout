@@ -1,9 +1,8 @@
-import { useState, useEffect, useMemo } from "react";
-import CodeEditor from "@/components/CodeEditor";
+import { useState } from "react";
 import type { IndentOption } from "@/components/IndentSelect";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import type { FormatResult } from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import { useErrorLineSet } from "@/hooks/useErrorLineSet";
 import { htmlBeautify } from "@/utils/beautifier";
 import { singleErrorToParseErrors } from "@/utils/validationTypes";
 import { validateHtml } from "@/utils/validators";
@@ -27,96 +26,60 @@ const SAMPLE_HTML = `<!DOCTYPE html>
 </body>
 </html>`;
 
+const DEFAULT_INPUT =
+  '<div class="container"><h1>Hello</h1><p>World</p><ul><li>Item 1</li><li>Item 2</li></ul></div>';
+
 const minifyHtml = (html: string): string =>
   html.replace(/>\s+</g, "><").replace(/\s+/g, " ").trim();
 
+function formatHtmlWithValidation(input: string, indent: IndentOption): FormatResult | Promise<FormatResult> {
+  const validation = validateHtml(input);
+  const errors =
+    validation.valid || !validation.error ? [] : singleErrorToParseErrors(validation.error);
+  if (!input.trim()) return { output: "", errors };
+  if (indent === "minified") return { output: minifyHtml(input), errors };
+  const indentNum = indent === "tab" ? 2 : (indent as number);
+  const useTabs = indent === "tab";
+  return htmlBeautify(input, indentNum, useTabs)
+    .then((output) => ({ output, errors }))
+    .catch((err) => ({
+      output: `Error: ${err instanceof Error ? err.message : String(err)}`,
+      errors,
+    }));
+}
+
 const HtmlFormatterPage = () => {
   const tool = useCurrentTool();
-  const [input, setInput] = useState(
-    '<div class="container"><h1>Hello</h1><p>World</p><ul><li>Item 1</li><li>Item 2</li></ul></div>'
-  );
-  const [output, setOutput] = useState("");
-  const [indentOption, setIndentOption] = useState<IndentOption>(2);
-  const [loading, setLoading] = useState(false);
-
-  const validation = useMemo(() => validateHtml(input), [input]);
-  const validationErrors = useMemo(
-    () => (validation.valid || !validation.error ? [] : singleErrorToParseErrors(validation.error)),
-    [validation]
-  );
-  const errorLineSet = useErrorLineSet(validationErrors);
-
-  useEffect(() => {
-    if (!input.trim()) {
-      setOutput("");
-      return;
-    }
-    if (indentOption === "minified") {
-      setOutput(minifyHtml(input));
-      return;
-    }
-    setLoading(true);
-    setOutput("");
-    let cancelled = false;
-    const indentNum = indentOption === "tab" ? 2 : (indentOption as number);
-    const useTabs = indentOption === "tab";
-    htmlBeautify(input, indentNum, useTabs)
-      .then((formatted) => {
-        if (!cancelled) setOutput(formatted);
-      })
-      .catch((err) => {
-        if (!cancelled) setOutput(`Error: ${err instanceof Error ? err.message : String(err)}`);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [input, indentOption]);
+  const [input, setInput] = useState(DEFAULT_INPUT);
 
   return (
     <TwoPanelToolLayout
       tool={tool}
-      validationErrors={validationErrors}
       inputPane={{
         inputToolbar: {
           onSample: () => setInput(SAMPLE_HTML),
-          setInput: setInput,
+          setInput,
           fileAccept: ".html,.htm,text/html",
           onFileText: setInput,
         },
-        onClear: clearInput,
-        children: (
-          <CodeEditor
-            value={input}
-            onChange={setInput}
-            language="html"
-            placeholder="<div>...</div>"
-            errorLines={errorLineSet}
-            fillHeight
-          />
-        ),
+        inputEditor: {
+          value: input,
+          onChange: setInput,
+          language: "html",
+          placeholder: "<div>...</div>",
+        },
       }}
       outputPane={{
-        copyText: output,
         outputToolbar: {
-          indent: indentOption,
-          onIndentChange: setIndentOption,
-          outputContent: output,
+          format: formatHtmlWithValidation,
           outputFilename: "output.html",
           outputMimeType: "text/html",
         },
-        children: (
-          <CodeEditor
-            key={`result-${indentOption}`}
-            value={output}
-            readOnly
-            language="html"
-            placeholder={loading ? "Formatting…" : "Result will appear here..."}
-            fillHeight
-          />
-        ),
+        outputEditor: {
+          value: "",
+          language: "html",
+          placeholder: "Result will appear here...",
+        },
       }}
     />
   );
