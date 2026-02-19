@@ -85,12 +85,6 @@ const MockGeneratorPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "Mock Payload"} description={tool?.description ?? "Generate mock JSON data from a schema"}>
-      <div className="flex flex-col flex-1 min-h-0">
-      <div className="flex gap-2 items-center mb-3 flex-wrap shrink-0">
-        <label className="text-xs text-muted-foreground">Count:</label>
-        <input type="number" min={1} max={100} value={count} onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value))))} className="input-compact w-16" />
-        <Button size="xs" onClick={generate}>Generate</Button>
-      </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
         <div className="tool-panel flex flex-col min-h-0">
           <PanelHeader
@@ -116,13 +110,29 @@ const MockGeneratorPage = () => {
           </div>
         </div>
         <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="Output" text={output} />
+          <PanelHeader
+            label="Output"
+            text={output}
+            extra={
+              <div className="flex items-center gap-2">
+                <label className="text-xs text-muted-foreground shrink-0">Count</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={100}
+                  value={count}
+                  onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value))))}
+                  className="h-7 w-14 rounded border border-input bg-background px-2 font-mono text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                />
+                <Button size="sm" className="h-7 text-xs" onClick={generate}>Generate</Button>
+              </div>
+            }
+          />
           {error && <div className="code-block text-destructive text-xs shrink-0">⚠ {error}</div>}
           <div className="flex-1 min-h-0 flex flex-col">
             <CodeEditor value={output || ""} readOnly language="json" placeholder="Generated data will appear here..." fillHeight />
           </div>
         </div>
-      </div>
       </div>
     </ToolLayout>
   );

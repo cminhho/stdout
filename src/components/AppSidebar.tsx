@@ -171,7 +171,7 @@ const AppSidebar = () => {
   }
 
   return (
-    <aside className="w-60 shrink-0 h-screen sticky top-0 flex flex-col border-r bg-sidebar border-sidebar-border">
+    <aside className="w-72 shrink-0 h-screen sticky top-0 flex flex-col border-r bg-sidebar border-sidebar-border">
       <div className="flex items-center justify-between px-4 py-4 border-b border-sidebar-border">
         <NavLink to="/" className="flex items-center gap-2 text-inherit no-underline hover:opacity-90 transition-opacity">
           <Terminal className="h-5 w-5 text-primary" />

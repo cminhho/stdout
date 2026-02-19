@@ -6,31 +6,18 @@ import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Upload, FileCode, Eraser } from "lucide-react";
 
-type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
-type TextMode = "formatted" | "minified";
+type IndentStyle = 2 | 4 | 8 | "tab" | "compact";
 
-const readFileAsText = (file: File, encoding: FileEncoding): Promise<string> => {
+const readFileAsText = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result;
-      if (typeof result === "string") {
-        resolve(result);
-        return;
-      }
-      if (result instanceof ArrayBuffer) {
-        const enc = encoding === "utf-16le" ? "utf-16le" : encoding === "utf-16be" ? "utf-16be" : "utf-8";
-        resolve(new TextDecoder(enc).decode(result));
-        return;
-      }
-      reject(new Error("Failed to read file"));
+      if (typeof result === "string") resolve(result);
+      else reject(new Error("Failed to read file"));
     };
     reader.onerror = () => reject(reader.error);
-    if (encoding === "utf-8") {
-      reader.readAsText(file, "UTF-8");
-    } else {
-      reader.readAsArrayBuffer(file);
-    }
+    reader.readAsText(file, "UTF-8");
   });
 };
 
@@ -46,13 +33,17 @@ const SQL_KEYWORDS = [
 
 const PG_KEYWORDS = ["ILIKE", "RETURNING", "SERIAL", "BIGSERIAL", "BOOLEAN", "TEXT", "JSONB", "UUID", "ARRAY", "LATERAL", "MATERIALIZED", "CONCURRENTLY"];
 const MYSQL_KEYWORDS = ["AUTO_INCREMENT", "ENGINE", "CHARSET", "COLLATE", "UNSIGNED", "ENUM", "TINYINT", "MEDIUMINT", "LONGTEXT", "MEDIUMTEXT", "IF", "IGNORE", "REPLACE"];
+const MARIADB_KEYWORDS = [...MYSQL_KEYWORDS, "SEQUENCE", "PERSISTENT", "STATIC", "VIRTUAL"];
+const PLSQL_KEYWORDS = ["DECLARE", "BEGIN", "END", "LOOP", "FOR", "WHILE", "IF", "ELSIF", "ELSE", "EXCEPTION", "EXIT", "CONTINUE", "RETURN", "PROCEDURE", "FUNCTION", "PACKAGE", "BODY", "TYPE", "RECORD", "TABLE", "CURSOR", "OPEN", "FETCH", "CLOSE", "RAISE", "PRAGMA", "EXECUTE", "IMMEDIATE", "COMMIT", "ROLLBACK", "SAVEPOINT", "BOOLEAN", "BINARY_INTEGER", "PLS_INTEGER", "NUMBER", "VARCHAR2", "DATE", "TIMESTAMP", "%TYPE", "%ROWTYPE", "OUT", "IN", "INOUT", "NOCOPY"];
 
-type Dialect = "standard" | "postgresql" | "mysql";
+type Dialect = "standard" | "mysql" | "mariadb" | "postgresql" | "plsql";
 
 const DIALECT_EXTRAS: Record<Dialect, string[]> = {
   standard: [],
-  postgresql: PG_KEYWORDS,
   mysql: MYSQL_KEYWORDS,
+  mariadb: MARIADB_KEYWORDS,
+  postgresql: PG_KEYWORDS,
+  plsql: PLSQL_KEYWORDS,
 };
 
 const BREAK_BEFORE = new Set([
@@ -71,8 +62,8 @@ const applyCase = (s: string, mode: KeywordCase | IdentifierCase): string => {
   return s;
 };
 
-const formatSql = (sql: string, indent: number, dialect: Dialect, keywordCase: KeywordCase, identifierCase: IdentifierCase): string => {
-  const tab = " ".repeat(indent);
+const formatSql = (sql: string, indent: 2 | 4 | 8 | "tab", dialect: Dialect, keywordCase: KeywordCase, identifierCase: IdentifierCase): string => {
+  const tab = indent === "tab" ? "\t" : " ".repeat(indent);
   const allKeywords = [...SQL_KEYWORDS, ...DIALECT_EXTRAS[dialect]];
   const keywordSet = new Set(allKeywords.map((k) => k.toUpperCase()));
   const tokens = sql.replace(/\s+/g, " ").replace(/,/g, ",\n" + tab + tab).split(" ").filter(Boolean);
@@ -114,26 +105,24 @@ const SqlFormatterPage = () => {
   const [input, setInput] = useState(
     "SELECT u.id, u.name, u.email, COUNT(o.id) as order_count FROM users u LEFT JOIN orders o ON u.id = o.user_id WHERE u.active = true AND u.created_at > '2024-01-01' GROUP BY u.id, u.name, u.email ORDER BY order_count DESC LIMIT 50"
   );
-  const [indent, setIndent] = useState(2);
-  const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
+  const [indent, setIndent] = useState<IndentStyle>(2);
   const [keywordCase, setKeywordCase] = useState<KeywordCase>("upper");
   const [identifierCase, setIdentifierCase] = useState<IdentifierCase>("as-is");
   const [dialect, setDialect] = useState<Dialect>("standard");
-  const [textMode, setTextMode] = useState<TextMode>("formatted");
 
   const output = useMemo(
     () =>
-      textMode === "formatted"
-        ? formatSql(input, indent, dialect, keywordCase, identifierCase)
-        : minifySql(input),
-    [input, indent, dialect, keywordCase, identifierCase, textMode]
+      indent === "compact"
+        ? minifySql(input)
+        : formatSql(input, indent, dialect, keywordCase, identifierCase),
+    [input, indent, dialect, keywordCase, identifierCase]
   );
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
-      const text = await readFileAsText(file, fileEncoding);
+      const text = await readFileAsText(file);
       setInput(text);
     } catch {
       setInput("");
@@ -168,25 +157,29 @@ const SqlFormatterPage = () => {
         <Upload className="h-3.5 w-3.5 mr-1.5" />
         Upload
       </Button>
-      <select
-        value={fileEncoding}
-        onChange={(e) => setFileEncoding(e.target.value as FileEncoding)}
-        className={selectClass}
-        title="File encoding"
-      >
-        <option value="utf-8">UTF-8</option>
-        <option value="utf-16le">UTF-16 LE</option>
-        <option value="utf-16be">UTF-16 BE</option>
+      <select value={dialect} onChange={(e) => setDialect(e.target.value as Dialect)} className={selectClass} title="Dialect">
+        <option value="standard">Generate SQL</option>
+        <option value="mysql">MySQL</option>
+        <option value="mariadb">MariaDB</option>
+        <option value="postgresql">PostgreSQL</option>
+        <option value="plsql">PL/SQL</option>
       </select>
     </div>
   );
 
   const outputExtra = (
     <div className="flex items-center gap-2 flex-wrap">
-      <select value={indent} onChange={(e) => setIndent(Number(e.target.value))} className={selectClass} title="Indentation">
+      <select
+        value={indent}
+        onChange={(e) => setIndent(e.target.value as IndentStyle)}
+        className={selectClass}
+        title="Indentation"
+      >
         <option value={2}>2 spaces</option>
         <option value={4}>4 spaces</option>
         <option value={8}>8 spaces</option>
+        <option value="tab">Tab</option>
+        <option value="compact">Minified</option>
       </select>
       <select value={keywordCase} onChange={(e) => setKeywordCase(e.target.value as KeywordCase)} className={selectClass} title="Keyword case">
         <option value="upper">Keywords: Upper</option>
@@ -196,15 +189,6 @@ const SqlFormatterPage = () => {
         <option value="as-is">Identifiers: As-is</option>
         <option value="upper">Identifiers: Upper</option>
         <option value="lower">Identifiers: Lower</option>
-      </select>
-      <select value={dialect} onChange={(e) => setDialect(e.target.value as Dialect)} className={selectClass} title="Dialect">
-        <option value="standard">Standard SQL</option>
-        <option value="postgresql">PostgreSQL</option>
-        <option value="mysql">MySQL</option>
-      </select>
-      <select value={textMode} onChange={(e) => setTextMode(e.target.value as TextMode)} className={selectClass} title="Mode">
-        <option value="formatted">Formatted</option>
-        <option value="minified">Minified</option>
       </select>
     </div>
   );

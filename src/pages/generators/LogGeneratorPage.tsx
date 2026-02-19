@@ -103,43 +103,41 @@ const LogGeneratorPage = () => {
   return (
     <ToolLayout title={tool?.label ?? "Log Generator"} description={tool?.description ?? "Generate synthetic log data for testing"}>
       <div className="flex flex-col flex-1 min-h-0 w-full gap-4">
-        <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0">
-          <select value={format} onChange={(e) => setFormat(e.target.value)} className="tool-select">
-            {LOG_FORMATS.map((f) => (
-              <option key={f.id} value={f.id}>{f.name}</option>
-            ))}
-          </select>
-          <div className="flex items-center gap-1.5">
-            <label className="text-xs text-muted-foreground">Lines:</label>
-            <input
-              type="number"
-              min={1}
-              max={10000}
-              value={count}
-              onChange={(e) => setCount(Math.max(1, Math.min(10000, Number(e.target.value))))}
-              className="w-20 rounded-md border px-2 py-1.5 text-xs font-mono bg-background border-border text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-            />
-          </div>
-          <Button size="sm" onClick={generate}>Generate</Button>
-          {output && (
-            <>
-              <Button size="sm" variant="outline" onClick={download}>
-                <Download className="h-3 w-3 mr-1" />Save .log
-              </Button>
-            </>
-          )}
-        </div>
         <div className="tool-panel flex flex-col flex-1 min-h-0">
           <PanelHeader
             label={`Output (${output ? output.split("\n").length : 0} lines)`}
             text={output}
             extra={
-              output ? (
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setOutput("")}>
-                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
-                  Clear
-                </Button>
-              ) : undefined
+              <div className="flex items-center gap-2 flex-wrap">
+                <select value={format} onChange={(e) => setFormat(e.target.value)} className="h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0">
+                  {LOG_FORMATS.map((f) => (
+                    <option key={f.id} value={f.id}>{f.name}</option>
+                  ))}
+                </select>
+                <div className="flex items-center gap-1.5">
+                  <label className="text-xs text-muted-foreground shrink-0">Lines</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={10000}
+                    value={count}
+                    onChange={(e) => setCount(Math.max(1, Math.min(10000, Number(e.target.value))))}
+                    className="h-7 w-16 rounded border border-input bg-background px-2 font-mono text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                  />
+                </div>
+                <Button size="sm" className="h-7 text-xs" onClick={generate}>Generate</Button>
+                {output && (
+                  <Button size="sm" variant="outline" className="h-7 text-xs" onClick={download}>
+                    <Download className="h-3 w-3 mr-1" />Save .log
+                  </Button>
+                )}
+                {output && (
+                  <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setOutput("")}>
+                    <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                    Clear
+                  </Button>
+                )}
+              </div>
             }
           />
           <div className="flex-1 min-h-0 flex flex-col overflow-hidden">

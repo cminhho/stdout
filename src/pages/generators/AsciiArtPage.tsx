@@ -3,7 +3,6 @@ import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { FileCode, Eraser } from "lucide-react";
 
@@ -93,55 +92,62 @@ const AsciiArtPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "ASCII Art"} description={tool?.description ?? "Turn text into ASCII art"}>
-      <div className="flex flex-col flex-1 min-h-0 w-full gap-4">
-        <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0">
-          <div className="flex items-center gap-2 min-w-0 flex-1 max-w-sm">
-            <Label className="text-xs text-muted-foreground shrink-0">Text</Label>
-            <input
-              className="input-compact flex-1 min-w-0 font-mono"
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader
+            label="Text"
+            extra={
+              <div className="flex items-center gap-2">
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput(SAMPLE_TEXT)}>
+                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
+                  Sample
+                </Button>
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput("")}>
+                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                  Clear
+                </Button>
+              </div>
+            }
+          />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={setInput}
+              language="text"
               placeholder="Enter text..."
-              maxLength={30}
+              fillHeight
+              showLineNumbers={false}
             />
-            <Button type="button" size="sm" variant="outline" className="h-7 text-xs shrink-0" onClick={() => setInput(SAMPLE_TEXT)}>
-              <FileCode className="h-3.5 w-3.5 mr-1.5" />
-              Sample
-            </Button>
-            <Button type="button" size="sm" variant="outline" className="h-7 text-xs shrink-0" onClick={() => setInput("")}>
-              <Eraser className="h-3.5 w-3.5 mr-1.5" />
-              Clear
-            </Button>
-          </div>
-          <div className="flex items-center gap-2">
-            <Label className="text-xs text-muted-foreground shrink-0">Character</Label>
-            <select value={charStyle} onChange={(e) => setCharStyle(e.target.value)} className="tool-select">
-              <option value="block">█ Block</option>
-              <option value="hash"># Hash</option>
-              <option value="asterisk">* Asterisk</option>
-              <option value="at">@ At</option>
-              <option value="dollar">$ Dollar</option>
-              <option value="plus">+ Plus</option>
-            </select>
-          </div>
-          <div className="flex items-center gap-2">
-            <Label className="text-xs text-muted-foreground shrink-0">Spacing</Label>
-            <select value={spacing} onChange={(e) => setSpacing(Number(e.target.value))} className="tool-select">
-              <option value={1}>Tight (1)</option>
-              <option value={2}>Normal (2)</option>
-              <option value={4}>Wide (4)</option>
-            </select>
           </div>
         </div>
-
-        <div className="tool-panel flex flex-col flex-1 min-h-0">
-          <PanelHeader label="Output" text={output} />
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader
+            label="Output"
+            text={output}
+            extra={
+              <div className="flex items-center gap-2 flex-wrap">
+                <select value={charStyle} onChange={(e) => setCharStyle(e.target.value)} className="h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0">
+                  <option value="block">█ Block</option>
+                  <option value="hash"># Hash</option>
+                  <option value="asterisk">* Asterisk</option>
+                  <option value="at">@ At</option>
+                  <option value="dollar">$ Dollar</option>
+                  <option value="plus">+ Plus</option>
+                </select>
+                <select value={spacing} onChange={(e) => setSpacing(Number(e.target.value))} className="h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0">
+                  <option value={1}>Tight</option>
+                  <option value={2}>Normal</option>
+                  <option value={4}>Wide</option>
+                </select>
+              </div>
+            }
+          />
           <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
             <CodeEditor
               value={output}
               readOnly
               language="text"
-              placeholder="Type something above..."
+              placeholder="Type in the left panel..."
               fillHeight
               showLineNumbers={false}
             />
