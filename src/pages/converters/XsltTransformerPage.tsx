@@ -18,8 +18,6 @@ import {
   XSLT_PLACEHOLDER_OUTPUT,
 } from "@/utils/xsltTransformer";
 
-const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
-
 const XsltTransformerPage = () => {
   const tool = useCurrentTool();
   const [xml, setXml] = useState("");
@@ -80,7 +78,7 @@ const XsltTransformerPage = () => {
       <div className="mt-4 flex flex-col min-h-0 flex-1">
         {error && <div className="text-sm text-destructive mb-2 shrink-0">Error: {error}</div>}
         <div className="tool-panel flex flex-col min-h-0 flex-1">
-          <PanelHeader label="Transformed Output" text={output} extra={<IndentSelect value={indent} onChange={setIndent} className={selectClass} />} />
+          <PanelHeader label="Transformed Output" text={output} extra={<IndentSelect value={indent} onChange={setIndent} />} />
           <div className="flex-1 min-h-0 flex flex-col">
             <CodeEditor value={output} readOnly language="xml" placeholder={XSLT_PLACEHOLDER_OUTPUT} fillHeight />
           </div>

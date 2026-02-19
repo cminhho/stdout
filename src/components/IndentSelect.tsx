@@ -1,4 +1,10 @@
-import { useCallback } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 /** Canonical indent option: spaces (2, 3, 4, 8), tab, or minified. */
 export type IndentOption = 2 | 3 | 4 | 8 | "tab" | "minified";
@@ -21,15 +27,16 @@ export interface IndentSelectProps {
   includeTab?: boolean;
   /** Show Minified option (default: true). */
   includeMinified?: boolean;
-  className?: string;
   title?: string;
 }
 
-const defaultClassName = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
+/** Compact trigger: same height/size as toolbar buttons (Sample, Clear, Save) for inline layout. */
+const compactTriggerClass =
+  "h-7 w-auto min-w-[5.5rem] text-xs rounded-md border border-outlineButton-border bg-outlineButton-bg text-outlineButton-foreground px-2.5 py-1 [&>svg]:h-3.5 [&>svg]:w-3.5 hover:bg-accent hover:text-accent-foreground";
 
 /**
- * Generic indentation select: 2/4/8 spaces, Tab, Minified.
- * Reusable across formatter and converter pages for consistent UX.
+ * Indentation select: 2/4/8 spaces, Tab, Minified.
+ * Compact trigger for toolbar use alongside Sample, Clear, Save.
  */
 const IndentSelect = ({
   value,
@@ -37,28 +44,36 @@ const IndentSelect = ({
   spaceOptions = DEFAULT_SPACE_OPTIONS,
   includeTab = true,
   includeMinified = true,
-  className = defaultClassName,
   title = "Indentation",
 }: IndentSelectProps) => {
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      onChange(parseIndentValue(e.target.value, spaceOptions));
-    },
-    [onChange, spaceOptions]
-  );
-
   const valueStr = typeof value === "number" ? String(value) : value;
 
   return (
-    <select value={valueStr} onChange={handleChange} className={className} title={title}>
-      {spaceOptions.map((n) => (
-        <option key={n} value={n}>
-          {n} spaces
-        </option>
-      ))}
-      {includeTab ? <option value="tab">Tab</option> : null}
-      {includeMinified ? <option value="minified">Minified</option> : null}
-    </select>
+    <Select
+      value={valueStr}
+      onValueChange={(v) => onChange(parseIndentValue(v, spaceOptions))}
+    >
+      <SelectTrigger
+        className={compactTriggerClass}
+        title={title}
+        aria-label={title}
+      >
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        {spaceOptions.map((n) => (
+          <SelectItem key={n} value={String(n)}>
+            {n} spaces
+          </SelectItem>
+        ))}
+        {includeTab ? (
+          <SelectItem value="tab">Tab</SelectItem>
+        ) : null}
+        {includeMinified ? (
+          <SelectItem value="minified">Minified</SelectItem>
+        ) : null}
+      </SelectContent>
+    </Select>
   );
 };
 

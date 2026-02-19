@@ -87,6 +87,7 @@
   "build": {
     "appId": "com.stdout.tools",
     "productName": "stdout",
+    "icon": "public/favicon.svg",
     "directories": {
       "output": "release"
     },

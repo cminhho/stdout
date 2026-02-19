@@ -9,8 +9,6 @@ import FileUploadButton from "@/components/FileUploadButton";
 import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 
-const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
-
 const SAMPLE_JSON = `{
   "store": {
     "books": [
@@ -183,7 +181,7 @@ const JsonPathPage = () => {
           </div>
         </div>
         <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="Result" text={result} extra={<IndentSelect value={indent} onChange={setIndent} className={selectClass} />} />
+          <PanelHeader label="Result" text={result} extra={<IndentSelect value={indent} onChange={setIndent} />} />
           {error ? (
             <div className="flex-1 min-h-0 overflow-auto rounded border border-border bg-muted/30 p-3 text-destructive text-sm font-mono">{error}</div>
           ) : (

@@ -8,8 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ClearButton, SaveButton } from "@/components/ToolActionButtons";
 
-const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
-
 const LOG_FORMATS = [
   {
     name: "Apache Common",
@@ -121,13 +119,13 @@ const LogGeneratorPage = () => {
             text={output}
             extra={
               <div className="flex items-center gap-2 flex-wrap">
-                <select value={format} onChange={(e) => setFormat(e.target.value)} className={selectClass}>
+                <select value={format} onChange={(e) => setFormat(e.target.value)}>
                   {LOG_FORMATS.map((f) => (
                     <option key={f.id} value={f.id}>{f.name}</option>
                   ))}
                 </select>
                 {format === "json" && (
-                  <IndentSelect value={indent} onChange={setIndent} className={selectClass} />
+                  <IndentSelect value={indent} onChange={setIndent} />
                 )}
                 <div className="flex items-center gap-1.5">
                   <label className="text-xs text-muted-foreground shrink-0">Lines</label>

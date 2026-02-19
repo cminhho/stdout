@@ -19,8 +19,6 @@ import {
   SQL_OUTPUT_PLACEHOLDER,
 } from "@/utils/sqlFormat";
 
-const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
-
 const SqlFormatterPage = () => {
   const tool = useCurrentTool();
   const [input, setInput] = useState("");
@@ -46,7 +44,7 @@ const SqlFormatterPage = () => {
             <SampleButton onClick={loadSample} />
             <ClearButton onClick={clearInput} />
             <FileUploadButton accept={SQL_FILE_ACCEPT} onText={setInput} />
-            <select value={dialect} onChange={(e) => setDialect(e.target.value as SqlDialect)} className={selectClass} title="Dialect">
+            <select value={dialect} onChange={(e) => setDialect(e.target.value as SqlDialect)} title="Dialect">
               <option value="standard">Standard</option>
               <option value="mysql">MySQL</option>
               <option value="mariadb">MariaDB</option>
@@ -70,16 +68,16 @@ const SqlFormatterPage = () => {
         copyText: output,
         toolbar: (
           <>
-            <select value={keywordCase} onChange={(e) => setKeywordCase(e.target.value as SqlKeywordCase)} className={selectClass} title="Keyword case">
+            <select value={keywordCase} onChange={(e) => setKeywordCase(e.target.value as SqlKeywordCase)} title="Keyword case">
               <option value="upper">Keywords: Upper</option>
               <option value="lower">Keywords: Lower</option>
             </select>
-            <select value={identifierCase} onChange={(e) => setIdentifierCase(e.target.value as SqlIdentifierCase)} className={selectClass} title="Identifier case">
+            <select value={identifierCase} onChange={(e) => setIdentifierCase(e.target.value as SqlIdentifierCase)} title="Identifier case">
               <option value="as-is">Identifiers: As-is</option>
               <option value="upper">Identifiers: Upper</option>
               <option value="lower">Identifiers: Lower</option>
             </select>
-            <IndentSelect value={indent} onChange={setIndent} className={selectClass} />
+            <IndentSelect value={indent} onChange={setIndent} />
             {output ? (
               <SaveButton content={output} filename={SQL_OUTPUT_FILENAME} mimeType={SQL_MIME_TYPE} />
             ) : null}

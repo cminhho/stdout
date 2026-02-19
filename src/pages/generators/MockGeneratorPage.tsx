@@ -9,7 +9,6 @@ import FileUploadButton from "@/components/FileUploadButton";
 import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 
-const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
 
 function randomString(len = 8): string {
   return Array.from(crypto.getRandomValues(new Uint8Array(len)), (b) => b.toString(36)).join("").slice(0, len);
@@ -129,7 +128,7 @@ const MockGeneratorPage = () => {
             text={output}
             extra={
               <div className="flex items-center gap-2 flex-wrap">
-                <IndentSelect value={indent} onChange={setIndent} className={selectClass} />
+                <IndentSelect value={indent} onChange={setIndent} />
                 <label className="text-xs text-muted-foreground shrink-0">Count</label>
                 <Input
                   type="number"
