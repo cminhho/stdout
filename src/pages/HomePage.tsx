@@ -141,11 +141,11 @@ const HomePage = () => {
 
   return (
     <div className="flex flex-1 flex-col min-h-0 overflow-auto">
-      <div className="flex flex-1 flex-col min-h-0 w-full px-3 py-2 md:px-4 md:py-3">
-        <div className="flex flex-col gap-5">
+      <div className="flex flex-1 flex-col min-h-0 w-full px-5 py-4 md:px-6 md:py-5">
+        <div className="flex flex-col gap-6">
           {/* About */}
-          <section className="space-y-2">
-            <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider">
+          <section className="space-y-3">
+            <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">
               About this toolkit
             </h2>
             <p className="text-sm text-muted-foreground leading-snug">
@@ -171,15 +171,15 @@ const HomePage = () => {
 
           {/* All tools grid */}
           <section>
-            <div className="sticky top-0 z-10 -mx-3 mb-2 bg-background/95 px-3 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:-mx-4 md:px-4">
-              <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider">
+            <div className="sticky top-0 z-10 -mx-5 mb-3 bg-background/95 px-5 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:-mx-6 md:px-6">
+              <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">
                 All tools
               </h2>
             </div>
             {visibleTools.length === 0 ? (
               <p className="text-sm text-muted-foreground">No tools available.</p>
             ) : (
-              <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {visibleTools.map((t) => (
                   <li key={t.id}>
                     <ToolCard tool={t} />

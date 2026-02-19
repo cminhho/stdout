@@ -60,9 +60,9 @@ const Router = window.location.protocol === "file:" ? HashRouter : BrowserRouter
 
 const App = () => (
   <TooltipProvider>
-    <Toaster />
     <Router>
       <SettingsProvider>
+        <Toaster />
         <div className="flex min-h-screen">
           <AppSidebar />
           <ToolRoutes />

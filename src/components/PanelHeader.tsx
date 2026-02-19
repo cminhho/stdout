@@ -14,16 +14,16 @@ interface PanelHeaderProps {
  * Use in every tool-panel for consistent alignment across all tools.
  */
 const PanelHeader = ({ label, text, onClear, extra }: PanelHeaderProps) => (
-  <div className="flex items-center justify-between min-h-[28px]">
-    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider select-none">
+  <div className="flex items-center justify-between min-h-[32px]">
+    <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider select-none">
       {label}
     </span>
     <div className="flex items-center gap-2 flex-wrap">
       {extra}
       {text !== undefined ? <CopyButton text={text} /> : null}
       {onClear ? (
-        <Button variant="ghost" size="sm" onClick={onClear} className="h-7 w-7 p-0">
-          <Trash2 className="h-3.5 w-3.5" />
+        <Button variant="ghost" size="sm" onClick={onClear} className="h-8 w-8 p-0">
+          <Trash2 className="h-4 w-4" />
         </Button>
       ) : null}
     </div>
