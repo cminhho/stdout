@@ -117,7 +117,7 @@ const ToolCard = ({ tool }: { tool: ToolDefinition }) => {
   return (
     <Link
       to={tool.path}
-      className="group relative flex min-h-[140px] flex-col rounded-md bg-card p-5 text-left transition-colors hover:bg-muted/40 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
+      className="group relative flex h-[160px] flex-col rounded-md bg-card p-5 text-left transition-colors hover:bg-muted/40 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
     >
       <ExternalLink
         className="absolute right-3 top-3 h-3.5 w-3.5 text-muted-foreground opacity-70"
