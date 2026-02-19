@@ -1,24 +1,11 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useMemo } from "react";
+import CodeEditor from "@/components/CodeEditor";
+import FileUploadButton from "@/components/FileUploadButton";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
+import ResizableTwoPanel from "@/components/ResizableTwoPanel";
+import { ClearButton, SampleButton, SaveButton } from "@/components/ToolActionButtons";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import PanelHeader from "@/components/PanelHeader";
-import CodeEditor from "@/components/CodeEditor";
-import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
-import { Button } from "@/components/ui/button";
-import { Upload, FileCode, Eraser } from "lucide-react";
-
-const readFileAsText = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result;
-      if (typeof result === "string") resolve(result);
-      else reject(new Error("Failed to read file"));
-    };
-    reader.onerror = () => reject(reader.error);
-    reader.readAsText(file, "UTF-8");
-  });
-};
 
 const SQL_KEYWORDS = [
   "SELECT", "FROM", "WHERE", "AND", "OR", "NOT", "INSERT", "INTO", "VALUES",
@@ -100,7 +87,6 @@ LIMIT 50`;
 
 const SqlFormatterPage = () => {
   const tool = useCurrentTool();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [input, setInput] = useState(
     "SELECT u.id, u.name, u.email, COUNT(o.id) as order_count FROM users u LEFT JOIN orders o ON u.id = o.user_id WHERE u.active = true AND u.created_at > '2024-01-01' GROUP BY u.id, u.name, u.email ORDER BY order_count DESC LIMIT 50"
   );
@@ -117,86 +103,56 @@ const SqlFormatterPage = () => {
     [input, indent, dialect, keywordCase, identifierCase]
   );
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      const text = await readFileAsText(file);
-      setInput(text);
-    } catch {
-      setInput("");
-    }
-    e.target.value = "";
-  };
-
-  const inputExtra = (
-    <div className="flex items-center gap-2 flex-wrap">
-      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput(SAMPLE_SQL)}>
-        <FileCode className="h-3.5 w-3.5 mr-1.5" />
-        Sample
-      </Button>
-      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput("")}>
-        <Eraser className="h-3.5 w-3.5 mr-1.5" />
-        Clear
-      </Button>
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".sql,text/x-sql,application/sql"
-        className="hidden"
-        onChange={handleFileUpload}
-      />
-      <Button
-        type="button"
-        size="sm"
-        variant="outline"
-        className="h-7 text-xs"
-        onClick={() => fileInputRef.current?.click()}
-      >
-        <Upload className="h-3.5 w-3.5 mr-1.5" />
-        Upload
-      </Button>
-      <select value={dialect} onChange={(e) => setDialect(e.target.value as Dialect)} className={selectClass} title="Dialect">
-        <option value="standard">Generate SQL</option>
-        <option value="mysql">MySQL</option>
-        <option value="mariadb">MariaDB</option>
-        <option value="postgresql">PostgreSQL</option>
-        <option value="plsql">PL/SQL</option>
-      </select>
-    </div>
-  );
-
-  const outputExtra = (
-    <div className="flex items-center gap-2 flex-wrap">
-      <IndentSelect value={indent} onChange={setIndent} className={selectClass} />
-      <select value={keywordCase} onChange={(e) => setKeywordCase(e.target.value as KeywordCase)} className={selectClass} title="Keyword case">
-        <option value="upper">Keywords: Upper</option>
-        <option value="lower">Keywords: Lower</option>
-      </select>
-      <select value={identifierCase} onChange={(e) => setIdentifierCase(e.target.value as IdentifierCase)} className={selectClass} title="Identifier case">
-        <option value="as-is">Identifiers: As-is</option>
-        <option value="upper">Identifiers: Upper</option>
-        <option value="lower">Identifiers: Lower</option>
-      </select>
-    </div>
-  );
+  const loadSample = () => setInput(SAMPLE_SQL);
+  const clearInput = () => setInput("");
 
   return (
     <ToolLayout title={tool?.label ?? "SQL Formatter"} description={tool?.description ?? "Format and beautify SQL queries"}>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="Input SQL" extra={inputExtra} />
-          <div className="flex-1 min-h-0 flex flex-col">
+      <ResizableTwoPanel
+        defaultInputPercent={50}
+        input={{
+          toolbar: (
+            <>
+              <SampleButton onClick={loadSample} />
+              <ClearButton onClick={clearInput} />
+              <FileUploadButton accept=".sql,text/x-sql,application/sql" onText={setInput} />
+              <select value={dialect} onChange={(e) => setDialect(e.target.value as Dialect)} className={selectClass} title="Dialect">
+                <option value="standard">Standard</option>
+                <option value="mysql">MySQL</option>
+                <option value="mariadb">MariaDB</option>
+                <option value="postgresql">PostgreSQL</option>
+                <option value="plsql">PL/SQL</option>
+              </select>
+            </>
+          ),
+          children: (
             <CodeEditor value={input} onChange={setInput} language="sql" placeholder="SELECT * FROM users WHERE ..." fillHeight />
-          </div>
-        </div>
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="Output" text={output} extra={outputExtra} />
-          <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor value={output} readOnly language="sql" placeholder="Result will appear here..." fillHeight />
-          </div>
-        </div>
-      </div>
+          ),
+        }}
+        output={{
+          copyText: output,
+          toolbar: (
+            <>
+              <select value={keywordCase} onChange={(e) => setKeywordCase(e.target.value as KeywordCase)} className={selectClass} title="Keyword case">
+                <option value="upper">Keywords: Upper</option>
+                <option value="lower">Keywords: Lower</option>
+              </select>
+              <select value={identifierCase} onChange={(e) => setIdentifierCase(e.target.value as IdentifierCase)} className={selectClass} title="Identifier case">
+                <option value="as-is">Identifiers: As-is</option>
+                <option value="upper">Identifiers: Upper</option>
+                <option value="lower">Identifiers: Lower</option>
+              </select>
+              <IndentSelect value={indent} onChange={setIndent} className={selectClass} />
+              {output ? (
+                <SaveButton content={output} filename="output.sql" mimeType="application/sql" />
+              ) : null}
+            </>
+          ),
+          children: (
+            <CodeEditor key={`result-${indent}-${dialect}-${keywordCase}-${identifierCase}`} value={output} readOnly language="sql" placeholder="Result will appear here..." fillHeight />
+          ),
+        }}
+      />
     </ToolLayout>
   );
 };
