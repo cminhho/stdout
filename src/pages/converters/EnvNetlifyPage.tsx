@@ -3,6 +3,7 @@ import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 import { Button } from "@/components/ui/button";
 import { Upload, FileCode, Eraser } from "lucide-react";
 
@@ -43,6 +44,7 @@ const EnvNetlifyPage = () => {
   const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
   const [envInput, setEnvInput] = useState(SAMPLE_ENV);
   const [format, setFormat] = useState<"netlify" | "docker" | "yaml">("netlify");
+  const [yamlIndent, setYamlIndent] = useState<IndentOption>(2);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -77,16 +79,18 @@ const EnvNetlifyPage = () => {
     return pairs.map(([k, v]) => `ENV ${k}="${v}"`).join("\n");
   };
 
-  const toYaml = (pairs: [string, string][]): string => {
+  const toYaml = (pairs: [string, string][], indent: number): string => {
     const lines = ["env:"];
-    pairs.forEach(([k, v]) => lines.push(`  ${k}: "${v}"`));
+    const spaces = " ".repeat(indent);
+    pairs.forEach(([k, v]) => lines.push(`${spaces}${k}: "${v}"`));
     return lines.join("\n");
   };
 
   const output = useMemo(() => {
     const pairs = parseEnv(envInput);
-    return format === "netlify" ? toNetlify(pairs) : format === "docker" ? toDocker(pairs) : toYaml(pairs);
-  }, [envInput, format]);
+    const space = typeof yamlIndent === "number" ? yamlIndent : 2; // YAML: 2 or 4 only via spaceOptions
+    return format === "netlify" ? toNetlify(pairs) : format === "docker" ? toDocker(pairs) : toYaml(pairs, space);
+  }, [envInput, format, yamlIndent]);
 
   const outputLang = format === "yaml" ? "yaml" as const : "env" as const;
 
@@ -134,6 +138,16 @@ const EnvNetlifyPage = () => {
                     {f === "netlify" ? "netlify.toml" : f === "docker" ? "Dockerfile" : "YAML"}
                   </Button>
                 ))}
+                {format === "yaml" && (
+                  <IndentSelect
+                    value={yamlIndent}
+                    onChange={setYamlIndent}
+                    spaceOptions={[2, 4]}
+                    includeTab={false}
+                    includeMinified={false}
+                    className={selectClass}
+                  />
+                )}
               </div>
             }
           />

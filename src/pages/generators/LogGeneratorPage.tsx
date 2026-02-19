@@ -1,10 +1,13 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 import { Button } from "@/components/ui/button";
 import { Download, Eraser } from "lucide-react";
+
+const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
 
 const LOG_FORMATS = [
   {
@@ -50,7 +53,7 @@ const LOG_FORMATS = [
       const levels = ["info", "info", "info", "warn", "error", "debug"];
       const msgs = ["Request processed", "User authenticated", "Cache miss", "Rate limit exceeded", "Database query slow", "Connection pool exhausted", "Config reloaded"];
       const d = new Date(Date.now() - rn(0, 86400000));
-      return JSON.stringify({
+      return {
         timestamp: d.toISOString(),
         level: pick(levels),
         message: pick(msgs),
@@ -58,7 +61,7 @@ const LOG_FORMATS = [
         request_id: crypto.randomUUID().slice(0, 8),
         duration_ms: rn(1, 5000),
         ...(Math.random() > 0.7 ? { error: pick(["timeout", "ECONNREFUSED", "ENOMEM"]) } : {}),
-      });
+      };
     },
   },
   {
@@ -82,10 +85,18 @@ const LogGeneratorPage = () => {
   const [format, setFormat] = useState("apache");
   const [count, setCount] = useState(50);
   const [output, setOutput] = useState("");
+  const [indent, setIndent] = useState<IndentOption>(2);
 
   const generate = () => {
     const fmt = LOG_FORMATS.find((f) => f.id === format)!;
-    const lines = Array.from({ length: count }, (_, i) => fmt.template(i));
+    const lines = Array.from({ length: count }, (_, i) => {
+      const out = fmt.template(i);
+      if (format === "json") {
+        const space = typeof indent === "number" ? indent : 0;
+        return JSON.stringify(out as object, null, space);
+      }
+      return out as string;
+    });
     setOutput(lines.join("\n"));
   };
 
@@ -109,11 +120,14 @@ const LogGeneratorPage = () => {
             text={output}
             extra={
               <div className="flex items-center gap-2 flex-wrap">
-                <select value={format} onChange={(e) => setFormat(e.target.value)} className="h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0">
+                <select value={format} onChange={(e) => setFormat(e.target.value)} className={selectClass}>
                   {LOG_FORMATS.map((f) => (
                     <option key={f.id} value={f.id}>{f.name}</option>
                   ))}
                 </select>
+                {format === "json" && (
+                  <IndentSelect value={indent} onChange={setIndent} className={selectClass} />
+                )}
                 <div className="flex items-center gap-1.5">
                   <label className="text-xs text-muted-foreground shrink-0">Lines</label>
                   <input
