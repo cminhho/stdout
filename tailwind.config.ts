@@ -62,6 +62,11 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        outlineButton: {
+          bg: "hsl(var(--outline-button-bg))",
+          border: "hsl(var(--outline-button-border))",
+          foreground: "hsl(var(--outline-button-foreground))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

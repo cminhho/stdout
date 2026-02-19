@@ -86,7 +86,7 @@
   },
   "build": {
     "appId": "com.stdout.tools",
-    "productName": "Stdout",
+    "productName": "stdout",
     "directories": {
       "output": "release"
     },

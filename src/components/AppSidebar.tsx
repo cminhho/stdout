@@ -9,7 +9,7 @@ import {
   TerminalSquare, FileType, List, KeySquare,
   FileOutput, Image, Scaling, FileArchive, Eye, Paintbrush, Ruler,
   FileUp, Dices, TableProperties, Settings, LetterText, ScrollText,
-  PanelLeftClose, PanelLeftOpen,
+  PanelLeftClose, PanelLeftOpen, Coffee,
 } from "lucide-react";
 import {
   Tooltip,
@@ -175,7 +175,7 @@ const AppSidebar = () => {
       <div className="flex items-center justify-between px-4 py-4 border-b border-sidebar-border">
         <NavLink to="/" className="flex items-center gap-2 text-inherit no-underline hover:opacity-90 transition-opacity">
           <Terminal className="h-5 w-5 text-primary" />
-          <span className="font-semibold text-sm text-sidebar-accent-foreground tracking-tight">Stdout</span>
+          <span className="font-semibold text-sm text-sidebar-accent-foreground tracking-tight">stdout</span>
         </NavLink>
         <div className="flex items-center gap-2">
           <button onClick={toggleSidebar} className="text-muted-foreground hover:text-foreground transition-colors" title="Collapse sidebar">
@@ -262,18 +262,16 @@ const AppSidebar = () => {
         )}
       </nav>
 
-      <div className="px-4 py-3 border-t border-sidebar-border flex justify-center">
+      <div className="px-4 py-2.5 border-t border-sidebar-border flex justify-center">
         <a
           href="https://www.buymeacoffee.com/chungho"
           target="_blank"
           rel="noopener noreferrer"
-          className="opacity-90 hover:opacity-100 transition-opacity"
+          className="inline-flex items-center gap-1.5 rounded-md border border-sidebar-border px-2.5 py-1.5 text-xs font-medium text-sidebar-foreground opacity-90 hover:opacity-100 hover:bg-sidebar-accent transition-colors"
+          title="Buy me a coffee"
         >
-          <img
-            src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
-            alt="Buy me a coffee"
-            className="h-8 w-auto"
-          />
+          <Coffee className="h-3.5 w-3.5 shrink-0" />
+          <span>Buy me a coffee</span>
         </a>
       </div>
     </aside>

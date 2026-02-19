@@ -6,28 +6,29 @@
 
 @layer base {
   /*
-   * Dark theme: background #2C211F, sidebar #383838, panels #3A3A3A,
-   * code/editor #1e1e1e, accent #0A84FF
+   * Dark theme (DevUtils-style): strict lightness ladder so surfaces never blend.
+   * Hue 9 = warm (#2C211F family). Ladder: code(11) < bg(15) < input(17) < border(20) < muted(24) < card(27) < secondary(31).
+   * Sidebar hue 22 (#342B26). Primary/accent #0A84FF.
    */
   :root,
   .dark {
-    --background: 9 10% 15%; /* #2C211F */
-    --foreground: 0 0% 80%;
+    --background: 9 10% 15%; /* #2C211F – main canvas, darkest */
+    --foreground: 0 0% 90%;
 
-    --card: 9 10% 26%; /* elevated panels/buttons – warm, clearly above background */
-    --card-foreground: 0 0% 80%;
+    --card: 9 8% 27%; /* content panels – clearly above muted, no blend */
+    --card-foreground: 0 0% 90%;
 
-    --popover: 9 10% 26%;
-    --popover-foreground: 0 0% 80%;
+    --popover: 9 8% 27%;
+    --popover-foreground: 0 0% 90%;
 
     --primary: 211 100% 52%; /* #0A84FF */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 9 10% 28%; /* buttons – warmer, higher contrast than bg */
-    --secondary-foreground: 0 0% 80%;
+    --secondary: 9 7% 31%; /* buttons – top of ladder, hover/active */
+    --secondary-foreground: 0 0% 90%;
 
-    --muted: 9 8% 24%;
-    --muted-foreground: 0 0% 73%;
+    --muted: 9 6% 24%; /* table headers, tags – between border and card */
+    --muted-foreground: 0 0% 62%;
 
     --accent: 211 100% 52%;
     --accent-foreground: 0 0% 100%;
@@ -35,24 +36,29 @@
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 9 8% 22%; /* visible edge against #2C211F */
-    --input: 9 8% 18%; /* input fields slightly warmer than code-bg */
+    --border: 9 6% 20%; /* visible on both bg and card */
+    --input: 9 6% 17%; /* inputs – one step above background */
     --ring: 211 100% 52%;
 
     --radius: 0.5rem;
 
     --sidebar-background: 22 16% 18%; /* #342B26 */
-    --sidebar-foreground: 0 0% 73%;
+    --sidebar-foreground: 0 0% 85%;
     --sidebar-primary: 211 100% 52%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 22 14% 24%; /* hover/active on sidebar */
-    --sidebar-accent-foreground: 0 0% 80%;
-    --sidebar-border: 22 12% 22%;
+    --sidebar-accent: 22 12% 25%; /* hover – clearly above sidebar bg */
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 22 10% 22%;
     --sidebar-ring: 211 100% 52%;
 
-    --code-bg: 0 0% 12%; /* #1e1e1e editor/code block */
-    --code-border: 0 0% 18%;
-    --code-text: 0 0% 80%;
+    --code-bg: 0 0% 11%; /* editor – darkest for code blocks */
+    --code-border: 9 6% 19%;
+    --code-text: 0 0% 85%;
+
+    /* Outline buttons (Sample, Clear, Upload) – bg #605956, white text */
+    --outline-button-bg: 18 14% 36%; /* #605956 */
+    --outline-button-border: 0 0% 72%;
+    --outline-button-foreground: 0 0% 100%;
 
     --font-mono: 'JetBrains Mono', ui-monospace, monospace;
     --font-sans: 'Inter', system-ui, sans-serif;
@@ -100,6 +106,10 @@
     --code-bg: 240 5% 96%;
     --code-border: 240 4% 88%;
     --code-text: 211 80% 38%;
+
+    --outline-button-bg: 0 0% 100%;
+    --outline-button-border: 240 4% 88%;
+    --outline-button-foreground: 240 6% 14%;
   }
 
 

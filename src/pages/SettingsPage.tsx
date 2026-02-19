@@ -40,7 +40,7 @@ const SettingsPage = () => {
   const visibleCount = tools.filter((t) => settings.isToolVisible(t.path)).length;
 
   return (
-    <ToolLayout title={tool?.label ?? "Settings"} description={tool?.description ?? "Customize your Stdout experience"}>
+    <ToolLayout title={tool?.label ?? "Settings"} description={tool?.description ?? "Customize your stdout experience"}>
       {/* Tabs */}
       <div className="flex gap-1 mb-6 border-b border-border">
         <button
@@ -124,7 +124,7 @@ const SettingsPage = () => {
               About
             </h3>
             <div className="rounded-lg border border-border p-4 space-y-2">
-              <div className="text-sm text-foreground font-medium">Stdout v1.0.0</div>
+              <div className="text-sm text-foreground font-medium">stdout v1.0.0</div>
               <div className="text-xs text-muted-foreground">
                 A modular, plugin-based developer tool platform built with React, TypeScript, and Tailwind CSS.
                 All tools run entirely in your browser — no data is sent to any server.
@@ -143,7 +143,7 @@ const SettingsPage = () => {
             </h3>
             <div className="rounded-lg border border-border p-4">
               <p className="text-xs text-muted-foreground mb-3">
-                Stdout is open source (MIT). If it’s useful to you, consider supporting development:
+                stdout is open source (MIT). If it’s useful to you, consider supporting development:
               </p>
               <div className="flex flex-wrap gap-2">
                 <a
