@@ -1,18 +1,19 @@
-import { useState, useMemo } from "react";
-import ToolLayout from "@/components/ToolLayout";
+import { useState, useCallback } from "react";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import PanelHeader from "@/components/PanelHeader";
-import CodeEditor from "@/components/CodeEditor";
-import FileUploadButton from "@/components/FileUploadButton";
-import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+import FileUploadButton from "@/components/FileUploadButton";
+import type { IndentOption } from "@/components/IndentSelect";
 import {
-  processJsonToTypes,
+  processJsonToTypesForLayout,
   type JsonTypescriptLang,
   JSON_TYPESCRIPT_FILE_ACCEPT,
   JSON_TYPESCRIPT_SAMPLE,
   JSON_TYPESCRIPT_LANGS,
+  JSON_TYPESCRIPT_PLACEHOLDER_INPUT,
   JSON_TYPESCRIPT_PLACEHOLDER_OUTPUT,
+  JSON_TYPESCRIPT_OUTPUT_FILENAME,
+  JSON_TYPESCRIPT_MIME_TYPE,
 } from "@/utils/jsonTypescript";
 
 const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
@@ -21,61 +22,56 @@ const JsonTypescriptPage = () => {
   const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const [lang, setLang] = useState<JsonTypescriptLang>("typescript");
-  const [indent, setIndent] = useState<IndentOption>(2);
 
-  const indentNum = typeof indent === "number" ? indent : 2;
-  const { output, error } = useMemo(
-    () => processJsonToTypes(input, lang, indentNum),
-    [input, lang, indentNum]
+  const format = useCallback(
+    (inputValue: string, indent: IndentOption) => processJsonToTypesForLayout(inputValue, indent, lang),
+    [lang]
   );
 
   const currentLang = JSON_TYPESCRIPT_LANGS.find((l) => l.value === lang)!;
 
   return (
-    <ToolLayout title={tool?.label ?? "JSON → Types"} description={tool?.description ?? "Generate TypeScript types from JSON"}>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader
-            label="JSON Input"
-            extra={
-              <div className="flex items-center gap-2 flex-wrap">
-                <SampleButton onClick={() => setInput(JSON_TYPESCRIPT_SAMPLE)} />
-                <ClearButton onClick={() => setInput("")} />
-                <FileUploadButton accept={JSON_TYPESCRIPT_FILE_ACCEPT} onText={setInput} />
-              </div>
-            }
-          />
-          <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor value={input} onChange={setInput} language="json" fillHeight />
-          </div>
-        </div>
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader
-            label={`${currentLang.label} Output`}
-            text={output}
-            extra={
-              <div className="flex items-center gap-2 flex-wrap">
-                <select value={lang} onChange={(e) => setLang(e.target.value as JsonTypescriptLang)} className={selectClass}>
-                  {JSON_TYPESCRIPT_LANGS.map((l) => (
-                    <option key={l.value} value={l.value}>
-                      {l.label}
-                    </option>
-                  ))}
-                </select>
-                <IndentSelect value={indent} onChange={setIndent} includeTab={false} includeMinified={false} className={selectClass} />
-              </div>
-            }
-          />
-          {error ? (
-            <div className="code-block text-destructive flex-1 min-h-0 overflow-auto">{error}</div>
-          ) : (
-            <div className="flex-1 min-h-0 flex flex-col">
-              <CodeEditor value={output} readOnly language={currentLang.editorLang} placeholder={JSON_TYPESCRIPT_PLACEHOLDER_OUTPUT} fillHeight />
-            </div>
-          )}
-        </div>
-      </div>
-    </ToolLayout>
+    <TwoPanelToolLayout
+      tool={tool}
+      inputPane={{
+        onClear: () => setInput(""),
+        toolbar: (
+          <>
+            <select value={lang} onChange={(e) => setLang(e.target.value as JsonTypescriptLang)} className={selectClass}>
+              {JSON_TYPESCRIPT_LANGS.map((l) => (
+                <option key={l.value} value={l.value}>
+                  {l.label}
+                </option>
+              ))}
+            </select>
+            <SampleButton onClick={() => setInput(JSON_TYPESCRIPT_SAMPLE)} />
+            <ClearButton onClick={() => setInput("")} />
+            <FileUploadButton accept={JSON_TYPESCRIPT_FILE_ACCEPT} onText={setInput} />
+          </>
+        ),
+        inputEditor: {
+          value: input,
+          onChange: setInput,
+          language: "json",
+          placeholder: JSON_TYPESCRIPT_PLACEHOLDER_INPUT,
+        },
+      }}
+      outputPane={{
+        outputToolbar: {
+          format,
+          outputFilename: JSON_TYPESCRIPT_OUTPUT_FILENAME,
+          outputMimeType: JSON_TYPESCRIPT_MIME_TYPE,
+          defaultIndent: 2,
+          indentSpaceOptions: [2, 4],
+          indentIncludeTab: false,
+        },
+        outputEditor: {
+          value: "",
+          language: currentLang.editorLang,
+          placeholder: JSON_TYPESCRIPT_PLACEHOLDER_OUTPUT,
+        },
+      }}
+    />
   );
 };
 

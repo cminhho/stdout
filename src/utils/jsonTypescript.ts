@@ -2,9 +2,17 @@
  * JSON → TypeScript/Go/Java/Kotlin types. Single place for conversion logic and constants.
  */
 
+import type { IndentOption } from "@/components/IndentSelect";
+import type { ParseError } from "@/utils/validationTypes";
+import { singleErrorToParseErrors } from "@/utils/validationTypes";
+
 export type JsonTypescriptLang = "typescript" | "go" | "java" | "kotlin";
 
 export const JSON_TYPESCRIPT_FILE_ACCEPT = ".json,application/json";
+export const JSON_TYPESCRIPT_PLACEHOLDER_INPUT = "Paste JSON object...";
+export const JSON_TYPESCRIPT_OUTPUT_FILENAME = "types.ts";
+export const JSON_TYPESCRIPT_MIME_TYPE = "text/plain";
+
 export const JSON_TYPESCRIPT_SAMPLE = `{
   "id": 1,
   "name": "John",
@@ -182,4 +190,20 @@ export function processJsonToTypes(
   } catch (e) {
     return { output: "", error: (e as Error).message };
   }
+}
+
+export interface JsonTypescriptFormatResult {
+  output: string;
+  errors?: ParseError[];
+}
+
+export function processJsonToTypesForLayout(
+  input: string,
+  indent: IndentOption,
+  lang: JsonTypescriptLang
+): JsonTypescriptFormatResult {
+  const indentNum = typeof indent === "number" ? indent : 2;
+  const { output, error } = processJsonToTypes(input, lang, indentNum);
+  if (error) return { output: "", errors: singleErrorToParseErrors(error) };
+  return { output, errors: [] };
 }

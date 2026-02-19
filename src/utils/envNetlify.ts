@@ -2,6 +2,8 @@
  * .env to Netlify/Docker/YAML converter. Single place for parsing and format logic.
  */
 
+import type { IndentOption } from "@/components/IndentSelect";
+
 export const ENV_NETLIFY_FILE_ACCEPT = ".env,.env.*,text/plain";
 export const ENV_NETLIFY_SAMPLE = `# Database
 DB_HOST=localhost
@@ -17,6 +19,16 @@ export const ENV_NETLIFY_PLACEHOLDER_INPUT = "KEY=value";
 export const ENV_NETLIFY_PLACEHOLDER_OUTPUT = "Output...";
 
 export type EnvOutputFormat = "netlify" | "docker" | "yaml";
+
+export function envOutputFilename(format: EnvOutputFormat): string {
+  return format === "netlify" ? "netlify.toml" : format === "docker" ? "Dockerfile" : "env.yaml";
+}
+
+export const ENV_NETLIFY_MIME_TYPE = "text/plain";
+
+export interface EnvNetlifyFormatResult {
+  output: string;
+}
 
 export function parseEnv(input: string): [string, string][] {
   return input
@@ -54,4 +66,15 @@ export function formatEnvOutput(
   yamlIndent: number
 ): string {
   return format === "netlify" ? toNetlify(pairs) : format === "docker" ? toDocker(pairs) : toYaml(pairs, yamlIndent);
+}
+
+export function processEnvNetlifyForLayout(
+  input: string,
+  indent: IndentOption,
+  outputFormat: EnvOutputFormat
+): EnvNetlifyFormatResult {
+  const pairs = parseEnv(input);
+  const yamlSpaces = typeof indent === "number" ? indent : indent === "tab" ? 2 : 2;
+  const output = formatEnvOutput(pairs, outputFormat, yamlSpaces);
+  return { output };
 }

@@ -3,11 +3,20 @@
  */
 
 import type { IndentOption } from "@/components/IndentSelect";
+import { singleErrorToParseErrors } from "@/utils/validationTypes";
 
 export const CSV_XML_FILE_ACCEPT = ".csv,text/csv";
 export const CSV_XML_SAMPLE_CSV = "name,age,city\nAlice,30,NYC\nBob,25,LA";
 export const CSV_XML_PLACEHOLDER_CSV = "name,age,city\nAlice,30,NYC";
 export const CSV_XML_PLACEHOLDER_OUTPUT = "Result...";
+
+export const CSV_XML_OUTPUT_FILENAME = "output.xml";
+export const CSV_XML_MIME_TYPE = "application/xml";
+
+export interface CsvXmlFormatResult {
+  output: string;
+  errors?: import("@/utils/validationTypes").ParseError[];
+}
 
 export function csvToRows(csv: string, delimiter: string): string[][] {
   const lines = csv.trim().split("\n");
@@ -65,4 +74,20 @@ export function csvToXml(
   }
   out += `</${rootTag}>`;
   return out;
+}
+
+export function processCsvToXmlForLayout(
+  input: string,
+  indent: IndentOption,
+  rootTag: string,
+  rowTag: string,
+  delimiter: string
+): CsvXmlFormatResult {
+  if (!input.trim()) return { output: "" };
+  try {
+    const output = csvToXml(input, rootTag, rowTag, delimiter, indent);
+    return { output };
+  } catch (e) {
+    return { output: "", errors: singleErrorToParseErrors((e as Error).message) };
+  }
 }

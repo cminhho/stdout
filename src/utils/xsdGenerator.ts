@@ -2,6 +2,11 @@
  * Infer a minimal XSD from XML (element names and attributes).
  */
 
+import type { IndentOption } from "@/components/IndentSelect";
+import type { ParseError } from "@/utils/validationTypes";
+import { singleErrorToParseErrors } from "@/utils/validationTypes";
+import { formatXml, minifyXml } from "@/utils/xmlFormat";
+
 export const XSD_GENERATOR_FILE_ACCEPT = ".xml,application/xml,text/xml";
 export const XSD_GENERATOR_SAMPLE_XML = `<?xml version="1.0"?>
 <catalog>
@@ -96,4 +101,26 @@ export function xmlToXsd(xmlString: string): string {
   </xs:element>
 </xs:schema>`;
   return xsd;
+}
+
+export const XSD_GENERATOR_OUTPUT_FILENAME = "schema.xsd";
+export const XSD_GENERATOR_MIME_TYPE = "application/xml";
+
+export interface XsdGeneratorFormatResult {
+  output: string;
+  errors?: ParseError[];
+}
+
+export function processXmlToXsd(input: string, indent: IndentOption): XsdGeneratorFormatResult {
+  if (!input.trim()) return { output: "", errors: [] };
+  try {
+    const raw = xmlToXsd(input);
+    const output =
+      indent === "minified"
+        ? minifyXml(raw)
+        : formatXml(raw, indent === "tab" ? 2 : (indent as number), indent === "tab");
+    return { output, errors: [] };
+  } catch (e) {
+    return { output: "", errors: singleErrorToParseErrors((e as Error).message) };
+  }
 }
