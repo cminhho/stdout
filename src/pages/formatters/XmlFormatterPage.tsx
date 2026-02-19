@@ -6,8 +6,7 @@ import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Upload, FileCode, Eraser } from "lucide-react";
 import { validateXml } from "@/utils/validators";
-
-type IndentOption = "2" | "4" | "tab" | "minified";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 
 const SAMPLE_XML = `<?xml version="1.0" encoding="UTF-8"?>
 <catalog>
@@ -63,14 +62,14 @@ const XmlFormatterPage = () => {
   const tool = useCurrentTool();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [input, setInput] = useState('<?xml version="1.0"?><catalog><book id="1"><title>XML Guide</title><author>John</author><price>29.99</price></book><book id="2"><title>Advanced XML</title><author>Jane</author><price>39.99</price></book></catalog>');
-  const [indentOption, setIndentOption] = useState<IndentOption>("2");
+  const [indentOption, setIndentOption] = useState<IndentOption>(2);
 
   const validation = useMemo(() => validateXml(input), [input]);
 
   const output = useMemo(() => {
     if (!input.trim()) return "";
     if (indentOption === "minified") return minifyXml(input);
-    const indentNum = indentOption === "tab" ? 2 : Number(indentOption);
+    const indentNum = indentOption === "tab" ? 2 : (indentOption as number);
     const useTabs = indentOption === "tab";
     return formatXml(input, indentNum, useTabs);
   }, [input, indentOption]);
@@ -119,17 +118,7 @@ const XmlFormatterPage = () => {
 
   const outputExtra = (
     <div className="flex items-center gap-2">
-      <select
-        value={indentOption}
-        onChange={(e) => setIndentOption(e.target.value as IndentOption)}
-        className={selectClass}
-        title="Indentation"
-      >
-        <option value="2">2 spaces</option>
-        <option value="4">4 spaces</option>
-        <option value="tab">1 tab</option>
-        <option value="minified">Minified</option>
-      </select>
+      <IndentSelect value={indentOption} onChange={setIndentOption} className={selectClass} />
     </div>
   );
 

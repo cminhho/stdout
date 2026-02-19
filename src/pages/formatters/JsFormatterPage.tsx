@@ -7,8 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Upload, FileCode, Eraser } from "lucide-react";
 import { jsBeautify } from "@/utils/beautifier";
 import { jsMinify } from "@/utils/minify";
-
-type IndentOption = "2" | "4" | "tab" | "minified";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 
 const SAMPLE_JS = `function greet(name) {
   return "Hello, " + name + "!";
@@ -46,7 +45,7 @@ const JsFormatterPage = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [input, setInput] = useState("function foo(){const a=1;return a+1;}");
   const [output, setOutput] = useState("");
-  const [indentOption, setIndentOption] = useState<IndentOption>("2");
+  const [indentOption, setIndentOption] = useState<IndentOption>(2);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -75,7 +74,7 @@ const JsFormatterPage = () => {
     setLoading(true);
     setOutput("");
     let cancelled = false;
-    const indentNum = indentOption === "tab" ? 2 : Number(indentOption);
+    const indentNum = indentOption === "tab" ? 2 : (indentOption as number);
     const useTabs = indentOption === "tab";
     jsBeautify(input, indentNum, useTabs)
       .then((formatted) => {
@@ -136,17 +135,7 @@ const JsFormatterPage = () => {
 
   const outputExtra = (
     <div className="flex items-center gap-2">
-      <select
-        value={indentOption}
-        onChange={(e) => setIndentOption(e.target.value as IndentOption)}
-        className={selectClass}
-        title="Indentation"
-      >
-        <option value="2">2 spaces</option>
-        <option value="4">4 spaces</option>
-        <option value="tab">1 tab</option>
-        <option value="minified">Minified</option>
-      </select>
+      <IndentSelect value={indentOption} onChange={setIndentOption} className={selectClass} />
     </div>
   );
 

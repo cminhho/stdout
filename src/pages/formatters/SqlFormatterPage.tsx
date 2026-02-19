@@ -3,10 +3,9 @@ import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 import { Button } from "@/components/ui/button";
 import { Upload, FileCode, Eraser } from "lucide-react";
-
-type IndentStyle = 2 | 4 | 8 | "tab" | "compact";
 
 const readFileAsText = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -62,7 +61,7 @@ const applyCase = (s: string, mode: KeywordCase | IdentifierCase): string => {
   return s;
 };
 
-const formatSql = (sql: string, indent: 2 | 4 | 8 | "tab", dialect: Dialect, keywordCase: KeywordCase, identifierCase: IdentifierCase): string => {
+const formatSql = (sql: string, indent: 2 | 3 | 4 | 8 | "tab", dialect: Dialect, keywordCase: KeywordCase, identifierCase: IdentifierCase): string => {
   const tab = indent === "tab" ? "\t" : " ".repeat(indent);
   const allKeywords = [...SQL_KEYWORDS, ...DIALECT_EXTRAS[dialect]];
   const keywordSet = new Set(allKeywords.map((k) => k.toUpperCase()));
@@ -105,14 +104,14 @@ const SqlFormatterPage = () => {
   const [input, setInput] = useState(
     "SELECT u.id, u.name, u.email, COUNT(o.id) as order_count FROM users u LEFT JOIN orders o ON u.id = o.user_id WHERE u.active = true AND u.created_at > '2024-01-01' GROUP BY u.id, u.name, u.email ORDER BY order_count DESC LIMIT 50"
   );
-  const [indent, setIndent] = useState<IndentStyle>(2);
+  const [indent, setIndent] = useState<IndentOption>(2);
   const [keywordCase, setKeywordCase] = useState<KeywordCase>("upper");
   const [identifierCase, setIdentifierCase] = useState<IdentifierCase>("as-is");
   const [dialect, setDialect] = useState<Dialect>("standard");
 
   const output = useMemo(
     () =>
-      indent === "compact"
+      indent === "minified"
         ? minifySql(input)
         : formatSql(input, indent, dialect, keywordCase, identifierCase),
     [input, indent, dialect, keywordCase, identifierCase]
@@ -169,18 +168,7 @@ const SqlFormatterPage = () => {
 
   const outputExtra = (
     <div className="flex items-center gap-2 flex-wrap">
-      <select
-        value={indent}
-        onChange={(e) => setIndent(e.target.value as IndentStyle)}
-        className={selectClass}
-        title="Indentation"
-      >
-        <option value={2}>2 spaces</option>
-        <option value={4}>4 spaces</option>
-        <option value={8}>8 spaces</option>
-        <option value="tab">Tab</option>
-        <option value="compact">Minified</option>
-      </select>
+      <IndentSelect value={indent} onChange={setIndent} className={selectClass} />
       <select value={keywordCase} onChange={(e) => setKeywordCase(e.target.value as KeywordCase)} className={selectClass} title="Keyword case">
         <option value="upper">Keywords: Upper</option>
         <option value="lower">Keywords: Lower</option>

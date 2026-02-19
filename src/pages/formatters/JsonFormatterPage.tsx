@@ -8,6 +8,7 @@ import { Upload, AlignLeft, Network, Download, FileCode, Eraser } from "lucide-r
 import { JsonView, defaultStyles, darkStyles, allExpanded } from "react-json-view-lite";
 import "react-json-view-lite/dist/index.css";
 import { useSettings } from "@/hooks/useSettings";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 
 const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
 
@@ -160,16 +161,7 @@ const computeStats = (parsed: unknown) => {
   return { keys, depth, arrays, objects, size };
 };
 
-type IndentOption = 2 | 3 | 4 | "tab" | "compact";
 type BracketStyle = "expanded" | "collapsed";
-
-const INDENT_OPTIONS: { value: IndentOption; label: string }[] = [
-  { value: 2, label: "2 spaces" },
-  { value: 3, label: "3 spaces" },
-  { value: 4, label: "4 spaces" },
-  { value: "tab", label: "Tab" },
-  { value: "compact", label: "Minified" },
-];
 
 const readFileAsText = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -193,20 +185,20 @@ const JsonFormatterPage = () => {
   const [bracketStyle, setBracketStyle] = useState<BracketStyle>("expanded");
   const [resultView, setResultView] = useState<"text" | "tree">("tree");
 
-  const isMinified = bracketStyle === "collapsed" || indent === "compact";
+  const isMinified = bracketStyle === "collapsed" || indent === "minified";
 
   /** Tree view indent: padding per nesting level to match Indent option. */
   const treeIndentClass = useMemo(() => {
     switch (indent) {
       case 2:
         return "[&_.child-fields-container]:pl-2";
-      case 3:
-        return "[&_.child-fields-container]:pl-3";
       case 4:
         return "[&_.child-fields-container]:pl-4";
+      case 8:
+        return "[&_.child-fields-container]:pl-8";
       case "tab":
         return "[&_.child-fields-container]:pl-8";
-      case "compact":
+      case "minified":
         return "[&_.child-fields-container]:pl-1";
       default:
         return "[&_.child-fields-container]:pl-4";
@@ -226,7 +218,7 @@ const JsonFormatterPage = () => {
       return { formatted: "", minified: "", errors: result.errors, stats: null, isValid: false, parsedData: undefined as unknown };
     }
     const data = result.parsed;
-    const space = indent === "compact" ? undefined : indent === "tab" ? "\t" : indent;
+    const space = indent === "minified" ? undefined : indent === "tab" ? "\t" : indent;
     return {
       formatted: JSON.stringify(data, null, space),
       minified: JSON.stringify(data),
@@ -285,21 +277,11 @@ const JsonFormatterPage = () => {
 
   const outputExtra = (
     <div className="flex items-center gap-2 flex-wrap">
-      <select
+      <IndentSelect
         value={indent}
-        onChange={(e) => {
-          const v = e.target.value;
-          setIndent((v === "tab" || v === "compact" ? v : Number(v)) as IndentOption);
-        }}
+        onChange={setIndent}
         className={selectClass}
-        title="Indentation"
-      >
-        {INDENT_OPTIONS.map((opt) => (
-          <option key={String(opt.value)} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
+      />
       <select
         value={bracketStyle}
         onChange={(e) => setBracketStyle(e.target.value as BracketStyle)}

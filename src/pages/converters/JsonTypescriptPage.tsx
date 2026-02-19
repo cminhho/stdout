@@ -5,6 +5,7 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Upload, FileCode, Eraser } from "lucide-react";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 
 const readFileAsText = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -177,7 +178,7 @@ const JsonTypescriptPage = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [input, setInput] = useState(SAMPLE_JSON);
   const [lang, setLang] = useState<Lang>("typescript");
-  const [indent, setIndent] = useState(2);
+  const [indent, setIndent] = useState<IndentOption>(2);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -191,10 +192,10 @@ const JsonTypescriptPage = () => {
   };
 
   const converters: Record<Lang, (obj: Record<string, unknown>) => string> = useMemo(() => ({
-    typescript: (obj) => jsonToTs(obj, "Root", indent),
-    go: (obj) => jsonToGo(obj, "Root", indent),
-    java: (obj) => jsonToJava(obj, "Root", indent),
-    kotlin: (obj) => jsonToKotlin(obj, "Root", indent),
+    typescript: (obj) => jsonToTs(obj, "Root", typeof indent === "number" ? indent : 2),
+    go: (obj) => jsonToGo(obj, "Root", typeof indent === "number" ? indent : 2),
+    java: (obj) => jsonToJava(obj, "Root", typeof indent === "number" ? indent : 2),
+    kotlin: (obj) => jsonToKotlin(obj, "Root", typeof indent === "number" ? indent : 2),
   }), [indent]);
 
   const { output, error } = useMemo(() => {
@@ -251,11 +252,13 @@ const JsonTypescriptPage = () => {
                     <option key={l.value} value={l.value}>{l.label}</option>
                   ))}
                 </select>
-                <select value={indent} onChange={(e) => setIndent(Number(e.target.value))} className={selectClass}>
-                  <option value={2}>2 spaces</option>
-                  <option value={4}>4 spaces</option>
-                  <option value={8}>8 spaces</option>
-                </select>
+                <IndentSelect
+                  value={indent}
+                  onChange={setIndent}
+                  includeTab={false}
+                  includeMinified={false}
+                  className={selectClass}
+                />
               </div>
             }
           />
