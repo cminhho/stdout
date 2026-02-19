@@ -18,7 +18,7 @@ const PanelHeader = ({ label, text, onClear, extra }: PanelHeaderProps) => (
     <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider select-none">
       {label}
     </span>
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-2 flex-wrap">
       {extra}
       {text !== undefined && <CopyButton text={text} />}
       {onClear && (
