@@ -1,4 +1,4 @@
-import { useId, useRef } from "react";
+import { useId, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { cn } from "@/utils/cn";
@@ -33,10 +33,12 @@ const FileUploadButton = ({
 }: FileUploadButtonProps) => {
   const id = useId();
   const inputRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setLoading(true);
     try {
       if (onText) {
         const text = await readFileAsText(file);
@@ -48,8 +50,11 @@ const FileUploadButton = ({
       if (onText) onText("");
     } finally {
       e.target.value = "";
+      setLoading(false);
     }
   };
+
+  const isDisabled = disabled || loading;
 
   return (
     <span className={cn("inline-flex", className)}>
@@ -61,10 +66,10 @@ const FileUploadButton = ({
         className="hidden"
         onChange={handleChange}
         multiple={multiple}
-        disabled={disabled}
+        disabled={isDisabled}
         aria-hidden
       />
-      <label htmlFor={id} className={disabled ? "pointer-events-none opacity-50" : "cursor-pointer"}>
+      <label htmlFor={id} className={isDisabled ? "pointer-events-none opacity-50" : "cursor-pointer"}>
         {children !== undefined ? (
           children
         ) : (
@@ -73,7 +78,8 @@ const FileUploadButton = ({
             size="sm"
             variant="outline"
             className={cn(toolButtonClass, buttonClassName)}
-            disabled={disabled}
+            disabled={isDisabled}
+            isLoading={loading}
             asChild
           >
             <span>

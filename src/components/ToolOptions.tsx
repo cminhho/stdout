@@ -1,5 +1,7 @@
 import { type ReactNode } from "react";
-import { Settings2 } from "lucide-react";
+import { Settings2, ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/utils/cn";
 
 export interface ToolOptionsProps {
   children: ReactNode;
@@ -12,17 +14,21 @@ export interface ToolOptionsProps {
 export function ToolOptions({ children, open, onOpenChange, title = "Options" }: ToolOptionsProps) {
   return (
     <div className="mb-4 rounded-lg border border-border bg-muted/20 overflow-hidden">
-      <button
+      <Button
         type="button"
+        variant="ghost"
+        size="sm"
         onClick={() => onOpenChange(!open)}
-        className="w-full flex items-center justify-between gap-2 px-3 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
+        className={cn(
+          "w-full justify-between rounded-none h-auto px-3 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/40"
+        )}
       >
         <span className="flex items-center gap-2">
           <Settings2 className="h-3.5 w-3.5" />
           {title}
         </span>
-        <span className="text-[10px] opacity-75">{open ? "▼" : "▶"}</span>
-      </button>
+        <ChevronDown className={cn("h-3.5 w-3.5 opacity-75 transition-transform", open && "rotate-180")} />
+      </Button>
       {open && (
         <div className="px-3 py-2.5 border-t border-border/80 flex flex-wrap items-center gap-x-4 gap-y-2">
           {children}

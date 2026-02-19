@@ -21,6 +21,7 @@ const CopyButton = ({ text, className }: CopyButtonProps) => {
       variant="outline"
       size="sm"
       onClick={handleCopy}
+      disabled={copied}
       className={className ?? "h-7 text-xs"}
     >
       {copied ? <Check className="h-3.5 w-3.5 mr-1.5" /> : <Copy className="h-3.5 w-3.5 mr-1.5" />}

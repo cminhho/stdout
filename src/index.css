@@ -6,110 +6,109 @@
 
 @layer base {
   /*
-   * Dark theme (DevUtils-style): strict lightness ladder so surfaces never blend.
-   * Hue 9 = warm (#2C211F family). Ladder: code(11) < bg(15) < input(17) < border(20) < muted(24) < card(27) < secondary(31).
-   * Sidebar hue 22 (#342B26). Primary/accent #0A84FF.
+   * Minimalism: neutral grayscale, single accent, clear hierarchy, restrained radius.
+   * Dark: pure neutrals (0% sat). Light: cool neutrals. One blue for actions.
    */
   :root,
   .dark {
-    --background: 9 10% 15%; /* #2C211F – main canvas, darkest */
+    --background: 0 0% 11%;
     --foreground: 0 0% 90%;
 
-    --card: 9 8% 27%; /* content panels – clearly above muted, no blend */
+    --card: 0 0% 15%;
     --card-foreground: 0 0% 90%;
 
-    --popover: 9 8% 27%;
+    --popover: 0 0% 15%;
     --popover-foreground: 0 0% 90%;
 
-    --primary: 211 100% 52%; /* #0A84FF */
+    --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 9 7% 31%; /* buttons – top of ladder, hover/active */
+    --secondary: 0 0% 22%;
     --secondary-foreground: 0 0% 90%;
 
-    --muted: 9 6% 24%; /* table headers, tags – between border and card */
-    --muted-foreground: 0 0% 62%;
+    --muted: 0 0% 18%;
+    --muted-foreground: 0 0% 58%;
 
-    --accent: 211 100% 52%;
+    --accent: 217 91% 60%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 65% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 9 6% 20%; /* visible on both bg and card */
-    --input: 9 6% 17%; /* inputs – one step above background */
-    --ring: 211 100% 52%;
+    --border: 0 0% 20%;
+    --input: 0 0% 14%;
+    --ring: 217 91% 60%;
 
-    --radius: 0.5rem;
+    --radius: 0.375rem;
 
-    --sidebar-background: 22 16% 18%; /* #342B26 */
-    --sidebar-foreground: 0 0% 85%;
-    --sidebar-primary: 211 100% 52%;
+    --sidebar-background: 0 0% 9%;
+    --sidebar-foreground: 0 0% 82%;
+    --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 22 12% 25%; /* hover – clearly above sidebar bg */
+    --sidebar-accent: 0 0% 18%;
     --sidebar-accent-foreground: 0 0% 90%;
-    --sidebar-border: 22 10% 22%;
-    --sidebar-ring: 211 100% 52%;
+    --sidebar-border: 0 0% 18%;
+    --sidebar-ring: 217 91% 60%;
 
-    --code-bg: 0 0% 11%; /* editor – darkest for code blocks */
-    --code-border: 9 6% 19%;
-    --code-text: 0 0% 85%;
+    --code-bg: 0 0% 8%;
+    --code-border: 0 0% 18%;
+    --code-text: 0 0% 82%;
 
-    /* Outline buttons (Sample, Clear, Upload) – bg #605956, white text */
-    --outline-button-bg: 18 14% 36%; /* #605956 */
-    --outline-button-border: 0 0% 72%;
+    --outline-button-bg: 0 0% 20%;
+    --outline-button-border: 0 0% 38%;
     --outline-button-foreground: 0 0% 100%;
 
     --font-mono: 'JetBrains Mono', ui-monospace, monospace;
     --font-sans: 'Inter', system-ui, sans-serif;
   }
 
-  /* Light theme: same hue/accent as dark (blue primary, neutral grays) for consistency */
   .light {
-    --background: 0 0% 98%;
-    --foreground: 240 6% 14%;
+    --background: 0 0% 99%;
+    --foreground: 0 0% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 6% 14%;
+    --card-foreground: 0 0% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 6% 14%;
+    --popover-foreground: 0 0% 12%;
 
-    --primary: 211 100% 45%;
+    --primary: 217 91% 55%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 5% 92%;
-    --secondary-foreground: 240 6% 22%;
+    --secondary: 0 0% 94%;
+    --secondary-foreground: 0 0% 18%;
 
-    --muted: 240 5% 94%;
-    --muted-foreground: 240 4% 42%;
+    --muted: 0 0% 95%;
+    --muted-foreground: 0 0% 42%;
 
-    --accent: 211 90% 38%;
+    --accent: 217 91% 55%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 72% 48%;
+    --destructive: 0 65% 48%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 4% 88%;
-    --input: 240 5% 90%;
-    --ring: 211 100% 45%;
+    --border: 0 0% 90%;
+    --input: 0 0% 92%;
+    --ring: 217 91% 55%;
 
-    --sidebar-background: 0 0% 97%;
-    --sidebar-foreground: 240 4% 38%;
-    --sidebar-primary: 211 100% 45%;
+    --radius: 0.375rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 28%;
+    --sidebar-primary: 217 91% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 5% 93%;
-    --sidebar-accent-foreground: 240 6% 14%;
-    --sidebar-border: 240 4% 90%;
-    --sidebar-ring: 211 100% 45%;
+    --sidebar-accent: 0 0% 94%;
+    --sidebar-accent-foreground: 0 0% 12%;
+    --sidebar-border: 0 0% 91%;
+    --sidebar-ring: 217 91% 55%;
 
-    --code-bg: 240 5% 96%;
-    --code-border: 240 4% 88%;
-    --code-text: 211 80% 38%;
+    --code-bg: 0 0% 96%;
+    --code-border: 0 0% 90%;
+    --code-text: 217 70% 35%;
 
     --outline-button-bg: 0 0% 100%;
-    --outline-button-border: 240 4% 88%;
-    --outline-button-foreground: 240 6% 14%;
+    --outline-button-border: 0 0% 88%;
+    --outline-button-foreground: 0 0% 12%;
   }
 
 

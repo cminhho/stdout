@@ -291,16 +291,19 @@ const TwoPanelToolLayout = ({
 
   const [asyncFormatResult, setAsyncFormatResult] = useState<FormatResult | null>(null);
   const [formatLoading, setFormatLoading] = useState(false);
+  const [formatError, setFormatError] = useState<Error | null>(null);
   useEffect(() => {
     if (!ot?.format) {
       setAsyncFormatResult(null);
       setFormatLoading(false);
+      setFormatError(null);
       return;
     }
     const r = ot.format(inputValue, resolvedIndent);
     if (r == null) return;
     if (typeof (r as Promise<FormatResult>).then === "function") {
       setFormatLoading(true);
+      setFormatError(null);
       let cancelled = false;
       (r as Promise<FormatResult>)
         .then(
@@ -308,10 +311,14 @@ const TwoPanelToolLayout = ({
             if (!cancelled) {
               setAsyncFormatResult(res);
               setFormatLoading(false);
+              setFormatError(null);
             }
           },
-          () => {
-            if (!cancelled) setFormatLoading(false);
+          (err: Error) => {
+            if (!cancelled) {
+              setFormatLoading(false);
+              setFormatError(err ?? new Error("Format failed"));
+            }
           }
         );
       return () => {
@@ -320,6 +327,7 @@ const TwoPanelToolLayout = ({
     }
     setAsyncFormatResult(null);
     setFormatLoading(false);
+    setFormatError(null);
   }, [inputValue, resolvedIndent, ot?.format]);
 
   const formatResult = syncFormatResult ?? asyncFormatResult;
@@ -338,6 +346,11 @@ const TwoPanelToolLayout = ({
 
   return (
     <ToolLayout title={title} description={description}>
+      {formatError ? (
+        <div className="mb-3 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+          Format failed: {formatError.message}
+        </div>
+      ) : null}
       {showValidationListResolved ? (
         <div className="mb-3">
           <ValidationErrorList errors={effectiveValidationErrors} />
