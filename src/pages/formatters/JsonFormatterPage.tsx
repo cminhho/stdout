@@ -1,14 +1,13 @@
 import { useMemo, useState } from "react";
-import ToolLayout from "@/components/ToolLayout";
-import ResizableTwoPanel from "@/components/ResizableTwoPanel";
 import CodeEditor from "@/components/CodeEditor";
 import FileUploadButton from "@/components/FileUploadButton";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
+import ResizableTwoPanel from "@/components/ResizableTwoPanel";
 import { ClearButton, SampleButton, SaveButton } from "@/components/ToolActionButtons";
+import ToolLayout from "@/components/ToolLayout";
 import ValidationErrorList from "@/components/ValidationErrorList";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import { processJsonInput } from "@/utils/jsonFormat";
-import { JSON_FORMATTER_SAMPLE } from "@/utils/samples/jsonFormatter";
+import { JSON_FORMATTER_SAMPLE, processJsonInput } from "@/utils/jsonFormat";
 
 const JsonFormatterPage = () => {
   const tool = useCurrentTool();

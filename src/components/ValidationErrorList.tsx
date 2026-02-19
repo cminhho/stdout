@@ -26,7 +26,7 @@ const ValidationErrorList = ({
     >
       {errors.map((err, i) => (
         <div
-          key={i}
+          key={`${err.line}-${err.column}-${i}`}
           className="rounded-md border border-destructive/30 bg-destructive/5 p-2 text-xs space-y-1"
         >
           <div className="flex gap-2">

@@ -56,12 +56,8 @@ const IndentSelect = ({
           {n} spaces
         </option>
       ))}
-      {includeTab && (
-        <option value="tab">Tab</option>
-      )}
-      {includeMinified && (
-        <option value="minified">Minified</option>
-      )}
+      {includeTab ? <option value="tab">Tab</option> : null}
+      {includeMinified ? <option value="minified">Minified</option> : null}
     </select>
   );
 };

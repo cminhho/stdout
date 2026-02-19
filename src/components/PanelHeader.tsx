@@ -20,12 +20,12 @@ const PanelHeader = ({ label, text, onClear, extra }: PanelHeaderProps) => (
     </span>
     <div className="flex items-center gap-2 flex-wrap">
       {extra}
-      {text !== undefined && <CopyButton text={text} />}
-      {onClear && (
+      {text !== undefined ? <CopyButton text={text} /> : null}
+      {onClear ? (
         <Button variant="ghost" size="sm" onClick={onClear} className="h-7 w-7 p-0">
           <Trash2 className="h-3.5 w-3.5" />
         </Button>
-      )}
+      ) : null}
     </div>
   </div>
 );

@@ -18,10 +18,10 @@ export interface ValidationSummaryProps {
 
 const DEFAULT_INVALID_LABEL = (count: number) => (count === 1 ? "✗ 1 error" : `✗ ${count} errors`);
 
-/**
- * Reusable validation summary: valid/invalid badge + optional stats.
- * Use across JSON, XML, CSV, JS, HTML, CSS formatter/validator tools.
- */
+function formatStatKey(key: string): string {
+  return key.charAt(0).toUpperCase() + key.slice(1);
+}
+
 const ValidationSummary = ({
   valid,
   errorCount = 0,
@@ -40,7 +40,7 @@ const ValidationSummary = ({
 
   return (
     <div className={cn("flex flex-wrap items-center gap-2 text-xs", className)}>
-      {valid !== null && (
+      {valid !== null ? (
         <span
           className={cn(
             "px-2 py-0.5 rounded font-medium",
@@ -49,14 +49,15 @@ const ValidationSummary = ({
         >
           {valid ? `✓ ${validLabel}` : invalidText}
         </span>
-      )}
-      {hasStats &&
-        orderedKeys.map((key) => (
-          <span key={key} className="px-2 py-0.5 rounded bg-muted text-muted-foreground">
-            {key.charAt(0).toUpperCase() + key.slice(1)}:{" "}
-            <span className="font-mono font-medium text-foreground">{stats[key]}</span>
-          </span>
-        ))}
+      ) : null}
+      {hasStats
+        ? orderedKeys.map((key) => (
+            <span key={key} className="px-2 py-0.5 rounded bg-muted text-muted-foreground">
+              {formatStatKey(key)}:{" "}
+              <span className="font-mono font-medium text-foreground">{stats![key]}</span>
+            </span>
+          ))
+        : null}
     </div>
   );
 };
