@@ -2,6 +2,7 @@ const { app, BrowserWindow, Menu } = require("electron");
 const path = require("path");
 
 const isDev = process.env.NODE_ENV === "development" || !app.isPackaged;
+const isMac = process.platform === "darwin";
 
 function createWindow() {
   const iconPath = path.join(__dirname, isDev ? "../public/favicon.svg" : "../dist/favicon.svg");
@@ -14,10 +15,11 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
+      preload: path.join(__dirname, "preload.cjs"),
     },
   });
 
-  // Hide default menu (View, Window, Help, etc.) for a cleaner app window
+  // No menu bar (View, Window, Help, etc.) for a cleaner window
   Menu.setApplicationMenu(null);
 
   if (isDev) {

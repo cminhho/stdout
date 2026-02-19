@@ -76,14 +76,14 @@ const SidebarGroupSection = ({
   return (
     <div>
       <button onClick={() => setOpen(!open)} className="sidebar-link w-full justify-between">
-        <span className="flex items-center gap-3 min-w-0">
-          <GroupIcon className="h-4 w-4 shrink-0" />
+        <span className="flex items-center gap-2 min-w-0">
+          <GroupIcon className="h-3.5 w-3.5 shrink-0" />
           <span className="truncate">{group.label}</span>
         </span>
         <ChevronDown className={`h-3.5 w-3.5 transition-transform ${isOpen ? "rotate-0" : "-rotate-90"}`} />
       </button>
       {isOpen && (
-        <div className="ml-4 pl-3 border-l border-border space-y-0.5 mt-0.5">
+        <div className="ml-3 pl-2 border-l border-border space-y-0.5 mt-0.5">
           {filteredItems.map((item) => {
             const Icon = getIcon(item.icon);
             return (
@@ -124,7 +124,7 @@ const AppSidebar = () => {
   if (sidebarCollapsed) {
     return (
       <aside className="w-12 shrink-0 h-screen sticky top-0 flex flex-col border-r bg-sidebar border-sidebar-border">
-        <div className="flex items-center justify-center py-4 border-b border-sidebar-border">
+        <div className="flex items-center justify-center py-2.5 border-b border-sidebar-border">
           <Tooltip>
             <TooltipTrigger asChild>
               <button onClick={toggleSidebar} className="text-muted-foreground hover:text-foreground transition-colors">
@@ -134,7 +134,7 @@ const AppSidebar = () => {
             <TooltipContent side="right">Expand sidebar</TooltipContent>
           </Tooltip>
         </div>
-        <nav className="flex-1 py-2 overflow-y-auto space-y-1">
+        <nav className="flex-1 py-1.5 overflow-y-auto space-y-0.5">
           {visibleItems.map((item) => {
             const Icon = getIcon(item.icon);
             return (
@@ -156,7 +156,7 @@ const AppSidebar = () => {
             );
           })}
         </nav>
-        <div className="py-3 border-t border-sidebar-border flex justify-center">
+        <div className="py-2 border-t border-sidebar-border flex justify-center">
           <Tooltip>
             <TooltipTrigger asChild>
               <NavLink to="/settings" className="text-muted-foreground hover:text-foreground transition-colors">
@@ -172,26 +172,26 @@ const AppSidebar = () => {
 
   return (
     <aside className="w-72 shrink-0 h-screen sticky top-0 flex flex-col border-r bg-sidebar border-sidebar-border">
-      <div className="flex items-center justify-between px-4 py-4 border-b border-sidebar-border">
-        <NavLink to="/" className="flex items-center gap-2 text-inherit no-underline hover:opacity-90 transition-opacity">
-          <Terminal className="h-5 w-5 text-primary" />
-          <span className="font-semibold text-sm text-sidebar-accent-foreground tracking-tight">stdout</span>
+      <div className="flex items-center justify-between px-3 py-2.5 border-b border-sidebar-border">
+        <NavLink to="/" className="flex items-center gap-2 text-inherit no-underline hover:opacity-90 transition-opacity min-w-0">
+          <Terminal className="h-4 w-4 shrink-0 text-primary" />
+          <span className="font-semibold text-sm text-sidebar-accent-foreground tracking-tight truncate">stdout</span>
         </NavLink>
-        <div className="flex items-center gap-2">
-          <button onClick={toggleSidebar} className="text-muted-foreground hover:text-foreground transition-colors" title="Collapse sidebar">
-            <PanelLeftClose className="h-4 w-4" />
+        <div className="flex items-center gap-1.5 shrink-0">
+          <button onClick={toggleSidebar} className="text-muted-foreground hover:text-foreground transition-colors p-0.5" title="Collapse sidebar">
+            <PanelLeftClose className="h-3.5 w-3.5" />
           </button>
-          <NavLink to="/settings" className="text-muted-foreground hover:text-foreground transition-colors">
-            <Settings className="h-4 w-4" />
+          <NavLink to="/settings" className="text-muted-foreground hover:text-foreground transition-colors p-0.5">
+            <Settings className="h-3.5 w-3.5" />
           </NavLink>
         </div>
       </div>
 
-      <div className="px-3 py-2 border-b border-sidebar-border">
+      <div className="px-3 py-1.5 border-b border-sidebar-border">
         <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
           <input
-            className="w-full rounded-md border px-3 py-1.5 pl-8 text-xs bg-background border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            className="w-full rounded border px-2.5 py-1 pl-7 text-xs bg-background border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
             placeholder="Search tools..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -209,7 +209,7 @@ const AppSidebar = () => {
         </div>
       </div>
 
-      <nav className="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto">
+      <nav className="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto min-w-0">
         {search && searchResults ? (
           searchResults.length > 0 ? (
             <div className="space-y-0.5">
@@ -262,12 +262,12 @@ const AppSidebar = () => {
         )}
       </nav>
 
-      <div className="px-4 py-2.5 border-t border-sidebar-border flex justify-center">
+      <div className="px-3 py-2 border-t border-sidebar-border flex justify-center">
         <a
           href="https://www.buymeacoffee.com/chungho"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-md border border-sidebar-border px-2.5 py-1.5 text-xs font-medium text-sidebar-foreground opacity-90 hover:opacity-100 hover:bg-sidebar-accent transition-colors"
+          className="inline-flex items-center gap-1 rounded border border-sidebar-border px-2 py-1 text-xs font-medium text-sidebar-foreground opacity-90 hover:opacity-100 hover:bg-sidebar-accent transition-colors"
           title="Buy me a coffee"
         >
           <Coffee className="h-3.5 w-3.5 shrink-0" />
