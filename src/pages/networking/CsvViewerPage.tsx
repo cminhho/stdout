@@ -1,38 +1,12 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
 import PanelHeader from "@/components/PanelHeader";
-import { Button } from "@/components/ui/button";
-import { FileCode, Eraser, Upload } from "lucide-react";
+import { SampleButton, ClearButton } from "@/components/ToolActionButtons";
+import FileUploadButton from "@/components/FileUploadButton";
 
 type ViewMode = "input" | "table";
-type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
-
-const readFileAsText = (file: File, encoding: FileEncoding): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result;
-      if (typeof result === "string") {
-        resolve(result);
-        return;
-      }
-      if (result instanceof ArrayBuffer) {
-        const enc = encoding === "utf-16le" ? "utf-16le" : encoding === "utf-16be" ? "utf-16be" : "utf-8";
-        resolve(new TextDecoder(enc).decode(result));
-        return;
-      }
-      reject(new Error("Failed to read file"));
-    };
-    reader.onerror = () => reject(reader.error);
-    if (encoding === "utf-8") {
-      reader.readAsText(file, "UTF-8");
-    } else {
-      reader.readAsArrayBuffer(file);
-    }
-  });
-};
 
 const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
 
@@ -40,25 +14,12 @@ const SAMPLE_CSV = "name,age,city\nAlice,30,NYC\nBob,25,LA\nCarol,28,Chicago";
 
 const CsvViewerPage = () => {
   const tool = useCurrentTool();
-  const fileRef = useRef<HTMLInputElement>(null);
-  const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
   const [csv, setCsv] = useState("");
   const [delimiter, setDelimiter] = useState(",");
   const [search, setSearch] = useState("");
   const [sortCol, setSortCol] = useState(-1);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [viewMode, setViewMode] = useState<ViewMode>("table");
-
-  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      setCsv(await readFileAsText(file, fileEncoding));
-    } catch {
-      setCsv("");
-    }
-    e.target.value = "";
-  };
 
   const parsed = useMemo(() => {
     if (!csv.trim()) return null;
@@ -94,7 +55,6 @@ const CsvViewerPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "CSV Viewer"} description={tool?.description ?? "View and search CSV files in a table"}>
-      <input ref={fileRef} type="file" accept=".csv,.tsv,.txt" className="hidden" onChange={handleFile} />
       <div className="flex flex-col flex-1 min-h-0 gap-3">
         <div className="tool-toolbar flex flex-wrap items-center gap-2 text-left">
           <select value={delimiter} onChange={(e) => setDelimiter(e.target.value)} className={selectClass}>
@@ -133,23 +93,9 @@ const CsvViewerPage = () => {
               label={parsed ? "CSV Input" : "Or paste CSV"}
               extra={
                 <div className="flex items-center gap-2">
-                  <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setCsv(SAMPLE_CSV)}>
-                    <FileCode className="h-3.5 w-3.5 mr-1.5" />
-                    Sample
-                  </Button>
-                  <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setCsv("")}>
-                    <Eraser className="h-3.5 w-3.5 mr-1.5" />
-                    Clear
-                  </Button>
-                  <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs" onClick={() => fileRef.current?.click()}>
-                    <Upload className="h-3 w-3 mr-1.5" />
-                    Upload
-                  </Button>
-                  <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
-                    <option value="utf-8">UTF-8</option>
-                    <option value="utf-16le">UTF-16 LE</option>
-                    <option value="utf-16be">UTF-16 BE</option>
-                  </select>
+                  <SampleButton onClick={() => setCsv(SAMPLE_CSV)} />
+                  <ClearButton onClick={() => setCsv("")} />
+                  <FileUploadButton accept=".csv,.tsv,.txt" onText={setCsv} />
                 </div>
               }
             />
