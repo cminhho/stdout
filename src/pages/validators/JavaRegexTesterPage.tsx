@@ -3,9 +3,10 @@ import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
-import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import CopyButton from "@/components/CopyButton";
-import { FileCode, Eraser } from "lucide-react";
+import FileUploadButton from "@/components/FileUploadButton";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
 
 const SAMPLE_TEST_STRING = "Order 2024-01-15\nShipped 2024-02-20";
 
@@ -57,15 +58,15 @@ const JavaRegexTesterPage = () => {
               <label className="text-xs text-muted-foreground mb-1 block">Pattern (Java-style, use \\ for escapes)</label>
               <div className="flex items-center rounded-md border bg-background border-border focus-within:ring-1 focus-within:ring-ring">
                 <span className="text-muted-foreground text-sm pl-3 select-none">/</span>
-                <input
-                  className="flex-1 px-1 py-2 text-sm font-mono bg-transparent text-foreground focus:outline-none"
+                <Input
+                  className="flex-1 min-w-0 border-0 bg-transparent px-1 py-2 text-sm font-mono focus-visible:ring-0 focus-visible:ring-offset-0"
                   placeholder="e.g. \\d{4}-\\d{2}-\\d{2}"
                   value={pattern}
                   onChange={(e) => setPattern(e.target.value)}
                 />
                 <span className="text-muted-foreground text-sm pr-1 select-none">/</span>
-                <input
-                  className="w-14 px-1 py-2 text-sm font-mono bg-transparent text-primary focus:outline-none"
+                <Input
+                  className="w-14 border-0 bg-transparent px-1 py-2 text-sm font-mono text-primary focus-visible:ring-0 focus-visible:ring-offset-0"
                   placeholder="flags"
                   value={flags}
                   onChange={(e) => setFlags(e.target.value)}
@@ -95,14 +96,9 @@ const JavaRegexTesterPage = () => {
               label="Test String"
               extra={
                 <div className="flex items-center gap-2">
-                  <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setTestString(SAMPLE_TEST_STRING)}>
-                    <FileCode className="h-3.5 w-3.5 mr-1.5" />
-                    Sample
-                  </Button>
-                  <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setTestString("")}>
-                    <Eraser className="h-3.5 w-3.5 mr-1.5" />
-                    Clear
-                  </Button>
+                  <SampleButton onClick={() => setTestString(SAMPLE_TEST_STRING)} />
+                  <ClearButton onClick={() => setTestString("")} />
+                  <FileUploadButton accept=".txt,text/plain" onText={setTestString} />
                 </div>
               }
             />

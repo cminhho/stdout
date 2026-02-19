@@ -1,26 +1,11 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
-import { Button } from "@/components/ui/button";
 import CopyButton from "@/components/CopyButton";
-import { Upload, FileCode, Eraser } from "lucide-react";
-
-const readFileAsText = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result;
-      if (typeof result === "string") resolve(result);
-      else reject(new Error("Failed to read file"));
-    };
-    reader.onerror = () => reject(reader.error);
-    reader.readAsText(file, "UTF-8");
-  });
-};
-
-const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
+import FileUploadButton from "@/components/FileUploadButton";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
 const SAMPLE_A = '{"id": 1, "name": "test", "roles": ["admin"]}';
 const SAMPLE_B = '{"id": "1", "email": "x@y.z", "roles": ["user"]}';
 
@@ -72,64 +57,21 @@ function diffObjects(a: unknown, b: unknown, path = ""): DiffEntry[] {
 
 const SchemaDiffPage = () => {
   const tool = useCurrentTool();
-  const leftInputRef = useRef<HTMLInputElement>(null);
-  const rightInputRef = useRef<HTMLInputElement>(null);
   const [left, setLeft] = useState("");
   const [right, setRight] = useState("");
 
-  const handleLeftUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      setLeft(await readFileAsText(file));
-    } catch {
-      setLeft("");
-    }
-    e.target.value = "";
-  };
-  const handleRightUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      setRight(await readFileAsText(file));
-    } catch {
-      setRight("");
-    }
-    e.target.value = "";
-  };
-
   const leftExtra = (
     <div className="flex items-center gap-2 flex-wrap">
-      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setLeft(SAMPLE_A)}>
-        <FileCode className="h-3.5 w-3.5 mr-1.5" />
-        Sample
-      </Button>
-      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setLeft("")}>
-        <Eraser className="h-3.5 w-3.5 mr-1.5" />
-        Clear
-      </Button>
-      <input ref={leftInputRef} type="file" accept=".json,application/json" className="hidden" onChange={handleLeftUpload} />
-      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => leftInputRef.current?.click()}>
-        <Upload className="h-3.5 w-3.5 mr-1.5" />
-        Upload
-      </Button>
+      <SampleButton onClick={() => setLeft(SAMPLE_A)} />
+      <ClearButton onClick={() => setLeft("")} />
+      <FileUploadButton accept=".json,application/json" onText={setLeft} />
     </div>
   );
   const rightExtra = (
     <div className="flex items-center gap-2 flex-wrap">
-      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setRight(SAMPLE_B)}>
-        <FileCode className="h-3.5 w-3.5 mr-1.5" />
-        Sample
-      </Button>
-      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setRight("")}>
-        <Eraser className="h-3.5 w-3.5 mr-1.5" />
-        Clear
-      </Button>
-      <input ref={rightInputRef} type="file" accept=".json,application/json" className="hidden" onChange={handleRightUpload} />
-      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => rightInputRef.current?.click()}>
-        <Upload className="h-3.5 w-3.5 mr-1.5" />
-        Upload
-      </Button>
+      <SampleButton onClick={() => setRight(SAMPLE_B)} />
+      <ClearButton onClick={() => setRight("")} />
+      <FileUploadButton accept=".json,application/json" onText={setRight} />
     </div>
   );
 

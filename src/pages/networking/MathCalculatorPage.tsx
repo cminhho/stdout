@@ -7,7 +7,8 @@ import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { FileCode, Eraser, HelpCircle } from "lucide-react";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+import { HelpCircle } from "lucide-react";
 
 const SAMPLE_EXPR = "sqrt(2) * pi + log10(100)";
 
@@ -160,14 +161,8 @@ const MathCalculatorPage = () => {
             label="Expression"
             extra={
               <div className="flex items-center gap-2">
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setExpr(SAMPLE_EXPR)}>
-                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
-                  Sample
-                </Button>
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setExpr("")}>
-                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
-                  Clear
-                </Button>
+                <SampleButton onClick={() => setExpr(SAMPLE_EXPR)} />
+                <ClearButton onClick={() => setExpr("")} />
               </div>
             }
           />
@@ -245,7 +240,7 @@ const MathCalculatorPage = () => {
           <div className="tool-card">
             <div className="flex justify-between items-center mb-2">
               <Label className="text-xs text-muted-foreground">History</Label>
-              <button onClick={() => setHistory([])} className="text-[10px] text-muted-foreground hover:text-foreground">Clear</button>
+              <ClearButton onClick={() => setHistory([])} className="h-6 text-[10px] px-2" />
             </div>
             <div className="space-y-1 max-h-56 overflow-y-auto">
               {history.map((h, i) => (

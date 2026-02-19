@@ -4,8 +4,8 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Eraser, FileCode } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
 
 const charSets = {
   lowercase: "abcdefghijklmnopqrstuvwxyz",
@@ -66,17 +66,12 @@ const RandomStringPage = () => {
         <div className="tool-panel flex flex-col min-h-0 overflow-auto min-w-0">
           <PanelHeader
             label="Options"
-            extra={
-              <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={loadSample}>
-                <FileCode className="h-3.5 w-3.5 mr-1.5" />
-                Sample
-              </Button>
-            }
+            extra={<SampleButton onClick={loadSample} />}
           />
           <div className="space-y-4 shrink-0">
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Length</Label>
-              <input
+              <Input
                 type="number"
                 min={1}
                 max={256}
@@ -102,21 +97,16 @@ const RandomStringPage = () => {
             {preset === "custom" && (
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Custom characters</Label>
-                <input
-                  value={customChars}
-                  onChange={(e) => setCustomChars(e.target.value)}
-                  placeholder="e.g. abc123"
-                  className={inputClass}
-                />
+                <Input value={customChars} onChange={(e) => setCustomChars(e.target.value)} placeholder="e.g. abc123" className={inputClass} />
               </div>
             )}
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Prefix</Label>
-              <input value={prefix} onChange={(e) => setPrefix(e.target.value)} className={inputClass} placeholder="Optional" />
+              <Input value={prefix} onChange={(e) => setPrefix(e.target.value)} className={inputClass} placeholder="Optional" />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Suffix</Label>
-              <input value={suffix} onChange={(e) => setSuffix(e.target.value)} className={inputClass} placeholder="Optional" />
+              <Input value={suffix} onChange={(e) => setSuffix(e.target.value)} className={inputClass} placeholder="Optional" />
             </div>
           </div>
         </div>
@@ -130,13 +120,13 @@ const RandomStringPage = () => {
               <div className="flex items-center gap-2 flex-wrap">
                 <div className="flex items-center gap-1.5">
                   <Label className="text-xs text-muted-foreground shrink-0">Count</Label>
-                  <input
+                  <Input
                     type="number"
                     min={1}
                     max={100}
                     value={count}
                     onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
-                    className="h-7 w-14 rounded border border-input bg-background px-2 font-mono text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                    className="h-7 w-14 font-mono text-xs"
                   />
                 </div>
                 <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer whitespace-nowrap">
@@ -148,10 +138,7 @@ const RandomStringPage = () => {
                   />
                   Color
                 </label>
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setStrings([])}>
-                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
-                  Clear
-                </Button>
+                <ClearButton onClick={() => setStrings([])} />
               </div>
             }
           />

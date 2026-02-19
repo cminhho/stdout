@@ -4,7 +4,8 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
 import PanelHeader from "@/components/PanelHeader";
 import { Button } from "@/components/ui/button";
-import { FileCode, Eraser } from "lucide-react";
+import FileUploadButton from "@/components/FileUploadButton";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
 
 const SAMPLE_INPUT = "banana\napple\ncherry\napple\nbanana";
 
@@ -37,14 +38,9 @@ const ListCollatorPage = () => {
             label="Input (one item per line)"
             extra={
               <div className="flex items-center gap-2">
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput(SAMPLE_INPUT)}>
-                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
-                  Sample
-                </Button>
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput("")}>
-                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
-                  Clear
-                </Button>
+                <SampleButton onClick={() => setInput(SAMPLE_INPUT)} />
+                <ClearButton onClick={() => setInput("")} />
+                <FileUploadButton accept=".txt,text/plain,.csv,text/csv" onText={setInput} />
               </div>
             }
           />

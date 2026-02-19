@@ -5,7 +5,8 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 import { Button } from "@/components/ui/button";
-import { Download, Eraser } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { ClearButton, SaveButton } from "@/components/ToolActionButtons";
 
 const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
 
@@ -130,27 +131,18 @@ const LogGeneratorPage = () => {
                 )}
                 <div className="flex items-center gap-1.5">
                   <label className="text-xs text-muted-foreground shrink-0">Lines</label>
-                  <input
+                  <Input
                     type="number"
                     min={1}
                     max={10000}
                     value={count}
-                    onChange={(e) => setCount(Math.max(1, Math.min(10000, Number(e.target.value))))}
-                    className="h-7 w-16 rounded border border-input bg-background px-2 font-mono text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                    onChange={(e) => setCount(Math.max(1, Math.min(10000, Number(e.target.value) || 1)))}
+                    className="h-7 w-16 font-mono text-xs"
                   />
                 </div>
                 <Button size="sm" className="h-7 text-xs" onClick={generate}>Generate</Button>
-                {output && (
-                  <Button size="sm" variant="outline" className="h-7 text-xs" onClick={download}>
-                    <Download className="h-3 w-3 mr-1" />Save .log
-                  </Button>
-                )}
-                {output && (
-                  <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setOutput("")}>
-                    <Eraser className="h-3.5 w-3.5 mr-1.5" />
-                    Clear
-                  </Button>
-                )}
+                {output && <SaveButton label="Save .log" onClick={download} className="h-7 text-xs" />}
+                {output && <ClearButton onClick={() => setOutput("")} />}
               </div>
             }
           />

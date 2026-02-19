@@ -5,7 +5,9 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import CopyButton from "@/components/CopyButton";
 import { Button } from "@/components/ui/button";
-import { FileCode, Eraser } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import FileUploadButton from "@/components/FileUploadButton";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
 
 const SAMPLE_TEXT = "The quick brown fox jumps over the lazy dog.\nSecond line here.\nThird line.";
 
@@ -79,16 +81,11 @@ const TextAnalyzerPage = () => {
       <div className="tool-panel flex flex-col min-h-0 flex-1">
         <PanelHeader
           label="Text Input"
-          extra={
+            extra={
             <div className="flex items-center gap-2 flex-wrap">
-              <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setText(SAMPLE_TEXT)}>
-                <FileCode className="h-3.5 w-3.5 mr-1.5" />
-                Sample
-              </Button>
-              <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setText("")}>
-                <Eraser className="h-3.5 w-3.5 mr-1.5" />
-                Clear
-              </Button>
+              <SampleButton onClick={() => setText(SAMPLE_TEXT)} />
+              <ClearButton onClick={() => setText("")} />
+              <FileUploadButton accept=".txt,text/plain" onText={setText} />
               <Button size="sm" variant="outline" className="h-7 text-xs" onClick={sortLines}>Sort Lines</Button>
               <Button size="sm" variant="outline" className="h-7 text-xs" onClick={removeDuplicateLines}>Remove Dupes</Button>
               <Button size="sm" variant="outline" className="h-7 text-xs" onClick={reverseLines}>Reverse</Button>
@@ -98,14 +95,14 @@ const TextAnalyzerPage = () => {
               <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("camel")}>camelCase</Button>
               <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("snake")}>snake_case</Button>
               <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("kebab")}>kebab-case</Button>
-              <input
-                className="h-7 rounded border border-input bg-background px-2 font-mono text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring w-36 min-w-0"
+              <Input
+                className="h-7 w-36 font-mono text-xs min-w-0"
                 placeholder="Regex..."
                 value={regexPattern}
                 onChange={(e) => setRegexPattern(e.target.value)}
               />
-              <input
-                className="h-7 w-14 rounded border border-input bg-background px-1.5 font-mono text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring text-center min-w-0"
+              <Input
+                className="h-7 w-14 font-mono text-xs text-center min-w-0"
                 placeholder="Flags"
                 value={regexFlags}
                 onChange={(e) => setRegexFlags(e.target.value)}

@@ -5,7 +5,8 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Eraser } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { ClearButton } from "@/components/ToolActionButtons";
 
 const generateUUIDv4 = (): string => crypto.randomUUID();
 
@@ -69,13 +70,13 @@ const UuidPage = () => {
               <div className="flex items-center gap-2 flex-wrap">
                 <div className="flex items-center gap-1.5">
                   <Label className="text-xs text-muted-foreground shrink-0">Count</Label>
-                  <input
+                  <Input
                     type="number"
                     min={1}
                     max={100}
                     value={count}
                     onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
-                    className="h-7 w-14 rounded border border-input bg-background px-2 font-mono text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                    className="h-7 w-14 font-mono text-xs"
                   />
                 </div>
                 <select
@@ -96,12 +97,7 @@ const UuidPage = () => {
                   Hyphens
                 </label>
                 <Button size="sm" className="h-7 text-xs" onClick={generate}>Generate</Button>
-                {outputText && (
-                  <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setUuids([])}>
-                    <Eraser className="h-3.5 w-3.5 mr-1.5" />
-                    Clear
-                  </Button>
-                )}
+                {outputText && <ClearButton onClick={() => setUuids([])} />}
               </div>
             }
           />

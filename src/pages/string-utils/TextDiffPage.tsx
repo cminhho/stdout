@@ -4,8 +4,8 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import CopyButton from "@/components/CopyButton";
-import { Button } from "@/components/ui/button";
-import { FileCode, Eraser } from "lucide-react";
+import FileUploadButton from "@/components/FileUploadButton";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
 
 const SAMPLE_A = "line one\nline two\nline three";
 const SAMPLE_B = "line one\nline two modified\nline three\nline four";
@@ -51,14 +51,9 @@ const TextDiffPage = () => {
             label="Original"
             extra={
               <div className="flex items-center gap-2">
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setTextA(SAMPLE_A)}>
-                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
-                  Sample
-                </Button>
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setTextA("")}>
-                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
-                  Clear
-                </Button>
+                <SampleButton onClick={() => setTextA(SAMPLE_A)} />
+                <ClearButton onClick={() => setTextA("")} />
+                <FileUploadButton accept=".txt,text/plain" onText={setTextA} />
               </div>
             }
           />
@@ -71,14 +66,9 @@ const TextDiffPage = () => {
             label="Modified"
             extra={
               <div className="flex items-center gap-2">
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setTextB(SAMPLE_B)}>
-                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
-                  Sample
-                </Button>
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setTextB("")}>
-                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
-                  Clear
-                </Button>
+                <SampleButton onClick={() => setTextB(SAMPLE_B)} />
+                <ClearButton onClick={() => setTextB("")} />
+                <FileUploadButton accept=".txt,text/plain" onText={setTextB} />
               </div>
             }
           />

@@ -5,6 +5,7 @@ import CodeEditor from "@/components/CodeEditor";
 import PanelHeader from "@/components/PanelHeader";
 import { SampleButton, ClearButton } from "@/components/ToolActionButtons";
 import FileUploadButton from "@/components/FileUploadButton";
+import { Input } from "@/components/ui/input";
 
 type ViewMode = "input" | "table";
 
@@ -81,7 +82,7 @@ const CsvViewerPage = () => {
                   Table
                 </button>
               </div>
-              <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search..." className="input-compact flex-1 min-w-[160px] max-w-xs" />
+              <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search..." className="input-compact flex-1 min-w-[160px] max-w-xs" />
               <span className="text-xs text-muted-foreground">{filtered?.rows.length}/{parsed.rows.length} rows</span>
             </>
           )}

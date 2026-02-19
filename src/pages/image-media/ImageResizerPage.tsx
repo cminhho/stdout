@@ -1,9 +1,12 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import { Button } from "@/components/ui/button";
-import { Eraser, Upload } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import FileUploadButton from "@/components/FileUploadButton";
+import { ClearButton, SaveButton } from "@/components/ToolActionButtons";
+import { Upload } from "lucide-react";
 
 const ImageResizerPage = () => {
   const tool = useCurrentTool();
@@ -18,9 +21,7 @@ const ImageResizerPage = () => {
   const fileRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const loadImageFromFile = useCallback((file: File) => {
     const reader = new FileReader();
     reader.onload = () => {
       const img = new Image();
@@ -34,6 +35,11 @@ const ImageResizerPage = () => {
       img.src = reader.result as string;
     };
     reader.readAsDataURL(file);
+  }, []);
+
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) loadImageFromFile(file);
   };
 
   const handleWidthChange = (w: number) => {
@@ -60,23 +66,23 @@ const ImageResizerPage = () => {
     img.src = imageSrc;
   };
 
-  const download = () => {
+  const download = useCallback(() => {
     if (!canvasRef.current) return;
     const mime = format === "png" ? "image/png" : format === "jpeg" ? "image/jpeg" : "image/webp";
-    const url = canvasRef.current.toDataURL(mime, quality / 100);
+    const dataUrl = canvasRef.current.toDataURL(mime, quality / 100);
     const a = document.createElement("a");
-    a.href = url;
+    a.href = dataUrl;
     a.download = `resized.${format}`;
     a.click();
-  };
+  }, [format, quality]);
 
-  const clearImage = () => {
+  const clearImage = useCallback(() => {
     setImageSrc("");
     setOrigW(0);
     setOrigH(0);
     setWidth(0);
     setHeight(0);
-  };
+  }, []);
 
   return (
     <ToolLayout title={tool?.label ?? "Image Resizer"} description={tool?.description ?? "Resize images with format conversion"}>
@@ -85,12 +91,10 @@ const ImageResizerPage = () => {
           <PanelHeader
             label="Upload Image"
             extra={
-              imageSrc ? (
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={clearImage}>
-                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
-                  Clear
-                </Button>
-              ) : undefined
+              <div className="flex items-center gap-2">
+                <FileUploadButton accept="image/*" onSelect={loadImageFromFile} />
+                {imageSrc && <ClearButton onClick={clearImage} />}
+              </div>
             }
           />
           <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-border rounded-md p-6 cursor-pointer hover:border-primary/50 transition-colors min-h-[200px]" onClick={() => fileRef.current?.click()}>
@@ -104,11 +108,11 @@ const ImageResizerPage = () => {
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="text-xs text-muted-foreground">Width</label>
-                  <input type="number" value={width} onChange={(e) => handleWidthChange(Number(e.target.value))} className="w-full rounded-md border px-2 py-1.5 text-xs font-mono bg-background border-border text-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+                  <Input type="number" value={width} onChange={(e) => handleWidthChange(Number(e.target.value))} className="h-8 font-mono text-xs" />
                 </div>
                 <div>
                   <label className="text-xs text-muted-foreground">Height</label>
-                  <input type="number" value={height} onChange={(e) => handleHeightChange(Number(e.target.value))} className="w-full rounded-md border px-2 py-1.5 text-xs font-mono bg-background border-border text-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+                  <Input type="number" value={height} onChange={(e) => handleHeightChange(Number(e.target.value))} className="h-8 font-mono text-xs" />
                 </div>
               </div>
               <div className="flex items-center gap-3 flex-wrap">
@@ -131,7 +135,7 @@ const ImageResizerPage = () => {
               </div>
               <div className="flex gap-2">
                 <Button size="sm" onClick={resize}>Resize</Button>
-                <Button size="sm" variant="outline" onClick={download}>Download</Button>
+                <SaveButton label="Download" onClick={download} className="h-7 text-xs" />
               </div>
             </div>
           )}

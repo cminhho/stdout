@@ -1,9 +1,10 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useCallback, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
-import { Button } from "@/components/ui/button";
-import { Eraser, Upload } from "lucide-react";
+import FileUploadButton from "@/components/FileUploadButton";
+import { ClearButton } from "@/components/ToolActionButtons";
+import { Input } from "@/components/ui/input";
 
 interface HarEntry {
   startedDateTime: string;
@@ -18,23 +19,16 @@ const HarViewerPage = () => {
   const [selected, setSelected] = useState<HarEntry | null>(null);
   const [filter, setFilter] = useState("");
   const [error, setError] = useState("");
-  const fileRef = useRef<HTMLInputElement>(null);
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const har = JSON.parse(reader.result as string);
-        setEntries(har.log?.entries || []);
-        setError("");
-      } catch (err) {
-        setError((err as Error).message);
-      }
-    };
-    reader.readAsText(file);
-  };
+  const loadHarFromText = useCallback((text: string) => {
+    try {
+      const har = JSON.parse(text);
+      setEntries(har.log?.entries || []);
+      setError("");
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  }, []);
 
   const filtered = useMemo(() => {
     if (!filter) return entries;
@@ -48,34 +42,25 @@ const HarViewerPage = () => {
     return "text-red-400";
   };
 
-  const clearHar = () => {
+  const clearHar = useCallback(() => {
     setEntries([]);
     setSelected(null);
     setError("");
     setFilter("");
-  };
+  }, []);
 
   return (
     <ToolLayout title={tool?.label ?? "HAR Viewer"} description={tool?.description ?? "Inspect HAR (HTTP Archive) files"}>
-      <input ref={fileRef} type="file" accept=".har,.json" onChange={handleFile} className="hidden" />
       <div className="space-y-3 flex flex-col flex-1 min-h-0">
         <PanelHeader
           label="HAR File"
           extra={
             <div className="flex items-center gap-2">
-              <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => fileRef.current?.click()}>
-                <Upload className="h-3 w-3 mr-1.5" />
-                Load HAR
-              </Button>
-              {entries.length > 0 && (
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={clearHar}>
-                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
-                  Clear
-                </Button>
-              )}
+              <FileUploadButton accept=".har,.json" onText={loadHarFromText} />
+              {entries.length > 0 && <ClearButton onClick={clearHar} />}
               {entries.length > 0 && (
                 <>
-                  <input value={filter} onChange={(e) => setFilter(e.target.value)} placeholder="Filter..." className="input-compact flex-1 min-w-0 max-w-[140px] font-mono h-7" />
+                  <Input value={filter} onChange={(e) => setFilter(e.target.value)} placeholder="Filter..." className="input-compact flex-1 min-w-0 max-w-[140px] font-mono h-7" />
                   <span className="text-xs text-muted-foreground shrink-0">{filtered.length}/{entries.length}</span>
                 </>
               )}

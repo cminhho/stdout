@@ -3,9 +3,9 @@ import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
-import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FileCode, Eraser } from "lucide-react";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
 
 const FIELDS = ["minute", "hour", "day", "month", "weekday"] as const;
 const LABELS: Record<(typeof FIELDS)[number], string> = {
@@ -103,7 +103,7 @@ const CronBuilderPage = () => {
           {FIELDS.map((field) => (
             <div key={field} className="flex items-center gap-2">
               <Label className="text-xs text-muted-foreground shrink-0 w-20">{LABELS[field]}</Label>
-              <input
+              <Input
                 className="input-compact w-16 font-mono text-center"
                 value={fields[field]}
                 onChange={(e) => setFields((f) => ({ ...f, [field]: e.target.value }))}
@@ -131,14 +131,8 @@ const CronBuilderPage = () => {
             text={expression}
             extra={
               <div className="flex items-center gap-2">
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyPreset(sampleExpression)}>
-                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
-                  Sample
-                </Button>
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={clearExpression}>
-                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
-                  Clear
-                </Button>
+                <SampleButton onClick={() => applyPreset(sampleExpression)} />
+                <ClearButton onClick={clearExpression} />
               </div>
             }
           />

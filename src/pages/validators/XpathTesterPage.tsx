@@ -1,11 +1,11 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Upload, FileCode, Eraser } from "lucide-react";
+import FileUploadButton from "@/components/FileUploadButton";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
 import { evaluateXPath } from "@/utils/validators";
 
 const SAMPLE_XML = `<?xml version="1.0"?>
@@ -14,24 +14,8 @@ const SAMPLE_XML = `<?xml version="1.0"?>
   <book id="2"><title>Beta</title><year>2021</year></book>
 </books>`;
 
-const readFileAsText = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result;
-      if (typeof result === "string") resolve(result);
-      else reject(new Error("Failed to read file"));
-    };
-    reader.onerror = () => reject(reader.error);
-    reader.readAsText(file, "UTF-8");
-  });
-};
-
-const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
-
 const XpathTesterPage = () => {
   const tool = useCurrentTool();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [xml, setXml] = useState(SAMPLE_XML);
   const [xpath, setXpath] = useState("//book/title");
 
@@ -39,32 +23,11 @@ const XpathTesterPage = () => {
 
   const resultText = result.items.map((i) => `[${i.type}] ${i.value}`).join("\n\n") || "";
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      setXml(await readFileAsText(file));
-    } catch {
-      setXml("");
-    }
-    e.target.value = "";
-  };
-
   const xmlExtra = (
     <div className="flex items-center gap-2 flex-wrap">
-      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setXml(SAMPLE_XML)}>
-        <FileCode className="h-3.5 w-3.5 mr-1.5" />
-        Sample
-      </Button>
-      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setXml("")}>
-        <Eraser className="h-3.5 w-3.5 mr-1.5" />
-        Clear
-      </Button>
-      <input ref={fileInputRef} type="file" accept=".xml,application/xml,text/xml" className="hidden" onChange={handleFileUpload} />
-      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => fileInputRef.current?.click()}>
-        <Upload className="h-3.5 w-3.5 mr-1.5" />
-        Upload
-      </Button>
+      <SampleButton onClick={() => setXml(SAMPLE_XML)} />
+      <ClearButton onClick={() => setXml("")} />
+      <FileUploadButton accept=".xml,application/xml,text/xml" onText={setXml} />
     </div>
   );
 

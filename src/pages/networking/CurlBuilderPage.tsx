@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Eraser, Plus, Trash2 } from "lucide-react";
+import { ClearButton } from "@/components/ToolActionButtons";
+import { Plus, Trash2 } from "lucide-react";
 
 interface Header {
   key: string;
@@ -211,12 +212,7 @@ const CurlBuilderPage = () => {
           <div className="tool-panel flex flex-col flex-1 min-h-0">
             <PanelHeader
               label="Import cURL"
-              extra={
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setImportInput("")}>
-                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
-                  Clear
-                </Button>
-              }
+              extra={<ClearButton onClick={() => setImportInput("")} />}
             />
             <div className="flex flex-col flex-1 min-h-0 overflow-hidden" style={{ minHeight: 120 }}>
               <CodeEditor

@@ -4,7 +4,7 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import CopyButton from "@/components/CopyButton";
-import { Eraser } from "lucide-react";
+import { ClearButton } from "@/components/ToolActionButtons";
 import { luhnCheck, generateCardNumber, CARD_BRANDS } from "@/utils/creditcard";
 
 const CreditCardPage = () => {
@@ -31,9 +31,7 @@ const CreditCardPage = () => {
               placeholder="Enter card number (digits only or with spaces/dashes)"
               className="font-mono flex-1"
             />
-            <Button type="button" size="sm" variant="outline" onClick={() => setInput("")} title="Clear">
-              <Eraser className="h-4 w-4" />
-            </Button>
+            <ClearButton onClick={() => setInput("")} />
           </div>
           {input.trim() && (
             <p className={`mt-2 text-sm ${isValid ? "text-green-600" : "text-destructive"}`}>
