@@ -3,13 +3,14 @@ import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
-import { Button } from "@/components/ui/button";
 import CopyButton from "@/components/CopyButton";
-import { FileCode, Eraser } from "lucide-react";
+import FileUploadButton from "@/components/FileUploadButton";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
 import { hashText, type HashAlgorithm } from "@/utils/crypto";
 
 const ALGOS: HashAlgorithm[] = ["SHA-1", "SHA-256", "SHA-384", "SHA-512"];
 const SAMPLE_INPUT = "Hello, world!";
+const HASH_FILE_ACCEPT = ".txt,text/plain";
 
 const HashGeneratorPage = () => {
   const tool = useCurrentTool();
@@ -34,15 +35,10 @@ const HashGeneratorPage = () => {
           <PanelHeader
             label="Input"
             extra={
-              <div className="flex items-center gap-2">
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput(SAMPLE_INPUT)}>
-                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
-                  Sample
-                </Button>
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setInput("")}>
-                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
-                  Clear
-                </Button>
+              <div className="flex items-center gap-2 flex-wrap">
+                <SampleButton onClick={() => setInput(SAMPLE_INPUT)} />
+                <ClearButton onClick={() => setInput("")} />
+                <FileUploadButton accept={HASH_FILE_ACCEPT} onText={setInput} />
               </div>
             }
           />

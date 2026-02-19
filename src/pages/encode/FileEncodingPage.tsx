@@ -5,7 +5,8 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { FileCode, Eraser } from "lucide-react";
+import FileUploadButton from "@/components/FileUploadButton";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
 import {
   Select,
   SelectContent,
@@ -138,15 +139,10 @@ const FileEncodingPage = () => {
           <PanelHeader
             label={mode === "decode" ? "Bytes (hex or base64)" : "Text"}
             extra={
-              <div className="flex items-center gap-2">
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => { setInput(mode === "decode" ? (bytesFormat === "hex" ? SAMPLE_HEX : SAMPLE_BASE64) : SAMPLE_TEXT); setOutput(""); setError(""); }}>
-                  <FileCode className="h-3.5 w-3.5 mr-1.5" />
-                  Sample
-                </Button>
-                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => { setInput(""); setOutput(""); setError(""); }}>
-                  <Eraser className="h-3.5 w-3.5 mr-1.5" />
-                  Clear
-                </Button>
+              <div className="flex items-center gap-2 flex-wrap">
+                <SampleButton onClick={() => { setInput(mode === "decode" ? (bytesFormat === "hex" ? SAMPLE_HEX : SAMPLE_BASE64) : SAMPLE_TEXT); setOutput(""); setError(""); }} />
+                <ClearButton onClick={() => { setInput(""); setOutput(""); setError(""); }} />
+                <FileUploadButton accept=".txt,text/plain" onText={(t) => { setInput(t); setOutput(""); setError(""); }} />
               </div>
             }
           />
