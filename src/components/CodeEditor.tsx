@@ -45,13 +45,16 @@ interface Token {
   value: string;
 }
 
+const REGEX_JSON =
+  /("(?:\\.|[^"\\])*")\s*(?=:)|("(?:\\.|[^"\\])*")|([-+]?\d+\.?\d*(?:[eE][+-]?\d+)?)\b|(true|false)\b|(null)\b|([{}[\]])|([,:])|(\/\/.*$)|(\S+)/g;
+
 const tokenizeJson = (line: string): Token[] => {
   const tokens: Token[] = [];
-  const regex = /("(?:\\.|[^"\\])*")\s*(?=:)|("(?:\\.|[^"\\])*")|([-+]?\d+\.?\d*(?:[eE][+-]?\d+)?)\b|(true|false)\b|(null)\b|([{}[\]])|([,:])|(\/\/.*$)|(\S+)/g;
+  REGEX_JSON.lastIndex = 0;
   let match: RegExpExecArray | null;
   let lastIndex = 0;
 
-  while ((match = regex.exec(line)) !== null) {
+  while ((match = REGEX_JSON.exec(line)) !== null) {
     if (match.index > lastIndex) {
       tokens.push({ type: "text", value: line.slice(lastIndex, match.index) });
     }
@@ -64,7 +67,7 @@ const tokenizeJson = (line: string): Token[] => {
     else if (match[7]) tokens.push({ type: "punctuation", value: match[7] });
     else if (match[8]) tokens.push({ type: "comment", value: match[8] });
     else if (match[9]) tokens.push({ type: "text", value: match[9] });
-    lastIndex = regex.lastIndex;
+    lastIndex = REGEX_JSON.lastIndex;
   }
 
   if (lastIndex < line.length) {
@@ -73,12 +76,15 @@ const tokenizeJson = (line: string): Token[] => {
   return tokens;
 };
 
+const REGEX_HTML =
+  /(<!--[\s\S]*?-->)|(<\/?[a-zA-Z][a-zA-Z0-9-]*)|(\s[a-zA-Z-]+)(?==)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(>|\/>)|([^<>"']+)/g;
+
 const tokenizeHtml = (line: string): Token[] => {
   const tokens: Token[] = [];
-  const regex = /(<!--[\s\S]*?-->)|(<\/?[a-zA-Z][a-zA-Z0-9-]*)|(\s[a-zA-Z-]+)(?==)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(>|\/>)|([^<>"']+)/g;
+  REGEX_HTML.lastIndex = 0;
   let match: RegExpExecArray | null;
   let lastIndex = 0;
-  while ((match = regex.exec(line)) !== null) {
+  while ((match = REGEX_HTML.exec(line)) !== null) {
     if (match.index > lastIndex) tokens.push({ type: "text", value: line.slice(lastIndex, match.index) });
     if (match[1]) tokens.push({ type: "comment", value: match[1] });
     else if (match[2]) tokens.push({ type: "tag", value: match[2] });
@@ -86,18 +92,21 @@ const tokenizeHtml = (line: string): Token[] => {
     else if (match[4]) tokens.push({ type: "string", value: match[4] });
     else if (match[5]) tokens.push({ type: "tag", value: match[5] });
     else if (match[6]) tokens.push({ type: "text", value: match[6] });
-    lastIndex = regex.lastIndex;
+    lastIndex = REGEX_HTML.lastIndex;
   }
   if (lastIndex < line.length) tokens.push({ type: "text", value: line.slice(lastIndex) });
   return tokens;
 };
 
+const REGEX_CSS =
+  /(\/\*[\s\S]*?\*\/|\/\/.*$)|([.#@][a-zA-Z_-][\w-]*)|([a-zA-Z-]+)(?=\s*:)|(:\s*)|(["'](?:[^"'\\]|\\.)*["'])|([-+]?\d+\.?\d*(?:px|em|rem|%|vh|vw|s|ms|deg|fr)?)\b|([{}();,])|([^{}"';,:\s]+)/g;
+
 const tokenizeCss = (line: string): Token[] => {
   const tokens: Token[] = [];
-  const regex = /(\/\*[\s\S]*?\*\/|\/\/.*$)|([.#@][a-zA-Z_-][\w-]*)|([a-zA-Z-]+)(?=\s*:)|(:\s*)|(["'](?:[^"'\\]|\\.)*["'])|([-+]?\d+\.?\d*(?:px|em|rem|%|vh|vw|s|ms|deg|fr)?)\b|([{}();,])|([^{}"';,:\s]+)/g;
+  REGEX_CSS.lastIndex = 0;
   let match: RegExpExecArray | null;
   let lastIndex = 0;
-  while ((match = regex.exec(line)) !== null) {
+  while ((match = REGEX_CSS.exec(line)) !== null) {
     if (match.index > lastIndex) tokens.push({ type: "text", value: line.slice(lastIndex, match.index) });
     if (match[1]) tokens.push({ type: "comment", value: match[1] });
     else if (match[2]) tokens.push({ type: "keyword", value: match[2] });
@@ -107,19 +116,22 @@ const tokenizeCss = (line: string): Token[] => {
     else if (match[6]) tokens.push({ type: "number", value: match[6] });
     else if (match[7]) tokens.push({ type: "bracket", value: match[7] });
     else if (match[8]) tokens.push({ type: "text", value: match[8] });
-    lastIndex = regex.lastIndex;
+    lastIndex = REGEX_CSS.lastIndex;
   }
   if (lastIndex < line.length) tokens.push({ type: "text", value: line.slice(lastIndex) });
   return tokens;
 };
 
+const REGEX_SQL_KEYWORDS =
+  /\b(SELECT|FROM|WHERE|INSERT|INTO|UPDATE|DELETE|SET|CREATE|ALTER|DROP|TABLE|INDEX|JOIN|LEFT|RIGHT|INNER|OUTER|ON|AND|OR|NOT|IN|IS|NULL|AS|ORDER|BY|GROUP|HAVING|LIMIT|OFFSET|UNION|ALL|DISTINCT|EXISTS|BETWEEN|LIKE|CASE|WHEN|THEN|ELSE|END|BEGIN|COMMIT|ROLLBACK|VALUES|PRIMARY|KEY|FOREIGN|REFERENCES|DEFAULT|CONSTRAINT|CHECK|UNIQUE|INT|VARCHAR|TEXT|BOOLEAN|DATE|TIMESTAMP|FLOAT|DOUBLE|DECIMAL|IF|GRANT|REVOKE|WITH|RECURSIVE|FETCH|CURSOR|DECLARE)\b/gi;
+const REGEX_SQL = /(--.*$)|(')([^']*)(')|(")([^"]*)(")|\b(\d+\.?\d*)\b|([(),;*=<>!+\-/.])|(\w+)|(\s+)/g;
+
 const tokenizeSql = (line: string): Token[] => {
   const tokens: Token[] = [];
-  const sqlKeywords = /\b(SELECT|FROM|WHERE|INSERT|INTO|UPDATE|DELETE|SET|CREATE|ALTER|DROP|TABLE|INDEX|JOIN|LEFT|RIGHT|INNER|OUTER|ON|AND|OR|NOT|IN|IS|NULL|AS|ORDER|BY|GROUP|HAVING|LIMIT|OFFSET|UNION|ALL|DISTINCT|EXISTS|BETWEEN|LIKE|CASE|WHEN|THEN|ELSE|END|BEGIN|COMMIT|ROLLBACK|VALUES|PRIMARY|KEY|FOREIGN|REFERENCES|DEFAULT|CONSTRAINT|CHECK|UNIQUE|INT|VARCHAR|TEXT|BOOLEAN|DATE|TIMESTAMP|FLOAT|DOUBLE|DECIMAL|IF|GRANT|REVOKE|WITH|RECURSIVE|FETCH|CURSOR|DECLARE)\b/gi;
-  const regex = /(--.*$)|(')([^']*)(')|(")([^"]*)(")|\b(\d+\.?\d*)\b|([(),;*=<>!+\-/.])|(\w+)|(\s+)/g;
+  REGEX_SQL.lastIndex = 0;
   let match: RegExpExecArray | null;
   let lastIndex = 0;
-  while ((match = regex.exec(line)) !== null) {
+  while ((match = REGEX_SQL.exec(line)) !== null) {
     if (match.index > lastIndex) tokens.push({ type: "text", value: line.slice(lastIndex, match.index) });
     if (match[1]) tokens.push({ type: "comment", value: match[1] });
     else if (match[2]) {
@@ -129,14 +141,14 @@ const tokenizeSql = (line: string): Token[] => {
     } else if (match[8]) tokens.push({ type: "number", value: match[8] });
     else if (match[9]) tokens.push({ type: "punctuation", value: match[9] });
     else if (match[10]) {
-      if (sqlKeywords.test(match[10])) {
-        sqlKeywords.lastIndex = 0;
+      REGEX_SQL_KEYWORDS.lastIndex = 0;
+      if (REGEX_SQL_KEYWORDS.test(match[10])) {
         tokens.push({ type: "keyword", value: match[10] });
       } else {
         tokens.push({ type: "text", value: match[10] });
       }
     } else if (match[11]) tokens.push({ type: "text", value: match[11] });
-    lastIndex = regex.lastIndex;
+    lastIndex = REGEX_SQL.lastIndex;
   }
   if (lastIndex < line.length) tokens.push({ type: "text", value: line.slice(lastIndex) });
   return tokens;
@@ -447,11 +459,12 @@ const CodeEditor = ({
         readOnly={readOnly}
         placeholder={placeholder}
         spellCheck={false}
-        className="relative z-[3] w-full h-full p-3 font-mono text-xs leading-relaxed bg-transparent border-none outline-none resize-y"
+        className="relative z-[3] w-full h-full p-3 font-mono text-xs leading-relaxed bg-transparent border-none outline-none resize-y overflow-auto"
         style={{
           paddingLeft: contentPaddingLeft,
           color: "transparent",
           caretColor: "hsl(var(--foreground))",
+          whiteSpace: "pre",
           ...(fillHeight
             ? { height: "100%", minHeight: 0, maxHeight: "none" }
             : { minHeight: 680, maxHeight: "88vh" }),

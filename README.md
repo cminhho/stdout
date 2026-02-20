@@ -12,28 +12,20 @@ Built for **trust, performance, and extensibility**.
 
 ## ✨ Features
 
-Full list of tools (from Public Developer Tools pack):
-
 | Tool | Description |
 |------|-------------|
-| JSON Formatter | Format, validate & beautify JSON with strict RFC compliance |
-| XML Formatter | Format and beautify XML documents |
-| HTML Formatter | Format and beautify HTML code |
+| JSON Format/Validate | Format, validate & beautify JSON with strict RFC compliance |
+| XML Format/Validate | Beautify, minify & validate XML |
+| HTML Beautify/Minify/Validate | Beautify, minify & validate HTML |
 | SQL Formatter | Format and beautify SQL queries |
-| CSS Formatter | Format and beautify CSS code |
+| CSS Beautifier/Minifier | Beautify or minify CSS (format/minify) |
+| JS Beautifier/Minifier | Beautify or minify JavaScript (format/minify) |
 | CSS Inliner (Email) | Inline CSS styles into HTML for email templates |
-| JS Beautifier | Format and indent JavaScript code |
-| JS Minifier | Remove comments and collapse whitespace in JavaScript |
-| CSS Beautifier | Format and indent CSS code |
-| CSS Minifier | Remove comments and collapse whitespace in CSS |
-| JSON Validator | Validate JSON structure and syntax |
 | JSONPath Tester | Test JSONPath expressions against JSON data |
 | Schema Diff | Compare two JSON schemas side by side |
 | Payload Comparator | Compare two JSON payloads and highlight differences |
 | Regex Tester | Test regular expressions with live matching |
 | Java Regex Tester | Test Java-style regular expressions |
-| XML Validator | Validate XML syntax and structure |
-| HTML Validator | Validate HTML syntax (parser-based) |
 | XPath Tester | Run XPath expressions against XML |
 | Credit Card Generator & Validator | Luhn check and generate test card numbers |
 | Cron Parser | Build and parse cron expressions (Quartz-style) |
@@ -52,9 +44,9 @@ Full list of tools (from Public Developer Tools pack):
 | XSLT Transformer | Transform XML using XSLT stylesheet |
 | XML ↔ JSON | Convert between XML and JSON |
 | CSV → XML | Convert CSV to XML (first row as element names) |
-| URL Encode | Encode and decode URL components |
-| Base64 | Encode and decode Base64 strings |
-| HTML Entity | Encode and decode HTML entities |
+| URL Encode/Decode | Encode and decode URL components |
+| Base64 String Encode/Decode | Encode and decode Base64 strings |
+| HTML Entity Encode/Decode | Encode and decode HTML entities |
 | JWT Debugger | Decode and inspect JWT tokens |
 | QR Code | Generate QR codes from text or URLs |
 | Gzip | Compress and decompress with Gzip |
@@ -63,15 +55,10 @@ Full list of tools (from Public Developer Tools pack):
 | Message Digester | MD5, SHA-1, SHA-256 hashes |
 | HMAC Generator | Generate HMAC signatures |
 | String Utilities | Convert between camelCase, snake_case, and more |
+| String Escaper (JSON, XML, CSV, SQL, Java, JS) | Escape or unescape text for JSON, XML, CSV, SQL, Java/.NET, JavaScript string literals |
 | List Collator | Merge, sort, and deduplicate lists |
 | Text Analyzer | Count words, characters, sentences in text |
 | Text Diff | Compare two texts and highlight differences |
-| XML Escape | Escape and unescape XML special characters |
-| Java / .NET Escape | Escape string literals for Java and .NET |
-| JavaScript Escape | Escape JavaScript string literals |
-| JSON Escape | Escape JSON string content |
-| CSV Escape | Escape CSV fields (RFC 4180) |
-| SQL Escape | Escape SQL string literals |
 | Lorem Ipsum | Generate placeholder text |
 | URL Parser | Parse and inspect URL / query string |
 | List of MIME Types | Reference table of common MIME types |

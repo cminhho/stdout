@@ -40,7 +40,7 @@ const SettingsPage = () => {
   const visibleCount = tools.filter((t) => settings.isToolVisible(t.path)).length;
 
   return (
-    <ToolLayout title={tool?.label ?? "Settings"} description={tool?.description ?? "Customize your Stdout experience"}>
+    <ToolLayout title={tool?.label ?? "Settings"} description={tool?.description ?? "Customize your stdout experience"}>
       {/* Tabs */}
       <div className="flex gap-1 mb-6 border-b border-border">
         <button
@@ -124,7 +124,7 @@ const SettingsPage = () => {
               About
             </h3>
             <div className="rounded-lg border border-border p-4 space-y-2">
-              <div className="text-sm text-foreground font-medium">Stdout v1.0.0</div>
+              <div className="text-sm text-foreground font-medium">stdout v1.0.0</div>
               <div className="text-xs text-muted-foreground">
                 A modular, plugin-based developer tool platform built with React, TypeScript, and Tailwind CSS.
                 All tools run entirely in your browser — no data is sent to any server.
@@ -135,7 +135,7 @@ const SettingsPage = () => {
             </div>
           </section>
 
-          {/* Support / Sponsor */}
+          {/* Support the project */}
           <section>
             <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
               <Heart className="h-4 w-4 text-primary" />
@@ -143,26 +143,16 @@ const SettingsPage = () => {
             </h3>
             <div className="rounded-lg border border-border p-4">
               <p className="text-xs text-muted-foreground mb-3">
-                Stdout is open source (MIT). If it’s useful to you, consider supporting development:
+                stdout is open source (MIT). If it’s useful to you, consider supporting development:
               </p>
-              <div className="flex flex-wrap gap-2">
-                <a
-                  href={SITE.githubSponsors}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-md border border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground transition-colors"
-                >
-                  GitHub Sponsors <ExternalLink className="h-3 w-3" />
-                </a>
-                <a
-                  href={SITE.buyMeACoffee}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-md border border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground transition-colors"
-                >
-                  Buy me a coffee <ExternalLink className="h-3 w-3" />
-                </a>
-              </div>
+              <a
+                href={SITE.buyMeACoffee}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-md border border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground transition-colors"
+              >
+                Buy me a coffee <ExternalLink className="h-3 w-3" />
+              </a>
             </div>
           </section>
         </div>

@@ -3,28 +3,20 @@ import type { ToolDefinition } from "@/tools/types";
 
 export const tools: ToolDefinition[] = [
     // ─── Formatters ──────────────────────────────────────────
-    { id: "json-formatter", path: "/formatters/json", label: "JSON Formatter", description: "Format, validate & beautify JSON with strict RFC compliance", group: "Formatters", icon: "Braces", component: lazy(() => import("@/pages/formatters/JsonFormatterPage")) },
-    { id: "xml-formatter", path: "/formatters/xml", label: "XML Formatter", description: "Format and beautify XML documents", group: "Formatters", icon: "FileJson", component: lazy(() => import("@/pages/formatters/XmlFormatterPage")) },
-    { id: "html-formatter", path: "/formatters/html", label: "HTML Formatter", description: "Format and beautify HTML code", group: "Formatters", icon: "Code2", component: lazy(() => import("@/pages/formatters/HtmlFormatterPage")) },
+    { id: "json-formatter", path: "/formatters/json", label: "JSON Format/Validate", description: "Format, validate & beautify JSON with strict RFC compliance", group: "Formatters", icon: "Braces", component: lazy(() => import("@/pages/formatters/JsonFormatterPage")) },
+    { id: "xml-formatter", path: "/formatters/xml", label: "XML Format/Validate", description: "Beautify, minify & validate XML", group: "Formatters", icon: "FileJson", component: lazy(() => import("@/pages/formatters/XmlFormatterPage")) },
+    { id: "html-formatter", path: "/formatters/html", label: "HTML Beautify/Minify", description: "Beautify, minify & validate HTML", group: "Formatters", icon: "Code2", component: lazy(() => import("@/pages/formatters/HtmlFormatterPage")) },
     { id: "sql-formatter", path: "/formatters/sql", label: "SQL Formatter", description: "Format and beautify SQL queries", group: "Formatters", icon: "Database", component: lazy(() => import("@/pages/formatters/SqlFormatterPage")) },
-    { id: "css-formatter", path: "/formatters/css", label: "CSS Formatter", description: "Format and beautify CSS code", group: "Formatters", icon: "FileType", component: lazy(() => import("@/pages/formatters/CssFormatterPage")) },
+    { id: "css-formatter", path: "/formatters/css", label: "CSS Beautifier/Minifier", description: "Beautify or minify CSS (format/minify)", group: "Formatters", icon: "FileType", component: lazy(() => import("@/pages/formatters/CssFormatterPage")) },
+    { id: "js-formatter", path: "/formatters/js", label: "JS Beautifier/Minifier", description: "Beautify or minify JavaScript (format/minify)", group: "Formatters", icon: "Code2", component: lazy(() => import("@/pages/formatters/JsFormatterPage")) },
     { id: "css-inliner", path: "/tools/css-inliner", label: "CSS Inliner (Email)", description: "Inline CSS styles into HTML for email templates", group: "Formatters", icon: "Paintbrush", component: lazy(() => import("@/pages/formatters/CssInlinerPage")) },
 
-    // ─── Minify & Beautify ───────────────────────────────────
-    { id: "js-beautifier", path: "/formatters/js-beautifier", label: "JS Beautifier", description: "Format and indent JavaScript code", group: "Minify & Beautify", icon: "Code2", component: lazy(() => import("@/pages/formatters/JsBeautifierPage")) },
-    { id: "js-minifier", path: "/formatters/js-minifier", label: "JS Minifier", description: "Remove comments and collapse whitespace in JavaScript", group: "Minify & Beautify", icon: "Code2", component: lazy(() => import("@/pages/formatters/JsMinifierPage")) },
-    { id: "css-beautifier", path: "/formatters/css-beautifier", label: "CSS Beautifier", description: "Format and indent CSS code", group: "Minify & Beautify", icon: "FileType", component: lazy(() => import("@/pages/formatters/CssBeautifierPage")) },
-    { id: "css-minifier", path: "/formatters/css-minifier", label: "CSS Minifier", description: "Remove comments and collapse whitespace in CSS", group: "Minify & Beautify", icon: "FileType", component: lazy(() => import("@/pages/formatters/CssMinifierPage")) },
-
     // ─── Validators ─────────────────────────────────────────
-    { id: "json-validator", path: "/tools/json-validator", label: "JSON Validator", description: "Validate JSON structure and syntax", group: "Validators", icon: "CheckCircle2", component: lazy(() => import("@/pages/validators/JsonValidatorPage")) },
     { id: "jsonpath", path: "/testers/jsonpath", label: "JSONPath Tester", description: "Test JSONPath expressions against JSON data", group: "Validators", icon: "Braces", component: lazy(() => import("@/pages/validators/JsonPathPage")) },
     { id: "schema-diff", path: "/tools/schema-diff", label: "Schema Diff", description: "Compare two JSON schemas side by side", group: "Validators", icon: "Diff", component: lazy(() => import("@/pages/validators/SchemaDiffPage")) },
     { id: "payload-compare", path: "/tools/payload-compare", label: "Payload Comparator", description: "Compare two JSON payloads and highlight differences", group: "Validators", icon: "GitCompare", component: lazy(() => import("@/pages/validators/PayloadComparatorPage")) },
     { id: "regex-tester", path: "/text/regex", label: "Regex Tester", description: "Test regular expressions with live matching", group: "Validators", icon: "Regex", component: lazy(() => import("@/pages/validators/RegexTesterPage")) },
     { id: "java-regex-tester", path: "/text/java-regex", label: "Java Regex Tester", description: "Test Java-style regular expressions", group: "Validators", icon: "Regex", component: lazy(() => import("@/pages/validators/JavaRegexTesterPage")) },
-    { id: "xml-validator", path: "/tools/xml-validator", label: "XML Validator", description: "Validate XML syntax and structure", group: "Validators", icon: "FileJson", component: lazy(() => import("@/pages/validators/XmlValidatorPage")) },
-    { id: "html-validator", path: "/tools/html-validator", label: "HTML Validator", description: "Validate HTML syntax (parser-based)", group: "Validators", icon: "Code2", component: lazy(() => import("@/pages/validators/HtmlValidatorPage")) },
     { id: "xpath-tester", path: "/tools/xpath-tester", label: "XPath Tester", description: "Run XPath expressions against XML", group: "Validators", icon: "Braces", component: lazy(() => import("@/pages/validators/XpathTesterPage")) },
     { id: "credit-card", path: "/tools/credit-card", label: "Credit Card Generator & Validator", description: "Luhn check and generate test card numbers", group: "Validators", icon: "KeyRound", component: lazy(() => import("@/pages/validators/CreditCardPage")) },
     { id: "cron-parser", path: "/converters/cron", label: "Cron Parser", description: "Build and parse cron expressions (Quartz-style)", group: "Validators", icon: "Clock", component: lazy(() => import("@/pages/validators/CronBuilderPage")) },
@@ -47,9 +39,9 @@ export const tools: ToolDefinition[] = [
     { id: "csv-xml", path: "/converters/csv-xml", label: "CSV → XML", description: "Convert CSV to XML (first row as element names)", group: "Converters", icon: "FileSpreadsheet", component: lazy(() => import("@/pages/converters/CsvXmlPage")) },
 
     // ─── Encoders / Cryptography ─────────────────────────────
-    { id: "url-encode", path: "/encode/url", label: "URL Encode", description: "Encode and decode URL components", group: "Encode & Crypto", icon: "Link2", component: lazy(() => import("@/pages/encode/UrlEncodePage")) },
-    { id: "base64", path: "/encode/base64", label: "Base64", description: "Encode and decode Base64 strings", group: "Encode & Crypto", icon: "Code2", component: lazy(() => import("@/pages/encode/Base64Page")) },
-    { id: "html-entity", path: "/encode/html", label: "HTML Entity", description: "Encode and decode HTML entities", group: "Encode & Crypto", icon: "Code2", component: lazy(() => import("@/pages/encode/HtmlEntityPage")) },
+    { id: "url-encode", path: "/encode/url", label: "URL Encode/Decode", description: "Encode and decode URL components", group: "Encode & Crypto", icon: "Link2", component: lazy(() => import("@/pages/encode/UrlEncodePage")) },
+    { id: "base64", path: "/encode/base64", label: "Base64 String Encode/Decode", description: "Encode and decode Base64 strings", group: "Encode & Crypto", icon: "Code2", component: lazy(() => import("@/pages/encode/Base64Page")) },
+    { id: "html-entity", path: "/encode/html", label: "HTML Entity Encode/Decode", description: "Encode and decode HTML entities", group: "Encode & Crypto", icon: "Code2", component: lazy(() => import("@/pages/encode/HtmlEntityPage")) },
     { id: "jwt-decode", path: "/encode/jwt", label: "JWT Debugger", description: "Decode and inspect JWT tokens", group: "Encode & Crypto", icon: "ShieldCheck", component: lazy(() => import("@/pages/encode/JwtDecodePage")) },
     { id: "qr-code", path: "/encode/qrcode", label: "QR Code", description: "Generate QR codes from text or URLs", group: "Encode & Crypto", icon: "QrCode", component: lazy(() => import("@/pages/encode/QrCodePage")) },
     { id: "gzip", path: "/encode/gzip", label: "Gzip", description: "Compress and decompress with Gzip", group: "Encode & Crypto", icon: "Archive", component: lazy(() => import("@/pages/encode/GzipPage")) },
@@ -60,15 +52,10 @@ export const tools: ToolDefinition[] = [
 
     // ─── String Escaper & Utilities ─────────────────────────
     { id: "string-transformer", path: "/text/transform", label: "String Utilities", description: "Convert between camelCase, snake_case, and more", group: "String & Utilities", icon: "Wand2", component: lazy(() => import("@/pages/string-utils/StringTransformerPage")) },
+    { id: "string-escaper", path: "/text/escape", label: "String Escaper (JSON, XML, CSV, SQL, Java, JS)", description: "Escape or unescape text for JSON, XML, CSV, SQL, Java/.NET, JavaScript string literals", group: "String & Utilities", icon: "Code2", component: lazy(() => import("@/pages/string-utils/UnifiedEscaperPage")) },
     { id: "list-collator", path: "/text/list-collator", label: "List Collator", description: "Merge, sort, and deduplicate lists", group: "String & Utilities", icon: "List", component: lazy(() => import("@/pages/string-utils/ListCollatorPage")) },
     { id: "text-analyzer", path: "/text/analyzer", label: "Text Analyzer", description: "Count words, characters, sentences in text", group: "String & Utilities", icon: "Type", component: lazy(() => import("@/pages/string-utils/TextAnalyzerPage")) },
     { id: "text-diff", path: "/text/diff", label: "Text Diff", description: "Compare two texts and highlight differences", group: "String & Utilities", icon: "GitCompare", component: lazy(() => import("@/pages/string-utils/TextDiffPage")) },
-    { id: "xml-escape", path: "/text/escape/xml", label: "XML Escape", description: "Escape and unescape XML special characters", group: "String & Utilities", icon: "Code2", component: lazy(() => import("@/pages/string-utils/XmlEscapePage")) },
-    { id: "java-escape", path: "/text/escape/java", label: "Java / .NET Escape", description: "Escape string literals for Java and .NET", group: "String & Utilities", icon: "Code2", component: lazy(() => import("@/pages/string-utils/JavaDotNetEscapePage")) },
-    { id: "javascript-escape", path: "/text/escape/javascript", label: "JavaScript Escape", description: "Escape JavaScript string literals", group: "String & Utilities", icon: "Code2", component: lazy(() => import("@/pages/string-utils/JavaScriptEscapePage")) },
-    { id: "json-escape", path: "/text/escape/json", label: "JSON Escape", description: "Escape JSON string content", group: "String & Utilities", icon: "Braces", component: lazy(() => import("@/pages/string-utils/JsonEscapePage")) },
-    { id: "csv-escape", path: "/text/escape/csv", label: "CSV Escape", description: "Escape CSV fields (RFC 4180)", group: "String & Utilities", icon: "FileSpreadsheet", component: lazy(() => import("@/pages/string-utils/CsvEscapePage")) },
-    { id: "sql-escape", path: "/text/escape/sql", label: "SQL Escape", description: "Escape SQL string literals", group: "String & Utilities", icon: "Database", component: lazy(() => import("@/pages/string-utils/SqlEscapePage")) },
 
     // ─── Web Resources ───────────────────────────────────────
     { id: "lorem-ipsum", path: "/generators/lorem", label: "Lorem Ipsum", description: "Generate placeholder text", group: "Web Resources", icon: "AlignLeft", component: lazy(() => import("@/pages/web-resources/LoremIpsumPage")) },

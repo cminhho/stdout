@@ -4,8 +4,10 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
 import PanelHeader from "@/components/PanelHeader";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ClearButton } from "@/components/ToolActionButtons";
 
 const WORDS = [
   "lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit",
@@ -54,34 +56,39 @@ const LoremIpsumPage = () => {
   return (
     <ToolLayout title={tool?.label ?? "Lorem Ipsum"} description={tool?.description ?? "Generate placeholder text"}>
       <div className="flex flex-col flex-1 min-h-0 w-full gap-4">
-        <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0">
-          <div className="flex items-center gap-2">
-            <Label className="text-xs text-muted-foreground shrink-0">Count</Label>
-            <input
-              type="number"
-              min={1}
-              max={100}
-              value={count}
-              onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
-              className="input-compact w-16"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <Label className="text-xs text-muted-foreground shrink-0">Unit</Label>
-            <Select value={unit} onValueChange={(v) => setUnit(v as typeof unit)}>
-              <SelectTrigger className="w-36 h-8"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="paragraphs">Paragraphs</SelectItem>
-                <SelectItem value="sentences">Sentences</SelectItem>
-                <SelectItem value="words">Words</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <Button size="sm" onClick={generate}>Generate</Button>
-        </div>
-
         <div className="tool-panel flex flex-col flex-1 min-h-0">
-          <PanelHeader label={output ? `${wordCount} words` : "Output"} text={output} />
+          <PanelHeader
+            label={output ? `${wordCount} words` : "Output"}
+            text={output}
+            extra={
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-1.5">
+                  <Label className="text-xs text-muted-foreground shrink-0">Count</Label>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={100}
+                    value={count}
+                    onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
+                    className="h-7 w-14 font-mono text-xs"
+                  />
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Label className="text-xs text-muted-foreground shrink-0">Unit</Label>
+                  <Select value={unit} onValueChange={(v) => setUnit(v as typeof unit)}>
+                    <SelectTrigger className="h-7 w-32 text-xs"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="paragraphs">Paragraphs</SelectItem>
+                      <SelectItem value="sentences">Sentences</SelectItem>
+                      <SelectItem value="words">Words</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button size="sm" className="h-7 text-xs" onClick={generate}>Generate</Button>
+                {output ? <ClearButton onClick={() => setOutput("")} /> : null}
+              </div>
+            }
+          />
           <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
             <CodeEditor
               value={output}

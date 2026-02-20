@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 // Common MIME types reference (subset of IANA list)
 const MIME_LIST: { type: string; description?: string }[] = [
@@ -71,7 +72,7 @@ const MimeTypesPage = () => {
     >
       <div className="space-y-4">
         <div className="max-w-md">
-          <label className="text-xs text-muted-foreground mb-1 block">Search</label>
+          <Label className="text-xs text-muted-foreground mb-1 block">Search</Label>
           <Input
             placeholder="Search by type or description..."
             value={query}

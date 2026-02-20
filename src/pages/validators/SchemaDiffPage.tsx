@@ -4,6 +4,10 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import CopyButton from "@/components/CopyButton";
+import FileUploadButton from "@/components/FileUploadButton";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+const SAMPLE_A = '{"id": 1, "name": "test", "roles": ["admin"]}';
+const SAMPLE_B = '{"id": "1", "email": "x@y.z", "roles": ["user"]}';
 
 interface DiffEntry {
   path: string;
@@ -56,6 +60,21 @@ const SchemaDiffPage = () => {
   const [left, setLeft] = useState("");
   const [right, setRight] = useState("");
 
+  const leftExtra = (
+    <div className="flex items-center gap-2 flex-wrap">
+      <SampleButton onClick={() => setLeft(SAMPLE_A)} />
+      <ClearButton onClick={() => setLeft("")} />
+      <FileUploadButton accept=".json,application/json" onText={setLeft} />
+    </div>
+  );
+  const rightExtra = (
+    <div className="flex items-center gap-2 flex-wrap">
+      <SampleButton onClick={() => setRight(SAMPLE_B)} />
+      <ClearButton onClick={() => setRight("")} />
+      <FileUploadButton accept=".json,application/json" onText={setRight} />
+    </div>
+  );
+
   const result = useMemo(() => {
     if (!left.trim() || !right.trim()) return null;
     try {
@@ -72,13 +91,17 @@ const SchemaDiffPage = () => {
   return (
     <ToolLayout title={tool?.label ?? "Schema Diff"} description={tool?.description ?? "Compare two JSON schemas side by side"}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="tool-panel">
-          <PanelHeader label="Schema A (JSON)" text={left} onClear={() => setLeft("")} />
-          <CodeEditor value={left} onChange={setLeft} language="json" placeholder='{"id": 1, "name": "test"}' />
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader label="Schema A (JSON)" extra={leftExtra} />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor value={left} onChange={setLeft} language="json" placeholder='{"id": 1, "name": "test"}' fillHeight />
+          </div>
         </div>
-        <div className="tool-panel">
-          <PanelHeader label="Schema B (JSON)" text={right} onClear={() => setRight("")} />
-          <CodeEditor value={right} onChange={setRight} language="json" placeholder='{"id": "1", "email": "x@y.z"}' />
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader label="Schema B (JSON)" extra={rightExtra} />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor value={right} onChange={setRight} language="json" placeholder='{"id": "1", "email": "x@y.z"}' fillHeight />
+          </div>
         </div>
       </div>
 

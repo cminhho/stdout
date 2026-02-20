@@ -1,113 +1,77 @@
-import { useState, useRef, useMemo } from "react";
-import ToolLayout from "@/components/ToolLayout";
+import { useState, useCallback } from "react";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import PanelHeader from "@/components/PanelHeader";
-import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
-import { ToolOptions, OptionField } from "@/components/ToolOptions";
-import { xmlToJson, jsonToXml } from "@/utils/xmlJson";
-
-type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
-
-const readFileAsText = (file: File, encoding: FileEncoding): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result;
-      if (typeof result === "string") {
-        resolve(result);
-        return;
-      }
-      if (result instanceof ArrayBuffer) {
-        const enc = encoding === "utf-16le" ? "utf-16le" : encoding === "utf-16be" ? "utf-16be" : "utf-8";
-        resolve(new TextDecoder(enc).decode(result));
-        return;
-      }
-      reject(new Error("Failed to read file"));
-    };
-    reader.onerror = () => reject(reader.error);
-    if (encoding === "utf-8") {
-      reader.readAsText(file, "UTF-8");
-    } else {
-      reader.readAsArrayBuffer(file);
-    }
-  });
-};
-
-const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+import FileUploadButton from "@/components/FileUploadButton";
+import type { IndentOption } from "@/components/IndentSelect";
+import type { XmlJsonMode } from "@/utils/xmlJson";
+import {
+  processXmlJson,
+  XML_JSON_FILE_ACCEPT,
+  XML_JSON_SAMPLE_XML,
+  XML_JSON_SAMPLE_JSON,
+  XML_JSON_PLACEHOLDER_XML,
+  XML_JSON_PLACEHOLDER_JSON,
+  XML_JSON_PLACEHOLDER_OUTPUT,
+  XML_JSON_OUTPUT_FILENAME_JSON,
+  XML_JSON_OUTPUT_FILENAME_XML,
+  XML_JSON_MIME_JSON,
+  XML_JSON_MIME_XML,
+} from "@/utils/xmlJson";
 
 const XmlJsonPage = () => {
   const tool = useCurrentTool();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [optionsOpen, setOptionsOpen] = useState(true);
-  const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
-  const [mode, setMode] = useState<"xml2json" | "json2xml">("xml2json");
+  const [mode, setMode] = useState<XmlJsonMode>("xml2json");
   const [input, setInput] = useState("");
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      setInput(await readFileAsText(file, fileEncoding));
-    } catch {
-      setInput("");
-    }
-    e.target.value = "";
-  };
+  const format = useCallback(
+    (inputValue: string, indent: IndentOption) => processXmlJson(inputValue, indent, mode),
+    [mode]
+  );
 
-  const { output, error } = useMemo(() => {
-    if (!input.trim()) return { output: "", error: "" };
-    try {
-      if (mode === "xml2json") {
-        const obj = xmlToJson(input);
-        return { output: JSON.stringify(obj, null, 2), error: "" };
-      }
-      const parsed = JSON.parse(input);
-      return { output: jsonToXml(parsed, "root"), error: "" };
-    } catch (e) {
-      return { output: "", error: (e as Error).message };
-    }
-  }, [input, mode]);
+  const sampleInput = mode === "xml2json" ? XML_JSON_SAMPLE_XML : XML_JSON_SAMPLE_JSON;
+  const inputPlaceholder = mode === "xml2json" ? XML_JSON_PLACEHOLDER_XML : XML_JSON_PLACEHOLDER_JSON;
+  const inputLang = mode === "xml2json" ? "xml" : "json";
+  const outputLang = mode === "xml2json" ? "json" : "xml";
 
   return (
-    <ToolLayout title={tool?.label ?? "XML ↔ JSON"} description={tool?.description ?? "Convert between XML and JSON"}>
-      <ToolOptions open={optionsOpen} onOpenChange={setOptionsOpen}>
-        <input ref={fileInputRef} type="file" accept=".xml,.json,application/xml,application/json" className="hidden" onChange={handleFileUpload} />
-        <div className="flex flex-col gap-y-2.5 w-full">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <OptionField label="Upload file">
-              <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs" onClick={() => fileInputRef.current?.click()}>
-                <Upload className="h-3 w-3 mr-1.5" />
-                Upload file
-              </Button>
-            </OptionField>
-            <OptionField label="File encoding">
-              <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
-                <option value="utf-8">UTF-8</option>
-                <option value="utf-16le">UTF-16 LE</option>
-                <option value="utf-16be">UTF-16 BE</option>
-              </select>
-            </OptionField>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <Button size="sm" variant={mode === "xml2json" ? "default" : "outline"} onClick={() => setMode("xml2json")}>XML → JSON</Button>
-            <Button size="sm" variant={mode === "json2xml" ? "default" : "outline"} onClick={() => setMode("json2xml")}>JSON → XML</Button>
-          </div>
-        </div>
-      </ToolOptions>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="tool-panel">
-          <PanelHeader label={mode === "xml2json" ? "XML" : "JSON"} text={input} onClear={() => setInput("")} />
-          <CodeEditor value={input} onChange={setInput} language={mode === "xml2json" ? "xml" : "json"} placeholder={mode === "xml2json" ? "<root>...</root>" : "{}"} />
-        </div>
-        <div className="tool-panel">
-          <PanelHeader label={mode === "xml2json" ? "JSON" : "XML"} text={output} />
-          {error && <div className="text-sm text-destructive mb-2">{error}</div>}
-          <CodeEditor value={output} readOnly language={mode === "xml2json" ? "json" : "xml"} placeholder="Result..." />
-        </div>
-      </div>
-    </ToolLayout>
+    <TwoPanelToolLayout
+      tool={tool}
+      inputPane={{
+        toolbar: (
+          <>
+            <Button size="sm" variant={mode === "xml2json" ? "default" : "outline"} onClick={() => setMode("xml2json")} className="h-7 text-xs">
+              XML → JSON
+            </Button>
+            <Button size="sm" variant={mode === "json2xml" ? "default" : "outline"} onClick={() => setMode("json2xml")} className="h-7 text-xs">
+              JSON → XML
+            </Button>
+            <SampleButton onClick={() => setInput(sampleInput)} />
+            <ClearButton onClick={() => setInput("")} />
+            <FileUploadButton accept={XML_JSON_FILE_ACCEPT} onText={setInput} />
+          </>
+        ),
+        inputEditor: {
+          value: input,
+          onChange: setInput,
+          language: inputLang,
+          placeholder: inputPlaceholder,
+        },
+      }}
+      outputPane={{
+        outputToolbar: {
+          format,
+          outputFilename: mode === "xml2json" ? XML_JSON_OUTPUT_FILENAME_JSON : XML_JSON_OUTPUT_FILENAME_XML,
+          outputMimeType: mode === "xml2json" ? XML_JSON_MIME_JSON : XML_JSON_MIME_XML,
+        },
+        outputEditor: {
+          value: "",
+          language: outputLang,
+          placeholder: XML_JSON_PLACEHOLDER_OUTPUT,
+        },
+      }}
+    />
   );
 };
 

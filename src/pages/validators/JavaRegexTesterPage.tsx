@@ -3,7 +3,12 @@ import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
+import { Input } from "@/components/ui/input";
 import CopyButton from "@/components/CopyButton";
+import FileUploadButton from "@/components/FileUploadButton";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+
+const SAMPLE_TEST_STRING = "Order 2024-01-15\nShipped 2024-02-20";
 
 const FLAG_OPTIONS = [
   { flag: "g", label: "Global", desc: "Find all matches" },
@@ -17,7 +22,7 @@ const JavaRegexTesterPage = () => {
   const tool = useCurrentTool();
   const [pattern, setPattern] = useState("\\d{4}-\\d{2}-\\d{2}");
   const [flags, setFlags] = useState("gm");
-  const [testString, setTestString] = useState("Order 2024-01-15\nShipped 2024-02-20");
+  const [testString, setTestString] = useState(SAMPLE_TEST_STRING);
 
   const toggleFlag = (f: string) => {
     setFlags((prev) => prev.includes(f) ? prev.replace(f, "") : prev + f);
@@ -53,15 +58,15 @@ const JavaRegexTesterPage = () => {
               <label className="text-xs text-muted-foreground mb-1 block">Pattern (Java-style, use \\ for escapes)</label>
               <div className="flex items-center rounded-md border bg-background border-border focus-within:ring-1 focus-within:ring-ring">
                 <span className="text-muted-foreground text-sm pl-3 select-none">/</span>
-                <input
-                  className="flex-1 px-1 py-2 text-sm font-mono bg-transparent text-foreground focus:outline-none"
+                <Input
+                  className="flex-1 min-w-0 border-0 bg-transparent px-1 py-2 text-sm font-mono focus-visible:ring-0 focus-visible:ring-offset-0"
                   placeholder="e.g. \\d{4}-\\d{2}-\\d{2}"
                   value={pattern}
                   onChange={(e) => setPattern(e.target.value)}
                 />
                 <span className="text-muted-foreground text-sm pr-1 select-none">/</span>
-                <input
-                  className="w-14 px-1 py-2 text-sm font-mono bg-transparent text-primary focus:outline-none"
+                <Input
+                  className="w-14 border-0 bg-transparent px-1 py-2 text-sm font-mono text-primary focus-visible:ring-0 focus-visible:ring-offset-0"
                   placeholder="flags"
                   value={flags}
                   onChange={(e) => setFlags(e.target.value)}
@@ -86,11 +91,22 @@ const JavaRegexTesterPage = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div className="tool-panel">
-            <PanelHeader label="Test String" text={testString} onClear={() => setTestString("")} />
-            <CodeEditor value={testString} onChange={setTestString} language="text" placeholder="Enter text to test against..." />
+          <div className="tool-panel flex flex-col min-h-0">
+            <PanelHeader
+              label="Test String"
+              extra={
+                <div className="flex items-center gap-2">
+                  <SampleButton onClick={() => setTestString(SAMPLE_TEST_STRING)} />
+                  <ClearButton onClick={() => setTestString("")} />
+                  <FileUploadButton accept=".txt,text/plain" onText={setTestString} />
+                </div>
+              }
+            />
+            <div className="flex-1 min-h-0 flex flex-col">
+              <CodeEditor value={testString} onChange={setTestString} language="text" placeholder="Enter text to test against..." fillHeight />
+            </div>
           </div>
-          <div className="tool-panel">
+          <div className="tool-panel flex flex-col min-h-0">
             <PanelHeader label={`Matches${result && !result.error ? ` (${result.matches.length})` : ""}`} text={result?.matches.map((m) => m.match).join("\n") ?? ""} />
             <div className="flex-1 min-h-0 flex flex-col mb-3">
               <CodeEditor
@@ -98,6 +114,7 @@ const JavaRegexTesterPage = () => {
                 readOnly
                 language="text"
                 placeholder="Matches will appear here..."
+                fillHeight
               />
             </div>
             {result?.error && <div className="text-sm text-destructive">⚠ {result.error}</div>}

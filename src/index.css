@@ -5,96 +5,117 @@
 @tailwind utilities;
 
 @layer base {
+  /*
+   * DevUtils HTML Preview palette (warm beige/brown).
+   * Dark: content #2C211F, sidebar #372E29, code #1E1E1E.
+   * Light: content #F6F0EB, sidebar #E9E3E1, code #FFFFFF.
+   */
   :root,
   .dark {
-    --background: 220 20% 7%;
-    --foreground: 210 20% 90%;
+    /* Content background #2C211F */
+    --background: 12 17% 15%;
+    --foreground: 30 15% 90%;
 
-    --card: 220 18% 10%;
-    --card-foreground: 210 20% 90%;
+    --card: 12 16% 17%;
+    --card-foreground: 30 15% 90%;
 
-    --popover: 220 18% 10%;
-    --popover-foreground: 210 20% 90%;
+    --popover: 12 16% 17%;
+    --popover-foreground: 30 15% 90%;
 
-    --primary: 152 60% 48%;
-    --primary-foreground: 220 20% 7%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 16% 14%;
-    --secondary-foreground: 210 20% 80%;
+    --secondary: 24 12% 24%;
+    --secondary-foreground: 30 15% 90%;
 
-    --muted: 220 14% 16%;
-    --muted-foreground: 215 15% 55%;
+    --muted: 24 12% 22%;
+    --muted-foreground: 28 10% 58%;
 
-    --accent: 185 60% 45%;
-    --accent-foreground: 220 20% 7%;
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 70% 55%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 220 14% 18%;
-    --input: 220 14% 18%;
-    --ring: 152 60% 48%;
+    --border: 24 12% 26%;
+    --input: 24 14% 22%;
+    --ring: 217 91% 60%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 220 20% 5%;
-    --sidebar-foreground: 210 15% 65%;
-    --sidebar-primary: 152 60% 48%;
-    --sidebar-primary-foreground: 220 20% 7%;
-    --sidebar-accent: 220 16% 12%;
-    --sidebar-accent-foreground: 210 20% 90%;
-    --sidebar-border: 220 14% 14%;
-    --sidebar-ring: 152 60% 48%;
+    /* Sidebar #372E29 */
+    --sidebar-background: 24 15% 19%;
+    --sidebar-foreground: 30 15% 78%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 24 12% 26%;
+    --sidebar-accent-foreground: 30 15% 90%;
+    --sidebar-border: 24 12% 24%;
+    --sidebar-ring: 217 91% 60%;
 
-    --code-bg: 220 20% 8%;
-    --code-border: 220 14% 16%;
-    --code-text: 152 40% 70%;
+    /* Code block #1E1E1E */
+    --code-bg: 0 0% 12%;
+    --code-border: 24 10% 22%;
+    --code-text: 30 10% 85%;
+
+    --outline-button-bg: 24 12% 24%;
+    --outline-button-border: 24 10% 35%;
+    --outline-button-foreground: 0 0% 100%;
 
     --font-mono: 'JetBrains Mono', ui-monospace, monospace;
     --font-sans: 'Inter', system-ui, sans-serif;
   }
 
   .light {
-    --background: 0 0% 98%;
-    --foreground: 220 20% 14%;
+    /* Content background #F6F0EB */
+    --background: 30 33% 94%;
+    --foreground: 24 12% 22%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 20% 14%;
+    --card-foreground: 24 12% 22%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 14%;
+    --popover-foreground: 24 12% 22%;
 
-    --primary: 152 60% 38%;
+    --primary: 217 91% 55%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 92%;
-    --secondary-foreground: 220 20% 25%;
+    --secondary: 30 14% 91%;
+    --secondary-foreground: 24 12% 25%;
 
-    --muted: 220 14% 94%;
-    --muted-foreground: 215 15% 45%;
+    --muted: 30 15% 92%;
+    --muted-foreground: 24 10% 45%;
 
-    --accent: 185 55% 40%;
+    --accent: 217 91% 55%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 70% 50%;
+    --destructive: 0 65% 48%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 14% 86%;
-    --input: 220 14% 86%;
-    --ring: 152 60% 38%;
+    --border: 30 12% 88%;
+    --input: 30 12% 91%;
+    --ring: 217 91% 55%;
 
-    --sidebar-background: 0 0% 97%;
-    --sidebar-foreground: 215 15% 40%;
-    --sidebar-primary: 152 60% 38%;
+    --radius: 0.5rem;
+
+    /* Sidebar #E9E3E1 */
+    --sidebar-background: 25 10% 90%;
+    --sidebar-foreground: 24 12% 28%;
+    --sidebar-primary: 217 91% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 14% 93%;
-    --sidebar-accent-foreground: 220 20% 14%;
-    --sidebar-border: 220 14% 88%;
-    --sidebar-ring: 152 60% 38%;
+    --sidebar-accent: 30 12% 86%;
+    --sidebar-accent-foreground: 24 12% 22%;
+    --sidebar-border: 28 10% 85%;
+    --sidebar-ring: 217 91% 55%;
 
-    --code-bg: 220 14% 95%;
-    --code-border: 220 14% 88%;
-    --code-text: 152 50% 30%;
+    /* Code block white */
+    --code-bg: 0 0% 100%;
+    --code-border: 30 10% 88%;
+    --code-text: 24 15% 28%;
+
+    --outline-button-bg: 0 0% 100%;
+    --outline-button-border: 30 10% 85%;
+    --outline-button-foreground: 24 12% 22%;
   }
 
 
@@ -107,6 +128,20 @@
     font-family: var(--font-sans);
   }
 
+  /* Electron: fill viewport, no body scroll; only inner content areas scroll */
+  html.electron,
+  html.electron body,
+  html.electron #root {
+    height: 100%;
+    overflow: hidden;
+    margin: 0;
+  }
+  html.electron #root {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
   code, pre, .font-mono {
     font-family: var(--font-mono) !important;
   }
@@ -114,20 +149,20 @@
 
 @layer components {
   .code-block {
-    @apply rounded-md border font-mono text-xs leading-relaxed p-3 overflow-auto;
+    @apply rounded-lg border font-mono text-sm leading-relaxed p-4 overflow-auto;
     background: hsl(var(--code-bg));
     border-color: hsl(var(--code-border));
     color: hsl(var(--code-text));
   }
 
   .tool-card {
-    @apply rounded-lg border p-4;
+    @apply rounded-lg border p-5;
     background: hsl(var(--card));
     border-color: hsl(var(--border));
   }
 
   .tool-textarea {
-    @apply w-full rounded-md border p-3 font-mono text-xs leading-relaxed focus:outline-none focus:ring-1 focus:ring-ring resize-y;
+    @apply w-full rounded-lg border p-4 font-mono text-sm leading-relaxed focus:outline-none focus:ring-1 focus:ring-ring resize-y;
     background: hsl(var(--code-bg));
     border-color: hsl(var(--code-border));
     color: hsl(var(--foreground));
@@ -159,7 +194,7 @@
   }
 
   .tool-panel {
-    @apply flex flex-col gap-2;
+    @apply flex flex-col gap-3;
     width: 100%;
     min-height: 0;
     flex: 1;
@@ -184,16 +219,16 @@
 
   /* Toolbar: top, fit height */
   .tool-toolbar {
-    @apply flex items-center gap-2 mb-3 flex-wrap flex-shrink-0;
+    @apply flex items-center gap-3 mb-4 flex-wrap flex-shrink-0;
   }
 
   .tool-select {
-    @apply h-8 rounded-md border px-2 py-1 text-xs font-medium bg-secondary border-border text-secondary-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors cursor-pointer;
+    @apply h-9 rounded-lg border px-3 py-2 text-sm font-medium bg-secondary border-border text-secondary-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors cursor-pointer;
   }
 
-  /* Compact option inputs for tool pages */
+  /* Standard input for tool pages (replaces compact style) */
   .input-compact {
-    @apply h-8 rounded-md border border-input bg-background px-2 py-1 text-xs font-mono ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply h-9 rounded-lg border border-input bg-background px-3 py-2 text-sm font-mono ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .tool-select:hover {
@@ -201,7 +236,7 @@
   }
 
   .tool-checkbox-label {
-    @apply flex items-center gap-1.5 text-xs font-medium text-muted-foreground cursor-pointer select-none transition-colors;
+    @apply flex items-center gap-2 text-sm font-medium text-muted-foreground cursor-pointer select-none transition-colors;
   }
 
   .tool-checkbox-label:hover {
@@ -214,7 +249,7 @@
   }
 
   .sidebar-link {
-    @apply flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors;
+    @apply flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-medium transition-colors;
     color: hsl(var(--sidebar-foreground));
   }
 
@@ -224,8 +259,8 @@
   }
 
   .sidebar-link.active {
-    background: hsl(var(--primary) / 0.12);
-    color: hsl(var(--primary));
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
   }
 
   .prose-markdown {
@@ -242,7 +277,7 @@
   .prose-markdown h3 { @apply text-lg; }
   .prose-markdown p { @apply mb-3; }
   .prose-markdown code {
-    @apply px-1.5 py-0.5 rounded text-xs font-mono;
+    @apply px-2 py-1 rounded text-sm font-mono;
     background: hsl(var(--code-bg));
     color: hsl(var(--code-text));
   }

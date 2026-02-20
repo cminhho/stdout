@@ -3,6 +3,10 @@ import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
+import FileUploadButton from "@/components/FileUploadButton";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+
+const SAMPLE_INPUT = "hello world example";
 
 const transforms: Record<string, (s: string) => string> = {
   "camelCase": (s) => s.replace(/[-_\s]+(.)?/g, (_, c) => c ? c.toUpperCase() : "").replace(/^[A-Z]/, (c) => c.toLowerCase()),
@@ -67,14 +71,27 @@ const StringTransformerPage = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="tool-panel">
-          <PanelHeader label="Input" text={input} onClear={() => setInput("")} />
-          <CodeEditor value={input} onChange={setInput} language="text" placeholder="Enter text to transform..." />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader
+            label="Input"
+            extra={
+              <div className="flex items-center gap-2">
+                <SampleButton onClick={() => setInput(SAMPLE_INPUT)} />
+                <ClearButton onClick={() => setInput("")} />
+                <FileUploadButton accept=".txt,text/plain" onText={setInput} />
+              </div>
+            }
+          />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor value={input} onChange={setInput} language="text" placeholder="Enter text to transform..." fillHeight />
+          </div>
         </div>
-        <div className="tool-panel">
+        <div className="tool-panel flex flex-col min-h-0">
           <PanelHeader label={`Result (${selected})`} text={output} />
-          <CodeEditor value={output} readOnly language="text" placeholder="Result will appear here..." />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor value={output} readOnly language="text" placeholder="Result will appear here..." fillHeight />
+          </div>
         </div>
       </div>
     </ToolLayout>

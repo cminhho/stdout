@@ -5,6 +5,8 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ClearButton } from "@/components/ToolActionButtons";
 
 const generateUUIDv4 = (): string => crypto.randomUUID();
 
@@ -60,43 +62,45 @@ const UuidPage = () => {
   return (
     <ToolLayout title={tool?.label ?? "UUID Generator"} description={tool?.description ?? "Generate UUIDs (v1, v4, v7)"}>
       <div className="flex flex-col flex-1 min-h-0 w-full gap-4">
-        <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0">
-          <div className="flex items-center gap-2">
-            <Label className="text-xs text-muted-foreground shrink-0">Count</Label>
-            <input
-              type="number"
-              min={1}
-              max={100}
-              value={count}
-              onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
-              className="input-compact w-16"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <Label className="text-xs text-muted-foreground shrink-0">Version</Label>
-            <select
-              value={version}
-              onChange={(e) => setVersion(e.target.value as "v1" | "v4" | "v7")}
-              className="tool-select"
-            >
-              <option value="v1">v1 (Time-based)</option>
-              <option value="v4">v4 (Random)</option>
-              <option value="v7">v7 (Time-ordered)</option>
-            </select>
-          </div>
-          <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer">
-            <input type="checkbox" checked={uppercase} onChange={(e) => setUppercase(e.target.checked)} className="accent-primary rounded" />
-            Uppercase
-          </label>
-          <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer">
-            <input type="checkbox" checked={hyphens} onChange={(e) => setHyphens(e.target.checked)} className="accent-primary rounded" />
-            Hyphens
-          </label>
-          <Button size="sm" onClick={generate}>Generate</Button>
-        </div>
-
         <div className="tool-panel flex flex-col flex-1 min-h-0">
-          <PanelHeader label={uuids.length ? `${uuids.length} UUIDs` : "Output"} text={outputText} />
+          <PanelHeader
+            label={uuids.length ? `${uuids.length} UUIDs` : "Output"}
+            text={outputText}
+            extra={
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-1.5">
+                  <Label className="text-xs text-muted-foreground shrink-0">Count</Label>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={100}
+                    value={count}
+                    onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
+                    className="h-7 w-14 font-mono text-xs"
+                  />
+                </div>
+                <select
+                  value={version}
+                  onChange={(e) => setVersion(e.target.value as "v1" | "v4" | "v7")}
+                  className="h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0"
+                >
+                  <option value="v1">v1</option>
+                  <option value="v4">v4</option>
+                  <option value="v7">v7</option>
+                </select>
+                <label className="flex items-center gap-1 text-xs text-muted-foreground cursor-pointer whitespace-nowrap">
+                  <input type="checkbox" checked={uppercase} onChange={(e) => setUppercase(e.target.checked)} className="accent-primary rounded border-input" />
+                  Upper
+                </label>
+                <label className="flex items-center gap-1 text-xs text-muted-foreground cursor-pointer whitespace-nowrap">
+                  <input type="checkbox" checked={hyphens} onChange={(e) => setHyphens(e.target.checked)} className="accent-primary rounded border-input" />
+                  Hyphens
+                </label>
+                <Button size="sm" className="h-7 text-xs" onClick={generate}>Generate</Button>
+                {outputText && <ClearButton onClick={() => setUuids([])} />}
+              </div>
+            }
+          />
           <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
             <CodeEditor
               value={outputText}

@@ -3,7 +3,9 @@ import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
 
 const FIELDS = ["minute", "hour", "day", "month", "weekday"] as const;
 const LABELS: Record<(typeof FIELDS)[number], string> = {
@@ -91,6 +93,9 @@ const CronBuilderPage = () => {
 
   const applyExample = (expr: string) => setFields(parseExampleToFields(expr));
 
+  const sampleExpression = "* * * * *";
+  const clearExpression = () => setFields(Object.fromEntries(FIELDS.map((f) => [f, "*"])));
+
   return (
     <ToolLayout title={tool?.label ?? "Cron Parser"} description={tool?.description ?? "Build and parse cron expressions (Quartz-style)"}>
       <div className="flex flex-col flex-1 min-h-0 w-full gap-4">
@@ -98,7 +103,7 @@ const CronBuilderPage = () => {
           {FIELDS.map((field) => (
             <div key={field} className="flex items-center gap-2">
               <Label className="text-xs text-muted-foreground shrink-0 w-20">{LABELS[field]}</Label>
-              <input
+              <Input
                 className="input-compact w-16 font-mono text-center"
                 value={fields[field]}
                 onChange={(e) => setFields((f) => ({ ...f, [field]: e.target.value }))}
@@ -121,7 +126,16 @@ const CronBuilderPage = () => {
         </div>
 
         <div className="tool-panel flex flex-col flex-1 min-h-0">
-          <PanelHeader label="Expression" text={expression} />
+          <PanelHeader
+            label="Expression"
+            text={expression}
+            extra={
+              <div className="flex items-center gap-2">
+                <SampleButton onClick={() => applyPreset(sampleExpression)} />
+                <ClearButton onClick={clearExpression} />
+              </div>
+            }
+          />
           <div className="h-[52px] shrink-0">
             <CodeEditor
               value={expression}

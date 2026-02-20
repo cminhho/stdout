@@ -5,7 +5,16 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import CopyButton from "@/components/CopyButton";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
+import { Upload, Eraser } from "lucide-react";
+import {
+  base64ToDataUrl,
+  formatFileSizeKb,
+  IMAGE_BASE64_ACCEPT,
+  IMAGE_BASE64_DOWNLOAD_FILENAME,
+  IMAGE_BASE64_PLACEHOLDER_INPUT,
+  IMAGE_BASE64_PLACEHOLDER_OUTPUT,
+  IMAGE_BASE64_PREVIEW_PLACEHOLDER,
+} from "@/utils/imageBase64";
 
 const ImageBase64Page = () => {
   const tool = useCurrentTool();
@@ -20,7 +29,7 @@ const ImageBase64Page = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     setFileName(file.name);
-    setFileSize((file.size / 1024).toFixed(1) + " KB");
+    setFileSize(formatFileSizeKb(file.size));
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result as string;
@@ -32,19 +41,14 @@ const ImageBase64Page = () => {
 
   const handleBase64Input = (val: string) => {
     setBase64(val);
-    try {
-      const src = val.startsWith("data:") ? val : `data:image/png;base64,${val}`;
-      setImageUrl(src);
-    } catch {
-      setImageUrl("");
-    }
+    setImageUrl(base64ToDataUrl(val));
   };
 
   const downloadImage = () => {
     if (!imageUrl) return;
     const a = document.createElement("a");
     a.href = imageUrl;
-    a.download = "image.png";
+    a.download = IMAGE_BASE64_DOWNLOAD_FILENAME;
     a.click();
   };
 
@@ -54,26 +58,41 @@ const ImageBase64Page = () => {
         <Button size="sm" variant={mode === "toBase64" ? "default" : "outline"} onClick={() => setMode("toBase64")}>Image → Base64</Button>
         <Button size="sm" variant={mode === "toImage" ? "default" : "outline"} onClick={() => setMode("toImage")}>Base64 → Image</Button>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <div className="tool-panel">
-          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            {mode === "toBase64" ? "Image Input" : "Base64 Input"}
-          </label>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1 min-h-0">
+        <div className="tool-panel flex flex-col min-h-0">
           {mode === "toBase64" ? (
-            <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-border rounded-md p-8 cursor-pointer hover:border-primary/50 transition-colors" onClick={() => fileRef.current?.click()}>
-              <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} className="hidden" />
-              <Upload className="h-8 w-8 text-muted-foreground mb-2" />
-              <p className="text-sm text-muted-foreground">Click to upload an image</p>
-              {fileName && (
-                <div className="mt-3 text-xs text-foreground">
-                  <span className="font-mono">{fileName}</span> · <span>{fileSize}</span>
-                </div>
-              )}
-            </div>
+            <>
+              <div className="flex items-center min-h-[28px]">
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider select-none">Image Input</span>
+              </div>
+              <div className="flex-1 min-h-0 flex flex-col items-center justify-center border-2 border-dashed border-border rounded-md p-8 cursor-pointer hover:border-primary/50 transition-colors" onClick={() => fileRef.current?.click()}>
+                <input ref={fileRef} type="file" accept={IMAGE_BASE64_ACCEPT} onChange={handleFile} className="hidden" />
+                <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+                <p className="text-sm text-muted-foreground">Click to upload an image</p>
+                {fileName && (
+                  <div className="mt-3 text-xs text-foreground">
+                    <span className="font-mono">{fileName}</span> · <span>{fileSize}</span>
+                  </div>
+                )}
+              </div>
+            </>
           ) : (
-            <div className="flex-1 min-h-0 flex flex-col">
-              <CodeEditor value={base64} onChange={handleBase64Input} language="text" placeholder="Paste Base64 string here..." fillHeight />
-            </div>
+            <>
+              <PanelHeader
+                label="Base64 Input"
+                extra={
+                  <div className="flex items-center gap-2">
+                    <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => handleBase64Input("")}>
+                      <Eraser className="h-3.5 w-3.5 mr-1.5" />
+                      Clear
+                    </Button>
+                  </div>
+                }
+              />
+              <div className="flex-1 min-h-0 flex flex-col">
+                <CodeEditor value={base64} onChange={handleBase64Input} language="text" placeholder={IMAGE_BASE64_PLACEHOLDER_INPUT} fillHeight />
+              </div>
+            </>
           )}
         </div>
         <div className="tool-panel flex flex-col min-h-0">
@@ -84,11 +103,11 @@ const ImageBase64Page = () => {
           />
           {mode === "toBase64" ? (
             <div className="flex-1 min-h-0 flex flex-col">
-              <CodeEditor value={base64 || ""} readOnly language="text" placeholder="Base64 string will appear here..." fillHeight />
+              <CodeEditor value={base64 || ""} readOnly language="text" placeholder={IMAGE_BASE64_PLACEHOLDER_OUTPUT} fillHeight />
             </div>
           ) : (
             <div className="code-block flex items-center justify-center min-h-[280px]">
-              {imageUrl ? <img src={imageUrl} alt="Preview" className="max-w-full max-h-[60vh] object-contain rounded" /> : <span className="text-muted-foreground text-sm">Image preview...</span>}
+              {imageUrl ? <img src={imageUrl} alt="Preview" className="max-w-full max-h-[60vh] object-contain rounded" /> : <span className="text-muted-foreground text-sm">{IMAGE_BASE64_PREVIEW_PLACEHOLDER}</span>}
             </div>
           )}
         </div>

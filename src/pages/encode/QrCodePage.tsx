@@ -5,6 +5,10 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
+import FileUploadButton from "@/components/FileUploadButton";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+
+const SAMPLE_CONTENT = "https://example.com";
 
 const QrCodePage = () => {
   const tool = useCurrentTool();
@@ -42,7 +46,16 @@ const QrCodePage = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
           <div className="tool-panel flex flex-col flex-1 min-h-0">
-            <PanelHeader label="Content" text={input} onClear={() => { setInput(""); setGenerated(false); }} />
+            <PanelHeader
+              label="Content"
+              extra={
+                <div className="flex items-center gap-2 flex-wrap">
+                  <SampleButton onClick={() => { setInput(SAMPLE_CONTENT); setGenerated(false); }} />
+                  <ClearButton onClick={() => { setInput(""); setGenerated(false); }} />
+                  <FileUploadButton accept=".txt,text/plain" onText={(t) => { setInput(t); setGenerated(false); }} />
+                </div>
+              }
+            />
             <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
               <CodeEditor
                 value={input}

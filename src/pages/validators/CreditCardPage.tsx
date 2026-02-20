@@ -4,6 +4,7 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import CopyButton from "@/components/CopyButton";
+import { ClearButton } from "@/components/ToolActionButtons";
 import { luhnCheck, generateCardNumber, CARD_BRANDS } from "@/utils/creditcard";
 
 const CreditCardPage = () => {
@@ -28,8 +29,9 @@ const CreditCardPage = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Enter card number (digits only or with spaces/dashes)"
-              className="font-mono"
+              className="font-mono flex-1"
             />
+            <ClearButton onClick={() => setInput("")} />
           </div>
           {input.trim() && (
             <p className={`mt-2 text-sm ${isValid ? "text-green-600" : "text-destructive"}`}>

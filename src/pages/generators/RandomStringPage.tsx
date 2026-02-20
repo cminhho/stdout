@@ -1,10 +1,11 @@
-import { useState, useCallback } from "react";
+import { useState, useEffect } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
 
 const charSets = {
   lowercase: "abcdefghijklmnopqrstuvwxyz",
@@ -20,24 +21,22 @@ type Preset = "alphanumeric" | "hex" | "base64url" | "custom";
 const RandomStringPage = () => {
   const tool = useCurrentTool();
   const [strings, setStrings] = useState<string[]>([]);
-  const [length, setLength] = useState(32);
-  const [count, setCount] = useState(5);
+  const [length, setLength] = useState(48);
+  const [count, setCount] = useState(10);
   const [preset, setPreset] = useState<Preset>("alphanumeric");
   const [customChars, setCustomChars] = useState("");
   const [prefix, setPrefix] = useState("");
   const [suffix, setSuffix] = useState("");
+  const [colorize, setColorize] = useState(false);
 
-  const getChars = useCallback((): string => {
+  useEffect(() => {
+    let chars: string;
     switch (preset) {
-      case "alphanumeric": return charSets.alphanumeric;
-      case "hex": return charSets.hex;
-      case "base64url": return charSets.alphanumeric + "-_";
-      case "custom": return customChars || charSets.alphanumeric;
+      case "alphanumeric": chars = charSets.alphanumeric; break;
+      case "hex": chars = charSets.hex; break;
+      case "base64url": chars = charSets.alphanumeric + "-_"; break;
+      default: chars = customChars || charSets.alphanumeric;
     }
-  }, [preset, customChars]);
-
-  const generate = useCallback(() => {
-    const chars = getChars();
     const results: string[] = [];
     for (let i = 0; i < count; i++) {
       const arr = new Uint32Array(length);
@@ -46,77 +45,109 @@ const RandomStringPage = () => {
       results.push(prefix + str + suffix);
     }
     setStrings(results);
-  }, [length, count, prefix, suffix, getChars]);
+  }, [count, length, prefix, suffix, preset, customChars]);
 
   const outputText = strings.join("\n");
+  const inputClass = "h-8 w-full rounded border border-input bg-background px-2.5 font-mono text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring";
+
+  const loadSample = () => {
+    setLength(32);
+    setCount(5);
+    setPreset("alphanumeric");
+    setCustomChars("");
+    setPrefix("");
+    setSuffix("");
+  };
 
   return (
     <ToolLayout title={tool?.label ?? "Random String"} description={tool?.description ?? "Generate cryptographically secure random strings"}>
-      <div className="flex flex-col flex-1 min-h-0 w-full gap-4">
-        <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0">
-          <div className="flex items-center gap-2">
-            <Label className="text-xs text-muted-foreground shrink-0">Count</Label>
-            <input
-              type="number"
-              min={1}
-              max={100}
-              value={count}
-              onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
-              className="input-compact w-16"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <Label className="text-xs text-muted-foreground shrink-0">Length</Label>
-            <input
-              type="number"
-              min={1}
-              max={256}
-              value={length}
-              onChange={(e) => setLength(Math.max(1, Math.min(256, Number(e.target.value) || 1)))}
-              className="input-compact w-16"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <Label className="text-xs text-muted-foreground shrink-0">Set</Label>
-            <div className="flex gap-1 flex-wrap">
-              {(["alphanumeric", "hex", "base64url", "custom"] as Preset[]).map((p) => (
-                <button
-                  key={p}
-                  onClick={() => setPreset(p)}
-                  className={`px-2 py-1 text-xs rounded transition-colors ${preset === p ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground"}`}
-                >
-                  {p}
-                </button>
-              ))}
+      <div className="grid grid-cols-1 lg:grid-cols-[22rem_1fr] gap-4 flex-1 min-h-0">
+        {/* Input options column — fixed width */}
+        <div className="tool-panel flex flex-col min-h-0 overflow-auto min-w-0">
+          <PanelHeader
+            label="Options"
+            extra={<SampleButton onClick={loadSample} />}
+          />
+          <div className="space-y-4 shrink-0">
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Length</Label>
+              <Input
+                type="number"
+                min={1}
+                max={256}
+                value={length}
+                onChange={(e) => setLength(Math.max(1, Math.min(256, Number(e.target.value) || 1)))}
+                className={inputClass}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Character set</Label>
+              <div className="flex flex-col gap-1.5">
+                {(["alphanumeric", "hex", "base64url", "custom"] as Preset[]).map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => setPreset(p)}
+                    className={`h-8 px-3 text-xs rounded border text-left transition-colors ${preset === p ? "bg-primary text-primary-foreground border-primary" : "border-input bg-background text-muted-foreground hover:text-foreground"}`}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {preset === "custom" && (
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground">Custom characters</Label>
+                <Input value={customChars} onChange={(e) => setCustomChars(e.target.value)} placeholder="e.g. abc123" className={inputClass} />
+              </div>
+            )}
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Prefix</Label>
+              <Input value={prefix} onChange={(e) => setPrefix(e.target.value)} className={inputClass} placeholder="Optional" />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Suffix</Label>
+              <Input value={suffix} onChange={(e) => setSuffix(e.target.value)} className={inputClass} placeholder="Optional" />
             </div>
           </div>
-          {preset === "custom" && (
-            <input
-              value={customChars}
-              onChange={(e) => setCustomChars(e.target.value)}
-              placeholder="Custom chars..."
-              className="input-compact w-32 min-w-0 font-mono"
-            />
-          )}
-          <div className="flex items-center gap-2">
-            <Label className="text-xs text-muted-foreground shrink-0">Prefix</Label>
-            <input value={prefix} onChange={(e) => setPrefix(e.target.value)} className="input-compact w-24 min-w-0 font-mono" placeholder="" />
-          </div>
-          <div className="flex items-center gap-2">
-            <Label className="text-xs text-muted-foreground shrink-0">Suffix</Label>
-            <input value={suffix} onChange={(e) => setSuffix(e.target.value)} className="input-compact w-24 min-w-0 font-mono" placeholder="" />
-          </div>
-          <Button size="sm" onClick={generate}>Generate</Button>
         </div>
 
-        <div className="tool-panel flex flex-col flex-1 min-h-0">
-          <PanelHeader label={strings.length ? `${strings.length} string${strings.length > 1 ? "s" : ""}` : "Output"} text={outputText} />
-          <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+        {/* Output column — 70% */}
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader
+            label={strings.length ? `${strings.length} string${strings.length > 1 ? "s" : ""}` : "Output"}
+            text={outputText}
+            extra={
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-1.5">
+                  <Label className="text-xs text-muted-foreground shrink-0">Count</Label>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={100}
+                    value={count}
+                    onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
+                    className="h-7 w-14 font-mono text-xs"
+                  />
+                </div>
+                <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer whitespace-nowrap">
+                  <input
+                    type="checkbox"
+                    checked={colorize}
+                    onChange={(e) => setColorize(e.target.checked)}
+                    className="rounded border-input accent-primary"
+                  />
+                  Color
+                </label>
+                <ClearButton onClick={() => setStrings([])} />
+              </div>
+            }
+          />
+          <div className={`flex-1 min-h-0 flex flex-col overflow-hidden ${colorize ? "rounded-md ring-1 ring-primary/30" : ""}`}>
             <CodeEditor
               value={outputText}
               readOnly
               language="text"
-              placeholder="Click Generate to create random strings..."
+              placeholder="Results update automatically..."
               fillHeight
               showLineNumbers={false}
             />

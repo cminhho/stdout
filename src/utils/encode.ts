@@ -2,6 +2,8 @@
  * Core encoding/decoding utilities — pure functions.
  */
 
+import { singleErrorToParseErrors } from "@/utils/validationTypes";
+
 // ── Base64 ───────────────────────────────────────────────────────────
 
 export const base64Encode = (s: string): string =>
@@ -9,6 +11,30 @@ export const base64Encode = (s: string): string =>
 
 export const base64Decode = (s: string): string =>
   decodeURIComponent(escape(atob(s)));
+
+export const BASE64_FILE_ACCEPT = ".txt,text/plain,application/octet-stream";
+export const BASE64_SAMPLE = "Hello, Base64!";
+export const BASE64_PLACEHOLDER_INPUT = "Enter text...";
+export const BASE64_PLACEHOLDER_OUTPUT = "Result will appear here...";
+export const BASE64_OUTPUT_FILENAME = "output.txt";
+export const BASE64_MIME_TYPE = "text/plain";
+
+export type Base64Mode = "encode" | "decode";
+
+export interface Base64FormatResult {
+  output: string;
+  errors?: import("@/utils/validationTypes").ParseError[];
+}
+
+export function processBase64ForLayout(input: string, mode: Base64Mode): Base64FormatResult {
+  if (!input.trim()) return { output: "" };
+  try {
+    const output = mode === "encode" ? base64Encode(input) : base64Decode(input);
+    return { output };
+  } catch (e) {
+    return { output: "", errors: singleErrorToParseErrors((e as Error).message) };
+  }
+}
 
 // ── File encoding (charset conversion) ─────────────────────────────────────
 // TextDecoder labels: https://encoding.spec.whatwg.org/#names-and-labels

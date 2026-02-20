@@ -5,6 +5,8 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ClearButton } from "@/components/ToolActionButtons";
 
 const generatePassword = (length: number, opts: { upper: boolean; lower: boolean; digits: boolean; symbols: boolean }): string => {
   let chars = "";
@@ -50,41 +52,46 @@ const PasswordPage = () => {
   return (
     <ToolLayout title={tool?.label ?? "Password Generator"} description={tool?.description ?? "Generate secure passwords with custom rules"}>
       <div className="flex flex-col flex-1 min-h-0 w-full gap-4">
-        <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0">
-          <div className="flex items-center gap-2">
-            <Label className="text-xs text-muted-foreground shrink-0">Count</Label>
-            <input
-              type="number"
-              min={1}
-              max={50}
-              value={count}
-              onChange={(e) => setCount(Math.max(1, Math.min(50, Number(e.target.value) || 1)))}
-              className="input-compact w-16"
-            />
-          </div>
-          <div className="flex items-center gap-2 min-w-[140px]">
-            <Label className="text-xs text-muted-foreground shrink-0">Length</Label>
-            <input
-              type="range"
-              min={4}
-              max={64}
-              value={length}
-              onChange={(e) => setLength(Number(e.target.value))}
-              className="flex-1 accent-primary min-w-0"
-            />
-            <span className="font-mono text-xs w-8 text-right text-foreground shrink-0">{length}</span>
-          </div>
-          {(["upper", "lower", "digits", "symbols"] as const).map((k) => (
-            <label key={k} className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer">
-              <input type="checkbox" checked={opts[k]} onChange={(e) => setOpts((o) => ({ ...o, [k]: e.target.checked }))} className="accent-primary rounded" />
-              {k === "upper" ? "A-Z" : k === "lower" ? "a-z" : k === "digits" ? "0-9" : "!@#$"}
-            </label>
-          ))}
-          <Button size="sm" onClick={generate}>Generate</Button>
-        </div>
-
         <div className="tool-panel flex flex-col flex-1 min-h-0">
-          <PanelHeader label={passwords.length ? `Password${passwords.length > 1 ? "s" : ""}` : "Password"} text={passwordText} />
+          <PanelHeader
+            label={passwords.length ? `Password${passwords.length > 1 ? "s" : ""}` : "Password"}
+            text={passwordText}
+            extra={
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-1.5">
+                  <Label className="text-xs text-muted-foreground shrink-0">Count</Label>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={50}
+                    value={count}
+                    onChange={(e) => setCount(Math.max(1, Math.min(50, Number(e.target.value) || 1)))}
+                    className="h-7 w-14 font-mono text-xs"
+                  />
+                </div>
+                <div className="flex items-center gap-1.5 min-w-[100px]">
+                  <Label className="text-xs text-muted-foreground shrink-0">Len</Label>
+                  <input
+                    type="range"
+                    min={4}
+                    max={64}
+                    value={length}
+                    onChange={(e) => setLength(Number(e.target.value))}
+                    className="flex-1 accent-primary min-w-0 max-w-20"
+                  />
+                  <span className="font-mono text-xs w-6 text-right shrink-0">{length}</span>
+                </div>
+                {(["upper", "lower", "digits", "symbols"] as const).map((k) => (
+                  <label key={k} className="flex items-center gap-1 text-xs text-muted-foreground cursor-pointer whitespace-nowrap">
+                    <input type="checkbox" checked={opts[k]} onChange={(e) => setOpts((o) => ({ ...o, [k]: e.target.checked }))} className="accent-primary rounded border-input" />
+                    {k === "upper" ? "A-Z" : k === "lower" ? "a-z" : k === "digits" ? "0-9" : "!@#$"}
+                  </label>
+                ))}
+                <Button size="sm" className="h-7 text-xs" onClick={generate}>Generate</Button>
+                {passwordText && <ClearButton onClick={() => setPasswords([])} />}
+              </div>
+            }
+          />
           <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
             <CodeEditor
               value={passwordText}

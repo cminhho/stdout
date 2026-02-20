@@ -1,11 +1,12 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
-import CopyButton from "@/components/CopyButton";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { ClearButton, SaveButton } from "@/components/ToolActionButtons";
 
 const LOG_FORMATS = [
   {
@@ -51,7 +52,7 @@ const LOG_FORMATS = [
       const levels = ["info", "info", "info", "warn", "error", "debug"];
       const msgs = ["Request processed", "User authenticated", "Cache miss", "Rate limit exceeded", "Database query slow", "Connection pool exhausted", "Config reloaded"];
       const d = new Date(Date.now() - rn(0, 86400000));
-      return JSON.stringify({
+      return {
         timestamp: d.toISOString(),
         level: pick(levels),
         message: pick(msgs),
@@ -59,7 +60,7 @@ const LOG_FORMATS = [
         request_id: crypto.randomUUID().slice(0, 8),
         duration_ms: rn(1, 5000),
         ...(Math.random() > 0.7 ? { error: pick(["timeout", "ECONNREFUSED", "ENOMEM"]) } : {}),
-      });
+      };
     },
   },
   {
@@ -83,10 +84,18 @@ const LogGeneratorPage = () => {
   const [format, setFormat] = useState("apache");
   const [count, setCount] = useState(50);
   const [output, setOutput] = useState("");
+  const [indent, setIndent] = useState<IndentOption>(2);
 
   const generate = () => {
     const fmt = LOG_FORMATS.find((f) => f.id === format)!;
-    const lines = Array.from({ length: count }, (_, i) => fmt.template(i));
+    const lines = Array.from({ length: count }, (_, i) => {
+      const out = fmt.template(i);
+      if (format === "json") {
+        const space = typeof indent === "number" ? indent : 0;
+        return JSON.stringify(out as object, null, space);
+      }
+      return out as string;
+    });
     setOutput(lines.join("\n"));
   };
 
@@ -103,33 +112,42 @@ const LogGeneratorPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "Log Generator"} description={tool?.description ?? "Generate synthetic log data for testing"}>
-      <div className="tool-toolbar">
-        <select value={format} onChange={(e) => setFormat(e.target.value)} className="tool-select">
-          {LOG_FORMATS.map((f) => (
-            <option key={f.id} value={f.id}>{f.name}</option>
-          ))}
-        </select>
-        <div className="flex items-center gap-1.5">
-          <label className="text-xs text-muted-foreground">Lines:</label>
-          <input
-            type="number"
-            min={1}
-            max={10000}
-            value={count}
-            onChange={(e) => setCount(Math.max(1, Math.min(10000, Number(e.target.value))))}
-            className="w-20 rounded-md border px-2 py-1.5 text-xs font-mono bg-background border-border text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+      <div className="flex flex-col flex-1 min-h-0 w-full gap-4">
+        <div className="tool-panel flex flex-col flex-1 min-h-0">
+          <PanelHeader
+            label={`Output (${output ? output.split("\n").length : 0} lines)`}
+            text={output}
+            extra={
+              <div className="flex items-center gap-2 flex-wrap">
+                <select value={format} onChange={(e) => setFormat(e.target.value)}>
+                  {LOG_FORMATS.map((f) => (
+                    <option key={f.id} value={f.id}>{f.name}</option>
+                  ))}
+                </select>
+                {format === "json" && (
+                  <IndentSelect value={indent} onChange={setIndent} />
+                )}
+                <div className="flex items-center gap-1.5">
+                  <label className="text-xs text-muted-foreground shrink-0">Lines</label>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={10000}
+                    value={count}
+                    onChange={(e) => setCount(Math.max(1, Math.min(10000, Number(e.target.value) || 1)))}
+                    className="h-7 w-16 font-mono text-xs"
+                  />
+                </div>
+                <Button size="sm" className="h-7 text-xs" onClick={generate}>Generate</Button>
+                {output && <SaveButton label="Save .log" onClick={download} className="h-7 text-xs" />}
+                {output && <ClearButton onClick={() => setOutput("")} />}
+              </div>
+            }
           />
+          <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+            <CodeEditor value={output} readOnly language="text" placeholder="Click Generate to create log data..." fillHeight />
+          </div>
         </div>
-        <Button size="sm" onClick={generate}>Generate</Button>
-        {output && (
-          <Button size="sm" variant="outline" onClick={download}>
-            <Download className="h-3 w-3 mr-1" />Save .log
-          </Button>
-        )}
-      </div>
-      <div className="tool-panel">
-        <PanelHeader label={`Output (${output ? output.split("\n").length : 0} lines)`} text={output} onClear={() => setOutput("")} />
-        <CodeEditor value={output} readOnly language="text" placeholder="Click Generate to create log data..." />
       </div>
     </ToolLayout>
   );

@@ -5,6 +5,9 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import FileUploadButton from "@/components/FileUploadButton";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
 
 type HmacAlgo = "SHA-1" | "SHA-256" | "SHA-384" | "SHA-512";
 const algos: HmacAlgo[] = ["SHA-1", "SHA-256", "SHA-384", "SHA-512"];
@@ -15,6 +18,8 @@ const computeHmac = async (message: string, secret: string, algo: HmacAlgo): Pro
   const sig = await crypto.subtle.sign("HMAC", key, enc.encode(message));
   return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, "0")).join("");
 };
+
+const SAMPLE_MESSAGE = "message to sign";
 
 const HmacPage = () => {
   const tool = useCurrentTool();
@@ -48,9 +53,9 @@ const HmacPage = () => {
           </div>
           <div className="flex items-center gap-2 min-w-0 flex-1 max-w-xs">
             <Label className="text-xs text-muted-foreground shrink-0">Secret</Label>
-            <input
+            <Input
               type="text"
-              className="input-compact flex-1 min-w-0 font-mono"
+              className="h-7 flex-1 min-w-0 font-mono text-xs"
               value={secret}
               onChange={(e) => setSecret(e.target.value)}
               placeholder="Secret key..."
@@ -61,7 +66,16 @@ const HmacPage = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
           <div className="tool-panel flex flex-col flex-1 min-h-0">
-            <PanelHeader label="Message" text={message} onClear={() => { setMessage(""); setOutput(""); }} />
+          <PanelHeader
+            label="Message"
+            extra={
+              <div className="flex items-center gap-2 flex-wrap">
+                <SampleButton onClick={() => { setMessage(SAMPLE_MESSAGE); setOutput(""); }} />
+                <ClearButton onClick={() => { setMessage(""); setOutput(""); }} />
+                <FileUploadButton accept=".txt,text/plain" onText={setMessage} />
+              </div>
+            }
+          />
             <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
               <CodeEditor value={message} onChange={setMessage} language="text" placeholder="Enter message to sign..." fillHeight />
             </div>

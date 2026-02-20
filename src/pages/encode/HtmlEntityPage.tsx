@@ -1,111 +1,72 @@
-import { useState, useRef } from "react";
-import ToolLayout from "@/components/ToolLayout";
+import { useState, useCallback } from "react";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import PanelHeader from "@/components/PanelHeader";
-import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
-import { ToolOptions, OptionField } from "@/components/ToolOptions";
-
-type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
-
-const readFileAsText = (file: File, encoding: FileEncoding): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result;
-      if (typeof result === "string") {
-        resolve(result);
-        return;
-      }
-      if (result instanceof ArrayBuffer) {
-        const enc = encoding === "utf-16le" ? "utf-16le" : encoding === "utf-16be" ? "utf-16be" : "utf-8";
-        resolve(new TextDecoder(enc).decode(result));
-        return;
-      }
-      reject(new Error("Failed to read file"));
-    };
-    reader.onerror = () => reject(reader.error);
-    if (encoding === "utf-8") {
-      reader.readAsText(file, "UTF-8");
-    } else {
-      reader.readAsArrayBuffer(file);
-    }
-  });
-};
-
-const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
-
-const htmlEncode = (s: string) =>
-  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-
-const htmlDecode = (s: string) => {
-  const doc = new DOMParser().parseFromString(s, "text/html");
-  return doc.documentElement.textContent ?? "";
-};
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+import FileUploadButton from "@/components/FileUploadButton";
+import type { IndentOption } from "@/components/IndentSelect";
+import {
+  processHtmlEntityForLayout,
+  type HtmlEntityMode,
+  HTML_ENTITY_FILE_ACCEPT,
+  HTML_ENTITY_SAMPLE,
+  HTML_ENTITY_PLACEHOLDER_INPUT,
+  HTML_ENTITY_PLACEHOLDER_OUTPUT,
+  HTML_ENTITY_OUTPUT_FILENAME,
+  HTML_ENTITY_MIME_TYPE,
+} from "@/utils/htmlEntity";
 
 const HtmlEntityPage = () => {
   const tool = useCurrentTool();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [optionsOpen, setOptionsOpen] = useState(true);
-  const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
   const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
+  const [mode, setMode] = useState<HtmlEntityMode>("encode");
 
-  const run = (dir: "encode" | "decode") => {
-    setOutput(dir === "encode" ? htmlEncode(input) : htmlDecode(input));
-  };
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      setInput(await readFileAsText(file, fileEncoding));
-      setOutput("");
-    } catch {
-      setInput("");
-      setOutput("");
-    }
-    e.target.value = "";
-  };
+  const format = useCallback(
+    (inputValue: string, _indent: IndentOption) => processHtmlEntityForLayout(inputValue, mode),
+    [mode]
+  );
 
   return (
-    <ToolLayout title={tool?.label ?? "HTML Entity"} description={tool?.description ?? "Encode and decode HTML entities"}>
-      <ToolOptions open={optionsOpen} onOpenChange={setOptionsOpen}>
-        <input ref={fileInputRef} type="file" accept=".html,.htm,text/html,text/plain" className="hidden" onChange={handleFileUpload} />
-        <div className="flex flex-col gap-y-2.5 w-full">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <OptionField label="Upload file">
-              <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs" onClick={() => fileInputRef.current?.click()}>
-                <Upload className="h-3 w-3 mr-1.5" />
-                Upload file
-              </Button>
-            </OptionField>
-            <OptionField label="File encoding">
-              <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
-                <option value="utf-8">UTF-8</option>
-                <option value="utf-16le">UTF-16 LE</option>
-                <option value="utf-16be">UTF-16 BE</option>
-              </select>
-            </OptionField>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <Button size="sm" onClick={() => run("encode")}>Encode</Button>
-            <Button size="sm" variant="outline" onClick={() => run("decode")}>Decode</Button>
-          </div>
-        </div>
-      </ToolOptions>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="tool-panel">
-          <PanelHeader label="Input" text={input} onClear={() => { setInput(""); setOutput(""); }} />
-          <CodeEditor value={input} onChange={setInput} language="html" placeholder="<div>Hello</div>" />
-        </div>
-        <div className="tool-panel">
-          <PanelHeader label="Output" text={output} />
-          <CodeEditor value={output} readOnly language="html" placeholder="Result will appear here..." />
-        </div>
-      </div>
-    </ToolLayout>
+    <TwoPanelToolLayout
+      tool={tool}
+      inputPane={{
+        onClear: () => setInput(""),
+        toolbar: (
+          <>
+            <Button size="sm" variant={mode === "encode" ? "default" : "outline"} className="h-7 text-xs" onClick={() => setMode("encode")}>
+              Encode
+            </Button>
+            <Button size="sm" variant={mode === "decode" ? "default" : "outline"} className="h-7 text-xs" onClick={() => setMode("decode")}>
+              Decode
+            </Button>
+            <SampleButton onClick={() => setInput(HTML_ENTITY_SAMPLE)} />
+            <ClearButton onClick={() => setInput("")} />
+            <FileUploadButton accept={HTML_ENTITY_FILE_ACCEPT} onText={setInput} />
+          </>
+        ),
+        inputEditor: {
+          value: input,
+          onChange: setInput,
+          language: "html",
+          placeholder: HTML_ENTITY_PLACEHOLDER_INPUT,
+        },
+      }}
+      outputPane={{
+        outputToolbar: {
+          format,
+          outputFilename: HTML_ENTITY_OUTPUT_FILENAME,
+          outputMimeType: HTML_ENTITY_MIME_TYPE,
+          defaultIndent: 2,
+          indentSpaceOptions: [2, 4],
+          indentIncludeTab: false,
+        },
+        outputEditor: {
+          value: "",
+          language: "html",
+          placeholder: HTML_ENTITY_PLACEHOLDER_OUTPUT,
+        },
+      }}
+    />
   );
 };
 

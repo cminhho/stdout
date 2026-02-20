@@ -2,6 +2,43 @@
  * XML to JSON and JSON to XML (attributes in @, text in #text).
  */
 
+import type { IndentOption } from "@/components/IndentSelect";
+import type { ParseError } from "@/utils/validationTypes";
+import { singleErrorToParseErrors } from "@/utils/validationTypes";
+
+export const XML_JSON_FILE_ACCEPT = ".xml,.json,application/xml,application/json";
+export const XML_JSON_SAMPLE_XML = '<root><item id="1">Alpha</item><item id="2">Beta</item></root>';
+export const XML_JSON_SAMPLE_JSON = '{"root":{"item":[{"@id":"1","#text":"Alpha"},{"@id":"2","#text":"Beta"}]}}';
+export const XML_JSON_PLACEHOLDER_XML = "<root>...</root>";
+export const XML_JSON_PLACEHOLDER_JSON = "{}";
+export const XML_JSON_PLACEHOLDER_OUTPUT = "Result...";
+export const XML_JSON_OUTPUT_FILENAME_JSON = "output.json";
+export const XML_JSON_OUTPUT_FILENAME_XML = "output.xml";
+export const XML_JSON_MIME_JSON = "application/json";
+export const XML_JSON_MIME_XML = "application/xml";
+
+export type XmlJsonMode = "xml2json" | "json2xml";
+
+export interface XmlJsonFormatResult {
+  output: string;
+  errors?: ParseError[];
+}
+
+export function processXmlJson(input: string, indent: IndentOption, mode: XmlJsonMode): XmlJsonFormatResult {
+  if (!input.trim()) return { output: "", errors: [] };
+  try {
+    if (mode === "xml2json") {
+      const obj = xmlToJson(input);
+      const space = indent === "minified" ? undefined : indent === "tab" ? "\t" : (indent as number);
+      return { output: JSON.stringify(obj, null, space), errors: [] };
+    }
+    const parsed = JSON.parse(input) as object;
+    return { output: jsonToXml(parsed, "root"), errors: [] };
+  } catch (e) {
+    return { output: "", errors: singleErrorToParseErrors((e as Error).message) };
+  }
+}
+
 function domToObj(node: Node): unknown {
   if (node.nodeType === 3) {
     const t = (node as Text).textContent;

@@ -1,117 +1,37 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
-import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
-import { ToolOptions, OptionField } from "@/components/ToolOptions";
-
-type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
-
-const readFileAsText = (file: File, encoding: FileEncoding): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result;
-      if (typeof result === "string") {
-        resolve(result);
-        return;
-      }
-      if (result instanceof ArrayBuffer) {
-        const enc = encoding === "utf-16le" ? "utf-16le" : encoding === "utf-16be" ? "utf-16be" : "utf-8";
-        resolve(new TextDecoder(enc).decode(result));
-        return;
-      }
-      reject(new Error("Failed to read file"));
-    };
-    reader.onerror = () => reject(reader.error);
-    if (encoding === "utf-8") {
-      reader.readAsText(file, "UTF-8");
-    } else {
-      reader.readAsArrayBuffer(file);
-    }
-  });
-};
-
-const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
+import FileUploadButton from "@/components/FileUploadButton";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+import { parseJsonToTable, JSON_TABLE_FILE_ACCEPT, JSON_TABLE_SAMPLE, JSON_TABLE_PLACEHOLDER } from "@/utils/jsonTable";
 
 const JsonTablePage = () => {
   const tool = useCurrentTool();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [optionsOpen, setOptionsOpen] = useState(true);
-  const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
   const [input, setInput] = useState("");
-  const [error, setError] = useState("");
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      setInput(await readFileAsText(file, fileEncoding));
-      setError("");
-    } catch {
-      setInput("");
-      setError("");
-    }
-    e.target.value = "";
-  };
-
-  const tableData = useMemo(() => {
-    if (!input.trim()) { setError(""); return null; }
-    try {
-      const parsed = JSON.parse(input);
-      const arr = Array.isArray(parsed) ? parsed : [parsed];
-      if (arr.length === 0) return { headers: [], rows: [] };
-      const headers = [...new Set(arr.flatMap((item) => Object.keys(item)))];
-      const rows = arr.map((item) => headers.map((h) => {
-        const v = item[h];
-        return v === undefined ? "" : typeof v === "object" ? JSON.stringify(v) : String(v);
-      }));
-      setError("");
-      return { headers, rows };
-    } catch (e) {
-      setError((e as Error).message);
-      return null;
-    }
-  }, [input]);
+  const { data: tableData, error } = useMemo(() => parseJsonToTable(input), [input]);
 
   return (
     <ToolLayout title={tool?.label ?? "JSON → Table"} description={tool?.description ?? "Visualize JSON data as a table"}>
-      <ToolOptions open={optionsOpen} onOpenChange={setOptionsOpen}>
-        <input ref={fileInputRef} type="file" accept=".json,application/json" className="hidden" onChange={handleFileUpload} />
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-          <OptionField label="Upload your JSON file">
-            <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs" onClick={() => fileInputRef.current?.click()}>
-              <Upload className="h-3 w-3 mr-1.5" />
-              Upload file
-            </Button>
-          </OptionField>
-          <OptionField label="File encoding">
-            <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
-              <option value="utf-8">UTF-8</option>
-              <option value="utf-16le">UTF-16 LE</option>
-              <option value="utf-16be">UTF-16 BE</option>
-            </select>
-          </OptionField>
-        </div>
-      </ToolOptions>
       <div className="flex flex-col flex-1 min-h-0 gap-4">
-        {/* JSON Input: 50% height, max 50% */}
-        <div className="tool-panel flex-1 min-h-0 max-h-[50%]">
-          <PanelHeader label="JSON Input" text={input} onClear={() => { setInput(""); setError(""); }} />
+        <div className="tool-panel flex-1 min-h-0 max-h-[50%] flex flex-col min-h-0">
+          <PanelHeader
+            label="JSON Input"
+            extra={
+              <div className="flex items-center gap-2 flex-wrap">
+                <SampleButton onClick={() => setInput(JSON_TABLE_SAMPLE)} />
+                <ClearButton onClick={() => setInput("")} />
+                <FileUploadButton accept={JSON_TABLE_FILE_ACCEPT} onText={setInput} />
+              </div>
+            }
+          />
           <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-            <CodeEditor
-              value={input}
-              onChange={setInput}
-              language="json"
-              placeholder='[{"name": "Alice", "age": 30}]'
-              fillHeight
-            />
+            <CodeEditor value={input} onChange={setInput} language="json" placeholder={JSON_TABLE_PLACEHOLDER} fillHeight />
           </div>
         </div>
 
-        {/* JSON Table section: 50% height, title + table, max 50% */}
         <div className="flex flex-col flex-1 min-h-0 max-h-[50%]">
           <div className="flex-shrink-0 mb-2 flex items-center gap-2">
             <h2 className="text-sm font-semibold text-foreground">JSON Table</h2>
@@ -123,7 +43,9 @@ const JsonTablePage = () => {
                 <thead>
                   <tr className="border-b border-border">
                     {tableData.headers.map((h) => (
-                      <th key={h} className="text-left px-3 py-2 text-xs font-medium text-muted-foreground uppercase sticky top-0 bg-card">{h}</th>
+                      <th key={h} className="text-left px-3 py-2 text-xs font-medium text-muted-foreground uppercase sticky top-0 bg-card">
+                        {h}
+                      </th>
                     ))}
                   </tr>
                 </thead>
@@ -131,16 +53,16 @@ const JsonTablePage = () => {
                   {tableData.rows.map((row, i) => (
                     <tr key={i} className="border-b border-border last:border-0">
                       {row.map((cell, j) => (
-                        <td key={j} className="px-3 py-2 font-mono text-xs text-foreground">{cell}</td>
+                        <td key={j} className="px-3 py-2 font-mono text-xs text-foreground">
+                          {cell}
+                        </td>
                       ))}
                     </tr>
                   ))}
                 </tbody>
               </table>
             ) : !error && input.trim() ? (
-              <div className="flex items-center justify-center text-muted-foreground text-sm p-8">
-                No valid table data
-              </div>
+              <div className="flex items-center justify-center text-muted-foreground text-sm p-8">No valid table data</div>
             ) : null}
           </div>
         </div>

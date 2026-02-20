@@ -1,9 +1,14 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import FileUploadButton from "@/components/FileUploadButton";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
+
 
 function randomString(len = 8): string {
   return Array.from(crypto.getRandomValues(new Uint8Array(len)), (b) => b.toString(36)).join("").slice(0, len);
@@ -48,7 +53,7 @@ function generateFromSchema(schema: unknown): unknown {
   return null;
 }
 
-const defaultSchema = `{
+const SAMPLE_SCHEMA = `{
   "id": "uuid",
   "name": "string",
   "email": "email",
@@ -65,34 +70,51 @@ const defaultSchema = `{
 
 const MockGeneratorPage = () => {
   const tool = useCurrentTool();
-  const [schema, setSchema] = useState(defaultSchema);
+  const [schema, setSchema] = useState(SAMPLE_SCHEMA);
   const [count, setCount] = useState(3);
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
+  const [indent, setIndent] = useState<IndentOption>(2);
 
   const generate = useCallback(() => {
     try {
       const parsed = JSON.parse(schema);
       const items = Array.from({ length: count }, () => generateFromSchema(parsed));
-      setOutput(JSON.stringify(count === 1 ? items[0] : items, null, 2));
+      const space = indent === "minified" ? undefined : indent === "tab" ? "\t" : (indent as number);
+      setOutput(JSON.stringify(count === 1 ? items[0] : items, null, space));
       setError("");
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : String(e));
       setOutput("");
     }
-  }, [schema, count]);
+  }, [schema, count, indent]);
+
+  // When indent changes, re-format existing output so user doesn't need to click Generate again
+  useEffect(() => {
+    if (!output.trim()) return;
+    try {
+      const parsed = JSON.parse(output);
+      const space = indent === "minified" ? undefined : indent === "tab" ? "\t" : (indent as number);
+      setOutput(JSON.stringify(parsed, null, space));
+    } catch {
+      // output is not valid JSON (e.g. user pasted something), leave as-is
+    }
+  }, [indent]);
 
   return (
     <ToolLayout title={tool?.label ?? "Mock Payload"} description={tool?.description ?? "Generate mock JSON data from a schema"}>
-      <div className="flex flex-col flex-1 min-h-0">
-      <div className="flex gap-2 items-center mb-3 flex-wrap shrink-0">
-        <label className="text-xs text-muted-foreground">Count:</label>
-        <input type="number" min={1} max={100} value={count} onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value))))} className="input-compact w-16" />
-        <Button size="xs" onClick={generate}>Generate</Button>
-      </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
         <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="Schema Template" text={schema} onClear={() => { setSchema(""); setOutput(""); setError(""); }} />
+          <PanelHeader
+            label="Schema Template"
+            extra={
+              <div className="flex items-center gap-2">
+                <SampleButton onClick={() => { setSchema(SAMPLE_SCHEMA); setOutput(""); setError(""); }} />
+                <ClearButton onClick={() => { setSchema(""); setOutput(""); setError(""); }} />
+                <FileUploadButton accept=".json,application/json" onText={(t) => { setSchema(t); setOutput(""); setError(""); }} />
+              </div>
+            }
+          />
           <div className="flex-1 min-h-0 flex flex-col">
             <CodeEditor value={schema} onChange={setSchema} language="json" placeholder='{"id": "uuid", "name": "string", ...}' fillHeight />
           </div>
@@ -101,13 +123,30 @@ const MockGeneratorPage = () => {
           </div>
         </div>
         <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="Output" text={output} />
+          <PanelHeader
+            label="Output"
+            text={output}
+            extra={
+              <div className="flex items-center gap-2 flex-wrap">
+                <IndentSelect value={indent} onChange={setIndent} />
+                <label className="text-xs text-muted-foreground shrink-0">Count</label>
+                <Input
+                  type="number"
+                  min={1}
+                  max={100}
+                  value={count}
+                  onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
+                  className="h-7 w-14 font-mono text-xs"
+                />
+                <Button size="sm" className="h-7 text-xs" onClick={generate}>Generate</Button>
+              </div>
+            }
+          />
           {error && <div className="code-block text-destructive text-xs shrink-0">⚠ {error}</div>}
           <div className="flex-1 min-h-0 flex flex-col">
             <CodeEditor value={output || ""} readOnly language="json" placeholder="Generated data will appear here..." fillHeight />
           </div>
         </div>
-      </div>
       </div>
     </ToolLayout>
   );

@@ -4,34 +4,15 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CopyButton from "@/components/CopyButton";
 import { Label } from "@/components/ui/label";
-
-type Base = { label: string; radix: number };
-const bases: Base[] = [
-  { label: "Binary (2)", radix: 2 },
-  { label: "Octal (8)", radix: 8 },
-  { label: "Decimal (10)", radix: 10 },
-  { label: "Hexadecimal (16)", radix: 16 },
-];
+import { NUMBER_BASE_OPTIONS, NUMBER_BASE_PLACEHOLDER, parseFromBase, convertToAllBases } from "@/utils/numberBase";
 
 const NumberBasePage = () => {
   const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const [fromBase, setFromBase] = useState(10);
 
-  const parsed = useMemo(() => {
-    try {
-      const n = parseInt(input.trim(), fromBase);
-      if (isNaN(n)) return null;
-      return n;
-    } catch {
-      return null;
-    }
-  }, [input, fromBase]);
-
-  const results = useMemo(() => {
-    if (parsed === null) return null;
-    return bases.map((b) => ({ ...b, value: parsed.toString(b.radix).toUpperCase() }));
-  }, [parsed]);
+  const parsed = useMemo(() => parseFromBase(input, fromBase), [input, fromBase]);
+  const results = useMemo(() => (parsed === null ? null : convertToAllBases(parsed)), [parsed]);
 
   return (
     <ToolLayout title={tool?.label ?? "Number Base"} description={tool?.description ?? "Convert numbers between bases (bin, oct, dec, hex)"}>
@@ -43,13 +24,13 @@ const NumberBasePage = () => {
               className="input-compact flex-1 min-w-0 font-mono"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Enter a number..."
+              placeholder={NUMBER_BASE_PLACEHOLDER}
             />
           </div>
           <div className="flex items-center gap-2">
             <Label className="text-xs text-muted-foreground shrink-0">From</Label>
             <div className="flex gap-1">
-              {bases.map((b) => (
+              {NUMBER_BASE_OPTIONS.map((b) => (
                 <button
                   key={b.radix}
                   onClick={() => setFromBase(b.radix)}

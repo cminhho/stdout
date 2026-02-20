@@ -1,42 +1,13 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Upload } from "lucide-react";
-import { ToolOptions, OptionField } from "@/components/ToolOptions";
-
-type FileEncoding = "utf-8" | "utf-16le" | "utf-16be";
-
-const readFileAsText = (file: File, encoding: FileEncoding): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result;
-      if (typeof result === "string") {
-        resolve(result);
-        return;
-      }
-      if (result instanceof ArrayBuffer) {
-        const enc = encoding === "utf-16le" ? "utf-16le" : encoding === "utf-16be" ? "utf-16be" : "utf-8";
-        resolve(new TextDecoder(enc).decode(result));
-        return;
-      }
-      reject(new Error("Failed to read file"));
-    };
-    reader.onerror = () => reject(reader.error);
-    if (encoding === "utf-8") {
-      reader.readAsText(file, "UTF-8");
-    } else {
-      reader.readAsArrayBuffer(file);
-    }
-  });
-};
-
-const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
+import FileUploadButton from "@/components/FileUploadButton";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 
 const SAMPLE_JSON = `{
   "store": {
@@ -147,32 +118,20 @@ const tokenizePath = (path: string): string[] => {
 
 const JsonPathPage = () => {
   const tool = useCurrentTool();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [optionsOpen, setOptionsOpen] = useState(true);
-  const [fileEncoding, setFileEncoding] = useState<FileEncoding>("utf-8");
   const [jsonInput, setJsonInput] = useState(SAMPLE_JSON);
   const [pathInput, setPathInput] = useState("$.store.books[*].title");
+  const [indent, setIndent] = useState<IndentOption>(2);
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      setJsonInput(await readFileAsText(file, fileEncoding));
-    } catch {
-      setJsonInput("");
-    }
-    e.target.value = "";
-  };
-
+  const space = indent === "minified" ? undefined : indent === "tab" ? "\t" : (indent as number);
   const { result, error } = useMemo(() => {
     try {
       const obj = JSON.parse(jsonInput);
       const res = evaluateJsonPath(obj, pathInput);
-      return { result: JSON.stringify(res.length === 1 ? res[0] : res, null, 2), error: null };
+      return { result: JSON.stringify(res.length === 1 ? res[0] : res, null, space), error: null };
     } catch (e) {
       return { result: "", error: (e as Error).message };
     }
-  }, [jsonInput, pathInput]);
+  }, [jsonInput, pathInput, space]);
 
   const examples = [
     "$.store.name",
@@ -183,28 +142,16 @@ const JsonPathPage = () => {
     "$..price",
   ];
 
+  const jsonInputExtra = (
+    <div className="flex items-center gap-2 flex-wrap">
+      <SampleButton onClick={() => setJsonInput(SAMPLE_JSON)} />
+      <ClearButton onClick={() => setJsonInput("")} />
+      <FileUploadButton accept=".json,application/json" onText={setJsonInput} />
+    </div>
+  );
+
   return (
     <ToolLayout title={tool?.label ?? "JSONPath Tester"} description={tool?.description ?? "Test JSONPath expressions against JSON data"}>
-      <ToolOptions open={optionsOpen} onOpenChange={setOptionsOpen}>
-        <input ref={fileInputRef} type="file" accept=".json,application/json" className="hidden" onChange={handleFileUpload} />
-        <div className="flex flex-col gap-y-2.5 w-full">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <OptionField label="Upload your JSON file">
-              <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs" onClick={() => fileInputRef.current?.click()}>
-                <Upload className="h-3 w-3 mr-1.5" />
-                Upload file
-              </Button>
-            </OptionField>
-            <OptionField label="File encoding">
-              <select value={fileEncoding} onChange={(e) => setFileEncoding(e.target.value as FileEncoding)} className={selectClass}>
-                <option value="utf-8">UTF-8</option>
-                <option value="utf-16le">UTF-16 LE</option>
-                <option value="utf-16be">UTF-16 BE</option>
-              </select>
-            </OptionField>
-          </div>
-        </div>
-      </ToolOptions>
       <div className="tool-toolbar flex flex-col gap-2 items-start text-left">
         <div className="flex gap-3 items-end w-full">
           <div className="flex-1 min-w-0 max-w-full">
@@ -227,18 +174,18 @@ const JsonPathPage = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
-        <div className="tool-panel flex-1 min-h-0">
-          <PanelHeader label="JSON Input" text={jsonInput} onClear={() => setJsonInput("")} />
-          <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader label="JSON Input" extra={jsonInputExtra} />
+          <div className="flex-1 min-h-0 flex flex-col">
             <CodeEditor value={jsonInput} onChange={setJsonInput} language="json" fillHeight />
           </div>
         </div>
-        <div className="tool-panel flex-1 min-h-0">
-          <PanelHeader label="Result" text={result} />
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader label="Result" text={result} extra={<IndentSelect value={indent} onChange={setIndent} />} />
           {error ? (
-            <div className="code-block text-destructive flex-1 overflow-auto">{error}</div>
+            <div className="flex-1 min-h-0 overflow-auto rounded border border-border bg-muted/30 p-3 text-destructive text-sm font-mono">{error}</div>
           ) : (
-            <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+            <div className="flex-1 min-h-0 flex flex-col">
               <CodeEditor value={result} readOnly language="json" placeholder="Result will appear here..." fillHeight />
             </div>
           )}

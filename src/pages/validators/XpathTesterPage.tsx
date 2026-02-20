@@ -4,9 +4,11 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Input } from "@/components/ui/input";
+import FileUploadButton from "@/components/FileUploadButton";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
 import { evaluateXPath } from "@/utils/validators";
 
-const defaultXml = `<?xml version="1.0"?>
+const SAMPLE_XML = `<?xml version="1.0"?>
 <books>
   <book id="1"><title>Alpha</title><year>2020</year></book>
   <book id="2"><title>Beta</title><year>2021</year></book>
@@ -14,14 +16,24 @@ const defaultXml = `<?xml version="1.0"?>
 
 const XpathTesterPage = () => {
   const tool = useCurrentTool();
-  const [xml, setXml] = useState(defaultXml);
+  const [xml, setXml] = useState(SAMPLE_XML);
   const [xpath, setXpath] = useState("//book/title");
 
   const result = useMemo(() => evaluateXPath(xml, xpath), [xml, xpath]);
 
+  const resultText = result.items.map((i) => `[${i.type}] ${i.value}`).join("\n\n") || "";
+
+  const xmlExtra = (
+    <div className="flex items-center gap-2 flex-wrap">
+      <SampleButton onClick={() => setXml(SAMPLE_XML)} />
+      <ClearButton onClick={() => setXml("")} />
+      <FileUploadButton accept=".xml,application/xml,text/xml" onText={setXml} />
+    </div>
+  );
+
   return (
     <ToolLayout title={tool?.label ?? "XPath Tester"} description={tool?.description ?? "Run XPath expressions against XML"}>
-      <div className="space-y-3">
+      <div className="space-y-3 flex flex-col min-h-0">
         <div>
           <label className="text-xs text-muted-foreground mb-1 block">XPath expression</label>
           <Input
@@ -49,18 +61,23 @@ const XpathTesterPage = () => {
             </ul>
           </div>
         )}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div className="tool-panel">
-            <PanelHeader label="XML" text={xml} onClear={() => setXml("")} />
-            <CodeEditor value={xml} onChange={setXml} language="xml" placeholder="Paste XML..." />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+          <div className="tool-panel flex flex-col min-h-0">
+            <PanelHeader label="XML" extra={xmlExtra} />
+            <div className="flex-1 min-h-0 flex flex-col">
+              <CodeEditor value={xml} onChange={setXml} language="xml" placeholder="Paste XML..." fillHeight />
+            </div>
           </div>
-          <div className="tool-panel">
-            <PanelHeader label="Results preview" text={result.items.map((i) => i.value).join("\n")} />
-            <CodeEditor
-              value={result.items.map((i) => `[${i.type}] ${i.value}`).join("\n\n") || "Run XPath to see results"}
-              readOnly
-              language="text"
-            />
+          <div className="tool-panel flex flex-col min-h-0">
+            <PanelHeader label="Results" text={resultText || undefined} />
+            <div className="flex-1 min-h-0 flex flex-col">
+              <CodeEditor
+                value={resultText || "Run XPath to see results"}
+                readOnly
+                language="text"
+                fillHeight
+              />
+            </div>
           </div>
         </div>
       </div>

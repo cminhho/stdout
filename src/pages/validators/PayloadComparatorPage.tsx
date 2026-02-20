@@ -3,7 +3,10 @@ import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
-import CopyButton from "@/components/CopyButton";
+import FileUploadButton from "@/components/FileUploadButton";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+const SAMPLE_A = '{"status": "ok", "data": [1, 2, 3], "count": 3}';
+const SAMPLE_B = '{"status": "error", "data": [1, 2], "count": 2}';
 
 interface Diff {
   path: string;
@@ -49,6 +52,21 @@ const PayloadComparatorPage = () => {
   const [left, setLeft] = useState("");
   const [right, setRight] = useState("");
 
+  const leftExtra = (
+    <div className="flex items-center gap-2 flex-wrap">
+      <SampleButton onClick={() => setLeft(SAMPLE_A)} />
+      <ClearButton onClick={() => setLeft("")} />
+      <FileUploadButton accept=".json,application/json" onText={setLeft} />
+    </div>
+  );
+  const rightExtra = (
+    <div className="flex items-center gap-2 flex-wrap">
+      <SampleButton onClick={() => setRight(SAMPLE_B)} />
+      <ClearButton onClick={() => setRight("")} />
+      <FileUploadButton accept=".json,application/json" onText={setRight} />
+    </div>
+  );
+
   const result = useMemo(() => {
     if (!left.trim() || !right.trim()) return null;
     try {
@@ -63,13 +81,17 @@ const PayloadComparatorPage = () => {
   return (
     <ToolLayout title={tool?.label ?? "Payload Comparator"} description={tool?.description ?? "Compare two JSON payloads and highlight differences"}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="tool-panel">
-          <PanelHeader label="Payload A" text={left} onClear={() => setLeft("")} />
-          <CodeEditor value={left} onChange={setLeft} language="json" placeholder='{"status": "ok", "data": [1,2,3]}' />
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader label="Payload A" extra={leftExtra} />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor value={left} onChange={setLeft} language="json" placeholder='{"status": "ok", "data": [1,2,3]}' fillHeight />
+          </div>
         </div>
-        <div className="tool-panel">
-          <PanelHeader label="Payload B" text={right} onClear={() => setRight("")} />
-          <CodeEditor value={right} onChange={setRight} language="json" placeholder='{"status": "error", "data": [1,2]}' />
+        <div className="tool-panel flex flex-col min-h-0">
+          <PanelHeader label="Payload B" extra={rightExtra} />
+          <div className="flex-1 min-h-0 flex flex-col">
+            <CodeEditor value={right} onChange={setRight} language="json" placeholder='{"status": "error", "data": [1,2]}' fillHeight />
+          </div>
         </div>
       </div>
 

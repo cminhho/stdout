@@ -1,11 +1,16 @@
 import { useState, useCallback } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
+import PanelHeader from "@/components/PanelHeader";
 import CopyButton from "@/components/CopyButton";
 import CodeEditor from "@/components/CodeEditor";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
 import { HelpCircle } from "lucide-react";
+
+const SAMPLE_EXPR = "sqrt(2) * pi + log10(100)";
 
 const FUNCTION_HELP: { name: string; description: string; sample: string }[] = [
   { name: "sin, cos, tan", description: "Trigonometry (radians)", sample: "sin(pi/2)" },
@@ -150,9 +155,17 @@ const MathCalculatorPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "Math Calculator"} description={tool?.description ?? "Evaluate math expressions"}>
-      <div className="space-y-4 max-w-2xl">
-        <div className="tool-card space-y-3">
-          <Label className="text-xs text-muted-foreground block mb-1">Expression</Label>
+      <div className="space-y-4 max-w-2xl flex flex-col flex-1 min-h-0">
+        <div className="tool-panel flex flex-col flex-1 min-h-0 space-y-3">
+          <PanelHeader
+            label="Expression"
+            extra={
+              <div className="flex items-center gap-2">
+                <SampleButton onClick={() => setExpr(SAMPLE_EXPR)} />
+                <ClearButton onClick={() => setExpr("")} />
+              </div>
+            }
+          />
           <div className="flex gap-2 items-stretch">
             <div className="flex-1 min-w-0 h-[52px] min-h-0">
               <CodeEditor
@@ -227,7 +240,7 @@ const MathCalculatorPage = () => {
           <div className="tool-card">
             <div className="flex justify-between items-center mb-2">
               <Label className="text-xs text-muted-foreground">History</Label>
-              <button onClick={() => setHistory([])} className="text-[10px] text-muted-foreground hover:text-foreground">Clear</button>
+              <ClearButton onClick={() => setHistory([])} className="h-6 text-[10px] px-2" />
             </div>
             <div className="space-y-1 max-h-56 overflow-y-auto">
               {history.map((h, i) => (
