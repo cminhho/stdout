@@ -48,6 +48,8 @@ const groupIconMap: Record<string, React.ElementType> = {
 
 const getIcon = (name: string) => iconMap[name] || Braces;
 
+const isElectron = typeof window !== "undefined" && !!window.electronAPI;
+
 /** Truncates long labels to one line when sidebar is expanded (no tooltip; tooltips only when collapsed). */
 const SidebarItemLabel = ({ label }: { label: string }) => (
   <span className="min-w-0 truncate block">{label}</span>
@@ -123,7 +125,9 @@ const AppSidebar = () => {
   // Collapsed sidebar (Radix tooltips on hover)
   if (sidebarCollapsed) {
     return (
-      <aside className="w-12 shrink-0 h-screen sticky top-0 flex flex-col border-r bg-sidebar border-sidebar-border">
+      <aside
+        className={`w-12 shrink-0 flex flex-col border-r bg-sidebar border-sidebar-border ${isElectron ? "h-full min-h-0" : "h-screen sticky top-0"}`}
+      >
         <div className="flex items-center justify-center py-2.5 border-b border-sidebar-border">
           <Tooltip>
             <TooltipTrigger asChild>
@@ -171,7 +175,9 @@ const AppSidebar = () => {
   }
 
   return (
-    <aside className="w-80 shrink-0 h-screen sticky top-0 flex flex-col border-r bg-sidebar border-sidebar-border">
+    <aside
+      className={`w-80 shrink-0 flex flex-col border-r bg-sidebar border-sidebar-border ${isElectron ? "h-full min-h-0" : "h-screen sticky top-0"}`}
+    >
       <div className="flex items-center justify-between px-4 py-3">
         <Tooltip>
           <TooltipTrigger asChild>

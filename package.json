@@ -24,6 +24,7 @@
     "developer-utilities"
   ],
   "license": "MIT",
+  "author": "cminhho (https://github.com/cminhho)",
   "main": "electron/main.cjs",
   "scripts": {
     "dev": "vite",

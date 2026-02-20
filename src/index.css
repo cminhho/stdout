@@ -128,6 +128,20 @@
     font-family: var(--font-sans);
   }
 
+  /* Electron: fill viewport, no body scroll; only inner content areas scroll */
+  html.electron,
+  html.electron body,
+  html.electron #root {
+    height: 100%;
+    overflow: hidden;
+    margin: 0;
+  }
+  html.electron #root {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
   code, pre, .font-mono {
     font-family: var(--font-mono) !important;
   }

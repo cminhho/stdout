@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import CodeEditor from "@/components/CodeEditor";
 import FileUploadButton from "@/components/FileUploadButton";
-import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
+import IndentSelect, { DEFAULT_INDENT, type IndentOption } from "@/components/IndentSelect";
 import ResizableTwoPanel from "@/components/ResizableTwoPanel";
 import type { PaneProps } from "@/components/ResizableTwoPanel";
 import { ClearButton, SampleButton, SaveButton } from "@/components/ToolActionButtons";
@@ -20,8 +20,6 @@ export interface DefaultInputToolbarConfig {
   onFileText: (text: string) => void;
 }
 
-const DEFAULT_INDENT: IndentOption = 2;
-
 /** Result of format(input, indent); layout uses output and errors when format is provided. */
 export interface FormatResult {
   output: string;
@@ -34,7 +32,7 @@ export interface DefaultOutputToolbarConfig {
   indent?: IndentOption;
   /** Notified when indent changes so parent can sync. Omit when using format() – layout owns indent. */
   onIndentChange?: (value: IndentOption) => void;
-  /** Initial indent when indent is not provided (uncontrolled). Layout default is 2. */
+  /** Initial indent when indent is not provided (uncontrolled). Default: 4 spaces. */
   defaultIndent?: IndentOption;
   /**
    * When provided, layout calls format(inputValue, resolvedIndent) and uses result.output for output

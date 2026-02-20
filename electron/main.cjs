@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require("electron");
+const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 const path = require("path");
 
 const isDev = process.env.NODE_ENV === "development" || !app.isPackaged;
@@ -12,6 +12,12 @@ function createWindow() {
     height: 800,
     title: "stdout",
     icon: iconPath,
+    // Custom title bar: no native frame so the web app draws the header (traffic lights + title + actions).
+    // On macOS use hiddenInset to keep OS traffic lights; use frame: false for fully custom traffic lights.
+    ...(isMac
+      ? { titleBarStyle: "hiddenInset" }
+      : { frame: false }),
+    trafficLightPosition: isMac ? { x: 14, y: 14 } : undefined,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -31,6 +37,20 @@ function createWindow() {
     win.loadURL(fileUrl);
   }
 }
+
+// Custom window controls when frame: false (Windows/Linux)
+ipcMain.handle("window:close", () => {
+  const w = BrowserWindow.getFocusedWindow();
+  if (w) w.close();
+});
+ipcMain.handle("window:minimize", () => {
+  const w = BrowserWindow.getFocusedWindow();
+  if (w) w.minimize();
+});
+ipcMain.handle("window:maximize", () => {
+  const w = BrowserWindow.getFocusedWindow();
+  if (w) (w.isMaximized() ? w.unmaximize() : w.maximize());
+});
 
 app.whenReady().then(createWindow);
 

@@ -1,9 +1,10 @@
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import AppSidebar from "@/components/AppSidebar";
+import ElectronTitleBar from "@/components/ElectronTitleBar";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import { useToolTracking } from "@/hooks/useToolTracking";
 import SettingsPage from "@/pages/SettingsPage";
@@ -58,18 +59,40 @@ const ToolRoutes = () => {
 /** Use HashRouter under file: protocol (Electron) so routes work; BrowserRouter for web. */
 const Router = window.location.protocol === "file:" ? HashRouter : BrowserRouter;
 
-const App = () => (
-  <TooltipProvider>
-    <Router>
-      <SettingsProvider>
-        <Toaster />
-        <div className="flex min-h-screen">
-          <AppSidebar />
-          <ToolRoutes />
-        </div>
-      </SettingsProvider>
-    </Router>
-  </TooltipProvider>
-);
+const isElectron = typeof window !== "undefined" && !!window.electronAPI;
+
+const App = () => {
+  useEffect(() => {
+    if (isElectron) {
+      document.documentElement.classList.add("electron");
+      return () => document.documentElement.classList.remove("electron");
+    }
+  }, []);
+
+  return (
+    <TooltipProvider>
+      <Router>
+        <SettingsProvider>
+          <Toaster />
+          <div
+            className={
+              isElectron
+                ? "flex flex-col h-full overflow-hidden"
+                : "flex flex-col min-h-screen"
+            }
+          >
+            {isElectron && <ElectronTitleBar />}
+            <div className="flex flex-1 min-h-0 overflow-hidden min-w-0">
+              <AppSidebar />
+              <main className="flex-1 min-h-0 min-w-0 overflow-auto flex flex-col">
+                <ToolRoutes />
+              </main>
+            </div>
+          </div>
+        </SettingsProvider>
+      </Router>
+    </TooltipProvider>
+  );
+};
 
 export default App;

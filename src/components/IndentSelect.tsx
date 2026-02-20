@@ -6,8 +6,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-/** Canonical indent option: spaces (2, 3, 4, 8), tab, or minified. */
-export type IndentOption = 2 | 3 | 4 | 8 | "tab" | "minified";
+/** Canonical indent option: spaces (2, 4, 8), tab, or minified. */
+export type IndentOption = 2 | 4 | 8 | "tab" | "minified";
+
+/** Default indent when not defined (4 spaces). */
+export const DEFAULT_INDENT: IndentOption = 4;
 
 const DEFAULT_SPACE_OPTIONS: number[] = [2, 4, 8];
 
@@ -15,12 +18,14 @@ function parseIndentValue(raw: string, allowedSpaces: number[]): IndentOption {
   if (raw === "tab" || raw === "minified") return raw;
   const n = Number(raw);
   if (allowedSpaces.includes(n)) return n as IndentOption;
-  return (allowedSpaces[0] ?? 2) as IndentOption;
+  return (allowedSpaces.includes(DEFAULT_INDENT as number) ? DEFAULT_INDENT : allowedSpaces[0] ?? DEFAULT_INDENT) as IndentOption;
 }
 
 export interface IndentSelectProps {
   value: IndentOption;
   onChange: (value: IndentOption) => void;
+  /** Initial/default value when parent uses uncontrolled or for initial state (default: 4 spaces). */
+  defaultValue?: IndentOption;
   /** Space options to show (default: [2, 4, 8]). */
   spaceOptions?: number[];
   /** Show Tab option (default: true). */
@@ -41,6 +46,7 @@ const compactTriggerClass =
 const IndentSelect = ({
   value,
   onChange,
+  defaultValue = DEFAULT_INDENT,
   spaceOptions = DEFAULT_SPACE_OPTIONS,
   includeTab = true,
   includeMinified = true,
