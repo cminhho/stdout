@@ -2,9 +2,6 @@ import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Button } from "@/components/ui/button";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
-import FileUploadButton from "@/components/FileUploadButton";
 import type { IndentOption } from "@/components/IndentSelect";
 import {
   processUrlEncodeForLayout,
@@ -31,8 +28,13 @@ const UrlEncodePage = () => {
     <TwoPanelToolLayout
       tool={tool}
       inputPane={{
-        onClear: () => setInput(""),
-        toolbar: (
+        inputToolbar: {
+          onSample: () => setInput(URL_ENCODE_SAMPLE),
+          setInput,
+          fileAccept: URL_ENCODE_FILE_ACCEPT,
+          onFileText: setInput,
+        },
+        inputToolbarExtra: (
           <>
             <Button size="sm" variant={mode === "encode" ? "default" : "outline"} className="h-7 text-xs" onClick={() => setMode("encode")}>
               Encode
@@ -40,9 +42,6 @@ const UrlEncodePage = () => {
             <Button size="sm" variant={mode === "decode" ? "default" : "outline"} className="h-7 text-xs" onClick={() => setMode("decode")}>
               Decode
             </Button>
-            <SampleButton onClick={() => setInput(URL_ENCODE_SAMPLE)} />
-            <ClearButton onClick={() => setInput("")} />
-            <FileUploadButton accept={URL_ENCODE_FILE_ACCEPT} onText={setInput} />
           </>
         ),
         inputEditor: {

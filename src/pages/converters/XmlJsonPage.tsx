@@ -2,9 +2,6 @@ import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Button } from "@/components/ui/button";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
-import FileUploadButton from "@/components/FileUploadButton";
 import type { IndentOption } from "@/components/IndentSelect";
 import type { XmlJsonMode } from "@/utils/xmlJson";
 import {
@@ -40,7 +37,13 @@ const XmlJsonPage = () => {
     <TwoPanelToolLayout
       tool={tool}
       inputPane={{
-        toolbar: (
+        inputToolbar: {
+          onSample: () => setInput(sampleInput),
+          setInput,
+          fileAccept: XML_JSON_FILE_ACCEPT,
+          onFileText: setInput,
+        },
+        inputToolbarExtra: (
           <>
             <Button size="sm" variant={mode === "xml2json" ? "default" : "outline"} onClick={() => setMode("xml2json")} className="h-7 text-xs">
               XML → JSON
@@ -48,9 +51,6 @@ const XmlJsonPage = () => {
             <Button size="sm" variant={mode === "json2xml" ? "default" : "outline"} onClick={() => setMode("json2xml")} className="h-7 text-xs">
               JSON → XML
             </Button>
-            <SampleButton onClick={() => setInput(sampleInput)} />
-            <ClearButton onClick={() => setInput("")} />
-            <FileUploadButton accept={XML_JSON_FILE_ACCEPT} onText={setInput} />
           </>
         ),
         inputEditor: {

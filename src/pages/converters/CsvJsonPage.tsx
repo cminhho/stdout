@@ -2,9 +2,6 @@ import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Button } from "@/components/ui/button";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
-import FileUploadButton from "@/components/FileUploadButton";
 import type { IndentOption } from "@/components/IndentSelect";
 import type { CsvJsonMode } from "@/utils/csvJson";
 import {
@@ -40,7 +37,13 @@ const CsvJsonPage = () => {
     <TwoPanelToolLayout
       tool={tool}
       inputPane={{
-        toolbar: (
+        inputToolbar: {
+          onSample: () => setInput(sampleInput),
+          setInput,
+          fileAccept: CSV_JSON_FILE_ACCEPT,
+          onFileText: setInput,
+        },
+        inputToolbarExtra: (
           <>
             <Button size="sm" variant={mode === "csv2json" ? "default" : "outline"} onClick={() => setMode("csv2json")} className="h-7 text-xs">
               CSV → JSON
@@ -48,9 +51,6 @@ const CsvJsonPage = () => {
             <Button size="sm" variant={mode === "json2csv" ? "default" : "outline"} onClick={() => setMode("json2csv")} className="h-7 text-xs">
               JSON → CSV
             </Button>
-            <SampleButton onClick={() => setInput(sampleInput)} />
-            <ClearButton onClick={() => setInput("")} />
-            <FileUploadButton accept={CSV_JSON_FILE_ACCEPT} onText={setInput} />
           </>
         ),
         inputEditor: {

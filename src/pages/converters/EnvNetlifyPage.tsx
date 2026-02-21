@@ -1,9 +1,6 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
-import FileUploadButton from "@/components/FileUploadButton";
 import { Button } from "@/components/ui/button";
 import type { IndentOption } from "@/components/IndentSelect";
 import {
@@ -33,8 +30,13 @@ const EnvNetlifyPage = () => {
     <TwoPanelToolLayout
       tool={tool}
       inputPane={{
-        onClear: () => setInput(""),
-        toolbar: (
+        inputToolbar: {
+          onSample: () => setInput(ENV_NETLIFY_SAMPLE),
+          setInput,
+          fileAccept: ENV_NETLIFY_FILE_ACCEPT,
+          onFileText: setInput,
+        },
+        inputToolbarExtra: (
           <>
             {(["netlify", "docker", "yaml"] as const).map((f) => (
               <Button
@@ -47,9 +49,6 @@ const EnvNetlifyPage = () => {
                 {f === "netlify" ? "netlify.toml" : f === "docker" ? "Dockerfile" : "YAML"}
               </Button>
             ))}
-            <SampleButton onClick={() => setInput(ENV_NETLIFY_SAMPLE)} />
-            <ClearButton onClick={() => setInput("")} />
-            <FileUploadButton accept={ENV_NETLIFY_FILE_ACCEPT} onText={setInput} />
           </>
         ),
         inputEditor: {

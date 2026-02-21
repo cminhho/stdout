@@ -2,9 +2,6 @@ import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { SelectWithOptions } from "@/components/ui/select";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
-import FileUploadButton from "@/components/FileUploadButton";
 import type { IndentOption } from "@/components/IndentSelect";
 import {
   processJsonToTypesForLayout,
@@ -34,21 +31,21 @@ const JsonTypescriptPage = () => {
     <TwoPanelToolLayout
       tool={tool}
       inputPane={{
-        onClear: () => setInput(""),
-        toolbar: (
-          <>
-            <SelectWithOptions
-              size="sm"
-              value={lang}
-              onValueChange={setLang}
-              options={JSON_TYPESCRIPT_LANGS.map((l) => ({ value: l.value, label: l.label }))}
-              title="Output language"
-              aria-label="Output language"
-            />
-            <SampleButton onClick={() => setInput(JSON_TYPESCRIPT_SAMPLE)} />
-            <ClearButton onClick={() => setInput("")} />
-            <FileUploadButton accept={JSON_TYPESCRIPT_FILE_ACCEPT} onText={setInput} />
-          </>
+        inputToolbar: {
+          onSample: () => setInput(JSON_TYPESCRIPT_SAMPLE),
+          setInput,
+          fileAccept: JSON_TYPESCRIPT_FILE_ACCEPT,
+          onFileText: setInput,
+        },
+        inputToolbarExtra: (
+          <SelectWithOptions
+            size="sm"
+            value={lang}
+            onValueChange={setLang}
+            options={JSON_TYPESCRIPT_LANGS.map((l) => ({ value: l.value, label: l.label }))}
+            title="Output language"
+            aria-label="Output language"
+          />
         ),
         inputEditor: {
           value: input,

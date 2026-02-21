@@ -2,9 +2,6 @@ import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Button } from "@/components/ui/button";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
-import FileUploadButton from "@/components/FileUploadButton";
 import type { IndentOption } from "@/components/IndentSelect";
 import {
   processGzipForLayout,
@@ -31,8 +28,13 @@ const GzipPage = () => {
     <TwoPanelToolLayout
       tool={tool}
       inputPane={{
-        onClear: () => setInput(""),
-        toolbar: (
+        inputToolbar: {
+          onSample: () => setInput(GZIP_SAMPLE),
+          setInput,
+          fileAccept: GZIP_FILE_ACCEPT,
+          onFileText: setInput,
+        },
+        inputToolbarExtra: (
           <>
             <Button size="sm" variant={mode === "compress" ? "default" : "outline"} className="h-7 text-xs" onClick={() => setMode("compress")}>
               Compress
@@ -40,9 +42,6 @@ const GzipPage = () => {
             <Button size="sm" variant={mode === "decompress" ? "default" : "outline"} className="h-7 text-xs" onClick={() => setMode("decompress")}>
               Decompress
             </Button>
-            <SampleButton onClick={() => setInput(GZIP_SAMPLE)} />
-            <ClearButton onClick={() => setInput("")} />
-            <FileUploadButton accept={GZIP_FILE_ACCEPT} onText={setInput} />
           </>
         ),
         inputEditor: {

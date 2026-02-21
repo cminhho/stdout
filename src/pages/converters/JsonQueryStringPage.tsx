@@ -2,9 +2,6 @@ import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Button } from "@/components/ui/button";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
-import FileUploadButton from "@/components/FileUploadButton";
 import type { IndentOption } from "@/components/IndentSelect";
 import type { JsonQueryStringMode } from "@/utils/jsonQueryString";
 import {
@@ -37,7 +34,13 @@ const JsonQueryStringPage = () => {
     <TwoPanelToolLayout
       tool={tool}
       inputPane={{
-        toolbar: (
+        inputToolbar: {
+          onSample: () => setInput(sampleInput),
+          setInput,
+          fileAccept: JSON_QUERY_STRING_FILE_ACCEPT,
+          onFileText: setInput,
+        },
+        inputToolbarExtra: (
           <>
             <Button size="sm" variant={mode === "toQs" ? "default" : "outline"} onClick={() => setMode("toQs")} className="h-7 text-xs">
               JSON → Query String
@@ -45,9 +48,6 @@ const JsonQueryStringPage = () => {
             <Button size="sm" variant={mode === "toJson" ? "default" : "outline"} onClick={() => setMode("toJson")} className="h-7 text-xs">
               Query String → JSON
             </Button>
-            <SampleButton onClick={() => setInput(sampleInput)} />
-            <ClearButton onClick={() => setInput("")} />
-            <FileUploadButton accept={JSON_QUERY_STRING_FILE_ACCEPT} onText={setInput} />
           </>
         ),
         inputEditor: {

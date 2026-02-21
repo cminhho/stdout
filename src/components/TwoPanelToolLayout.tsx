@@ -65,6 +65,8 @@ export interface TwoPanelInputPaneConfig {
   onClear?: () => void;
   toolbar?: ReactNode;
   inputToolbar?: DefaultInputToolbarConfig;
+  /** Rendered before default Sample/Clear/FileUpload when inputToolbar is set. Use for mode toggles (e.g. Compress/Decompress). */
+  inputToolbarExtra?: ReactNode;
   /** When set (and children not set), layout renders CodeEditor. Override with children if needed. */
   inputEditor?: InputEditorConfig;
   /** Pane body; when set, overrides inputEditor. */
@@ -136,6 +138,7 @@ function buildInputPaneProps(
     config.toolbar ??
     (config.inputToolbar ? (
       <>
+        {config.inputToolbarExtra ?? null}
         <SampleButton onClick={config.inputToolbar.onSample} />
         {clearHandler ? <ClearButton onClick={clearHandler} /> : null}
         <FileUploadButton
