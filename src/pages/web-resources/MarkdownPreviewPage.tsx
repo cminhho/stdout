@@ -87,7 +87,7 @@ const MarkdownPreviewPage = () => {
         toolbar: (
           <div className="flex items-center gap-2">
             <Button
-              size="sm"
+              size="xs"
               variant={showHtml ? "outline" : "default"}
               className="h-7 text-xs"
               onClick={() => setShowHtml(false)}
@@ -95,7 +95,7 @@ const MarkdownPreviewPage = () => {
               Preview
             </Button>
             <Button
-              size="sm"
+              size="xs"
               variant={showHtml ? "default" : "outline"}
               className="h-7 text-xs"
               onClick={() => setShowHtml(true)}

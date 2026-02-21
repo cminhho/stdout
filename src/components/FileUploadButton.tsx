@@ -32,7 +32,7 @@ const FileUploadButton = ({
   buttonClassName,
   disabled = false,
   multiple = false,
-  variant = "secondary",
+  variant = "outline",
 }: FileUploadButtonProps) => {
   const id = useId();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -78,15 +78,15 @@ const FileUploadButton = ({
         ) : (
           <Button
             type="button"
-            size="sm"
+            size="xs"
             variant={variant}
             className={buttonClassName}
             disabled={isDisabled}
             isLoading={loading}
             asChild
           >
-            <span>
-              <Upload className="h-3.5 w-3.5 mr-1.5" />
+            <span className="inline-flex items-center justify-center gap-2">
+              <Upload className="h-3.5 w-3.5" />
               Upload
             </span>
           </Button>

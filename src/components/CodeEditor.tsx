@@ -1,4 +1,4 @@
-import { useRef, useCallback, useEffect, useMemo, useState } from "react";
+import { useRef, useCallback, useEffect, useMemo } from "react";
 
 export type Language =
   | "json"
@@ -308,7 +308,7 @@ const getTokenizer = (lang: Language) => {
 /** Line height multiplier; must match gutter/highlight row height so cursor aligns. */
 const CODE_LINE_HEIGHT = 1.5;
 
-/* Token colors from CSS variables (JSON/code dark theme: key white, string green, number orange, boolean cyan) */
+/* Token colors from CSS variables (key, string green, number orange, boolean/keyword purple, comment gray) */
 const tokenColors: Record<Token["type"], string> = {
   key: "hsl(var(--code-key))",
   string: "hsl(var(--code-string))",
@@ -375,7 +375,6 @@ const CodeEditor = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const highlightRef = useRef<HTMLDivElement>(null);
   const gutterRef = useRef<HTMLDivElement>(null);
-  const [focused, setFocused] = useState(false);
 
   const lines = useMemo(() => (value ? value.split("\n") : [""]), [value]);
   const tokenizer = useMemo(() => getTokenizer(language), [language]);
@@ -442,7 +441,7 @@ const CodeEditor = ({
 
   return (
     <div
-      className={`code-editor-wrapper relative z-0 rounded-md border overflow-hidden ${focused ? "ring-1 ring-ring" : ""} ${fillHeight ? "h-full min-h-0" : ""} ${className}`}
+      className={`code-editor-wrapper relative z-0 rounded-md border overflow-hidden ${fillHeight ? "h-full min-h-0" : ""} ${className}`}
       data-language={language}
       style={{
         background: "hsl(var(--code-bg))",
@@ -511,8 +510,6 @@ const CodeEditor = ({
         value={value}
         onChange={(e) => handleChange(e.target.value)}
         onKeyDown={readOnly ? undefined : handleKeyDown}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
         readOnly={readOnly}
         placeholder={placeholder}
         spellCheck={false}

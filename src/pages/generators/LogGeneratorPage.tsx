@@ -122,7 +122,7 @@ const LogGeneratorPage = () => {
             extra={
               <div className="flex items-center gap-2 flex-wrap">
                 <SelectWithOptions
-                  size="sm"
+                  size="xs"
                   variant="secondary"
                   value={format}
                   onValueChange={setFormat}
@@ -144,7 +144,7 @@ const LogGeneratorPage = () => {
                     className="h-7 w-16 font-mono text-xs"
                   />
                 </div>
-                <Button size="sm" onClick={generate}>Generate</Button>
+                <Button size="xs" onClick={generate}>Generate</Button>
                 {output && <SaveButton label="Save .log" onClick={download} className="h-7 text-xs" />}
                 {output && <ClearButton onClick={() => setOutput("")} />}
               </div>

@@ -45,7 +45,7 @@ const CreditCardPage = () => {
           <p className="text-xs text-muted-foreground mb-3">For testing only. Do not use for real transactions.</p>
           <div className="flex flex-wrap gap-2">
             {CARD_BRANDS.map((brand) => (
-              <Button key={brand} size="sm" variant="outline" onClick={() => handleGenerate(brand)}>
+              <Button key={brand} size="xs" variant="outline" onClick={() => handleGenerate(brand)}>
                 {brand}
               </Button>
             ))}

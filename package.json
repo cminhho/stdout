@@ -1,7 +1,7 @@
 {
   "name": "stdout",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Your standard output for dev tools. Format, convert, encode, generate — formatters, converters, generators, encode/decode, builders (cron, curl, etc.).",
   "type": "module",
   "repository": {
@@ -88,6 +88,7 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.38.0",
     "vite": "^5.4.19",
+    "vite-plugin-pwa": "^1.2.0",
     "wait-on": "^8.0.1"
   },
   "build": {

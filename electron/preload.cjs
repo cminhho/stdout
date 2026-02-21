@@ -8,4 +8,17 @@ contextBridge.exposeInMainWorld("electronAPI", {
     minimize: () => ipcRenderer.invoke("window:minimize"),
     maximize: () => ipcRenderer.invoke("window:maximize"),
   },
+  // macOS app menu actions (Stdout → Settings…, Check for Updates…, etc.). Return unsubscribe.
+  menu: {
+    onOpenSettings: (cb) => {
+      const handler = () => cb();
+      ipcRenderer.on("menu:open-settings", handler);
+      return () => ipcRenderer.removeListener("menu:open-settings", handler);
+    },
+    onCheckUpdates: (cb) => {
+      const handler = () => cb();
+      ipcRenderer.on("menu:check-updates", handler);
+      return () => ipcRenderer.removeListener("menu:check-updates", handler);
+    },
+  },
 });

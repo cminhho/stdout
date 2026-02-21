@@ -123,7 +123,7 @@ const ImageResizerPage = () => {
                   Keep ratio
                 </label>
                 <SelectWithOptions
-                  size="sm"
+                  size="xs"
                   variant="secondary"
                   value={format}
                   onValueChange={(v) => setFormat(v as "png" | "jpeg" | "webp")}
@@ -144,7 +144,7 @@ const ImageResizerPage = () => {
                 )}
               </div>
               <div className="flex gap-2">
-                <Button size="sm" onClick={resize}>Resize</Button>
+                <Button size="xs" onClick={resize}>Resize</Button>
                 <SaveButton label="Download" onClick={download} className="h-7 text-xs" />
               </div>
             </div>

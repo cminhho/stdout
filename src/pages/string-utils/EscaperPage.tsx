@@ -56,8 +56,8 @@ const EscaperPage = ({ type, title, description, formatSelector }: EscaperPagePr
         toolbar: (
           <>
             {formatSelector}
-            <Button size="sm" className="h-7 text-xs" onClick={() => run("encode")}>Escape</Button>
-            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => run("decode")}>Unescape</Button>
+            <Button size="xs" className="h-7 text-xs" onClick={() => run("encode")}>Escape</Button>
+            <Button size="xs" variant="outline" className="h-7 text-xs" onClick={() => run("decode")}>Unescape</Button>
           </>
         ),
         outputEditor: {

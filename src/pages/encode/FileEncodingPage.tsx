@@ -131,7 +131,7 @@ const FileEncodingPage = () => {
             </SelectContent>
           </Select>
         </div>
-        <Button size="sm" onClick={run}>
+        <Button size="xs" onClick={run}>
           {mode === "decode" ? "Decode" : "Encode"}
         </Button>
       </div>

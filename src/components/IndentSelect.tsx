@@ -37,7 +37,7 @@ export interface IndentSelectProps {
 
 /**
  * Indentation select: 2/4/8 spaces, Tab, Minified.
- * Uses SelectTrigger size="sm" for toolbar use alongside Sample, Clear, Save.
+ * Uses SelectTrigger size="xs" for toolbar use alongside Sample, Clear, Save.
  */
 const IndentSelect = ({
   value,
@@ -56,8 +56,8 @@ const IndentSelect = ({
       onValueChange={(v) => onChange(parseIndentValue(v, spaceOptions))}
     >
       <SelectTrigger
-        size="sm"
-        variant="secondary"
+        size="xs"
+        variant="default"
         title={title}
         aria-label={title}
       >

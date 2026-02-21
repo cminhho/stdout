@@ -1,7 +1,7 @@
 import { Suspense, useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { BrowserRouter, HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, HashRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import AppSidebar from "@/components/AppSidebar";
 import WindowTitleBar from "@/components/WindowTitleBar";
@@ -11,11 +11,27 @@ import SettingsPage from "@/pages/SettingsPage";
 import NotFound from "@/pages/NotFound";
 import HomePage from "@/pages/HomePage";
 
+const isDesktop = typeof window !== "undefined" && !!window.electronAPI;
+
 const ToolRoutes = () => {
   const { tools } = useToolEngine();
+  const navigate = useNavigate();
 
   // Activate usage tracking
   useToolTracking();
+
+  // macOS app menu: Settings… and Check for Updates… (License… handled in main)
+  useEffect(() => {
+    if (!isDesktop || !window.electronAPI?.menu) return;
+    const unsubSettings = window.electronAPI.menu.onOpenSettings(() => navigate("/settings"));
+    const unsubCheck = window.electronAPI.menu.onCheckUpdates(() =>
+      navigate("/settings?checkUpdates=1")
+    );
+    return () => {
+      unsubSettings();
+      unsubCheck();
+    };
+  }, [navigate]);
 
   return (
     <Suspense
@@ -58,8 +74,6 @@ const ToolRoutes = () => {
 
 /** HashRouter for file: protocol (desktop app); BrowserRouter for web. */
 const Router = window.location.protocol === "file:" ? HashRouter : BrowserRouter;
-
-const isDesktop = typeof window !== "undefined" && !!window.electronAPI;
 
 const App = () => {
   useEffect(() => {

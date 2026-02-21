@@ -84,7 +84,7 @@ const LoremIpsumPage = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button size="sm" className="h-7 text-xs" onClick={generate}>Generate</Button>
+                <Button size="xs" className="h-7 text-xs" onClick={generate}>Generate</Button>
                 {output ? <ClearButton onClick={() => setOutput("")} /> : null}
               </div>
             }

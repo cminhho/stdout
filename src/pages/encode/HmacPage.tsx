@@ -61,7 +61,7 @@ const HmacPage = () => {
               placeholder="Secret key..."
             />
           </div>
-          <Button size="sm" onClick={generate} disabled={!message.trim() || !secret.trim()}>
+          <Button size="xs" onClick={generate} disabled={!message.trim() || !secret.trim()}>
             Generate
           </Button>
         </div>

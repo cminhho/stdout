@@ -30,7 +30,7 @@ const CssUnitsPage = () => {
             <div>
               <label className="text-xs text-muted-foreground block mb-1">From</label>
               <SelectWithOptions
-                size="sm"
+                size="xs"
                 variant="secondary"
                 value={fromUnit}
                 onValueChange={setFromUnit}

@@ -12,22 +12,39 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const root = document.documentElement;
-    const applyTheme = (isDark: boolean) => {
-      root.classList.toggle("dark", isDark);
-      root.classList.toggle("light", !isDark);
-    };
+    const themeColors: Record<string, string> = { light: "#fafafa", dark: "#252a31", "deep-dark": "#121212" };
 
+    root.classList.remove("dark", "light", "deep-dark");
+
+    let resolved: "light" | "dark" | "deep-dark";
     if (state.theme === "dark") {
-      applyTheme(true);
+      resolved = "dark";
+      root.classList.add("dark");
     } else if (state.theme === "light") {
-      applyTheme(false);
+      resolved = "light";
+      root.classList.add("light");
+    } else if (state.theme === "deep-dark") {
+      resolved = "deep-dark";
+      root.classList.add("deep-dark");
     } else {
       const mq = window.matchMedia("(prefers-color-scheme: dark)");
-      applyTheme(mq.matches);
-      const handler = (e: MediaQueryListEvent) => applyTheme(e.matches);
+      resolved = mq.matches ? "dark" : "light";
+      root.classList.add(resolved);
+      const handler = () => {
+        root.classList.remove("dark", "light");
+        const next = mq.matches ? "dark" : "light";
+        root.classList.add(next);
+        const meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute("content", themeColors[next] ?? themeColors.light);
+      };
       mq.addEventListener("change", handler);
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute("content", themeColors[resolved] ?? themeColors.light);
       return () => mq.removeEventListener("change", handler);
     }
+
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute("content", themeColors[resolved] ?? themeColors.light);
   }, [state.theme]);
 
   const setTheme = (theme: Theme) => setState((s) => ({ ...s, theme }));

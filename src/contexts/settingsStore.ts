@@ -1,6 +1,6 @@
 import { createContext } from "react";
 
-export type Theme = "dark" | "light" | "system";
+export type Theme = "dark" | "light" | "deep-dark" | "system";
 export type SidebarMode = "grouped" | "flat";
 
 export interface SettingsState {

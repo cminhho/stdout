@@ -1,9 +1,111 @@
-const { app, BrowserWindow, Menu, ipcMain } = require("electron");
+const { app, BrowserWindow, Menu, ipcMain, shell } = require("electron");
 const path = require("path");
+const fs = require("fs");
 
 const APP_NAME = "stdout";
 const isDev = process.env.NODE_ENV === "development" || !app.isPackaged;
 const isMac = process.platform === "darwin";
+
+function getAppVersion() {
+  try {
+    const pkgPath = path.join(__dirname, "../package.json");
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
+    return pkg.version || "1.0.0";
+  } catch {
+    return "1.0.0";
+  }
+}
+
+function setMacOSApplicationMenu() {
+  if (!isMac) return;
+  const version = getAppVersion();
+  app.setAboutPanelOptions({
+    applicationName: "Stdout",
+    applicationVersion: version,
+    copyright: "MIT License",
+    website: "https://github.com/cminhho/stdout",
+  });
+  const template = [
+    {
+      label: "Stdout",
+      submenu: [
+        { label: "About Stdout", click: () => app.showAboutPanel() },
+        { type: "separator" },
+        {
+          label: "Settings…",
+          accelerator: "Cmd+,",
+          click: () => {
+            const w = BrowserWindow.getFocusedWindow();
+            if (w && w.webContents) w.webContents.send("menu:open-settings");
+          },
+        },
+        {
+          label: "Check for Updates…",
+          click: () => {
+            const w = BrowserWindow.getFocusedWindow();
+            if (w && w.webContents) w.webContents.send("menu:check-updates");
+          },
+        },
+        {
+          label: "License…",
+          click: () => shell.openExternal("https://github.com/cminhho/stdout/blob/main/LICENSE"),
+        },
+        { type: "separator" },
+        { role: "hide", label: "Hide Stdout" },
+        { role: "hideOthers", label: "Hide Others" },
+        { role: "unhide", label: "Show All" },
+        { type: "separator" },
+        { role: "quit", label: "Quit Stdout" },
+      ],
+    },
+    {
+      label: "Edit",
+      submenu: [
+        { role: "undo", label: "Undo" },
+        { role: "redo", label: "Redo" },
+        { type: "separator" },
+        { role: "cut", label: "Cut" },
+        { role: "copy", label: "Copy" },
+        { role: "paste", label: "Paste" },
+        { role: "selectAll", label: "Select All" },
+      ],
+    },
+    {
+      label: "View",
+      submenu: [
+        { role: "reload", label: "Reload" },
+        { role: "forceReload", label: "Force Reload" },
+        { role: "toggleDevTools", label: "Toggle Developer Tools" },
+        { type: "separator" },
+        { role: "resetZoom", label: "Actual Size" },
+        { role: "zoomIn", label: "Zoom In" },
+        { role: "zoomOut", label: "Zoom Out" },
+        { type: "separator" },
+        { role: "togglefullscreen", label: "Toggle Full Screen" },
+      ],
+    },
+    {
+      label: "Window",
+      submenu: [
+        { role: "minimize", label: "Minimize" },
+        { role: "zoom", label: "Zoom" },
+        { type: "separator" },
+        { role: "front", label: "Bring All to Front" },
+      ],
+    },
+    {
+      label: "Help",
+      submenu: [
+        {
+          label: "stdout on GitHub",
+          click: () => shell.openExternal("https://github.com/cminhho/stdout"),
+        },
+      ],
+    },
+  ];
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+}
 
 function createWindow() {
   const iconPath = path.join(__dirname, isDev ? "../public/favicon.svg" : "../dist/favicon.svg");
@@ -32,8 +134,8 @@ function createWindow() {
     win.setTitle(APP_NAME);
   });
 
-  // No menu bar (View, Window, Help, etc.) for a cleaner window
-  Menu.setApplicationMenu(null);
+  if (isMac) setMacOSApplicationMenu();
+  else Menu.setApplicationMenu(null);
 
   if (isDev) {
     win.loadURL("http://localhost:8080");
