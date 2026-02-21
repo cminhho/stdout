@@ -1,3 +1,4 @@
+import React from "react";
 import { useLocation } from "react-router-dom";
 import { useToolEngine } from "@/hooks/useToolEngine";
 
@@ -18,13 +19,13 @@ const ElectronTitleBar = () => {
 
   return (
     <header
-      className="flex items-center shrink-0 h-9 px-3 bg-sidebar border-b border-sidebar-border"
+      className="electron-title-bar flex items-center shrink-0 h-10 px-3 gap-3"
       style={{ WebkitAppRegion: "drag" } as React.CSSProperties}
     >
       {/* macOS hiddenInset: traffic lights are drawn by OS at ~14,14; leave space so we don't overlap */}
-      {isMac && <div className="w-[72px] shrink-0" style={{ WebkitAppRegion: "no-drag" }} />}
+      {isMac && <div className="w-[72px] shrink-0" style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties} />}
       {hasWindowControls && (
-        <div className="flex items-center gap-1 shrink-0" style={{ WebkitAppRegion: "no-drag" }}>
+        <div className="flex items-center gap-1 shrink-0" style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties}>
           <button
             type="button"
             className="w-3 h-3 rounded-full bg-[#ff5f57] hover:opacity-90"
@@ -45,8 +46,12 @@ const ElectronTitleBar = () => {
           />
         </div>
       )}
-      <div className="flex-1 min-w-0 flex justify-center pointer-events-none">
-        <span className="text-xs font-medium text-sidebar-foreground truncate">{title}</span>
+      <div className="flex-1 min-w-0 flex justify-center pointer-events-none px-2">
+        <span
+          className={`text-xs font-medium text-foreground truncate ${isMac ? "electron-title-plain" : "title-tab"}`}
+        >
+          {title}
+        </span>
       </div>
       <div className="w-[72px] shrink-0" />
     </header>

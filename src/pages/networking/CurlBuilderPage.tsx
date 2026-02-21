@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ClearButton } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
 import { Plus, Trash2 } from "lucide-react";
 
 interface Header {
@@ -125,7 +125,7 @@ const CurlBuilderPage = () => {
             <div className="w-32">
               <Label className="text-xs text-muted-foreground mb-1 block">Method</Label>
               <Select value={method} onValueChange={setMethod}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger variant="secondary"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"].map((m) => (
                     <SelectItem key={m} value={m}>{m}</SelectItem>

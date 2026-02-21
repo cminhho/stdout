@@ -35,13 +35,9 @@ export interface IndentSelectProps {
   title?: string;
 }
 
-/** Compact trigger: same height/size as toolbar buttons (Sample, Clear, Save) for inline layout. */
-const compactTriggerClass =
-  "h-7 w-auto min-w-[5.5rem] text-xs rounded-md border border-outlineButton-border bg-outlineButton-bg text-outlineButton-foreground px-2.5 py-1 [&>svg]:h-3.5 [&>svg]:w-3.5 hover:bg-accent hover:text-accent-foreground";
-
 /**
  * Indentation select: 2/4/8 spaces, Tab, Minified.
- * Compact trigger for toolbar use alongside Sample, Clear, Save.
+ * Uses SelectTrigger size="sm" for toolbar use alongside Sample, Clear, Save.
  */
 const IndentSelect = ({
   value,
@@ -60,7 +56,8 @@ const IndentSelect = ({
       onValueChange={(v) => onChange(parseIndentValue(v, spaceOptions))}
     >
       <SelectTrigger
-        className={compactTriggerClass}
+        size="sm"
+        variant="secondary"
         title={title}
         aria-label={title}
       >

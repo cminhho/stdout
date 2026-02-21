@@ -4,7 +4,9 @@ import FileUploadButton from "@/components/FileUploadButton";
 import IndentSelect, { DEFAULT_INDENT, type IndentOption } from "@/components/IndentSelect";
 import ResizableTwoPanel from "@/components/ResizableTwoPanel";
 import type { PaneProps } from "@/components/ResizableTwoPanel";
-import { ClearButton, SampleButton, SaveButton } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
+import { SampleButton } from "@/components/SampleButton";
+import { SaveButton } from "@/components/SaveButton";
 import ToolLayout from "@/components/ToolLayout";
 import ValidationErrorList from "@/components/ValidationErrorList";
 import type { ParseError } from "@/utils/validationTypes";
@@ -63,6 +65,8 @@ export interface TwoPanelInputPaneConfig {
   onClear?: () => void;
   toolbar?: ReactNode;
   inputToolbar?: DefaultInputToolbarConfig;
+  /** Rendered before default Sample/Clear/FileUpload when inputToolbar is set. Use for mode toggles (e.g. Compress/Decompress). */
+  inputToolbarExtra?: ReactNode;
   /** When set (and children not set), layout renders CodeEditor. Override with children if needed. */
   inputEditor?: InputEditorConfig;
   /** Pane body; when set, overrides inputEditor. */
@@ -83,6 +87,8 @@ export interface TwoPanelOutputPaneConfig {
   copyText?: string;
   toolbar?: ReactNode;
   outputToolbar?: DefaultOutputToolbarConfig;
+  /** Rendered before default IndentSelect/Save when outputToolbar is set. Use for output-format toggles (e.g. netlify/docker/yaml). */
+  outputToolbarExtra?: ReactNode;
   /** When set (and children not set), layout renders read-only CodeEditor. Override with children if needed. */
   outputEditor?: OutputEditorConfig;
   /** Pane body; when set, overrides outputEditor. */
@@ -101,6 +107,12 @@ export interface TwoPanelToolLayoutProps {
   description?: string;
   /** When set, title/description default to tool.label and tool.description. */
   tool?: ToolHeading | null;
+  /**
+   * Optional full-width section above the two panels. Use for tool-specific options (e.g. JSONPath
+   * expression + examples, filters) that would otherwise crowd the input toolbar and cause the two
+   * panes to have unequal header height.
+   */
+  topSection?: ReactNode;
   /** When present and non-empty, show ValidationErrorList above the two panels and derive input editor error lines (unless inputEditor.errorLines is set). */
   validationErrors?: ParseError[];
   /** When false, hide ValidationErrorList even if validationErrors is set. Default true. */
@@ -134,6 +146,7 @@ function buildInputPaneProps(
     config.toolbar ??
     (config.inputToolbar ? (
       <>
+        {config.inputToolbarExtra ?? null}
         <SampleButton onClick={config.inputToolbar.onSample} />
         {clearHandler ? <ClearButton onClick={clearHandler} /> : null}
         <FileUploadButton
@@ -199,6 +212,7 @@ function buildOutputPaneProps(
     config.toolbar ??
     (ot && indentControl ? (
       <>
+        {config.outputToolbarExtra ?? null}
         <IndentSelect
           value={indentControl.resolvedIndent}
           onChange={indentControl.onIndentChange}
@@ -249,6 +263,7 @@ const TwoPanelToolLayout = ({
   tool,
   validationErrors,
   showValidationErrors = true,
+  topSection,
   defaultInputPercent,
   minInputPercent,
   maxInputPercent,
@@ -354,8 +369,13 @@ const TwoPanelToolLayout = ({
           <ValidationErrorList errors={effectiveValidationErrors} />
         </div>
       ) : null}
+      {topSection ? (
+        <div className="mb-3 flex flex-col gap-2">
+          {topSection}
+        </div>
+      ) : null}
       <ResizableTwoPanel
-        defaultInputPercent={defaultInputPercent}
+        defaultInputPercent={defaultInputPercent ?? 40}
         minInputPercent={minInputPercent}
         maxInputPercent={maxInputPercent}
         resizerWidth={resizerWidth}

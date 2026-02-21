@@ -1,6 +1,6 @@
-import { useRef, useCallback, useEffect, useState } from "react";
+import { useRef, useCallback, useEffect, useMemo, useState } from "react";
 
-type Language =
+export type Language =
   | "json"
   | "xml"
   | "html"
@@ -20,19 +20,31 @@ type Language =
   | "kotlin"
   | "plaintext";
 
+/** Metadata passed when content changes; useful for line-by-line handling without re-splitting. */
+export interface CodeEditorChangeMeta {
+  /** Current lines (value split by "\n"). Same reference until value changes. */
+  lines: string[];
+  /** Number of lines. */
+  lineCount: number;
+}
+
 interface CodeEditorProps {
+  /** Current editor content (controlled). */
   value: string;
-  onChange?: (value: string) => void;
+  /** Called on content change. Second arg provides lines array for line-by-line consumers. */
+  onChange?: (value: string, meta?: CodeEditorChangeMeta) => void;
+  /** Syntax highlighting language. */
   language?: Language;
   readOnly?: boolean;
   placeholder?: string;
+  /** 1-based line numbers to highlight as errors. */
   errorLines?: Set<number>;
   className?: string;
-  /** When true, editor fills container height (no fixed min/max height) */
+  /** When true, editor fills container height (no fixed min/max height). */
   fillHeight?: boolean;
-  /** Optional key down handler (e.g. for Enter to submit) */
+  /** Optional key down handler (e.g. for Enter to submit). */
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
-  /** When false, hides the line number gutter (default true) */
+  /** When false, hides the line number gutter (default true). */
   showLineNumbers?: boolean;
   /** When set, renders this content instead of the code textarea (e.g. JSON tree view). Same wrapper/border/scroll. */
   customContent?: React.ReactNode;
@@ -284,24 +296,58 @@ const getTokenizer = (lang: Language) => {
   }
 };
 
-// ── Token colors (CSS variables) ─────────────────────────────────────
+/** Line height multiplier; must match gutter/highlight row height so cursor aligns. */
+const CODE_LINE_HEIGHT = 1.5;
 
+/* Token colors from CSS variables (JSON/code dark theme: key white, string green, number orange, boolean cyan) */
 const tokenColors: Record<Token["type"], string> = {
-  key: "hsl(var(--accent))",
-  string: "hsl(var(--code-text))",
-  number: "hsl(35 90% 65%)",
-  boolean: "hsl(280 60% 70%)",
-  null: "hsl(280 60% 70%)",
-  bracket: "hsl(var(--muted-foreground))",
-  punctuation: "hsl(var(--muted-foreground))",
+  key: "hsl(var(--code-key))",
+  string: "hsl(var(--code-string))",
+  number: "hsl(var(--code-number))",
+  boolean: "hsl(var(--code-boolean))",
+  null: "hsl(var(--code-null))",
+  bracket: "hsl(var(--code-bracket))",
+  punctuation: "hsl(var(--code-punctuation))",
   tag: "hsl(0 70% 65%)",
-  attr: "hsl(35 90% 65%)",
-  keyword: "hsl(280 60% 70%)",
-  comment: "hsl(var(--muted-foreground) / 0.6)",
+  attr: "hsl(var(--code-number))",
+  keyword: "hsl(var(--code-boolean))",
+  comment: "hsl(var(--code-comment))",
   text: "hsl(var(--foreground))",
 };
 
+// ── Hooks ───────────────────────────────────────────────────────────
+
+/** Syncs textarea scroll to highlight overlay and line gutter for aligned scrolling. */
+function useCodeEditorScrollSync(
+  textareaRef: React.RefObject<HTMLTextAreaElement | null>,
+  highlightRef: React.RefObject<HTMLDivElement | null>,
+  gutterRef: React.RefObject<HTMLDivElement | null>
+) {
+  const syncScroll = useCallback(() => {
+    const ta = textareaRef.current;
+    const hl = highlightRef.current;
+    const gt = gutterRef.current;
+    if (ta && hl) {
+      hl.scrollTop = ta.scrollTop;
+      hl.scrollLeft = ta.scrollLeft;
+    }
+    if (ta && gt) {
+      gt.scrollTop = ta.scrollTop;
+    }
+  }, [textareaRef, highlightRef, gutterRef]);
+
+  useEffect(() => {
+    const ta = textareaRef.current;
+    if (!ta) return;
+    ta.addEventListener("scroll", syncScroll);
+    return () => ta.removeEventListener("scroll", syncScroll);
+  }, [syncScroll, textareaRef]);
+}
+
 // ── Component ────────────────────────────────────────────────────────
+// Line-by-line friendly: lines/tokenizedLines are memoized from value; onChange optionally
+// receives meta.lines so parents can update by line without re-splitting. Stable keys (L0, L1…)
+// keep reconciliation predictable when only some lines change.
 
 const CodeEditor = ({
   value,
@@ -321,43 +367,37 @@ const CodeEditor = ({
   const gutterRef = useRef<HTMLDivElement>(null);
   const [focused, setFocused] = useState(false);
 
-  const lines = value ? value.split("\n") : [""];
-  const tokenizer = getTokenizer(language);
+  const lines = useMemo(() => (value ? value.split("\n") : [""]), [value]);
+  const tokenizer = useMemo(() => getTokenizer(language), [language]);
+  const tokenizedLines = useMemo(() => lines.map((line) => tokenizer(line)), [lines, tokenizer]);
 
-  const syncScroll = useCallback(() => {
-    const ta = textareaRef.current;
-    const hl = highlightRef.current;
-    const gt = gutterRef.current;
-    if (ta && hl) {
-      hl.scrollTop = ta.scrollTop;
-      hl.scrollLeft = ta.scrollLeft;
-    }
-    if (ta && gt) {
-      gt.scrollTop = ta.scrollTop;
-    }
-  }, []);
+  useCodeEditorScrollSync(textareaRef, highlightRef, gutterRef);
 
-  useEffect(() => {
-    const ta = textareaRef.current;
-    if (!ta) return;
-    ta.addEventListener("scroll", syncScroll);
-    return () => ta.removeEventListener("scroll", syncScroll);
-  }, [syncScroll]);
+  const handleChange = useCallback(
+    (newValue: string) => {
+      const newLines = newValue ? newValue.split("\n") : [""];
+      onChange?.(newValue, { lines: newLines, lineCount: newLines.length });
+    },
+    [onChange]
+  );
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Tab") {
-      e.preventDefault();
-      const ta = e.currentTarget;
-      const start = ta.selectionStart;
-      const end = ta.selectionEnd;
-      const newVal = value.slice(0, start) + "  " + value.slice(end);
-      onChange?.(newVal);
-      requestAnimationFrame(() => {
-        ta.selectionStart = ta.selectionEnd = start + 2;
-      });
-    }
-    onKeyDownProp?.(e);
-  };
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (!readOnly && e.key === "Tab") {
+        e.preventDefault();
+        const ta = e.currentTarget;
+        const start = ta.selectionStart;
+        const end = ta.selectionEnd;
+        const newVal = value.slice(0, start) + "  " + value.slice(end);
+        handleChange(newVal);
+        requestAnimationFrame(() => {
+          ta.selectionStart = ta.selectionEnd = start + 2;
+        });
+      }
+      onKeyDownProp?.(e);
+    },
+    [readOnly, value, handleChange, onKeyDownProp]
+  );
 
   const gutterWidth = showLineNumbers ? Math.max(String(lines.length).length * 10 + 16, 36) : 0;
   const contentPaddingLeft = gutterWidth + 12;
@@ -373,7 +413,7 @@ const CodeEditor = ({
         }}
       >
         <div
-          className="overflow-auto p-3 font-mono text-xs"
+          className="overflow-auto p-3 font-mono text-sm leading-relaxed"
           style={
             fillHeight
               ? { height: "100%", minHeight: 0 }
@@ -408,10 +448,11 @@ const CodeEditor = ({
           <div className="pt-3 pb-3">
             {lines.map((_, i) => (
               <div
-                key={i}
-                className="text-right pr-2 leading-relaxed text-xs font-mono"
+                key={`L${i}`}
+                className="text-right pr-2 text-sm font-mono flex items-center justify-end"
                 style={{
-                  height: "1.625em",
+                  height: `${CODE_LINE_HEIGHT}em`,
+                  lineHeight: CODE_LINE_HEIGHT,
                   color: errorLines?.has(i + 1) ? "hsl(var(--destructive))" : "hsl(var(--muted-foreground) / 0.5)",
                   fontWeight: errorLines?.has(i + 1) ? 600 : 400,
                 }}
@@ -426,21 +467,22 @@ const CodeEditor = ({
       <div
         ref={highlightRef}
         aria-hidden
-        className="absolute top-0 bottom-0 right-0 overflow-hidden pointer-events-none z-[1] p-3 font-mono text-xs leading-relaxed whitespace-pre"
-        style={{ left: gutterWidth }}
+        className="absolute top-0 bottom-0 right-0 overflow-hidden pointer-events-none z-[1] p-3 font-mono text-sm whitespace-pre"
+        style={{ left: gutterWidth, lineHeight: CODE_LINE_HEIGHT }}
       >
-        {lines.map((line, i) => (
+        {tokenizedLines.map((tokens, i) => (
           <div
-            key={i}
+            key={`L${i}`}
             className="whitespace-pre"
             style={{
-              height: "1.625em",
+              height: `${CODE_LINE_HEIGHT}em`,
+              lineHeight: CODE_LINE_HEIGHT,
               background: errorLines?.has(i + 1) ? "hsl(var(--destructive) / 0.08)" : "transparent",
             }}
           >
-            {line === ""
+            {tokens.length === 0
               ? "\n"
-              : tokenizer(line).map((token, j) => (
+              : tokens.map((token, j) => (
                   <span key={j} style={{ color: tokenColors[token.type] }}>
                     {token.value}
                   </span>
@@ -452,16 +494,17 @@ const CodeEditor = ({
       <textarea
         ref={textareaRef}
         value={value}
-        onChange={(e) => onChange?.(e.target.value)}
+        onChange={(e) => handleChange(e.target.value)}
         onKeyDown={readOnly ? undefined : handleKeyDown}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         readOnly={readOnly}
         placeholder={placeholder}
         spellCheck={false}
-        className="relative z-[3] w-full h-full p-3 font-mono text-xs leading-relaxed bg-transparent border-none outline-none resize-y overflow-auto"
+        className="relative z-[3] w-full h-full p-3 font-mono text-sm bg-transparent border-none outline-none resize-y overflow-auto"
         style={{
           paddingLeft: contentPaddingLeft,
+          lineHeight: CODE_LINE_HEIGHT,
           color: "transparent",
           caretColor: "hsl(var(--foreground))",
           whiteSpace: "pre",

@@ -5,7 +5,11 @@
 import { singleErrorToParseErrors } from "@/utils/validationTypes";
 
 export const GZIP_FILE_ACCEPT = ".txt,text/plain";
+/** Sample for Compress mode (plain text). */
 export const GZIP_SAMPLE = "Text to compress with gzip";
+/** Sample for Decompress mode (base64 of gzip-compressed GZIP_SAMPLE). */
+export const GZIP_SAMPLE_DECODE =
+  "H4sIAAAAAAAAEwtJrShRKMlXSM7PLShKLS5WKM8syVBIr8osAAC4qn+aGgAAAA==";
 export const GZIP_PLACEHOLDER_INPUT = "Enter text to compress...";
 export const GZIP_PLACEHOLDER_OUTPUT = "Result will appear here...";
 export const GZIP_OUTPUT_FILENAME = "output.txt";

@@ -1,9 +1,7 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import { SegmentGroup } from "@/components/SegmentGroup";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import { Button } from "@/components/ui/button";
-import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
-import FileUploadButton from "@/components/FileUploadButton";
 import type { IndentOption } from "@/components/IndentSelect";
 import type { XmlJsonMode } from "@/utils/xmlJson";
 import {
@@ -20,10 +18,20 @@ import {
   XML_JSON_MIME_XML,
 } from "@/utils/xmlJson";
 
+const MODE_OPTIONS: { value: XmlJsonMode; label: string }[] = [
+  { value: "xml2json", label: "XML → JSON" },
+  { value: "json2xml", label: "JSON → XML" },
+];
+
 const XmlJsonPage = () => {
   const tool = useCurrentTool();
   const [mode, setMode] = useState<XmlJsonMode>("xml2json");
   const [input, setInput] = useState("");
+
+  const setModeWithCleanup = useCallback((next: XmlJsonMode) => {
+    setMode(next);
+    setInput("");
+  }, []);
 
   const format = useCallback(
     (inputValue: string, indent: IndentOption) => processXmlJson(inputValue, indent, mode),
@@ -39,18 +47,19 @@ const XmlJsonPage = () => {
     <TwoPanelToolLayout
       tool={tool}
       inputPane={{
-        toolbar: (
-          <>
-            <Button size="sm" variant={mode === "xml2json" ? "default" : "outline"} onClick={() => setMode("xml2json")} className="h-7 text-xs">
-              XML → JSON
-            </Button>
-            <Button size="sm" variant={mode === "json2xml" ? "default" : "outline"} onClick={() => setMode("json2xml")} className="h-7 text-xs">
-              JSON → XML
-            </Button>
-            <SampleButton onClick={() => setInput(sampleInput)} />
-            <ClearButton onClick={() => setInput("")} />
-            <FileUploadButton accept={XML_JSON_FILE_ACCEPT} onText={setInput} />
-          </>
+        inputToolbar: {
+          onSample: () => setInput(sampleInput),
+          setInput,
+          fileAccept: XML_JSON_FILE_ACCEPT,
+          onFileText: setInput,
+        },
+        inputToolbarExtra: (
+          <SegmentGroup<XmlJsonMode>
+            value={mode}
+            onValueChange={setModeWithCleanup}
+            options={MODE_OPTIONS}
+            ariaLabel="Conversion direction"
+          />
         ),
         inputEditor: {
           value: input,

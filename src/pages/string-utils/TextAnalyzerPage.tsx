@@ -1,13 +1,9 @@
 import { useState, useMemo } from "react";
-import ToolLayout from "@/components/ToolLayout";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import PanelHeader from "@/components/PanelHeader";
-import CodeEditor from "@/components/CodeEditor";
-import CopyButton from "@/components/CopyButton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+import { Label } from "@/components/ui/label";
 
 const SAMPLE_TEXT = "The quick brown fox jumps over the lazy dog.\nSecond line here.\nThird line.";
 
@@ -66,43 +62,39 @@ const TextAnalyzerPage = () => {
   const applyCase = (type: CaseType) => setText(convertCase(text, type));
 
   return (
-    <ToolLayout title={tool?.label ?? "Text Analyzer"} description={tool?.description ?? "Count words, characters, sentences in text"}>
-      {/* Stats */}
-      {text && (
-        <div className="flex flex-wrap gap-2 text-xs mb-3">
-          {Object.entries(stats).map(([key, val]) => (
-            <span key={key} className="px-2 py-0.5 rounded bg-muted text-muted-foreground capitalize">
-              {key}: <span className="font-mono font-medium text-foreground">{val}</span>
-            </span>
-          ))}
-        </div>
-      )}
-
-      <div className="tool-panel flex flex-col min-h-0 flex-1">
-        <PanelHeader
-          label="Text Input"
-            extra={
-            <div className="flex items-center gap-2 flex-wrap">
-              <SampleButton onClick={() => setText(SAMPLE_TEXT)} />
-              <ClearButton onClick={() => setText("")} />
-              <FileUploadButton accept=".txt,text/plain" onText={setText} />
-              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={sortLines}>Sort Lines</Button>
-              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={removeDuplicateLines}>Remove Dupes</Button>
-              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={reverseLines}>Reverse</Button>
-              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("upper")}>UPPER</Button>
-              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("lower")}>lower</Button>
-              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("title")}>Title</Button>
-              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("camel")}>camelCase</Button>
-              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("snake")}>snake_case</Button>
-              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("kebab")}>kebab-case</Button>
+    <TwoPanelToolLayout
+      tool={tool}
+      topSection={
+        <div className="flex flex-col gap-2">
+          {text.length > 0 && (
+            <div className="flex flex-wrap gap-2 text-xs">
+              {Object.entries(stats).map(([key, val]) => (
+                <span key={key} className="px-2 py-0.5 rounded bg-muted text-muted-foreground capitalize">
+                  {key}: <span className="font-mono font-medium text-foreground">{val}</span>
+                </span>
+              ))}
+            </div>
+          )}
+          <div className="flex flex-wrap items-center gap-2">
+            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={sortLines}>Sort Lines</Button>
+            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={removeDuplicateLines}>Remove Dupes</Button>
+            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={reverseLines}>Reverse</Button>
+            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("upper")}>UPPER</Button>
+            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("lower")}>lower</Button>
+            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("title")}>Title</Button>
+            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("camel")}>camelCase</Button>
+            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("snake")}>snake_case</Button>
+            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("kebab")}>kebab-case</Button>
+            <div className="flex items-center gap-1.5 ml-1">
+              <Label className="text-xs text-muted-foreground shrink-0">Regex</Label>
               <Input
-                className="h-7 w-36 font-mono text-xs min-w-0"
-                placeholder="Regex..."
+                className="h-7 w-32 font-mono text-xs min-w-0"
+                placeholder="Pattern..."
                 value={regexPattern}
                 onChange={(e) => setRegexPattern(e.target.value)}
               />
               <Input
-                className="h-7 w-14 font-mono text-xs text-center min-w-0"
+                className="h-7 w-12 font-mono text-xs text-center min-w-0"
                 placeholder="Flags"
                 value={regexFlags}
                 onChange={(e) => setRegexFlags(e.target.value)}
@@ -113,30 +105,50 @@ const TextAnalyzerPage = () => {
                 </span>
               )}
             </div>
-          }
-        />
-        <div className="flex-1 min-h-0 flex flex-col">
-          <CodeEditor value={text} onChange={setText} language="text" placeholder="Paste your text here..." fillHeight />
-        </div>
-      </div>
-
-      {regexMatches.length > 0 && (
-        <div className="mt-3 tool-card">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Regex Matches</span>
-            <CopyButton text={regexMatches.map(m => m.match).join("\n")} />
           </div>
-          <div className="code-block space-y-1 max-h-40 overflow-y-auto">
-            {regexMatches.slice(0, 50).map((m, i) => (
-              <div key={i}>
-                <span className="text-primary">{m.match}</span>
-                <span className="text-muted-foreground"> at index {m.index}</span>
+        </div>
+      }
+      inputPane={{
+        inputToolbar: {
+          onSample: () => setText(SAMPLE_TEXT),
+          setInput: setText,
+          fileAccept: ".txt,text/plain",
+          onFileText: setText,
+        },
+        inputEditor: {
+          value: text,
+          onChange: setText,
+          language: "text",
+          placeholder: "Paste your text here...",
+        },
+      }}
+      outputPane={{
+        title: "Stats & Regex",
+        copyText: regexMatches.length > 0 ? regexMatches.map((m) => m.match).join("\n") : undefined,
+        children: (
+          <div className="flex-1 min-h-0 overflow-auto space-y-3">
+            {regexMatches.length === 0 && (
+              <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
+                Enter text to see stats above; add a regex to see matches here.
               </div>
-            ))}
+            )}
+            {regexMatches.length > 0 && (
+              <div className="space-y-1">
+                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Regex Matches</div>
+                <div className="code-block space-y-1 max-h-[50vh] overflow-y-auto">
+                  {regexMatches.slice(0, 50).map((m, i) => (
+                    <div key={i}>
+                      <span className="text-primary">{m.match}</span>
+                      <span className="text-muted-foreground"> at index {m.index}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      )}
-    </ToolLayout>
+        ),
+      }}
+    />
   );
 };
 

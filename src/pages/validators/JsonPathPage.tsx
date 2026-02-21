@@ -1,12 +1,8 @@
 import { useState, useMemo } from "react";
-import ToolLayout from "@/components/ToolLayout";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import PanelHeader from "@/components/PanelHeader";
-import CodeEditor from "@/components/CodeEditor";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 
 const SAMPLE_JSON = `{
@@ -116,6 +112,15 @@ const tokenizePath = (path: string): string[] => {
   return tokens;
 };
 
+const EXAMPLES = [
+  "$.store.name",
+  "$.store.books[0]",
+  "$.store.books[*].title",
+  "$.store.books[*].price",
+  "$..title",
+  "$..price",
+];
+
 const JsonPathPage = () => {
   const tool = useCurrentTool();
   const [jsonInput, setJsonInput] = useState(SAMPLE_JSON);
@@ -133,65 +138,68 @@ const JsonPathPage = () => {
     }
   }, [jsonInput, pathInput, space]);
 
-  const examples = [
-    "$.store.name",
-    "$.store.books[0]",
-    "$.store.books[*].title",
-    "$.store.books[*].price",
-    "$..title",
-    "$..price",
-  ];
-
-  const jsonInputExtra = (
-    <div className="flex items-center gap-2 flex-wrap">
-      <SampleButton onClick={() => setJsonInput(SAMPLE_JSON)} />
-      <ClearButton onClick={() => setJsonInput("")} />
-      <FileUploadButton accept=".json,application/json" onText={setJsonInput} />
-    </div>
-  );
-
   return (
-    <ToolLayout title={tool?.label ?? "JSONPath Tester"} description={tool?.description ?? "Test JSONPath expressions against JSON data"}>
-      <div className="tool-toolbar flex flex-col gap-2 items-start text-left">
-        <div className="flex gap-3 items-end w-full">
-          <div className="flex-1 min-w-0 max-w-full">
-            <Label className="text-xs text-muted-foreground mb-1 block">JSONPath Expression</Label>
-            <Input className="input-compact font-mono w-full" value={pathInput} onChange={(e) => setPathInput(e.target.value)} />
+    <TwoPanelToolLayout
+      tool={tool}
+      topSection={
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <Label className="text-xs text-muted-foreground shrink-0">JSONPath</Label>
+            <Input
+              className="input-compact font-mono flex-1 min-w-[12rem] max-w-md h-7"
+              value={pathInput}
+              onChange={(e) => setPathInput(e.target.value)}
+              placeholder="$..."
+            />
           </div>
-        </div>
-        <div className="flex flex-wrap gap-1.5 justify-start">
-          <span className="text-xs text-muted-foreground">Examples:</span>
-          {examples.map((ex) => (
+          <span className="text-xs text-muted-foreground shrink-0">Examples:</span>
+          {EXAMPLES.map((ex) => (
             <button
               key={ex}
+              type="button"
               onClick={() => setPathInput(ex)}
-              className="text-xs px-2 py-0.5 rounded bg-muted hover:bg-accent text-muted-foreground hover:text-accent-foreground transition-colors font-mono"
+              className="text-xs px-2 py-0.5 rounded bg-muted hover:bg-accent text-muted-foreground hover:text-accent-foreground transition-colors font-mono shrink-0"
             >
               {ex}
             </button>
           ))}
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="JSON Input" extra={jsonInputExtra} />
-          <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor value={jsonInput} onChange={setJsonInput} language="json" fillHeight />
+      }
+      inputPane={{
+        inputToolbar: {
+          onSample: () => setJsonInput(SAMPLE_JSON),
+          setInput: setJsonInput,
+          fileAccept: ".json,application/json",
+          onFileText: setJsonInput,
+        },
+        inputEditor: {
+          value: jsonInput,
+          onChange: setJsonInput,
+          language: "json",
+          placeholder: "{}",
+        },
+      }}
+      outputPane={{
+        title: "Result",
+        copyText: result || undefined,
+        toolbar: <IndentSelect value={indent} onChange={setIndent} />,
+        children: error ? (
+          <div className="flex-1 min-h-0 overflow-auto rounded border border-border bg-muted/30 p-3 text-destructive text-sm font-mono">
+            {error}
           </div>
-        </div>
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="Result" text={result} extra={<IndentSelect value={indent} onChange={setIndent} />} />
-          {error ? (
-            <div className="flex-1 min-h-0 overflow-auto rounded border border-border bg-muted/30 p-3 text-destructive text-sm font-mono">{error}</div>
-          ) : (
-            <div className="flex-1 min-h-0 flex flex-col">
-              <CodeEditor value={result} readOnly language="json" placeholder="Result will appear here..." fillHeight />
-            </div>
-          )}
-        </div>
-      </div>
-    </ToolLayout>
+        ) : (
+          undefined
+        ),
+        outputEditor: !error
+          ? {
+              value: result,
+              language: "json",
+              placeholder: "Result will appear here...",
+              outputKey: indent,
+            }
+          : undefined,
+      }}
+    />
   );
 };
 

@@ -1,12 +1,14 @@
 import { useState } from "react";
 import ToolLayout from "@/components/ToolLayout";
+import { SelectWithOptions } from "@/components/ui/select";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ClearButton, SaveButton } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
+import { SaveButton } from "@/components/SaveButton";
 
 const LOG_FORMATS = [
   {
@@ -119,11 +121,15 @@ const LogGeneratorPage = () => {
             text={output}
             extra={
               <div className="flex items-center gap-2 flex-wrap">
-                <select value={format} onChange={(e) => setFormat(e.target.value)}>
-                  {LOG_FORMATS.map((f) => (
-                    <option key={f.id} value={f.id}>{f.name}</option>
-                  ))}
-                </select>
+                <SelectWithOptions
+                  size="sm"
+                  variant="secondary"
+                  value={format}
+                  onValueChange={setFormat}
+                  options={LOG_FORMATS.map((f) => ({ value: f.id, label: f.name }))}
+                  title="Log format"
+                  aria-label="Log format"
+                />
                 {format === "json" && (
                   <IndentSelect value={indent} onChange={setIndent} />
                 )}
@@ -138,7 +144,7 @@ const LogGeneratorPage = () => {
                     className="h-7 w-16 font-mono text-xs"
                   />
                 </div>
-                <Button size="sm" className="h-7 text-xs" onClick={generate}>Generate</Button>
+                <Button size="sm" onClick={generate}>Generate</Button>
                 {output && <SaveButton label="Save .log" onClick={download} className="h-7 text-xs" />}
                 {output && <ClearButton onClick={() => setOutput("")} />}
               </div>

@@ -2,15 +2,39 @@
  * JSON ↔ YAML converter. Single place for conversion logic and constants.
  */
 
+import { parse as parseYaml } from "yaml";
 import type { ParseError } from "@/utils/validationTypes";
 import { singleErrorToParseErrors } from "@/utils/validationTypes";
 
-export const JSON_YAML_FILE_ACCEPT = ".json,application/json";
+export type JsonYamlDirection = "json-to-yaml" | "yaml-to-json";
+
+/** File accept when input is JSON. */
+export const JSON_YAML_FILE_ACCEPT_JSON = ".json,application/json";
+/** File accept when input is YAML. */
+export const JSON_YAML_FILE_ACCEPT_YAML = ".yaml,.yml,application/x-yaml,text/yaml";
 export const JSON_YAML_SAMPLE_JSON = '{"key": "value", "nested": {"a": 1}, "list": [1, 2, 3]}';
-export const JSON_YAML_PLACEHOLDER_INPUT = '{"key": "value"}';
+export const JSON_YAML_SAMPLE_YAML = `key: value
+nested:
+  a: 1
+list:
+  - 1
+  - 2
+  - 3`;
+export const JSON_YAML_PLACEHOLDER_JSON = '{"key": "value"}';
+export const JSON_YAML_PLACEHOLDER_YAML = "key: value";
 export const JSON_YAML_PLACEHOLDER_OUTPUT = "Result will appear here...";
-export const JSON_YAML_OUTPUT_FILENAME = "output.yaml";
-export const JSON_YAML_MIME_TYPE = "application/x-yaml";
+export const JSON_YAML_OUTPUT_FILENAME_YAML = "output.yaml";
+export const JSON_YAML_OUTPUT_FILENAME_JSON = "output.json";
+export const JSON_YAML_MIME_TYPE_YAML = "application/x-yaml";
+export const JSON_YAML_MIME_TYPE_JSON = "application/json";
+
+/** @deprecated Use direction-based constants. */
+export const JSON_YAML_FILE_ACCEPT = JSON_YAML_FILE_ACCEPT_JSON;
+/** @deprecated Use JSON_YAML_OUTPUT_FILENAME_YAML or _JSON by direction. */
+export const JSON_YAML_OUTPUT_FILENAME = JSON_YAML_OUTPUT_FILENAME_YAML;
+/** @deprecated Use JSON_YAML_MIME_TYPE_YAML or _JSON by direction. */
+export const JSON_YAML_MIME_TYPE = JSON_YAML_MIME_TYPE_YAML;
+/** @deprecated Use input language by direction. */
 export const JSON_YAML_LANGUAGE = "json";
 
 export interface JsonYamlFormatResult {
@@ -24,6 +48,19 @@ export function processJsonToYaml(input: string, spacesPerLevel: number): JsonYa
   try {
     const parsed = JSON.parse(input);
     return { output: jsonToYaml(parsed, 0, spacesPerLevel), errors: [] };
+  } catch (e) {
+    return { output: "", errors: singleErrorToParseErrors((e as Error).message) };
+  }
+}
+
+/** Format YAML input to JSON; returns output and optional parse errors for TwoPanelToolLayout. */
+export function processYamlToJson(input: string, spacesPerLevel: number): JsonYamlFormatResult {
+  if (!input.trim()) return { output: "", errors: [] };
+  try {
+    const parsed = parseYaml(input, { strict: false });
+    const indent = spacesPerLevel <= 0 ? 0 : spacesPerLevel;
+    const output = indent > 0 ? JSON.stringify(parsed, null, indent) : JSON.stringify(parsed);
+    return { output, errors: [] };
   } catch (e) {
     return { output: "", errors: singleErrorToParseErrors((e as Error).message) };
   }

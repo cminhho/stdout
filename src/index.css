@@ -6,116 +6,161 @@
 
 @layer base {
   /*
-   * DevUtils HTML Preview palette (warm beige/brown).
-   * Dark: content #2C211F, sidebar #372E29, code #1E1E1E.
-   * Light: content #F6F0EB, sidebar #E9E3E1, code #FFFFFF.
+   * Dark theme: DevUtils-style charcoal palette (#262626, #313131, #363636).
+   * Light: warm, soft. Sidebar glass (Electron only) via .sidebar-glass.
    */
   :root,
   .dark {
-    /* Content background #2C211F */
-    --background: 12 17% 15%;
-    --foreground: 30 15% 90%;
+    /* Content / editor – charcoal #2A2A2A (DevUtils); text trắng/sáng */
+    --background: 0 0% 16%;
+    --foreground: 0 0% 96%;
 
-    --card: 12 16% 17%;
-    --card-foreground: 30 15% 90%;
+    --card: 0 0% 17%;
+    --card-foreground: 0 0% 92%;
 
-    --popover: 12 16% 17%;
-    --popover-foreground: 30 15% 90%;
+    --popover: 0 0% 17%;
+    --popover-foreground: 0 0% 92%;
 
-    --primary: 217 91% 60%;
+    /* Primary blue ~#1A73E8 (DevUtils accent) */
+    --primary: 217 91% 56%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 24 12% 24%;
-    --secondary-foreground: 30 15% 90%;
+    /* Secondary – #605956 (warm gray) */
+    --secondary: 18 5% 36%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 24 12% 22%;
-    --muted-foreground: 28 10% 58%;
+    --muted: 0 0% 24%;
+    --muted-foreground: 0 0% 58%;
 
-    --accent: 217 91% 60%;
+    --accent: 217 91% 56%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 65% 50%;
+    --destructive: 0 62% 52%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 24 12% 26%;
-    --input: 24 14% 22%;
-    --ring: 217 91% 60%;
+    --border: 0 0% 26%;
+    --input: 0 0% 22%;
+    --ring: 217 91% 56%;
 
-    --radius: 0.5rem;
+    --radius: 0.625rem;
 
-    /* Sidebar #372E29 */
-    --sidebar-background: 24 15% 19%;
-    --sidebar-foreground: 30 15% 78%;
-    --sidebar-primary: 217 91% 60%;
+    /* Sidebar #363636; text trắng/sáng như DevUtils */
+    --sidebar-background: 0 0% 21%;
+    --sidebar-foreground: 0 0% 97%;
+    --sidebar-primary: 217 91% 56%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 24 12% 26%;
-    --sidebar-accent-foreground: 30 15% 90%;
-    --sidebar-border: 24 12% 24%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-accent: 0 0% 26%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 0 0% 24%;
+    --sidebar-ring: 217 91% 56%;
 
-    /* Code block #1E1E1E */
-    --code-bg: 0 0% 12%;
-    --code-border: 24 10% 22%;
-    --code-text: 30 10% 85%;
+    /* Electron header #313131; active tab #444444 */
+    --header-bg: 0 0% 19%;
+    --header-tab-bg: 0 0% 27%;
 
-    --outline-button-bg: 24 12% 24%;
-    --outline-button-border: 24 10% 35%;
+    /* Code block #2A2A2A; text sáng */
+    --code-bg: 0 0% 16%;
+    --code-border: 0 0% 22%;
+    --code-text: 0 0% 94%;
+    /* JSON/code syntax (dark): key, string, number, boolean, bracket, comment */
+    --code-key: 0 0% 92%;
+    --code-string: 142 52% 58%;
+    --code-number: 38 92% 52%;
+    --code-boolean: 199 89% 48%;
+    --code-null: 199 89% 48%;
+    --code-bracket: 0 0% 62%;
+    --code-punctuation: 0 0% 62%;
+    --code-comment: 0 0% 50%;
+
+    --outline-button-bg: 0 0% 26%;
+    --outline-button-border: 0 0% 35%;
     --outline-button-foreground: 0 0% 100%;
 
     --font-mono: 'JetBrains Mono', ui-monospace, monospace;
     --font-sans: 'Inter', system-ui, sans-serif;
+    /* Typography scale (across pages) */
+    --text-nav: 0.75rem;
+    --text-ui: 0.8125rem;
+    --text-content: 0.875rem;
+    /* Liquid Glass (Electron): stronger blur + visible edge */
+    --glass-blur: 44px;
+    --glass-saturate: 200%;
+    --glass-border-opacity: 0.14;
+    --glass-highlight: 0.1;
   }
 
   .light {
-    /* Content background #F6F0EB */
-    --background: 30 33% 94%;
-    --foreground: 24 12% 22%;
+    /* Content background #F6F0EB – warm, soft */
+    --background: 32 35% 95%;
+    --foreground: 24 14% 24%;
 
     --card: 0 0% 100%;
-    --card-foreground: 24 12% 22%;
+    --card-foreground: 24 14% 24%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 24 12% 22%;
+    --popover-foreground: 24 14% 24%;
 
-    --primary: 217 91% 55%;
+    --primary: 212 85% 52%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 30 14% 91%;
-    --secondary-foreground: 24 12% 25%;
+    /* Secondary – light warm gray (matches #605956 hue/saturation, lighter for light theme) */
+    --secondary: 18 8% 88%;
+    --secondary-foreground: 24 14% 26%;
 
-    --muted: 30 15% 92%;
-    --muted-foreground: 24 10% 45%;
+    --muted: 32 14% 93%;
+    --muted-foreground: 24 10% 48%;
 
-    --accent: 217 91% 55%;
+    --accent: 212 85% 52%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 65% 48%;
+    --destructive: 0 62% 48%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 30 12% 88%;
-    --input: 30 12% 91%;
-    --ring: 217 91% 55%;
+    --border: 32 14% 89%;
+    --input: 32 14% 92%;
+    --ring: 212 85% 52%;
 
-    --radius: 0.5rem;
+    --radius: 0.625rem;
 
     /* Sidebar #E9E3E1 */
-    --sidebar-background: 25 10% 90%;
-    --sidebar-foreground: 24 12% 28%;
-    --sidebar-primary: 217 91% 55%;
+    --sidebar-background: 28 12% 91%;
+    --sidebar-foreground: 24 14% 28%;
+    --sidebar-primary: 212 85% 52%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 30 12% 86%;
-    --sidebar-accent-foreground: 24 12% 22%;
-    --sidebar-border: 28 10% 85%;
-    --sidebar-ring: 217 91% 55%;
+    --sidebar-accent: 32 12% 87%;
+    --sidebar-accent-foreground: 24 14% 24%;
+    --sidebar-border: 30 10% 86%;
+    --sidebar-ring: 212 85% 52%;
 
     /* Code block white */
     --code-bg: 0 0% 100%;
-    --code-border: 30 10% 88%;
-    --code-text: 24 15% 28%;
+    --code-border: 32 10% 89%;
+    --code-text: 24 14% 28%;
+    --code-key: 24 60% 28%;
+    --code-string: 142 45% 32%;
+    --code-number: 28 80% 38%;
+    --code-boolean: 260 55% 42%;
+    --code-null: 260 55% 42%;
+    --code-bracket: 24 10% 45%;
+    --code-punctuation: 24 10% 45%;
+    --code-comment: 24 8% 55%;
 
     --outline-button-bg: 0 0% 100%;
-    --outline-button-border: 30 10% 85%;
-    --outline-button-foreground: 24 12% 22%;
+    --outline-button-border: 32 10% 86%;
+    --outline-button-foreground: 24 14% 24%;
+
+    --header-bg: 0 0% 96%;
+    --header-tab-bg: 0 0% 100%;
+
+    /* Liquid Glass – light: same blur, visible edge */
+    --glass-blur: 44px;
+    --glass-saturate: 200%;
+    --glass-border-opacity: 0.14;
+    --glass-highlight: 0.08;
+
+    --text-nav: 0.75rem;
+    --text-ui: 0.8125rem;
+    --text-content: 0.875rem;
   }
 
 
@@ -126,6 +171,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-sans);
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   /* Electron: fill viewport, no body scroll; only inner content areas scroll */
@@ -142,6 +188,68 @@
     flex-direction: column;
   }
 
+  /* Content area behind sidebar: subtle gradient so glass blur has depth */
+  html.electron .electron-layout {
+    background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(0 0% 22%), hsl(0 0% 14%));
+  }
+  html.electron.light .electron-layout {
+    background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(32 30% 97%), hsl(32 25% 92%));
+  }
+
+  /* Electron title bar: Liquid Glass – more transparent, strong blur, visible edge + shine */
+  .electron-title-bar {
+    background: hsl(var(--header-bg) / 0.48);
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    border-bottom: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));
+    box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / var(--glass-highlight));
+  }
+  .light .electron-title-bar {
+    border-bottom-color: hsl(0 0% 0% / var(--glass-border-opacity));
+    box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / 0.5);
+  }
+  .electron-title-bar .title-tab {
+    background: hsl(var(--header-tab-bg));
+    border: 1px solid hsl(var(--border));
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    padding: 0 12px;
+    min-height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .electron-title-bar .electron-title-plain {
+    /* macOS: plain centered title, no pill */
+    padding: 0 8px;
+  }
+
+  /* macOS-style thin scrollbars in Electron */
+  html.electron {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(0 0% 50% / 0.4) transparent;
+  }
+  html.electron ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  html.electron ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  html.electron ::-webkit-scrollbar-thumb {
+    background: hsl(0 0% 50% / 0.4);
+    border-radius: 4px;
+  }
+  html.electron ::-webkit-scrollbar-thumb:hover {
+    background: hsl(0 0% 50% / 0.55);
+  }
+  .light.electron ::-webkit-scrollbar-thumb {
+    background: hsl(0 0% 0% / 0.2);
+  }
+  .light.electron ::-webkit-scrollbar-thumb:hover {
+    background: hsl(0 0% 0% / 0.3);
+  }
+
   code, pre, .font-mono {
     font-family: var(--font-mono) !important;
   }
@@ -149,20 +257,22 @@
 
 @layer components {
   .code-block {
-    @apply rounded-lg border font-mono text-sm leading-relaxed p-4 overflow-auto;
+    @apply rounded-xl border font-mono leading-relaxed p-4 overflow-auto transition-colors duration-150;
+    font-size: var(--text-content);
     background: hsl(var(--code-bg));
     border-color: hsl(var(--code-border));
     color: hsl(var(--code-text));
   }
 
   .tool-card {
-    @apply rounded-lg border p-5;
+    @apply rounded-xl border p-5 transition-colors duration-150;
     background: hsl(var(--card));
     border-color: hsl(var(--border));
   }
 
   .tool-textarea {
-    @apply w-full rounded-lg border p-4 font-mono text-sm leading-relaxed focus:outline-none focus:ring-1 focus:ring-ring resize-y;
+    @apply w-full rounded-xl border p-4 font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background resize-y transition-colors duration-150;
+    font-size: var(--text-content);
     background: hsl(var(--code-bg));
     border-color: hsl(var(--code-border));
     color: hsl(var(--foreground));
@@ -222,17 +332,34 @@
     @apply flex items-center gap-3 mb-4 flex-wrap flex-shrink-0;
   }
 
-  .tool-select {
-    @apply h-9 rounded-lg border px-3 py-2 text-sm font-medium bg-secondary border-border text-secondary-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors cursor-pointer;
+  /* Unified control: button, select, input – same bg, text, border, font (dark + light) */
+  .control-base {
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--input));
+    font-size: var(--text-content);
   }
 
-  /* Standard input for tool pages (replaces compact style) */
-  .input-compact {
-    @apply h-9 rounded-lg border border-input bg-background px-3 py-2 text-sm font-mono ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50;
+  .tool-select {
+    @apply h-9 rounded-lg px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background transition-colors duration-150 cursor-pointer;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--input));
+    font-size: var(--text-content);
   }
 
   .tool-select:hover {
-    background: hsl(var(--muted));
+    background: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+  }
+
+  /* Standard input for tool pages – same as control-base */
+  .input-compact {
+    @apply h-9 rounded-lg px-3 py-2 font-mono ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-150;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--input));
+    font-size: var(--text-content);
   }
 
   .tool-checkbox-label {
@@ -249,7 +376,8 @@
   }
 
   .sidebar-link {
-    @apply flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-medium transition-colors;
+    @apply flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium transition-colors duration-150;
+    font-size: var(--text-nav);
     color: hsl(var(--sidebar-foreground));
   }
 
@@ -261,6 +389,34 @@
   .sidebar-link.active {
     background: hsl(var(--primary));
     color: hsl(var(--primary-foreground));
+  }
+
+  /* Liquid Glass: sidebar (Electron) – very translucent, strong blur, visible edge + left shine */
+  .sidebar-glass {
+    background: hsl(0 0% 10% / 0.42);
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    border-right: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));
+    box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / var(--glass-highlight));
+  }
+  .light .sidebar-glass {
+    background: hsl(0 0% 100% / 0.5);
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    border-right: 1px solid hsl(0 0% 0% / var(--glass-border-opacity));
+    box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / 0.6);
+  }
+
+  /* Reusable Liquid Glass surface (e.g. cards, panels in Electron) */
+  .glass-surface {
+    background: hsl(var(--background) / 0.7);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border: 1px solid hsl(var(--border) / 0.6);
+  }
+  .light .glass-surface {
+    background: hsl(var(--background) / 0.75);
+    border-color: hsl(var(--border) / 0.7);
   }
 
   .prose-markdown {
@@ -277,12 +433,12 @@
   .prose-markdown h3 { @apply text-lg; }
   .prose-markdown p { @apply mb-3; }
   .prose-markdown code {
-    @apply px-2 py-1 rounded text-sm font-mono;
+    @apply px-2 py-1 rounded-md text-sm font-mono;
     background: hsl(var(--code-bg));
     color: hsl(var(--code-text));
   }
   .prose-markdown pre {
-    @apply p-4 rounded-md my-3 overflow-auto;
+    @apply p-4 rounded-lg my-3 overflow-auto;
     background: hsl(var(--code-bg));
   }
   .prose-markdown pre code {

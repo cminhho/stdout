@@ -5,7 +5,10 @@
 import { singleErrorToParseErrors } from "@/utils/validationTypes";
 
 export const URL_ENCODE_FILE_ACCEPT = ".txt,text/plain";
+/** Sample for Encode mode (plain text). */
 export const URL_ENCODE_SAMPLE = "Hello World & Co.";
+/** Sample for Decode mode (URL-encoded form of URL_ENCODE_SAMPLE). */
+export const URL_ENCODE_SAMPLE_DECODE = "Hello%20World%20%26%20Co.";
 export const URL_ENCODE_PLACEHOLDER_INPUT = "Enter text or URL...";
 export const URL_ENCODE_PLACEHOLDER_OUTPUT = "Result will appear here...";
 export const URL_ENCODE_OUTPUT_FILENAME = "output.txt";

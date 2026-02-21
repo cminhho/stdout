@@ -6,7 +6,8 @@ import CodeEditor from "@/components/CodeEditor";
 import { Input } from "@/components/ui/input";
 import CopyButton from "@/components/CopyButton";
 import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
+import { SampleButton } from "@/components/SampleButton";
 
 const SAMPLE_TEST_STRING = "Order placed on 2024-01-15\nShipped on 2024-02-20\nDelivered 2024-03-01\nNo date here";
 

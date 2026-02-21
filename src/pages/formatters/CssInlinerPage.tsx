@@ -2,7 +2,9 @@ import { useMemo, useState } from "react";
 import CodeEditor from "@/components/CodeEditor";
 import FileUploadButton from "@/components/FileUploadButton";
 import PanelHeader from "@/components/PanelHeader";
-import { ClearButton, SampleButton, SaveButton } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
+import { SampleButton } from "@/components/SampleButton";
+import { SaveButton } from "@/components/SaveButton";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import {

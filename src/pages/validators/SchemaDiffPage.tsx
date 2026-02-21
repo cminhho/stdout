@@ -5,7 +5,8 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import CopyButton from "@/components/CopyButton";
 import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
+import { SampleButton } from "@/components/SampleButton";
 const SAMPLE_A = '{"id": 1, "name": "test", "roles": ["admin"]}';
 const SAMPLE_B = '{"id": "1", "email": "x@y.z", "roles": ["user"]}';
 

@@ -1,6 +1,7 @@
 const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 const path = require("path");
 
+const APP_NAME = "stdout";
 const isDev = process.env.NODE_ENV === "development" || !app.isPackaged;
 const isMac = process.platform === "darwin";
 
@@ -10,7 +11,7 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 1280,
     height: 800,
-    title: "stdout",
+    title: APP_NAME,
     icon: iconPath,
     // Custom title bar: no native frame so the web app draws the header (traffic lights + title + actions).
     // On macOS use hiddenInset to keep OS traffic lights; use frame: false for fully custom traffic lights.
@@ -23,6 +24,12 @@ function createWindow() {
       contextIsolation: true,
       preload: path.join(__dirname, "preload.cjs"),
     },
+  });
+
+  win.setTitle(APP_NAME);
+  win.on("page-title-updated", (ev) => {
+    ev.preventDefault();
+    win.setTitle(APP_NAME);
   });
 
   // No menu bar (View, Window, Help, etc.) for a cleaner window

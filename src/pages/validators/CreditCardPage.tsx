@@ -4,7 +4,7 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import CopyButton from "@/components/CopyButton";
-import { ClearButton } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
 import { luhnCheck, generateCardNumber, CARD_BRANDS } from "@/utils/creditcard";
 
 const CreditCardPage = () => {

@@ -6,7 +6,8 @@ import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
+import { SampleButton } from "@/components/SampleButton";
 import {
   Select,
   SelectContent,
@@ -92,7 +93,7 @@ const FileEncodingPage = () => {
         <div className="flex items-center gap-2">
           <Label className="text-xs text-muted-foreground">Mode</Label>
           <Select value={mode} onValueChange={(v) => setMode(v as "decode" | "encode")}>
-            <SelectTrigger className="w-[120px] h-8">
+            <SelectTrigger variant="secondary" className="w-[120px] h-8">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -105,7 +106,7 @@ const FileEncodingPage = () => {
           <div className="flex items-center gap-2">
             <Label className="text-xs text-muted-foreground">From encoding</Label>
             <Select value={decodeEncoding} onValueChange={setDecodeEncoding}>
-              <SelectTrigger className="w-[140px] h-8">
+              <SelectTrigger variant="secondary" className="w-[140px] h-8">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -121,7 +122,7 @@ const FileEncodingPage = () => {
         <div className="flex items-center gap-2">
           <Label className="text-xs text-muted-foreground">Bytes as</Label>
           <Select value={bytesFormat} onValueChange={(v) => setBytesFormat(v as "hex" | "base64")}>
-            <SelectTrigger className="w-[100px] h-8">
+            <SelectTrigger variant="secondary" className="w-[100px] h-8">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

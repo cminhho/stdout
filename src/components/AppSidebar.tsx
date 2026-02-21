@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   Braces, Type, FileText, Lock, Shuffle, Hash, Terminal, GitCompare,
-  Clock, ChevronDown, KeyRound, Fingerprint, Link2, Code2, QrCode,
+  Clock, ChevronDown, ChevronRight, KeyRound, Fingerprint, Link2, Code2, QrCode,
   Archive, ShieldCheck, Table2, FileJson, Binary, ArrowLeftRight, Search,
   CalendarClock, FileSpreadsheet, Regex, Diff, Boxes, Globe,
   CheckCircle2, Wand2, Calculator, Palette, AlignLeft, FileCode, Database,
@@ -82,7 +82,7 @@ const SidebarGroupSection = ({
           <GroupIcon className="h-4 w-4 shrink-0" />
           <span className="truncate">{group.label}</span>
         </span>
-        <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-0" : "-rotate-90"}`} />
+        <ChevronRight className={`h-4 w-4 shrink-0 transition-transform ${isOpen ? "rotate-90" : "rotate-0"}`} />
       </button>
       {isOpen && (
         <div className="ml-3 pl-2 border-l border-border space-y-1 mt-1">
@@ -126,7 +126,7 @@ const AppSidebar = () => {
   if (sidebarCollapsed) {
     return (
       <aside
-        className={`w-12 shrink-0 flex flex-col border-r bg-sidebar border-sidebar-border ${isElectron ? "h-full min-h-0" : "h-screen sticky top-0"}`}
+        className={`w-12 shrink-0 flex flex-col border-r border-sidebar-border ${isElectron ? "h-full min-h-0 sidebar-glass" : "h-screen sticky top-0 bg-sidebar"}`}
       >
         <div className="flex items-center justify-center py-2.5 border-b border-sidebar-border">
           <Tooltip>
@@ -176,17 +176,16 @@ const AppSidebar = () => {
 
   return (
     <aside
-      className={`w-80 shrink-0 flex flex-col border-r bg-sidebar border-sidebar-border ${isElectron ? "h-full min-h-0" : "h-screen sticky top-0"}`}
+      className={`w-80 shrink-0 flex flex-col border-r border-sidebar-border ${isElectron ? "h-full min-h-0 sidebar-glass" : "h-screen sticky top-0 bg-sidebar"}`}
     >
       <div className="flex items-center justify-between px-4 py-3">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <NavLink to="/" className="flex items-center justify-center w-8 h-8 rounded-md text-inherit no-underline hover:opacity-90 hover:bg-sidebar-accent transition-colors shrink-0" aria-label="Home">
-              <Terminal className="h-4 w-4 text-primary" />
-            </NavLink>
-          </TooltipTrigger>
-          <TooltipContent side="right">stdout</TooltipContent>
-        </Tooltip>
+        <NavLink
+          to="/"
+          className="text-sm font-semibold text-foreground no-underline hover:opacity-80 truncate min-w-0"
+          aria-label="Home"
+        >
+          stdout
+        </NavLink>
         <div className="flex items-center gap-2 shrink-0">
           <button onClick={toggleSidebar} className="text-muted-foreground hover:text-foreground transition-colors p-1" title="Collapse sidebar">
             <PanelLeftClose className="h-4 w-4" />
@@ -270,16 +269,34 @@ const AppSidebar = () => {
       </nav>
 
       <div className="flex items-center justify-between gap-2 px-4 py-3 border-t border-sidebar-border">
-        <a
-          href="https://www.buymeacoffee.com/chungho"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-md border border-sidebar-border bg-sidebar-accent px-3 py-2 text-sm font-medium text-sidebar-accent-foreground opacity-90 hover:opacity-100 hover:brightness-110 transition-colors min-w-0"
-          title="Buy me a coffee"
-        >
-          <Coffee className="h-4 w-4 shrink-0" />
-          <span className="truncate">Buy me a coffee</span>
-        </a>
+        {isElectron ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <a
+                href="https://www.buymeacoffee.com/chungho"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center w-8 h-8 shrink-0 rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors"
+                title="Buy me a coffee"
+                aria-label="Buy me a coffee"
+              >
+                <Coffee className="h-4 w-4" />
+              </a>
+            </TooltipTrigger>
+            <TooltipContent side="right">Buy me a coffee</TooltipContent>
+          </Tooltip>
+        ) : (
+          <a
+            href="https://www.buymeacoffee.com/chungho"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-md border border-sidebar-border bg-sidebar-accent px-3 py-2 text-sm font-medium text-sidebar-accent-foreground opacity-90 hover:opacity-100 hover:brightness-110 transition-colors min-w-0"
+            title="Buy me a coffee"
+          >
+            <Coffee className="h-4 w-4 shrink-0" />
+            <span className="truncate">Buy me a coffee</span>
+          </a>
+        )}
         <Tooltip>
           <TooltipTrigger asChild>
             <NavLink to="/settings" className="flex items-center justify-center w-8 h-8 shrink-0 rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors" aria-label="Settings">

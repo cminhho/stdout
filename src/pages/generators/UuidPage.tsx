@@ -1,12 +1,19 @@
 import { useState, useCallback } from "react";
 import ToolLayout from "@/components/ToolLayout";
+import { SelectWithOptions } from "@/components/ui/select";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ClearButton } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
+
+const UUID_VERSION_OPTIONS = [
+  { value: "v1", label: "v1" },
+  { value: "v4", label: "v4" },
+  { value: "v7", label: "v7" },
+] as const;
 
 const generateUUIDv4 = (): string => crypto.randomUUID();
 
@@ -79,15 +86,15 @@ const UuidPage = () => {
                     className="h-7 w-14 font-mono text-xs"
                   />
                 </div>
-                <select
+                <SelectWithOptions
+                  size="sm"
+                  variant="secondary"
                   value={version}
-                  onChange={(e) => setVersion(e.target.value as "v1" | "v4" | "v7")}
-                  className="h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0"
-                >
-                  <option value="v1">v1</option>
-                  <option value="v4">v4</option>
-                  <option value="v7">v7</option>
-                </select>
+                  onValueChange={(v) => setVersion(v as "v1" | "v4" | "v7")}
+                  options={UUID_VERSION_OPTIONS.map((o) => ({ value: o.value, label: o.label }))}
+                  title="UUID version"
+                  aria-label="UUID version"
+                />
                 <label className="flex items-center gap-1 text-xs text-muted-foreground cursor-pointer whitespace-nowrap">
                   <input type="checkbox" checked={uppercase} onChange={(e) => setUppercase(e.target.checked)} className="accent-primary rounded border-input" />
                   Upper
@@ -96,7 +103,7 @@ const UuidPage = () => {
                   <input type="checkbox" checked={hyphens} onChange={(e) => setHyphens(e.target.checked)} className="accent-primary rounded border-input" />
                   Hyphens
                 </label>
-                <Button size="sm" className="h-7 text-xs" onClick={generate}>Generate</Button>
+                <Button size="sm" onClick={generate}>Generate</Button>
                 {outputText && <ClearButton onClick={() => setUuids([])} />}
               </div>
             }

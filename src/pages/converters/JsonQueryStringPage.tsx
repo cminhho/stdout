@@ -1,9 +1,7 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import { SegmentGroup } from "@/components/SegmentGroup";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import { Button } from "@/components/ui/button";
-import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
-import FileUploadButton from "@/components/FileUploadButton";
 import type { IndentOption } from "@/components/IndentSelect";
 import type { JsonQueryStringMode } from "@/utils/jsonQueryString";
 import {
@@ -18,53 +16,68 @@ import {
   JSON_QUERY_STRING_MIME_QS,
 } from "@/utils/jsonQueryString";
 
+const MODE_OPTIONS: { value: JsonQueryStringMode; label: string }[] = [
+  { value: "toQs", label: "JSON → QS" },
+  { value: "toJson", label: "QS → JSON" },
+];
+
 const JsonQueryStringPage = () => {
   const tool = useCurrentTool();
   const [mode, setMode] = useState<JsonQueryStringMode>("toQs");
   const [input, setInput] = useState("");
+
+  const setModeWithCleanup = useCallback((next: JsonQueryStringMode) => {
+    setMode(next);
+    setInput("");
+  }, []);
 
   const format = useCallback(
     (inputValue: string, indent: IndentOption) => processJsonQueryString(inputValue, indent, mode),
     [mode]
   );
 
-  const sampleInput = mode === "toQs" ? JSON_QUERY_STRING_SAMPLE_JSON : JSON_QUERY_STRING_SAMPLE_QS;
-  const inputLang = mode === "toQs" ? "json" : "text";
-  const outputLang = mode === "toQs" ? "text" : "json";
+  const isToQs = mode === "toQs";
 
   return (
     <TwoPanelToolLayout
       tool={tool}
       inputPane={{
-        toolbar: (
-          <>
-            <Button size="sm" variant={mode === "toQs" ? "default" : "outline"} onClick={() => setMode("toQs")} className="h-7 text-xs">
-              JSON → Query String
-            </Button>
-            <Button size="sm" variant={mode === "toJson" ? "default" : "outline"} onClick={() => setMode("toJson")} className="h-7 text-xs">
-              Query String → JSON
-            </Button>
-            <SampleButton onClick={() => setInput(sampleInput)} />
-            <ClearButton onClick={() => setInput("")} />
-            <FileUploadButton accept={JSON_QUERY_STRING_FILE_ACCEPT} onText={setInput} />
-          </>
+        inputToolbar: {
+          onSample: () =>
+            setInput(isToQs ? JSON_QUERY_STRING_SAMPLE_JSON : JSON_QUERY_STRING_SAMPLE_QS),
+          setInput,
+          fileAccept: JSON_QUERY_STRING_FILE_ACCEPT,
+          onFileText: setInput,
+        },
+        inputToolbarExtra: (
+          <SegmentGroup<JsonQueryStringMode>
+            value={mode}
+            onValueChange={setModeWithCleanup}
+            options={MODE_OPTIONS}
+            ariaLabel="Conversion direction"
+          />
         ),
         inputEditor: {
           value: input,
           onChange: setInput,
-          language: inputLang,
-          placeholder: mode === "toQs" ? "Paste JSON..." : "Paste query string...",
+          language: isToQs ? "json" : "text",
+          placeholder: isToQs ? "Paste JSON..." : "Paste query string...",
         },
       }}
       outputPane={{
         outputToolbar: {
           format,
-          outputFilename: mode === "toQs" ? JSON_QUERY_STRING_OUTPUT_FILENAME_QS : JSON_QUERY_STRING_OUTPUT_FILENAME_JSON,
-          outputMimeType: mode === "toQs" ? JSON_QUERY_STRING_MIME_QS : JSON_QUERY_STRING_MIME_JSON,
+          outputFilename: isToQs
+            ? JSON_QUERY_STRING_OUTPUT_FILENAME_QS
+            : JSON_QUERY_STRING_OUTPUT_FILENAME_JSON,
+          outputMimeType: isToQs ? JSON_QUERY_STRING_MIME_QS : JSON_QUERY_STRING_MIME_JSON,
+          defaultIndent: 2,
+          indentSpaceOptions: [2, 4],
+          indentIncludeTab: false,
         },
         outputEditor: {
           value: "",
-          language: outputLang,
+          language: isToQs ? "text" : "json",
           placeholder: JSON_QUERY_STRING_PLACEHOLDER_OUTPUT,
         },
       }}

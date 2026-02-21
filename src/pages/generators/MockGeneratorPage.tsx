@@ -6,7 +6,8 @@ import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
+import { SampleButton } from "@/components/SampleButton";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 
 
@@ -138,7 +139,7 @@ const MockGeneratorPage = () => {
                   onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
                   className="h-7 w-14 font-mono text-xs"
                 />
-                <Button size="sm" className="h-7 text-xs" onClick={generate}>Generate</Button>
+                <Button size="sm" onClick={generate}>Generate</Button>
               </div>
             }
           />
