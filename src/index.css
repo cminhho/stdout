@@ -78,23 +78,30 @@
     --text-nav: 0.75rem;
     --text-ui: 0.8125rem;
     --text-content: 0.875rem;
-    /* Layout spacing: content, panels, toolbars – tune here for consistent density */
-    --spacing-content-x: 1.25rem;
-    --spacing-content-y: 1rem;
-    --spacing-content-x-md: 1.5rem;
+    /*
+     * Layout spacing: 4px base (VS Code / Linear / Notion).
+     * Scale: 4px(0.25) 8(0.5) 12(0.75) 16(1) 20(1.25) 24(1.5) 32(2).
+     * Content = main padding; panel-gap = between panels; toolbar-mb = below toolbars.
+     */
+    --spacing-content-x: 1.25rem;   /* 20px */
+    --spacing-content-y: 1rem;      /* 16px */
+    --spacing-content-x-md: 1.5rem; /* 24px @ md */
     --spacing-content-y-md: 1.25rem;
-    --spacing-panel-gap: 0.5rem;
-    --spacing-toolbar-mb: 0.75rem;
-    --spacing-title-mb: 0.75rem;
-    --spacing-section-mb: 0.75rem;
+    --spacing-panel-gap: 0.5rem;    /* 8px between panel header and body */
+    --spacing-toolbar-mb: 0.75rem;  /* 12px below toolbar */
+    --spacing-title-mb: 0.75rem;   /* 12px below page title */
+    --spacing-section-mb: 0.75rem; /* 12px between sections */
+    --spacing-block-gap: 0.5rem;   /* 8px between inline blocks (e.g. alerts) */
     --spacing-code-editor: 0.75rem;
-    --spacing-grid-gap: 0.75rem;
-    /* Sidebar: horizontal/vertical block padding, gap between items, nested indent */
-    --spacing-sidebar-x: 0.75rem;
-    --spacing-sidebar-y: 0.625rem;
+    --spacing-grid-gap: 0.75rem;   /* 12px grid/flex gap */
+    /* Sidebar */
+    --spacing-sidebar-x: 0.75rem;  /* 12px horizontal */
+    --spacing-sidebar-y: 0.625rem; /* 10px vertical block */
     --spacing-sidebar-gap: 0.25rem;
     --spacing-sidebar-indent: 0.5rem;
-    --spacing-sidebar-item-y: 0.375rem;
+    --spacing-sidebar-item-y: 0.375rem; /* 6px item vertical padding */
+    --spacing-sidebar-header-h: 1.75rem; /* 28px min height for panel header */
+    --spacing-footer-min-h: 2.25rem;    /* 36px min height for sidebar footer */
     /* Liquid Glass (desktop): blur + visible edge */
     --glass-blur: 44px;
     --glass-saturate: 200%;
@@ -437,9 +444,9 @@
     @apply overflow-auto;
   }
 
-  /* Toolbar: top, fit height */
+  /* Toolbar: top, fit height (VS Code/Linear: 8px gap) */
   .tool-toolbar {
-    @apply flex items-center gap-3 flex-wrap flex-shrink-0;
+    @apply flex items-center gap-2 flex-wrap flex-shrink-0;
     margin-bottom: var(--spacing-toolbar-mb);
   }
 
@@ -495,6 +502,7 @@
     padding-bottom: var(--spacing-sidebar-gap);
     padding-left: var(--spacing-sidebar-x);
     padding-right: var(--spacing-sidebar-x);
+    min-height: var(--spacing-footer-min-h);
   }
 
   /* Sidebar nav items: no left border (VS Code/Linear/Notion style – active by background only) */

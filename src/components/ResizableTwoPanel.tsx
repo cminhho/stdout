@@ -8,7 +8,7 @@ const DEFAULT_MAX_INPUT_PERCENT = 80;
 const DEFAULT_INPUT_PERCENT = 50;
 
 const RESIZER_BASE_CLASS =
-  "hidden lg:flex shrink-0 flex-col items-center justify-center cursor-col-resize select-none";
+  "hidden lg:flex shrink-0 flex-col items-center cursor-col-resize select-none self-stretch";
 
 const PANEL_BODY_CLASS = "flex-1 min-h-0 flex flex-col overflow-hidden";
 
@@ -161,7 +161,7 @@ const ResizableTwoPanel = ({
   return (
     <div
       ref={containerRef}
-      className={cn("flex flex-col lg:flex-row flex-1 min-h-0 w-full gap-2 lg:gap-0", className)}
+      className={cn("flex flex-col lg:flex-row flex-1 min-h-0 w-full gap-[var(--spacing-panel-gap)] lg:gap-0", className)}
     >
       <Pane
         pane={{ ...input, title: input.title ?? DEFAULT_INPUT_TITLE }}
@@ -179,7 +179,7 @@ const ResizableTwoPanel = ({
         className={cn(RESIZER_BASE_CLASS, "group hover:bg-muted/30 transition-colors")}
         style={{ width: resizerWidth, minWidth: resizerWidth }}
       >
-        <div className="w-0.5 h-8 rounded-full bg-border group-hover:bg-muted-foreground/50 transition-colors" />
+        <div className="w-px h-full bg-border group-hover:bg-muted-foreground/50 transition-colors shrink-0" />
       </div>
 
       <Pane pane={{ ...output, title: output.title ?? DEFAULT_OUTPUT_TITLE }} className="flex-1 min-w-0 lg:min-h-0" />

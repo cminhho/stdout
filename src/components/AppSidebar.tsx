@@ -269,7 +269,7 @@ const AppSidebar = () => {
         )}
       </nav>
 
-      <footer className="flex items-center justify-between gap-2 sidebar-footer-pad border-t border-sidebar-border min-h-9 flex-shrink-0" aria-label="Sidebar footer">
+      <footer className="flex items-center justify-between gap-2 sidebar-footer-pad border-t border-sidebar-border flex-shrink-0" aria-label="Sidebar footer">
         <Tooltip>
           <TooltipTrigger asChild>
             <a

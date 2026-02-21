@@ -89,7 +89,7 @@ const SettingsPage = () => {
   return (
     <ToolLayout title={tool?.label ?? "Settings"} description={tool?.description ?? "Customize your stdout experience"}>
       {/* Tabs: VS Code/Linear style – role="tablist", aria-selected, consistent radius */}
-      <div role="tablist" aria-label="Settings sections" className="flex gap-1 mb-6 border-b border-border">
+      <div role="tablist" aria-label="Settings sections" className="flex gap-1 mb-4 border-b border-border">
         <button
           type="button"
           role="tab"
@@ -125,10 +125,10 @@ const SettingsPage = () => {
       </div>
 
       {tab === "general" && (
-        <div id="settings-general" role="tabpanel" aria-labelledby="tab-general" className="space-y-8 max-w-2xl">
+        <div id="settings-general" role="tabpanel" aria-labelledby="tab-general" className="space-y-6 max-w-2xl">
           {/* Theme */}
           <section aria-labelledby="settings-theme-heading">
-            <h2 id="settings-theme-heading" className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
+            <h2 id="settings-theme-heading" className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
               <Palette className="h-4 w-4 text-primary" />
               Theme
             </h2>
@@ -154,7 +154,7 @@ const SettingsPage = () => {
 
           {/* Sidebar Mode */}
           <section aria-labelledby="settings-sidebar-heading">
-            <h2 id="settings-sidebar-heading" className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
+            <h2 id="settings-sidebar-heading" className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
               <LayoutList className="h-4 w-4 text-primary" />
               Sidebar Layout
             </h2>
@@ -180,7 +180,7 @@ const SettingsPage = () => {
 
           {/* About */}
           <section aria-labelledby="settings-about-heading">
-            <h2 id="settings-about-heading" className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
+            <h2 id="settings-about-heading" className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
               <Info className="h-4 w-4 text-primary" />
               About
             </h2>
@@ -232,12 +232,12 @@ const SettingsPage = () => {
 
           {/* Support the project */}
           <section aria-labelledby="settings-support-heading">
-            <h2 id="settings-support-heading" className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
+            <h2 id="settings-support-heading" className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
               <Heart className="h-4 w-4 text-primary" />
               Support the project
             </h2>
             <div className="rounded-md border border-border bg-muted/20 p-4">
-              <p className="text-xs text-muted-foreground mb-3">
+              <p className="text-xs text-muted-foreground mb-2">
                 stdout is open source (MIT). If it’s useful to you, consider supporting development:
               </p>
               <Button variant="outline" size="xs" asChild>

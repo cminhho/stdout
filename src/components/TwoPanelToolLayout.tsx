@@ -363,7 +363,10 @@ const TwoPanelToolLayout = ({
   return (
     <ToolLayout title={title} description={description}>
       {hasChromeAbove ? (
-        <div className="flex flex-col gap-1.5 flex-shrink-0 mb-2">
+        <div
+          className="flex flex-col flex-shrink-0"
+          style={{ gap: "var(--spacing-block-gap, 0.5rem)", marginBottom: "var(--spacing-toolbar-mb, 0.75rem)" }}
+        >
           {formatError ? (
             <div
               className="rounded-md border border-destructive/25 bg-destructive/10 px-2.5 py-1.5 text-xs text-destructive transition-colors duration-150"
@@ -377,7 +380,11 @@ const TwoPanelToolLayout = ({
               <ValidationErrorList errors={effectiveValidationErrors} />
             </section>
           ) : null}
-          {topSection ? <div className="flex flex-col gap-1.5">{topSection}</div> : null}
+          {topSection ? (
+            <div className="flex flex-col" style={{ gap: "var(--spacing-block-gap, 0.5rem)" }}>
+              {topSection}
+            </div>
+          ) : null}
         </div>
       ) : null}
       <ResizableTwoPanel

@@ -27,7 +27,7 @@ export interface SegmentGroupProps<T extends string> {
 /**
  * Segmented control: one-of-many selection with clear active state.
  * Container uses border-border and bg-muted/30; active = primary, inactive = ghost (muted hover).
- * Accessible (role="group", aria-pressed). Use for e.g. JSON↔YAML direction, compress/decompress.
+ * Spacing: p-0.5 (2px) container, px-2.5 (10px) per segment (4px scale). Accessible (role="group", aria-pressed).
  */
 function SegmentGroupInner<T extends string>(
   {

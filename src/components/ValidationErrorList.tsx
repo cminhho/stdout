@@ -23,8 +23,8 @@ const ValidationErrorList = ({
     <ul
       role="list"
       aria-label="Validation errors"
-      className={cn("space-y-1 overflow-y-auto list-none pl-0 m-0", className)}
-      style={{ maxHeight }}
+      className={cn("flex flex-col list-none pl-0 m-0 overflow-y-auto", className)}
+      style={{ maxHeight, gap: "var(--spacing-block-gap)" }}
     >
       {errors.map((err, i) => (
         <li
