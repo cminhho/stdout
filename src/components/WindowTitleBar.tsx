@@ -23,53 +23,53 @@ const WindowTitleBar = () => {
 
   return (
     <header
-      className="desktop-title-bar flex items-center shrink-0 h-10 px-3 gap-3"
+      className="desktop-title-bar flex items-center shrink-0 h-9 px-2 gap-1"
       style={{ WebkitAppRegion: "drag" } as React.CSSProperties}
     >
       <div className="shrink-0" style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties}>
         <button
           type="button"
           onClick={toggleSidebar}
-          className="flex items-center justify-center w-8 h-8 rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors"
+          className="flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors"
           aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {sidebarCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+          {sidebarCollapsed ? <PanelLeftOpen className="h-3.5 w-3.5" /> : <PanelLeftClose className="h-3.5 w-3.5" />}
         </button>
       </div>
       {hasSystemTitleBarControls && (
         <div className="w-[72px] shrink-0" style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties} />
       )}
       {!hasSystemTitleBarControls && hasWindowAPI && (
-        <div className="flex items-center gap-1 shrink-0" style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties}>
+        <div className="flex items-center gap-1.5 shrink-0" style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties}>
           <button
             type="button"
-            className="w-3 h-3 rounded-full bg-[#ff5f57] hover:opacity-90"
+            className="w-3 h-3 rounded-full bg-[#ff5f57] hover:opacity-80 active:opacity-70 transition-opacity"
             onClick={() => window.electronAPI?.window?.close()}
             aria-label="Close"
           />
           <button
             type="button"
-            className="w-3 h-3 rounded-full bg-[#febc2e] hover:opacity-90"
+            className="w-3 h-3 rounded-full bg-[#febc2e] hover:opacity-80 active:opacity-70 transition-opacity"
             onClick={() => window.electronAPI?.window?.minimize()}
             aria-label="Minimize"
           />
           <button
             type="button"
-            className="w-3 h-3 rounded-full bg-[#28c840] hover:opacity-90"
+            className="w-3 h-3 rounded-full bg-[#28c840] hover:opacity-80 active:opacity-70 transition-opacity"
             onClick={() => window.electronAPI?.window?.maximize()}
             aria-label="Maximize"
           />
         </div>
       )}
-      <div className="flex-1 min-w-0 flex justify-center pointer-events-none px-2">
+      <div className="flex-1 min-w-0 flex items-center justify-center pointer-events-none px-2">
         <span
-          className={`text-xs font-medium text-foreground truncate ${hasSystemTitleBarControls ? "desktop-title-plain" : "title-tab"}`}
+          className={`text-[13px] font-medium text-foreground/90 truncate ${hasSystemTitleBarControls ? "desktop-title-plain" : "title-tab"}`}
         >
           {title}
         </span>
       </div>
-      <div className="w-[72px] shrink-0" />
+      <div className="w-8 shrink-0" />
     </header>
   );
 };

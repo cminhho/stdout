@@ -66,10 +66,10 @@ const SidebarNavItem = ({
     <NavLink
       to={item.path}
       onClick={onClick}
-      className={`sidebar-link min-w-0 ${isActive ? "active" : ""}`}
+      className={`sidebar-link ${isActive ? "active" : ""}`}
     >
-      <Icon className="h-4 w-4 shrink-0" />
-      <span className="min-w-0 truncate block">{item.label}</span>
+      <Icon className="h-[14px] w-[14px] shrink-0 opacity-90" />
+      <span className="min-w-0 truncate">{item.label}</span>
     </NavLink>
   );
 };
@@ -97,14 +97,14 @@ const SidebarGroupSection = ({
   return (
     <div>
       <button type="button" onClick={() => setOpen(!open)} className="sidebar-link w-full justify-between">
-        <span className="flex items-center gap-2 min-w-0">
-          <GroupIcon className="h-4 w-4 shrink-0" />
+        <span className="flex items-center min-w-0 gap-2">
+          <GroupIcon className="h-[14px] w-[14px] shrink-0 opacity-90" />
           <span className="truncate">{group.label}</span>
         </span>
-        <ChevronRight className={`h-4 w-4 shrink-0 transition-transform ${isOpen ? "rotate-90" : ""}`} />
+        <ChevronRight className={`h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform ${isOpen ? "rotate-90" : ""}`} />
       </button>
       {isOpen && (
-        <div className="ml-[var(--spacing-sidebar-x)] pl-[var(--spacing-sidebar-indent)] border-l border-border space-y-[var(--spacing-sidebar-gap)] mt-[var(--spacing-sidebar-gap)]">
+        <div className="ml-[var(--spacing-sidebar-x)] pl-[var(--spacing-sidebar-indent)] border-l border-sidebar-border space-y-0.5 mt-0.5">
           {filteredItems.map((item) => (
             <SidebarNavItem key={item.path} item={item} isActive={pathname === item.path} />
           ))}
@@ -146,7 +146,7 @@ const AppSidebar = () => {
             </Tooltip>
           </div>
         )}
-        <nav className="flex-1 overflow-y-auto space-y-[var(--spacing-sidebar-gap)] [padding:var(--spacing-sidebar-y)_0] sidebar-pad">
+        <nav className="flex-1 overflow-y-auto space-y-0.5 [padding:var(--spacing-sidebar-item-y)_0] sidebar-pad">
           {visibleItems.map((item) => {
             const Icon = getIcon(item.icon);
             return (
@@ -154,13 +154,13 @@ const AppSidebar = () => {
                 <TooltipTrigger asChild>
                   <NavLink
                     to={item.path}
-                    className={`flex items-center justify-center py-[var(--spacing-sidebar-y)] transition-colors rounded-md mx-[var(--spacing-sidebar-gap)] ${
+                    className={`flex items-center justify-center py-[var(--spacing-sidebar-item-y)] transition-colors rounded-md mx-[var(--spacing-sidebar-gap)] border-l-2 border-transparent ${
                       location.pathname === item.path
-                        ? "text-primary bg-primary/12"
+                        ? "text-foreground bg-sidebar-accent border-sidebar-primary"
                         : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent"
                     }`}
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon className="h-[14px] w-[14px] opacity-90" />
                   </NavLink>
                 </TooltipTrigger>
                 <TooltipContent side="right">{item.label}</TooltipContent>
@@ -196,13 +196,15 @@ const AppSidebar = () => {
           </Tooltip>
         </div>
       )}
-      <div className="sidebar-pad">
+      <div className="px-[var(--spacing-sidebar-x)] pt-[var(--spacing-sidebar-y)] pb-[var(--spacing-sidebar-gap)]">
         <div className="relative">
-          <Search className="absolute left-[var(--spacing-sidebar-x)] top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" aria-hidden />
           <input
-            className="w-full rounded-md border py-2 pr-[var(--spacing-sidebar-x)] text-sm bg-background border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-            style={{ paddingLeft: "calc(var(--spacing-sidebar-x) + 1rem)" }}
-            placeholder="Search tools..."
+            type="search"
+            role="searchbox"
+            aria-label="Search tools"
+            className="sidebar-search w-full"
+            placeholder="Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => {
@@ -213,10 +215,10 @@ const AppSidebar = () => {
         </div>
       </div>
 
-      <nav className="flex-1 sidebar-pad overflow-y-auto min-w-0 space-y-[var(--spacing-sidebar-gap)]">
+      <nav className="flex-1 sidebar-pad overflow-y-auto min-w-0 space-y-0.5">
         {search && searchResults !== null ? (
           searchResults.length > 0 ? (
-            <div className="space-y-[var(--spacing-sidebar-gap)]">
+            <div className="space-y-0.5">
               <div className="text-xs text-muted-foreground uppercase tracking-wider px-[var(--spacing-sidebar-gap)] pb-[var(--spacing-sidebar-gap)]">
                 {searchResults.length} result{searchResults.length !== 1 ? "s" : ""}
               </div>
@@ -228,7 +230,7 @@ const AppSidebar = () => {
             <div className="text-sm text-muted-foreground text-center py-[var(--spacing-content-y)]">No tools found</div>
           )
         ) : sidebarMode === "flat" ? (
-          <div className="space-y-[var(--spacing-sidebar-gap)]">
+          <div className="space-y-0.5">
             {visibleItems.map((item) => (
               <SidebarNavItem key={item.path} item={item} isActive={location.pathname === item.path} />
             ))}
