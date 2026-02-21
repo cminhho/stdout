@@ -11,10 +11,10 @@ interface PanelHeaderProps {
 
 /**
  * Standardized panel header with label, copy button, and optional clear/extra actions.
- * Use in every tool-panel for consistent alignment across all tools.
+ * Padding matches pane body (--spacing-panel-inner-x/y). No bottom padding; .tool-panel gap separates header from body.
  */
 const PanelHeader = ({ label, text, onClear, extra }: PanelHeaderProps) => (
-  <div className="flex items-center justify-between flex-wrap min-h-[var(--spacing-sidebar-header-h)]">
+  <div className="flex items-center justify-between flex-wrap min-h-[var(--spacing-sidebar-header-h)] px-[var(--spacing-panel-inner-x)] pt-[var(--spacing-panel-inner-y)] pb-0">
     <span className="text-sm font-medium text-foreground uppercase tracking-wider select-none">
       {label}
     </span>

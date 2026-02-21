@@ -361,11 +361,13 @@ const TwoPanelToolLayout = ({
   const hasChromeAbove = formatError || showValidationListResolved || topSection;
 
   return (
-    <ToolLayout title={title} description={description}>
+    <ToolLayout title={title} description={description} contentPadding={false}>
       {hasChromeAbove ? (
         <div
-          className="flex flex-col flex-shrink-0"
-          style={{ gap: "var(--spacing-block-gap, 0.5rem)", marginBottom: "var(--spacing-toolbar-mb, 0.75rem)" }}
+          className={cn(
+            "flex flex-col flex-shrink-0 gap-[var(--spacing-block-gap)] mb-[var(--spacing-toolbar-mb)]",
+            "px-[var(--spacing-panel-inner-x)]"
+          )}
         >
           {formatError ? (
             <div
@@ -381,7 +383,7 @@ const TwoPanelToolLayout = ({
             </section>
           ) : null}
           {topSection ? (
-            <div className="flex flex-col" style={{ gap: "var(--spacing-block-gap, 0.5rem)" }}>
+            <div className="flex flex-col gap-[var(--spacing-block-gap)]">
               {topSection}
             </div>
           ) : null}
@@ -392,7 +394,7 @@ const TwoPanelToolLayout = ({
         minInputPercent={minInputPercent}
         maxInputPercent={maxInputPercent}
         resizerWidth={resizerWidth}
-        className={cn(hasChromeAbove ? "min-h-0" : "", className)}
+        className={cn(hasChromeAbove && "min-h-0", className)}
         input={buildInputPaneProps(inputPane, effectiveValidationErrors)}
         output={buildOutputPaneProps(outputPane, indentControl, derived)}
       />

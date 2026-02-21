@@ -8,9 +8,13 @@ const DEFAULT_MAX_INPUT_PERCENT = 80;
 const DEFAULT_INPUT_PERCENT = 50;
 
 const RESIZER_BASE_CLASS =
-  "hidden lg:flex shrink-0 flex-col items-center cursor-col-resize select-none self-stretch";
+  "hidden lg:flex shrink-0 flex-col items-center justify-center cursor-col-resize select-none self-stretch h-full min-h-0 relative";
 
 const PANEL_BODY_CLASS = "flex-1 min-h-0 flex flex-col overflow-hidden";
+
+/** Pane body inner base; use with resizer-side classes when side-by-side to reduce gap next to resizer. */
+const PANEL_BODY_INNER_BASE =
+  "flex-1 min-h-0 flex flex-col overflow-hidden pt-0 pb-[var(--spacing-panel-inner-y)]";
 
 function useIsLg(): boolean {
   const [isLg, setIsLg] = useState(false);
@@ -116,11 +120,21 @@ function Pane({
   pane,
   className,
   style,
+  resizerSide,
 }: {
   pane: PaneProps;
   className?: string;
   style?: React.CSSProperties;
+  /** When 'left'|'right', use smaller padding on that side (next to resizer) when side-by-side. */
+  resizerSide?: "left" | "right";
 }) {
+  const bodyInnerClass =
+    resizerSide === "left"
+      ? cn(PANEL_BODY_INNER_BASE, "pl-[var(--spacing-panel-resizer-gap)] pr-[var(--spacing-panel-inner-x)]")
+      : resizerSide === "right"
+        ? cn(PANEL_BODY_INNER_BASE, "pl-[var(--spacing-panel-inner-x)] pr-[var(--spacing-panel-resizer-gap)]")
+        : cn(PANEL_BODY_INNER_BASE, "px-[var(--spacing-panel-inner-x)]");
+
   return (
     <div className={cn("tool-panel flex flex-col min-h-0 overflow-hidden", className)} style={style}>
       {pane.customHeader !== undefined ? (
@@ -133,7 +147,9 @@ function Pane({
           extra={pane.toolbar}
         />
       )}
-      <div className={PANEL_BODY_CLASS}>{pane.children}</div>
+      <div className={PANEL_BODY_CLASS}>
+        <div className={bodyInnerClass}>{pane.children}</div>
+      </div>
     </div>
   );
 }
@@ -161,11 +177,17 @@ const ResizableTwoPanel = ({
   return (
     <div
       ref={containerRef}
-      className={cn("flex flex-col lg:flex-row flex-1 min-h-0 w-full gap-[var(--spacing-panel-gap)] lg:gap-0", className)}
+      className={cn(
+        "flex flex-col lg:flex-row flex-1 min-h-0 w-full",
+        "gap-[var(--spacing-panel-gap)] lg:gap-0",
+        "m-0 p-0",
+        className
+      )}
     >
       <Pane
         pane={{ ...input, title: input.title ?? DEFAULT_INPUT_TITLE }}
-        className="min-w-0 flex-1 lg:flex-none lg:shrink-0"
+        resizerSide={isLg ? "right" : undefined}
+        className="min-w-0 flex-1 lg:flex-none lg:shrink-0 p-2"
         style={isLg ? { width: `${inputPercent}%`, minWidth: 120 } : undefined}
       />
 
@@ -176,13 +198,18 @@ const ResizableTwoPanel = ({
         aria-label="Resize panels"
         tabIndex={0}
         onMouseDown={onResizerMouseDown}
-        className={cn(RESIZER_BASE_CLASS, "group hover:bg-muted/30 transition-colors")}
+        className={cn(RESIZER_BASE_CLASS, "panel-resizer p-0")}
         style={{ width: resizerWidth, minWidth: resizerWidth }}
       >
-        <div className="w-px h-full bg-border group-hover:bg-muted-foreground/50 transition-colors shrink-0" />
+        {/* Full-height line: absolute so it always spans top-to-bottom regardless of flex context */}
+        <div className="panel-resizer-line absolute inset-y-0 left-1/2 w-px -translate-x-px" />
       </div>
 
-      <Pane pane={{ ...output, title: output.title ?? DEFAULT_OUTPUT_TITLE }} className="flex-1 min-w-0 lg:min-h-0" />
+      <Pane
+        pane={{ ...output, title: output.title ?? DEFAULT_OUTPUT_TITLE }}
+        resizerSide={isLg ? "left" : undefined}
+        className="flex-1 min-w-0 lg:min-h-0 p-2"
+      />
     </div>
   );
 };
