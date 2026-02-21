@@ -99,7 +99,7 @@ const CronBuilderPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "Cron Parser"} description={tool?.description ?? "Build and parse cron expressions (Quartz-style)"}>
-      <div className="flex flex-col flex-1 min-h-0 w-full gap-4">
+      <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack">
         <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0">
           {FIELDS.map((field) => (
             <div key={field} className="flex items-center gap-2">

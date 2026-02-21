@@ -114,7 +114,7 @@ const LogGeneratorPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "Log Generator"} description={tool?.description ?? "Generate synthetic log data for testing"}>
-      <div className="flex flex-col flex-1 min-h-0 w-full gap-4">
+      <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack">
         <div className="tool-panel flex flex-col flex-1 min-h-0">
           <PanelHeader
             label={`Output (${output ? output.split("\n").length : 0} lines)`}

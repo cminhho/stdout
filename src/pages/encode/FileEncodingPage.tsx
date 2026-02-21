@@ -135,7 +135,7 @@ const FileEncodingPage = () => {
           {mode === "decode" ? "Decode" : "Encode"}
         </Button>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+      <div className="grid grid-cols-1 lg:grid-cols-2 tool-content-grid flex-1 min-h-0">
         <div className="tool-panel flex flex-col min-h-0">
           <PanelHeader
             label={mode === "decode" ? "Bytes (hex or base64)" : "Text"}

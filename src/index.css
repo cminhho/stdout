@@ -316,6 +316,14 @@
     padding: var(--spacing-code-editor);
   }
 
+  /* Use with grid/flex for consistent gap from --spacing-grid-gap */
+  .tool-content-grid {
+    gap: var(--spacing-grid-gap);
+  }
+  .tool-content-stack {
+    gap: var(--spacing-grid-gap);
+  }
+
   .tool-layout-content > .tool-toolbar {
     flex-shrink: 0;
     margin-bottom: var(--spacing-toolbar-mb);

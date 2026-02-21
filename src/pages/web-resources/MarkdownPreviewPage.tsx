@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
+import { htmlBeautify } from "@/utils/beautifier";
 
 const SAMPLE_MARKDOWN = `# Markdown Preview
 
@@ -41,6 +42,27 @@ const MarkdownPreviewPage = () => {
   const tool = useCurrentTool();
   const [markdown, setMarkdown] = useState(SAMPLE_MARKDOWN);
   const [showHtml, setShowHtml] = useState(false);
+  const [beautifiedHtml, setBeautifiedHtml] = useState("");
+
+  useEffect(() => {
+    if (!showHtml) return;
+    const raw = getHtml();
+    if (!raw.trim()) {
+      setBeautifiedHtml("");
+      return;
+    }
+    let cancelled = false;
+    htmlBeautify(raw, 2, false)
+      .then((out) => {
+        if (!cancelled) setBeautifiedHtml(out);
+      })
+      .catch(() => {
+        if (!cancelled) setBeautifiedHtml(raw);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [showHtml, markdown]);
 
   return (
     <TwoPanelToolLayout
@@ -61,7 +83,7 @@ const MarkdownPreviewPage = () => {
       }}
       outputPane={{
         title: showHtml ? "HTML Output" : "Preview",
-        copyText: showHtml ? getHtml() : markdown,
+        copyText: showHtml ? (beautifiedHtml || getHtml()) : markdown,
         toolbar: (
           <div className="flex items-center gap-2">
             <Button
@@ -86,13 +108,13 @@ const MarkdownPreviewPage = () => {
           <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
             <div
               id="md-preview"
-              className={`prose-markdown code-block flex-1 min-h-0 overflow-auto rounded-md border border-border p-4 bg-background ${showHtml ? "hidden" : ""}`}
+              className={`prose-markdown code-block flex-1 min-h-0 overflow-auto rounded-md border border-border bg-background ${showHtml ? "hidden" : ""}`}
             >
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>
             </div>
             {showHtml && (
               <CodeEditor
-                value={getHtml()}
+                value={beautifiedHtml || getHtml()}
                 readOnly
                 language="html"
                 placeholder=""

@@ -58,7 +58,7 @@ const ImageBase64Page = () => {
         <Button size="sm" variant={mode === "toBase64" ? "default" : "outline"} onClick={() => setMode("toBase64")}>Image → Base64</Button>
         <Button size="sm" variant={mode === "toImage" ? "default" : "outline"} onClick={() => setMode("toImage")}>Base64 → Image</Button>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1 min-h-0">
+      <div className="grid grid-cols-1 lg:grid-cols-2 tool-content-grid flex-1 min-h-0">
         <div className="tool-panel flex flex-col min-h-0">
           {mode === "toBase64" ? (
             <>

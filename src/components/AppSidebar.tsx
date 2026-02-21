@@ -238,7 +238,7 @@ const AppSidebar = () => {
               })}
             </div>
           ) : (
-            <div className="text-sm text-muted-foreground text-center py-6">No tools found</div>
+            <div className="text-sm text-muted-foreground text-center py-4">No tools found</div>
           )
         ) : sidebarMode === "flat" ? (
           <div className="space-y-1">
