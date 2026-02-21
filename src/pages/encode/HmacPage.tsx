@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
+import { SampleButton } from "@/components/SampleButton";
 
 type HmacAlgo = "SHA-1" | "SHA-256" | "SHA-384" | "SHA-512";
 const algos: HmacAlgo[] = ["SHA-1", "SHA-256", "SHA-384", "SHA-512"];

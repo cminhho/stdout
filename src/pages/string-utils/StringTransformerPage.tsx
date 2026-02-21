@@ -4,7 +4,8 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
+import { SampleButton } from "@/components/SampleButton";
 
 const SAMPLE_INPUT = "hello world example";
 

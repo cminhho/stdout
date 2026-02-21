@@ -1,7 +1,8 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
+import { SampleButton } from "@/components/SampleButton";
 import FileUploadButton from "@/components/FileUploadButton";
 import { Input } from "@/components/ui/input";
 import type { IndentOption } from "@/components/IndentSelect";

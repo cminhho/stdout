@@ -5,7 +5,8 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import FileUploadButton from "@/components/FileUploadButton";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
-import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
+import { SampleButton } from "@/components/SampleButton";
 import { formatXml, minifyXml } from "@/utils/xmlFormat";
 import {
   transformWithXslt,

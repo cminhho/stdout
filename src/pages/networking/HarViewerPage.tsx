@@ -3,7 +3,7 @@ import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
 import { Input } from "@/components/ui/input";
 
 interface HarEntry {

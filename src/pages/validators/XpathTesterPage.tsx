@@ -5,7 +5,8 @@ import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Input } from "@/components/ui/input";
 import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
+import { SampleButton } from "@/components/SampleButton";
 import { evaluateXPath } from "@/utils/validators";
 
 const SAMPLE_XML = `<?xml version="1.0"?>

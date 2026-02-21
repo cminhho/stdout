@@ -7,7 +7,7 @@ import CodeEditor from "@/components/CodeEditor";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ClearButton, toolButtonClass } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
 
 const UUID_VERSION_OPTIONS = [
   { value: "v1", label: "v1" },
@@ -102,7 +102,7 @@ const UuidPage = () => {
                   <input type="checkbox" checked={hyphens} onChange={(e) => setHyphens(e.target.checked)} className="accent-primary rounded border-input" />
                   Hyphens
                 </label>
-                <Button size="sm" variant="toolbar" className={toolButtonClass} onClick={generate}>Generate</Button>
+                <Button size="sm" variant="toolbar" onClick={generate}>Generate</Button>
                 {outputText && <ClearButton onClick={() => setUuids([])} />}
               </div>
             }

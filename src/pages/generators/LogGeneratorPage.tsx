@@ -7,7 +7,8 @@ import CodeEditor from "@/components/CodeEditor";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ClearButton, SaveButton, toolButtonClass } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
+import { SaveButton } from "@/components/SaveButton";
 
 const LOG_FORMATS = [
   {
@@ -142,7 +143,7 @@ const LogGeneratorPage = () => {
                     className="h-7 w-16 font-mono text-xs"
                   />
                 </div>
-                <Button size="sm" variant="toolbar" className={toolButtonClass} onClick={generate}>Generate</Button>
+                <Button size="sm" variant="toolbar" onClick={generate}>Generate</Button>
                 {output && <SaveButton label="Save .log" onClick={download} className="h-7 text-xs" />}
                 {output && <ClearButton onClick={() => setOutput("")} />}
               </div>

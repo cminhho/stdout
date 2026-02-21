@@ -6,7 +6,8 @@ import CodeEditor from "@/components/CodeEditor";
 import PanelHeader from "@/components/PanelHeader";
 import { Button } from "@/components/ui/button";
 import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton, SampleButton, toolButtonClass } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
+import { SampleButton } from "@/components/SampleButton";
 
 const SAMPLE_INPUT = "banana\napple\ncherry\napple\nbanana";
 
@@ -76,7 +77,7 @@ const ListCollatorPage = () => {
                   title="Sort order"
                   aria-label="Sort order"
                 />
-                <Button size="sm" variant="toolbar" className={toolButtonClass} onClick={process}>Process</Button>
+                <Button size="sm" variant="toolbar" onClick={process}>Process</Button>
               </div>
             }
           />

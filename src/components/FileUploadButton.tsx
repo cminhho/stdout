@@ -2,7 +2,6 @@ import { useId, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { cn } from "@/utils/cn";
-import { toolButtonClass } from "@/components/ToolActionButtons";
 import { readFileAsText } from "@/utils/fileUpload";
 
 export type FileUploadButtonProps = {
@@ -77,7 +76,7 @@ const FileUploadButton = ({
             type="button"
             size="sm"
             variant="toolbar"
-            className={cn(toolButtonClass, buttonClassName)}
+            className={buttonClassName}
             disabled={isDisabled}
             isLoading={loading}
             asChild

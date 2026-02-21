@@ -6,7 +6,8 @@ import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
+import { SampleButton } from "@/components/SampleButton";
 import {
   Select,
   SelectContent,

@@ -6,7 +6,8 @@ import PanelHeader from "@/components/PanelHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton, SaveButton, toolButtonClass } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
+import { SaveButton } from "@/components/SaveButton";
 import { Upload } from "lucide-react";
 
 const ImageResizerPage = () => {
@@ -142,7 +143,7 @@ const ImageResizerPage = () => {
                 )}
               </div>
               <div className="flex gap-2">
-                <Button size="sm" variant="toolbar" className={toolButtonClass} onClick={resize}>Resize</Button>
+                <Button size="sm" variant="toolbar" onClick={resize}>Resize</Button>
                 <SaveButton label="Download" onClick={download} className="h-7 text-xs" />
               </div>
             </div>

@@ -4,7 +4,9 @@ import FileUploadButton from "@/components/FileUploadButton";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 import { SelectWithOptions } from "@/components/ui/select";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { ClearButton, SampleButton, SaveButton } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
+import { SampleButton } from "@/components/SampleButton";
+import { SaveButton } from "@/components/SaveButton";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import {
   type SqlDialect,

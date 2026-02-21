@@ -4,7 +4,8 @@ import { SelectWithOptions } from "@/components/ui/select";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
 import PanelHeader from "@/components/PanelHeader";
-import { SampleButton, ClearButton } from "@/components/ToolActionButtons";
+import { ClearButton } from "@/components/ClearButton";
+import { SampleButton } from "@/components/SampleButton";
 import FileUploadButton from "@/components/FileUploadButton";
 import { Input } from "@/components/ui/input";
 

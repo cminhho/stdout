@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/utils/cn";
-import { toolButtonClass } from "@/components/ToolActionButtons";
 
 interface CopyButtonProps {
   text: string;
@@ -19,13 +17,7 @@ const CopyButton = ({ text, className }: CopyButtonProps) => {
   };
 
   return (
-    <Button
-      variant="toolbar"
-      size="sm"
-      onClick={handleCopy}
-      disabled={copied}
-      className={cn(toolButtonClass, className)}
-    >
+    <Button variant="toolbar" size="sm" onClick={handleCopy} disabled={copied} className={className}>
       {copied ? <Check className="h-3.5 w-3.5 mr-1.5" /> : <Copy className="h-3.5 w-3.5 mr-1.5" />}
       {copied ? "Copied" : "Copy"}
     </Button>
