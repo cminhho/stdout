@@ -63,7 +63,7 @@ const SqlFormatterPage = () => {
         },
         inputToolbarExtra: (
           <SelectWithOptions<SqlDialect>
-            size="sm"
+            size="xs"
             variant="secondary"
             value={dialect}
             onValueChange={setDialect}
@@ -84,7 +84,7 @@ const SqlFormatterPage = () => {
         toolbar: (
           <>
             <SelectWithOptions<SqlKeywordCase>
-              size="sm"
+              size="xs"
               variant="secondary"
               value={keywordCase}
               onValueChange={setKeywordCase}
@@ -93,7 +93,7 @@ const SqlFormatterPage = () => {
               aria-label="Keyword case"
             />
             <SelectWithOptions<SqlIdentifierCase>
-              size="sm"
+              size="xs"
               variant="secondary"
               value={identifierCase}
               onValueChange={setIdentifierCase}

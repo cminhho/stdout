@@ -29,7 +29,7 @@ const UnifiedEscaperPage = () => {
       description={description}
       formatSelector={
         <SelectWithOptions
-          size="sm"
+          size="xs"
           variant="secondary"
           value={type}
           onValueChange={setType}

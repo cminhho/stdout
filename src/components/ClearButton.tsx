@@ -10,7 +10,7 @@ export interface ClearButtonProps {
 
 export function ClearButton({ onClick, disabled, className, variant = "outline" }: ClearButtonProps) {
   return (
-    <Button type="button" size="sm" variant={variant} className={className} onClick={onClick} disabled={disabled}>
+    <Button type="button" size="xs" variant={variant} className={className} onClick={onClick} disabled={disabled}>
       <Eraser className="h-3.5 w-3.5" />
       Clear
     </Button>

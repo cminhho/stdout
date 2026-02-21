@@ -10,7 +10,7 @@ export interface SampleButtonProps {
 
 export function SampleButton({ onClick, disabled, className, variant = "outline" }: SampleButtonProps) {
   return (
-    <Button type="button" size="sm" variant={variant} className={className} onClick={onClick} disabled={disabled}>
+    <Button type="button" size="xs" variant={variant} className={className} onClick={onClick} disabled={disabled}>
       <FileCode className="h-3.5 w-3.5" />
       Sample
     </Button>

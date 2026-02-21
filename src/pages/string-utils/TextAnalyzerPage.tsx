@@ -76,15 +76,15 @@ const TextAnalyzerPage = () => {
             </div>
           )}
           <div className="flex flex-wrap items-center gap-2">
-            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={sortLines}>Sort Lines</Button>
-            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={removeDuplicateLines}>Remove Dupes</Button>
-            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={reverseLines}>Reverse</Button>
-            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("upper")}>UPPER</Button>
-            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("lower")}>lower</Button>
-            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("title")}>Title</Button>
-            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("camel")}>camelCase</Button>
-            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("snake")}>snake_case</Button>
-            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => applyCase("kebab")}>kebab-case</Button>
+            <Button size="xs" variant="outline" className="h-7 text-xs" onClick={sortLines}>Sort Lines</Button>
+            <Button size="xs" variant="outline" className="h-7 text-xs" onClick={removeDuplicateLines}>Remove Dupes</Button>
+            <Button size="xs" variant="outline" className="h-7 text-xs" onClick={reverseLines}>Reverse</Button>
+            <Button size="xs" variant="outline" className="h-7 text-xs" onClick={() => applyCase("upper")}>UPPER</Button>
+            <Button size="xs" variant="outline" className="h-7 text-xs" onClick={() => applyCase("lower")}>lower</Button>
+            <Button size="xs" variant="outline" className="h-7 text-xs" onClick={() => applyCase("title")}>Title</Button>
+            <Button size="xs" variant="outline" className="h-7 text-xs" onClick={() => applyCase("camel")}>camelCase</Button>
+            <Button size="xs" variant="outline" className="h-7 text-xs" onClick={() => applyCase("snake")}>snake_case</Button>
+            <Button size="xs" variant="outline" className="h-7 text-xs" onClick={() => applyCase("kebab")}>kebab-case</Button>
             <div className="flex items-center gap-1.5 ml-1">
               <Label className="text-xs text-muted-foreground shrink-0">Regex</Label>
               <Input

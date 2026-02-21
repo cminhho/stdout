@@ -55,8 +55,8 @@ const ImageBase64Page = () => {
   return (
     <ToolLayout title={tool?.label ?? "Image ↔ Base64"} description={tool?.description ?? "Convert images to/from Base64 strings"}>
       <div className="flex gap-2 mb-3">
-        <Button size="sm" variant={mode === "toBase64" ? "default" : "outline"} onClick={() => setMode("toBase64")}>Image → Base64</Button>
-        <Button size="sm" variant={mode === "toImage" ? "default" : "outline"} onClick={() => setMode("toImage")}>Base64 → Image</Button>
+        <Button size="xs" variant={mode === "toBase64" ? "default" : "outline"} onClick={() => setMode("toBase64")}>Image → Base64</Button>
+        <Button size="xs" variant={mode === "toImage" ? "default" : "outline"} onClick={() => setMode("toImage")}>Base64 → Image</Button>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 tool-content-grid flex-1 min-h-0">
         <div className="tool-panel flex flex-col min-h-0">
@@ -82,7 +82,7 @@ const ImageBase64Page = () => {
                 label="Base64 Input"
                 extra={
                   <div className="flex items-center gap-2">
-                    <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => handleBase64Input("")}>
+                    <Button type="button" size="xs" variant="outline" className="h-7 text-xs" onClick={() => handleBase64Input("")}>
                       <Eraser className="h-3.5 w-3.5 mr-1.5" />
                       Clear
                     </Button>
@@ -99,7 +99,7 @@ const ImageBase64Page = () => {
           <PanelHeader
             label={mode === "toBase64" ? "Base64 Output" : "Image Preview"}
             text={mode === "toBase64" ? base64 : ""}
-            extra={mode === "toImage" && imageUrl ? <Button size="sm" variant="outline" onClick={downloadImage}>Download</Button> : undefined}
+            extra={mode === "toImage" && imageUrl ? <Button size="xs" variant="outline" onClick={downloadImage}>Download</Button> : undefined}
           />
           {mode === "toBase64" ? (
             <div className="flex-1 min-h-0 flex flex-col">

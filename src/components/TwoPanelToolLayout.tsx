@@ -9,6 +9,7 @@ import { SampleButton } from "@/components/SampleButton";
 import { SaveButton } from "@/components/SaveButton";
 import ToolLayout from "@/components/ToolLayout";
 import ValidationErrorList from "@/components/ValidationErrorList";
+import { cn } from "@/utils/cn";
 import type { ParseError } from "@/utils/validationTypes";
 
 /** Config for default input toolbar: Sample + Clear + File upload. */
@@ -357,24 +358,26 @@ const TwoPanelToolLayout = ({
         }
       : undefined;
 
+  const hasChromeAbove = formatError || showValidationListResolved || topSection;
+
   return (
     <ToolLayout title={title} description={description}>
-      {formatError ? (
-        <div
-          className="tool-layout-section rounded-md border border-destructive/25 bg-destructive/10 px-2.5 py-1.5 text-xs text-destructive"
-          role="alert"
-        >
-          Format failed: {formatError.message}
-        </div>
-      ) : null}
-      {showValidationListResolved ? (
-        <section className="tool-layout-section" aria-label="Validation errors">
-          <ValidationErrorList errors={effectiveValidationErrors} />
-        </section>
-      ) : null}
-      {topSection ? (
-        <div className="tool-layout-section flex flex-col gap-1.5">
-          {topSection}
+      {hasChromeAbove ? (
+        <div className="flex flex-col gap-1.5 flex-shrink-0 mb-2">
+          {formatError ? (
+            <div
+              className="rounded-md border border-destructive/25 bg-destructive/10 px-2.5 py-1.5 text-xs text-destructive transition-colors duration-150"
+              role="alert"
+            >
+              Format failed: {formatError.message}
+            </div>
+          ) : null}
+          {showValidationListResolved ? (
+            <section aria-label="Validation errors">
+              <ValidationErrorList errors={effectiveValidationErrors} />
+            </section>
+          ) : null}
+          {topSection ? <div className="flex flex-col gap-1.5">{topSection}</div> : null}
         </div>
       ) : null}
       <ResizableTwoPanel
@@ -382,7 +385,7 @@ const TwoPanelToolLayout = ({
         minInputPercent={minInputPercent}
         maxInputPercent={maxInputPercent}
         resizerWidth={resizerWidth}
-        className={className}
+        className={cn(hasChromeAbove ? "min-h-0" : "", className)}
         input={buildInputPaneProps(inputPane, effectiveValidationErrors)}
         output={buildOutputPaneProps(outputPane, indentControl, derived)}
       />

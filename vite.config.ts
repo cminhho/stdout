@@ -1,13 +1,20 @@
 import path from "path";
+import { createRequire } from "node:module";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import { VitePWA } from "vite-plugin-pwa";
 import { visualizer } from "rollup-plugin-visualizer";
 
+const require = createRequire(import.meta.url);
+const pkg = require("./package.json") as { version: string };
+
 const isElectron = !!process.env.ELECTRON_BUILD;
 
 export default defineConfig(({ mode }) => ({
   base: isElectron ? "./" : "/",
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version),
+  },
   resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
   server: {
     host: "::",

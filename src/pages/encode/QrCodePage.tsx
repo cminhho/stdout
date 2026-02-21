@@ -40,7 +40,7 @@ const QrCodePage = () => {
     <ToolLayout title={tool?.label ?? "QR Code"} description={tool?.description ?? "Generate QR codes from text or URLs"}>
       <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack">
         <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0">
-          <Button size="sm" onClick={generate} disabled={!input.trim()}>
+          <Button size="xs" onClick={generate} disabled={!input.trim()}>
             Generate QR Code
           </Button>
         </div>
@@ -72,7 +72,7 @@ const QrCodePage = () => {
             <div className="flex-1 min-h-0 flex flex-col items-center justify-center gap-3 overflow-hidden p-4">
               <canvas ref={canvasRef} className="rounded-md max-w-full" />
               {generated ? (
-                <Button size="sm" variant="outline" onClick={download}>Download PNG</Button>
+                <Button size="xs" variant="outline" onClick={download}>Download PNG</Button>
               ) : (
                 <p className="text-xs text-muted-foreground text-center">Enter content and click Generate QR Code.</p>
               )}

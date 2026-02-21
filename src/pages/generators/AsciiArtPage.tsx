@@ -40,7 +40,7 @@ const AsciiArtPage = () => {
         inputToolbarExtra: (
           <>
             <SelectWithOptions
-              size="sm"
+              size="xs"
               variant="secondary"
               value={charStyle}
               onValueChange={setCharStyle}
@@ -49,7 +49,7 @@ const AsciiArtPage = () => {
               aria-label="Character style"
             />
             <SelectWithOptions
-              size="sm"
+              size="xs"
               variant="secondary"
               value={String(spacing)}
               onValueChange={(v) => setSpacing(Number(v))}

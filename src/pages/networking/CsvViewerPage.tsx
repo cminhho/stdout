@@ -66,7 +66,7 @@ const CsvViewerPage = () => {
         },
         inputToolbarExtra: (
           <SelectWithOptions
-            size="sm"
+            size="xs"
             variant="secondary"
             value={delimiter}
             onValueChange={setDelimiter}

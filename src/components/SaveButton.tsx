@@ -26,7 +26,7 @@ export function SaveButton({
       ? () => downloadAsFile(rest.content, rest.filename, rest.mimeType)
       : rest.onClick;
   return (
-    <Button type="button" size="sm" variant={variant} className={className} onClick={onClick} disabled={disabled} title={title}>
+    <Button type="button" size="xs" variant={variant} className={className} onClick={onClick} disabled={disabled} title={title}>
       <Download className="h-3.5 w-3.5" />
       {label}
     </Button>

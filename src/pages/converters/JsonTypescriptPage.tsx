@@ -39,7 +39,7 @@ const JsonTypescriptPage = () => {
         },
         inputToolbarExtra: (
           <SelectWithOptions
-            size="sm"
+            size="xs"
             variant="secondary"
             value={lang}
             onValueChange={setLang}

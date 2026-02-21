@@ -78,7 +78,7 @@ const FileUploadButton = ({
         ) : (
           <Button
             type="button"
-            size="sm"
+            size="xs"
             variant={variant}
             className={buttonClassName}
             disabled={isDisabled}

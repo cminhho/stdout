@@ -87,7 +87,7 @@ const PasswordPage = () => {
                     {k === "upper" ? "A-Z" : k === "lower" ? "a-z" : k === "digits" ? "0-9" : "!@#$"}
                   </label>
                 ))}
-                <Button size="sm" onClick={generate}>Generate</Button>
+                <Button size="xs" onClick={generate}>Generate</Button>
                 {passwordText && <ClearButton onClick={() => setPasswords([])} />}
               </div>
             }

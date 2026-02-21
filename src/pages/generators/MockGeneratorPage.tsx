@@ -139,7 +139,7 @@ const MockGeneratorPage = () => {
                   onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
                   className="h-7 w-14 font-mono text-xs"
                 />
-                <Button size="sm" onClick={generate}>Generate</Button>
+                <Button size="xs" onClick={generate}>Generate</Button>
               </div>
             }
           />

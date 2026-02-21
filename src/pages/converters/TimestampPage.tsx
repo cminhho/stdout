@@ -48,7 +48,7 @@ const TimestampPage = () => {
             <span className="text-xs font-mono text-foreground">{Math.floor(now / 1000)}</span>
             <span className="text-xs text-muted-foreground">s</span>
           </div>
-          <Button size="sm" variant="outline" onClick={setCurrentTime}>
+          <Button size="xs" variant="outline" onClick={setCurrentTime}>
             <RefreshCw className="h-3 w-3 mr-1" /> Use Now
           </Button>
           <div className="flex items-center gap-1.5 flex-wrap">

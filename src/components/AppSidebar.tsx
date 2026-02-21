@@ -270,34 +270,22 @@ const AppSidebar = () => {
       </nav>
 
       <footer className="flex items-center justify-between gap-2 sidebar-footer-pad border-t border-sidebar-border min-h-9 flex-shrink-0" aria-label="Sidebar footer">
-        {isDesktop ? (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <a
-                href="https://www.buymeacoffee.com/chungho"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-icon-chrome shrink-0"
-                title="Buy me a coffee"
-                aria-label="Buy me a coffee"
-              >
-                <Coffee className="h-3.5 w-3.5" />
-              </a>
-            </TooltipTrigger>
-            <TooltipContent side="right">Buy me a coffee</TooltipContent>
-          </Tooltip>
-        ) : (
-          <a
-            href="https://www.buymeacoffee.com/chungho"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-md border border-sidebar-border bg-sidebar-accent/80 text-xs font-medium text-sidebar-accent-foreground opacity-90 hover:opacity-100 hover:bg-sidebar-accent transition-colors min-w-0 px-2 py-1.5"
-            title="Buy me a coffee"
-          >
-            <Coffee className="h-3.5 w-3.5 shrink-0" />
-            <span className="truncate">Buy me a coffee</span>
-          </a>
-        )}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <a
+              href="https://www.buymeacoffee.com/chungho"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="sidebar-donate-link"
+              title="Support the project — Buy me a coffee"
+              aria-label="Buy me a coffee"
+            >
+              <Coffee className="sidebar-donate-link-icon" aria-hidden />
+              <span className="truncate">Buy me a coffee</span>
+            </a>
+          </TooltipTrigger>
+          <TooltipContent side="right">Support the project — Buy me a coffee</TooltipContent>
+        </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
             <NavLink to="/settings" className="btn-icon-chrome shrink-0" aria-label="Settings">

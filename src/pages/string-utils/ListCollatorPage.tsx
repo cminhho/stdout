@@ -60,7 +60,7 @@ const ListCollatorPage = () => {
               <input type="checkbox" checked={removeEmpty} onChange={(e) => setRemoveEmpty(e.target.checked)} className="rounded border-input" /> No empty
             </label>
             <SelectWithOptions
-              size="sm"
+              size="xs"
               variant="secondary"
               value={sortOrder}
               onValueChange={(v) => setSortOrder(v as "asc" | "desc" | "none")}
@@ -72,7 +72,7 @@ const ListCollatorPage = () => {
               title="Sort order"
               aria-label="Sort order"
             />
-            <Button size="sm" onClick={process}>Process</Button>
+            <Button size="xs" onClick={process}>Process</Button>
           </>
         ),
         outputEditor: {
