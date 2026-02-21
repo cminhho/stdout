@@ -17,8 +17,8 @@ import {
 } from "@/utils/jsonQueryString";
 
 const MODE_OPTIONS: { value: JsonQueryStringMode; label: string }[] = [
-  { value: "toQs", label: "JSON → Query String" },
-  { value: "toJson", label: "Query String → JSON" },
+  { value: "toQs", label: "JSON → QS" },
+  { value: "toJson", label: "QS → JSON" },
 ];
 
 const JsonQueryStringPage = () => {

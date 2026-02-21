@@ -15,7 +15,7 @@ interface PanelHeaderProps {
  */
 const PanelHeader = ({ label, text, onClear, extra }: PanelHeaderProps) => (
   <div className="flex items-center justify-between min-h-[32px]">
-    <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider select-none">
+    <span className="text-sm font-medium text-foreground uppercase tracking-wider select-none">
       {label}
     </span>
     <div className="flex items-center gap-2 flex-wrap">

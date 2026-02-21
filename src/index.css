@@ -25,8 +25,8 @@
     --primary: 217 91% 56%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary – dark gray #424242 */
-    --secondary: 0 0% 26%;
+    /* Secondary – #605956 (warm gray) */
+    --secondary: 18 5% 36%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 0 0% 24%;
@@ -98,7 +98,8 @@
     --primary: 212 85% 52%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 32 16% 92%;
+    /* Secondary – light warm gray (matches #605956 hue/saturation, lighter for light theme) */
+    --secondary: 18 8% 88%;
     --secondary-foreground: 24 14% 26%;
 
     --muted: 32 14% 93%;
