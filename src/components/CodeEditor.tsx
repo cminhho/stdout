@@ -400,7 +400,8 @@ const CodeEditor = ({
   );
 
   const gutterWidth = showLineNumbers ? Math.max(String(lines.length).length * 10 + 16, 36) : 0;
-  const contentPaddingLeft = gutterWidth + 12;
+  const editorPad = 12;
+  const contentPaddingLeft = gutterWidth + editorPad;
 
   if (customContent != null) {
     return (
@@ -413,7 +414,7 @@ const CodeEditor = ({
         }}
       >
         <div
-          className="overflow-auto p-3 font-mono text-sm leading-relaxed"
+          className="code-editor-pad overflow-auto font-mono text-sm leading-relaxed"
           style={
             fillHeight
               ? { height: "100%", minHeight: 0 }
@@ -445,7 +446,7 @@ const CodeEditor = ({
             background: "hsl(var(--code-bg))",
           }}
         >
-          <div className="pt-3 pb-3">
+          <div className="pt-[var(--spacing-code-editor)] pb-[var(--spacing-code-editor)]">
             {lines.map((_, i) => (
               <div
                 key={`L${i}`}
@@ -467,7 +468,7 @@ const CodeEditor = ({
       <div
         ref={highlightRef}
         aria-hidden
-        className="absolute top-0 bottom-0 right-0 overflow-hidden pointer-events-none z-[1] p-3 font-mono text-sm whitespace-pre"
+        className="code-editor-pad absolute top-0 bottom-0 right-0 overflow-hidden pointer-events-none z-[1] font-mono text-sm whitespace-pre"
         style={{ left: gutterWidth, lineHeight: CODE_LINE_HEIGHT }}
       >
         {tokenizedLines.map((tokens, i) => (
@@ -501,8 +502,9 @@ const CodeEditor = ({
         readOnly={readOnly}
         placeholder={placeholder}
         spellCheck={false}
-        className="relative z-[3] w-full h-full p-3 font-mono text-sm bg-transparent border-none outline-none resize-y overflow-auto"
+        className="relative z-[3] w-full h-full font-mono text-sm bg-transparent border-none outline-none resize-y overflow-auto"
         style={{
+          padding: "var(--spacing-code-editor)",
           paddingLeft: contentPaddingLeft,
           lineHeight: CODE_LINE_HEIGHT,
           color: "transparent",

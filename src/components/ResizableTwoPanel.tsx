@@ -2,7 +2,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import PanelHeader from "@/components/PanelHeader";
 import { cn } from "@/utils/cn";
 
-const DEFAULT_RESIZER_WIDTH = 20;
+const DEFAULT_RESIZER_WIDTH = 16;
 const DEFAULT_MIN_INPUT_PERCENT = 20;
 const DEFAULT_MAX_INPUT_PERCENT = 80;
 const DEFAULT_INPUT_PERCENT = 50;

@@ -178,7 +178,7 @@ const AppSidebar = () => {
     <aside
       className={`w-80 shrink-0 flex flex-col border-r border-sidebar-border ${isElectron ? "h-full min-h-0 sidebar-glass" : "h-screen sticky top-0 bg-sidebar"}`}
     >
-      <div className="flex items-center justify-between px-4 py-3">
+      <div className="flex items-center justify-between px-3 py-2.5">
         <NavLink
           to="/"
           className="text-sm font-semibold text-foreground no-underline hover:opacity-80 truncate min-w-0"
@@ -193,7 +193,7 @@ const AppSidebar = () => {
         </div>
       </div>
 
-      <div className="px-4 py-2">
+      <div className="px-3 py-2">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
@@ -268,7 +268,7 @@ const AppSidebar = () => {
         )}
       </nav>
 
-      <div className="flex items-center justify-between gap-2 px-4 py-3 border-t border-sidebar-border">
+      <div className="flex items-center justify-between gap-2 px-3 py-2.5 border-t border-sidebar-border">
         {isElectron ? (
           <Tooltip>
             <TooltipTrigger asChild>

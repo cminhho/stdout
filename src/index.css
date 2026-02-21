@@ -90,6 +90,9 @@
     --spacing-panel-gap: 0.5rem;
     --spacing-toolbar-mb: 0.75rem;
     --spacing-title-mb: 0.75rem;
+    --spacing-section-mb: 0.75rem;
+    --spacing-code-editor: 0.75rem;
+    --spacing-grid-gap: 0.75rem;
     /* Liquid Glass (Electron): stronger blur + visible edge */
     --glass-blur: 44px;
     --glass-saturate: 200%;
@@ -265,7 +268,8 @@
 
 @layer components {
   .code-block {
-    @apply rounded-xl border font-mono leading-relaxed p-4 overflow-auto transition-colors duration-150;
+    @apply rounded-xl border font-mono leading-relaxed overflow-auto transition-colors duration-150;
+    padding: var(--spacing-code-editor);
     font-size: var(--text-content);
     background: hsl(var(--code-bg));
     border-color: hsl(var(--code-border));
@@ -273,13 +277,15 @@
   }
 
   .tool-card {
-    @apply rounded-xl border p-5 transition-colors duration-150;
+    @apply rounded-xl border transition-colors duration-150;
+    padding: var(--spacing-content-y-md);
     background: hsl(var(--card));
     border-color: hsl(var(--border));
   }
 
   .tool-textarea {
-    @apply w-full rounded-xl border p-4 font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background resize-y transition-colors duration-150;
+    @apply w-full rounded-xl border font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background resize-y transition-colors duration-150;
+    padding: var(--spacing-code-editor);
     font-size: var(--text-content);
     background: hsl(var(--code-bg));
     border-color: hsl(var(--code-border));
@@ -302,6 +308,12 @@
   }
   .tool-layout-title {
     margin-bottom: var(--spacing-title-mb);
+  }
+  .tool-layout-section {
+    margin-bottom: var(--spacing-section-mb);
+  }
+  .code-editor-wrapper .code-editor-pad {
+    padding: var(--spacing-code-editor);
   }
 
   .tool-layout-content > .tool-toolbar {
