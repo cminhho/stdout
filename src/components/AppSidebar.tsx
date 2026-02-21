@@ -215,7 +215,7 @@ const AppSidebar = () => {
         </div>
       </div>
 
-      <nav className="flex-1 px-4 py-3 space-y-1 overflow-y-auto min-w-0">
+      <nav className="flex-1 px-3 py-2.5 space-y-1 overflow-y-auto min-w-0">
         {search && searchResults ? (
           searchResults.length > 0 ? (
             <div className="space-y-1">

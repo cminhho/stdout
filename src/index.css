@@ -82,6 +82,14 @@
     --text-nav: 0.75rem;
     --text-ui: 0.8125rem;
     --text-content: 0.875rem;
+    /* Layout spacing: content, panels, toolbars – tune here for consistent density */
+    --spacing-content-x: 1.25rem;
+    --spacing-content-y: 1rem;
+    --spacing-content-x-md: 1.5rem;
+    --spacing-content-y-md: 1.25rem;
+    --spacing-panel-gap: 0.5rem;
+    --spacing-toolbar-mb: 0.75rem;
+    --spacing-title-mb: 0.75rem;
     /* Liquid Glass (Electron): stronger blur + visible edge */
     --glass-blur: 44px;
     --glass-saturate: 200%;
@@ -285,10 +293,20 @@
     width: 100%;
     height: 100%;
     min-height: 0;
+    padding: var(--spacing-content-y) var(--spacing-content-x);
+  }
+  @media (min-width: 768px) {
+    .tool-layout-inner {
+      padding: var(--spacing-content-y-md) var(--spacing-content-x-md);
+    }
+  }
+  .tool-layout-title {
+    margin-bottom: var(--spacing-title-mb);
   }
 
   .tool-layout-content > .tool-toolbar {
     flex-shrink: 0;
+    margin-bottom: var(--spacing-toolbar-mb);
   }
 
   .tool-layout-content > .grid {
@@ -304,7 +322,9 @@
   }
 
   .tool-panel {
-    @apply flex flex-col gap-3;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-panel-gap);
     width: 100%;
     min-height: 0;
     flex: 1;
@@ -329,7 +349,8 @@
 
   /* Toolbar: top, fit height */
   .tool-toolbar {
-    @apply flex items-center gap-3 mb-4 flex-wrap flex-shrink-0;
+    @apply flex items-center gap-3 flex-wrap flex-shrink-0;
+    margin-bottom: var(--spacing-toolbar-mb);
   }
 
   /* Unified control: button, select, input – same bg, text, border, font (dark + light) */
