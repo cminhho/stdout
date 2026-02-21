@@ -52,7 +52,6 @@ const isDesktop = typeof window !== "undefined" && !!window.electronAPI;
 
 const SIDEBAR_ASIDE_BASE = "shrink-0 flex flex-col border-r border-sidebar-border";
 const SIDEBAR_ASIDE_LAYOUT = isDesktop ? "h-full min-h-0 sidebar-glass" : "h-screen sticky top-0 bg-sidebar";
-const SIDEBAR_ICON_BTN = "flex items-center justify-center w-8 h-8 shrink-0 rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors";
 
 type SidebarItem = { path: string; icon: string; label: string };
 
@@ -138,8 +137,8 @@ const AppSidebar = () => {
           <div className="flex items-center justify-center sidebar-pad border-b border-sidebar-border">
             <Tooltip>
               <TooltipTrigger asChild>
-                <button onClick={toggleSidebar} className="text-muted-foreground hover:text-foreground transition-colors">
-                  <PanelLeftOpen className="h-4 w-4" />
+                <button type="button" onClick={toggleSidebar} className="btn-icon-chrome btn-icon-chrome-sm shrink-0">
+                  <PanelLeftOpen className="h-3.5 w-3.5" />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right">Expand sidebar</TooltipContent>
@@ -171,8 +170,8 @@ const AppSidebar = () => {
         <div className="sidebar-footer-pad border-t border-sidebar-border flex justify-center">
           <Tooltip>
             <TooltipTrigger asChild>
-              <NavLink to="/settings" className="text-muted-foreground hover:text-foreground transition-colors">
-                <Settings className="h-4 w-4" />
+              <NavLink to="/settings" className="btn-icon-chrome shrink-0" aria-label="Settings">
+                <Settings className="h-3.5 w-3.5" />
               </NavLink>
             </TooltipTrigger>
             <TooltipContent side="right">Settings</TooltipContent>
@@ -183,17 +182,17 @@ const AppSidebar = () => {
   }
 
   return (
-    <aside className={`w-80 ${SIDEBAR_ASIDE_BASE} ${SIDEBAR_ASIDE_LAYOUT}`}>
+    <aside className={`w-72 ${SIDEBAR_ASIDE_BASE} ${SIDEBAR_ASIDE_LAYOUT}`}>
       {!isDesktop && (
         <div className="flex items-center justify-end sidebar-pad border-b border-sidebar-border">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button onClick={toggleSidebar} className="text-muted-foreground hover:text-foreground transition-colors p-1" title="Collapse sidebar">
-                <PanelLeftClose className="h-4 w-4" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="right">Collapse sidebar</TooltipContent>
-          </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button type="button" onClick={toggleSidebar} className="btn-icon-chrome btn-icon-chrome-sm shrink-0" title="Collapse sidebar">
+                  <PanelLeftClose className="h-3.5 w-3.5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right">Collapse sidebar</TooltipContent>
+            </Tooltip>
         </div>
       )}
       <div className="px-[var(--spacing-sidebar-x)] pt-[var(--spacing-sidebar-y)] pb-[var(--spacing-sidebar-gap)]">
@@ -219,7 +218,7 @@ const AppSidebar = () => {
         {search && searchResults !== null ? (
           searchResults.length > 0 ? (
             <div className="space-y-0.5">
-              <div className="text-xs text-muted-foreground uppercase tracking-wider px-[var(--spacing-sidebar-gap)] pb-[var(--spacing-sidebar-gap)]">
+              <div className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium px-[var(--spacing-sidebar-x)] pb-1">
                 {searchResults.length} result{searchResults.length !== 1 ? "s" : ""}
               </div>
               {searchResults.map((item) => (
@@ -227,7 +226,7 @@ const AppSidebar = () => {
               ))}
             </div>
           ) : (
-            <div className="text-sm text-muted-foreground text-center py-[var(--spacing-content-y)]">No tools found</div>
+            <div className="text-xs text-muted-foreground text-center py-4 px-[var(--spacing-sidebar-x)]">No tools found</div>
           )
         ) : sidebarMode === "flat" ? (
           <div className="space-y-0.5">
@@ -256,11 +255,11 @@ const AppSidebar = () => {
                 href="https://www.buymeacoffee.com/chungho"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={SIDEBAR_ICON_BTN}
+                className="btn-icon-chrome shrink-0"
                 title="Buy me a coffee"
                 aria-label="Buy me a coffee"
               >
-                <Coffee className="h-4 w-4" />
+                <Coffee className="h-3.5 w-3.5" />
               </a>
             </TooltipTrigger>
             <TooltipContent side="right">Buy me a coffee</TooltipContent>
@@ -273,14 +272,14 @@ const AppSidebar = () => {
             className="inline-flex items-center gap-2 rounded-md border border-sidebar-border bg-sidebar-accent text-sm font-medium text-sidebar-accent-foreground opacity-90 hover:opacity-100 hover:brightness-110 transition-colors min-w-0 px-[var(--spacing-sidebar-x)] py-[var(--spacing-sidebar-y)]"
             title="Buy me a coffee"
           >
-            <Coffee className="h-4 w-4 shrink-0" />
+            <Coffee className="h-3.5 w-3.5 shrink-0" />
             <span className="truncate">Buy me a coffee</span>
           </a>
         )}
         <Tooltip>
           <TooltipTrigger asChild>
-            <NavLink to="/settings" className={SIDEBAR_ICON_BTN} aria-label="Settings">
-              <Settings className="h-4 w-4" />
+            <NavLink to="/settings" className="btn-icon-chrome shrink-0" aria-label="Settings">
+              <Settings className="h-3.5 w-3.5" />
             </NavLink>
           </TooltipTrigger>
           <TooltipContent side="right">Settings</TooltipContent>

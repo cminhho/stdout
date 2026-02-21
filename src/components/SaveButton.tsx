@@ -18,7 +18,7 @@ export function SaveButton({
   title = "Save as file",
   disabled,
   className,
-  variant = "secondary",
+  variant = "default",
   ...rest
 }: SaveButtonProps) {
   const onClick =
@@ -27,7 +27,7 @@ export function SaveButton({
       : rest.onClick;
   return (
     <Button type="button" size="sm" variant={variant} className={className} onClick={onClick} disabled={disabled} title={title}>
-      <Download className="h-3.5 w-3.5 mr-1.5" />
+      <Download className="h-3.5 w-3.5" />
       {label}
     </Button>
   );

@@ -544,6 +544,29 @@
     box-shadow: 0 0 0 1px hsl(var(--sidebar-ring));
   }
 
+  /* Chrome icon buttons (sidebar + title bar): VS Code/Linear/Notion – token-based, consistent */
+  .btn-icon-chrome {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 6px;
+    color: hsl(var(--muted-foreground));
+    transition: color 0.15s, background-color 0.15s, opacity 0.15s;
+  }
+  .btn-icon-chrome:hover {
+    color: hsl(var(--foreground));
+    background: hsl(var(--sidebar-accent));
+  }
+  .btn-icon-chrome:active {
+    opacity: 0.85;
+  }
+  .btn-icon-chrome-sm {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
   /* Liquid Glass: sidebar in desktop window – translucent, blur, edge + shine */
   .sidebar-glass {
     background: hsl(0 0% 10% / 0.42);

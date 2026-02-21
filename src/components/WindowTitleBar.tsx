@@ -30,7 +30,7 @@ const WindowTitleBar = () => {
         <button
           type="button"
           onClick={toggleSidebar}
-          className="flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors"
+          className="btn-icon-chrome btn-icon-chrome-sm"
           aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >

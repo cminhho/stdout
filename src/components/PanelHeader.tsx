@@ -22,8 +22,8 @@ const PanelHeader = ({ label, text, onClear, extra }: PanelHeaderProps) => (
       {extra}
       {text !== undefined ? <CopyButton text={text} /> : null}
       {onClear ? (
-        <Button variant="ghost" size="sm" onClick={onClear} className="h-8 w-8 p-0">
-          <Trash2 className="h-4 w-4" />
+        <Button variant="ghost" size="icon-sm" onClick={onClear} aria-label="Clear">
+          <Trash2 className="h-3.5 w-3.5" />
         </Button>
       ) : null}
     </div>
