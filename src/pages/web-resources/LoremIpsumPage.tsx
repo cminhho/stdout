@@ -76,7 +76,7 @@ const LoremIpsumPage = () => {
                 <div className="flex items-center gap-1.5">
                   <Label className="text-xs text-muted-foreground shrink-0">Unit</Label>
                   <Select value={unit} onValueChange={(v) => setUnit(v as typeof unit)}>
-                    <SelectTrigger className="h-7 w-32 text-xs"><SelectValue /></SelectTrigger>
+                    <SelectTrigger variant="secondary" size="xs" className="w-32"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="paragraphs">Paragraphs</SelectItem>
                       <SelectItem value="sentences">Sentences</SelectItem>

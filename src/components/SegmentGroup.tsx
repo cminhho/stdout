@@ -46,7 +46,7 @@ function SegmentGroupInner<T extends string>(
       role="group"
       aria-label={ariaLabel}
       className={cn(
-        "flex rounded-lg border border-input bg-muted/50 p-0.5",
+        "flex rounded-lg border border-input bg-secondary/30 p-0.5",
         className
       )}
     >
@@ -56,7 +56,7 @@ function SegmentGroupInner<T extends string>(
           <Button
             key={option.value}
             type="button"
-            variant={isActive ? "default" : "ghost"}
+            variant={isActive ? "default" : "secondary"}
             size={size}
             className="min-w-0 rounded-md px-2.5 shadow-sm transition-colors"
             aria-pressed={isActive}

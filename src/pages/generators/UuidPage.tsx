@@ -88,6 +88,7 @@ const UuidPage = () => {
                 </div>
                 <SelectWithOptions
                   size="sm"
+                  variant="secondary"
                   value={version}
                   onValueChange={(v) => setVersion(v as "v1" | "v4" | "v7")}
                   options={UUID_VERSION_OPTIONS.map((o) => ({ value: o.value, label: o.label }))}
@@ -102,7 +103,7 @@ const UuidPage = () => {
                   <input type="checkbox" checked={hyphens} onChange={(e) => setHyphens(e.target.checked)} className="accent-primary rounded border-input" />
                   Hyphens
                 </label>
-                <Button size="sm" variant="secondary" onClick={generate}>Generate</Button>
+                <Button size="sm" onClick={generate}>Generate</Button>
                 {outputText && <ClearButton onClick={() => setUuids([])} />}
               </div>
             }

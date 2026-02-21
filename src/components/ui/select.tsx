@@ -12,9 +12,13 @@ const SelectGroup = SelectPrimitive.Group;
 const SelectValue = SelectPrimitive.Value;
 
 const selectTriggerVariants = cva(
-  "flex w-full items-center justify-between rounded-lg border border-input bg-background text-foreground ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 transition-colors duration-150 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground",
+  "flex w-full items-center justify-between rounded-lg border border-input ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 transition-colors duration-150 [&_svg]:shrink-0",
   {
     variants: {
+      variant: {
+        default: "bg-background text-foreground hover:bg-accent hover:text-accent-foreground",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:text-secondary-foreground",
+      },
       size: {
         default: "h-10 w-full px-3 py-2 text-sm [&_svg]:h-4 [&_svg]:w-4",
         sm: "h-8 w-auto min-w-[6rem] px-2.5 py-1 text-sm [&_svg]:h-3.5 [&_svg]:w-3.5",
@@ -23,6 +27,7 @@ const selectTriggerVariants = cva(
       },
     },
     defaultVariants: {
+      variant: "default",
       size: "default",
     },
   },
@@ -35,10 +40,10 @@ export interface SelectTriggerProps
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   SelectTriggerProps
->(({ className, size = "default", children, ...props }, ref) => (
+>(({ className, size = "default", variant = "default", children, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
-    className={cn(selectTriggerVariants({ size }), className)}
+    className={cn(selectTriggerVariants({ size, variant }), className)}
     {...props}
   >
     {children}
@@ -160,6 +165,7 @@ export interface SelectWithOptionsProps<T extends string = string> {
   options: SelectOption<T>[];
   placeholder?: string;
   size?: "default" | "sm" | "xs" | "lg";
+  variant?: "default" | "secondary";
   title?: string;
   "aria-label"?: string;
   className?: string;
@@ -176,6 +182,7 @@ function SelectWithOptions<T extends string = string>({
   options,
   placeholder = "Select…",
   size = "default",
+  variant = "default",
   title,
   "aria-label": ariaLabel,
   className,
@@ -185,6 +192,7 @@ function SelectWithOptions<T extends string = string>({
     <Select value={value} onValueChange={(v) => onValueChange(v as T)}>
       <SelectTrigger
         size={size}
+        variant={variant}
         className={triggerClassName}
         title={title}
         aria-label={ariaLabel ?? title}

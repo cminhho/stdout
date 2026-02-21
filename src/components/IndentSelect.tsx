@@ -57,6 +57,7 @@ const IndentSelect = ({
     >
       <SelectTrigger
         size="sm"
+        variant="secondary"
         title={title}
         aria-label={title}
       >

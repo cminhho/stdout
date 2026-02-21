@@ -61,6 +61,7 @@ const ListCollatorPage = () => {
             </label>
             <SelectWithOptions
               size="sm"
+              variant="secondary"
               value={sortOrder}
               onValueChange={(v) => setSortOrder(v as "asc" | "desc" | "none")}
               options={[
@@ -71,7 +72,7 @@ const ListCollatorPage = () => {
               title="Sort order"
               aria-label="Sort order"
             />
-            <Button size="sm" variant="secondary" onClick={process}>Process</Button>
+            <Button size="sm" onClick={process}>Process</Button>
           </>
         ),
         outputEditor: {

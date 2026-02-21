@@ -64,6 +64,7 @@ const SqlFormatterPage = () => {
         inputToolbarExtra: (
           <SelectWithOptions<SqlDialect>
             size="sm"
+            variant="secondary"
             value={dialect}
             onValueChange={setDialect}
             options={DIALECT_OPTIONS}
@@ -84,6 +85,7 @@ const SqlFormatterPage = () => {
           <>
             <SelectWithOptions<SqlKeywordCase>
               size="sm"
+              variant="secondary"
               value={keywordCase}
               onValueChange={setKeywordCase}
               options={KEYWORD_CASE_OPTIONS}
@@ -92,6 +94,7 @@ const SqlFormatterPage = () => {
             />
             <SelectWithOptions<SqlIdentifierCase>
               size="sm"
+              variant="secondary"
               value={identifierCase}
               onValueChange={setIdentifierCase}
               options={IDENTIFIER_CASE_OPTIONS}

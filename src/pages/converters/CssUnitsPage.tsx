@@ -31,6 +31,7 @@ const CssUnitsPage = () => {
               <label className="text-xs text-muted-foreground block mb-1">From</label>
               <SelectWithOptions
                 size="sm"
+                variant="secondary"
                 value={fromUnit}
                 onValueChange={setFromUnit}
                 options={CSS_UNITS_LIST.map((u) => ({ value: u, label: u }))}

@@ -41,6 +41,7 @@ const AsciiArtPage = () => {
           <>
             <SelectWithOptions
               size="sm"
+              variant="secondary"
               value={charStyle}
               onValueChange={setCharStyle}
               options={ASCII_ART_CHAR_STYLES}
@@ -49,6 +50,7 @@ const AsciiArtPage = () => {
             />
             <SelectWithOptions
               size="sm"
+              variant="secondary"
               value={String(spacing)}
               onValueChange={(v) => setSpacing(Number(v))}
               options={ASCII_ART_SPACING_OPTIONS.map((o) => ({ value: String(o.value), label: o.label }))}

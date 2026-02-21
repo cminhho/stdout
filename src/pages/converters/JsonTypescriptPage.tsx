@@ -40,6 +40,7 @@ const JsonTypescriptPage = () => {
         inputToolbarExtra: (
           <SelectWithOptions
             size="sm"
+            variant="secondary"
             value={lang}
             onValueChange={setLang}
             options={JSON_TYPESCRIPT_LANGS.map((l) => ({ value: l.value, label: l.label }))}

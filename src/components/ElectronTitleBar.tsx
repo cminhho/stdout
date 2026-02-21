@@ -46,8 +46,8 @@ const ElectronTitleBar = () => {
           />
         </div>
       )}
-      <div className="flex-1 min-w-[320px] flex justify-center pointer-events-none">
-        <span className="title-tab text-xs font-medium text-foreground truncate min-w-[320px]">{title}</span>
+      <div className="flex-1 min-w-[360px] flex justify-center pointer-events-none">
+        <span className="title-tab text-xs font-medium text-foreground truncate min-w-[360px]">{title}</span>
       </div>
       <div className="w-[72px] shrink-0" />
     </header>
