@@ -6,75 +6,72 @@
 
 @layer base {
   /*
-   * Dark theme: DevUtils-style charcoal palette (#262626, #313131, #363636).
-   * Light: warm, soft. Sidebar glass (desktop app window) via .sidebar-glass.
+   * Theme tokens: WCAG AA contrast, semantic layers, single primary hue.
+   * Dark: slate-tinted neutrals (224°). Light: warm neutrals (25°). Deep dark: true neutrals (0°).
+   * Primary: blue 221 83% 53% (works on light/dark). Code syntax: VS Code–style.
    */
   :root,
   .dark {
-    /* Content / editor – charcoal #2A2A2A (DevUtils); text trắng/sáng */
-    --background: 0 0% 16%;
-    --foreground: 0 0% 96%;
+    /* Base: slate-800 style, foreground ≥ 4.5:1 on background */
+    --background: 224 13% 17%;
+    --foreground: 210 40% 98%;
 
-    --card: 0 0% 17%;
-    --card-foreground: 0 0% 92%;
+    --card: 224 13% 20%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 0 0% 17%;
-    --popover-foreground: 0 0% 92%;
+    --popover: 224 13% 20%;
+    --popover-foreground: 210 40% 98%;
 
-    /* Primary blue ~#1A73E8 (DevUtils accent) */
-    --primary: 217 91% 56%;
+    /* Primary: blue-600 style, 4.5:1 on white and on dark bg */
+    --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary – #605956 (warm gray) */
-    --secondary: 18 5% 36%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 215 14% 26%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 0 0% 24%;
-    --muted-foreground: 0 0% 58%;
+    --muted: 215 14% 26%;
+    --muted-foreground: 215 9% 58%;
 
-    --accent: 217 91% 56%;
+    --accent: 221 83% 53%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62% 52%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 26%;
-    --input: 0 0% 22%;
-    --ring: 217 91% 56%;
+    --border: 216 12% 24%;
+    --input: 216 12% 21%;
+    --ring: 221 83% 53%;
 
     --radius: 0.625rem;
 
-    /* Sidebar #363636; text trắng/sáng như DevUtils */
-    --sidebar-background: 0 0% 21%;
-    --sidebar-foreground: 0 0% 97%;
-    --sidebar-primary: 217 91% 56%;
+    --sidebar-background: 224 13% 14%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 221 83% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 26%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 0 0% 24%;
-    --sidebar-ring: 217 91% 56%;
+    --sidebar-accent: 215 14% 24%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 216 12% 22%;
+    --sidebar-ring: 221 83% 53%;
 
-    /* Title bar / header; active tab */
-    --header-bg: 0 0% 19%;
-    --header-tab-bg: 0 0% 27%;
+    --header-bg: 224 13% 15%;
+    --header-tab-bg: 215 14% 24%;
 
-    /* Code block #2A2A2A; text sáng */
-    --code-bg: 0 0% 16%;
-    --code-border: 0 0% 22%;
-    --code-text: 0 0% 94%;
-    /* JSON/code syntax (dark): key, string, number, boolean, bracket, comment */
-    --code-key: 0 0% 92%;
-    --code-string: 142 52% 58%;
-    --code-number: 38 92% 52%;
-    --code-boolean: 199 89% 48%;
-    --code-null: 199 89% 48%;
-    --code-bracket: 0 0% 62%;
-    --code-punctuation: 0 0% 62%;
-    --code-comment: 0 0% 50%;
+    /* Code: VS Code–style syntax, sufficient contrast */
+    --code-bg: 224 13% 14%;
+    --code-border: 216 12% 22%;
+    --code-text: 210 40% 96%;
+    --code-key: 210 40% 92%;
+    --code-string: 142 69% 58%;
+    --code-number: 31 92% 50%;
+    --code-boolean: 258 90% 66%;
+    --code-null: 258 90% 66%;
+    --code-bracket: 215 9% 62%;
+    --code-punctuation: 215 9% 62%;
+    --code-comment: 215 9% 48%;
 
-    --outline-button-bg: 0 0% 26%;
-    --outline-button-border: 0 0% 35%;
-    --outline-button-foreground: 0 0% 100%;
+    --outline-button-bg: 215 14% 24%;
+    --outline-button-border: 216 12% 32%;
+    --outline-button-foreground: 210 40% 98%;
 
     --font-mono: 'JetBrains Mono', ui-monospace, monospace;
     --font-sans: 'Inter', system-ui, sans-serif;
@@ -106,66 +103,63 @@
   }
 
   .light {
-    /* Content background #F6F0EB – warm, soft */
-    --background: 32 35% 95%;
-    --foreground: 24 14% 24%;
+    /* Warm neutrals (25°), WCAG AA on background; elevated surfaces pure white */
+    --background: 25 20% 97%;
+    --foreground: 25 25% 18%;
 
     --card: 0 0% 100%;
-    --card-foreground: 24 14% 24%;
+    --card-foreground: 25 25% 18%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 24 14% 24%;
+    --popover-foreground: 25 25% 18%;
 
-    --primary: 212 85% 52%;
+    --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary – light warm gray (matches #605956 hue/saturation, lighter for light theme) */
-    --secondary: 18 8% 88%;
-    --secondary-foreground: 24 14% 26%;
+    --secondary: 25 15% 90%;
+    --secondary-foreground: 25 25% 22%;
 
-    --muted: 32 14% 93%;
-    --muted-foreground: 24 10% 48%;
+    --muted: 25 15% 92%;
+    --muted-foreground: 25 15% 42%;
 
-    --accent: 212 85% 52%;
+    --accent: 221 83% 53%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62% 48%;
+    --destructive: 0 72% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 32 14% 89%;
-    --input: 32 14% 92%;
-    --ring: 212 85% 52%;
+    --border: 25 12% 88%;
+    --input: 25 12% 91%;
+    --ring: 221 83% 53%;
 
     --radius: 0.625rem;
 
-    /* Sidebar #E9E3E1 */
-    --sidebar-background: 28 12% 91%;
-    --sidebar-foreground: 24 14% 28%;
-    --sidebar-primary: 212 85% 52%;
+    --sidebar-background: 25 18% 94%;
+    --sidebar-foreground: 25 25% 22%;
+    --sidebar-primary: 221 83% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 32 12% 87%;
-    --sidebar-accent-foreground: 24 14% 24%;
-    --sidebar-border: 30 10% 86%;
-    --sidebar-ring: 212 85% 52%;
+    --sidebar-accent: 25 15% 90%;
+    --sidebar-accent-foreground: 25 25% 18%;
+    --sidebar-border: 25 12% 88%;
+    --sidebar-ring: 221 83% 53%;
 
-    /* Code block white */
-    --code-bg: 0 0% 100%;
-    --code-border: 32 10% 89%;
-    --code-text: 24 14% 28%;
-    --code-key: 24 60% 28%;
+    --code-bg: 0 0% 99%;
+    --code-border: 25 10% 90%;
+    --code-text: 25 25% 22%;
+    --code-key: 25 35% 22%;
     --code-string: 142 45% 32%;
-    --code-number: 28 80% 38%;
-    --code-boolean: 260 55% 42%;
-    --code-null: 260 55% 42%;
-    --code-bracket: 24 10% 45%;
-    --code-punctuation: 24 10% 45%;
-    --code-comment: 24 8% 55%;
+    --code-number: 25 75% 32%;
+    --code-boolean: 258 55% 38%;
+    --code-null: 258 55% 38%;
+    --code-bracket: 25 15% 42%;
+    --code-punctuation: 25 15% 42%;
+    --code-comment: 25 10% 52%;
 
     --outline-button-bg: 0 0% 100%;
-    --outline-button-border: 32 10% 86%;
-    --outline-button-foreground: 24 14% 24%;
+    --outline-button-border: 25 12% 85%;
+    --outline-button-foreground: 25 25% 18%;
 
-    --header-bg: 0 0% 96%;
+    --header-bg: 0 0% 98%;
     --header-tab-bg: 0 0% 100%;
 
     /* Liquid Glass – light: same blur, visible edge */
@@ -179,6 +173,71 @@
     --text-content: 0.875rem;
   }
 
+  /* Deep dark: near-black (0°), OLED-friendly, WCAG AA muted text */
+  .deep-dark {
+    --background: 0 0% 7%;
+    --foreground: 0 0% 96%;
+
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 96%;
+
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 96%;
+
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 58%;
+
+    --accent: 221 83% 53%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 16%;
+    --input: 0 0% 12%;
+    --ring: 221 83% 53%;
+
+    --radius: 0.625rem;
+
+    --sidebar-background: 0 0% 9%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 221 83% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 16%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 0 0% 14%;
+    --sidebar-ring: 221 83% 53%;
+
+    --header-bg: 0 0% 8%;
+    --header-tab-bg: 0 0% 14%;
+
+    --code-bg: 0 0% 8%;
+    --code-border: 0 0% 14%;
+    --code-text: 0 0% 94%;
+    --code-key: 0 0% 92%;
+    --code-string: 142 69% 58%;
+    --code-number: 31 92% 50%;
+    --code-boolean: 258 90% 66%;
+    --code-null: 258 90% 66%;
+    --code-bracket: 0 0% 58%;
+    --code-punctuation: 0 0% 58%;
+    --code-comment: 0 0% 48%;
+
+    --outline-button-bg: 0 0% 14%;
+    --outline-button-border: 0 0% 22%;
+    --outline-button-foreground: 0 0% 98%;
+
+    --glass-blur: 44px;
+    --glass-saturate: 200%;
+    --glass-border-opacity: 0.12;
+    --glass-highlight: 0.08;
+  }
 
   * {
     @apply border-border;
@@ -206,10 +265,13 @@
 
   /* Content area behind sidebar: gradient so glass blur has depth */
   html.desktop .desktop-layout {
-    background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(0 0% 22%), hsl(0 0% 14%));
+    background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(224 13% 22%), hsl(224 13% 12%));
   }
   html.desktop.light .desktop-layout {
-    background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(32 30% 97%), hsl(32 25% 92%));
+    background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(25 25% 98%), hsl(25 20% 94%));
+  }
+  html.desktop.deep-dark .desktop-layout {
+    background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(0 0% 10%), hsl(0 0% 5%));
   }
 
   /* Title bar: Liquid Glass – translucent, blur, edge + shine */
@@ -223,6 +285,10 @@
   .light .desktop-title-bar {
     border-bottom-color: hsl(0 0% 0% / var(--glass-border-opacity));
     box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / 0.5);
+  }
+  .deep-dark .desktop-title-bar {
+    border-bottom-color: hsl(0 0% 100% / var(--glass-border-opacity));
+    box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / var(--glass-highlight));
   }
   .desktop-title-bar .title-tab {
     background: hsl(var(--header-tab-bg));
@@ -463,6 +529,13 @@
     border-right: 1px solid hsl(0 0% 0% / var(--glass-border-opacity));
     box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / 0.6);
   }
+  .deep-dark .sidebar-glass {
+    background: hsl(0 0% 6% / 0.5);
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    border-right: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));
+    box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / var(--glass-highlight));
+  }
 
   /* Reusable Liquid Glass surface (e.g. cards, panels in desktop app) */
   .glass-surface {
@@ -474,6 +547,10 @@
   .light .glass-surface {
     background: hsl(var(--background) / 0.75);
     border-color: hsl(var(--border) / 0.7);
+  }
+  .deep-dark .glass-surface {
+    background: hsl(var(--background) / 0.75);
+    border-color: hsl(var(--border) / 0.5);
   }
 
   .prose-markdown {

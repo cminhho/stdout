@@ -12,19 +12,21 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const root = document.documentElement;
-    const applyTheme = (isDark: boolean) => {
-      root.classList.toggle("dark", isDark);
-      root.classList.toggle("light", !isDark);
-    };
+    root.classList.remove("dark", "light", "deep-dark");
 
     if (state.theme === "dark") {
-      applyTheme(true);
+      root.classList.add("dark");
     } else if (state.theme === "light") {
-      applyTheme(false);
+      root.classList.add("light");
+    } else if (state.theme === "deep-dark") {
+      root.classList.add("deep-dark");
     } else {
       const mq = window.matchMedia("(prefers-color-scheme: dark)");
-      applyTheme(mq.matches);
-      const handler = (e: MediaQueryListEvent) => applyTheme(e.matches);
+      root.classList.add(mq.matches ? "dark" : "light");
+      const handler = () => {
+        root.classList.remove("dark", "light");
+        root.classList.add(mq.matches ? "dark" : "light");
+      };
       mq.addEventListener("change", handler);
       return () => mq.removeEventListener("change", handler);
     }

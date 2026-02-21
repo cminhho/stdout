@@ -8,7 +8,7 @@ function useResolvedTheme(): "light" | "dark" {
   const { theme } = useSettings();
   const [resolved, setResolved] = useState<"light" | "dark">(() => {
     if (theme === "light") return "light";
-    if (theme === "dark") return "dark";
+    if (theme === "dark" || theme === "deep-dark") return "dark";
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   });
 
@@ -17,7 +17,7 @@ function useResolvedTheme(): "light" | "dark" {
       setResolved("light");
       return;
     }
-    if (theme === "dark") {
+    if (theme === "dark" || theme === "deep-dark") {
       setResolved("dark");
       return;
     }

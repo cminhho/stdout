@@ -9,8 +9,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { SITE } from "@/site";
 
 const themes: { value: Theme; label: string; desc: string }[] = [
-  { value: "dark", label: "Dark", desc: "Dark background with light text" },
   { value: "light", label: "Light", desc: "Light background with dark text" },
+  { value: "dark", label: "Dark", desc: "Dark background with light text" },
+  { value: "deep-dark", label: "Deep dark", desc: "Near-black, easy on the eyes" },
   { value: "system", label: "System", desc: "Follow OS preference" },
 ];
 
@@ -75,7 +76,7 @@ const SettingsPage = () => {
               <Palette className="h-4 w-4 text-primary" />
               Theme
             </h3>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {themes.map((t) => (
                 <button
                   key={t.value}

@@ -94,29 +94,45 @@ Built for **trust, performance, and extensibility**.
 
 ## 📦 Installation
 
-Clone the repository:
+### Get the app
+
+**macOS (desktop app)**
+
+```bash
+brew tap cminhho/tap
+brew install --cask cminhho/tap/stdout
+```
+
+Then open **stdout** from Applications or Spotlight. If macOS blocks the first open (“developer cannot be verified”), run once: `xattr -cr /Applications/stdout.app`
+
+**Web** — Run locally (see below) or deploy the built `dist/` to any static host.
+
+---
+
+### Development
+
+Clone and install:
 
 ```bash
 git clone https://github.com/cminhho/stdout.git
 cd stdout
-```
-
-Install dependencies:
-
-```bash
 npm install
 ```
 
-Start development server:
+**Web (Vite)**
 
 ```bash
-npm run dev
+npm run dev          # Dev server
+npm run build        # Production build → dist/
 ```
 
-Build for production:
+**Desktop (Electron)**
 
 ```bash
-npm run build
+npm run electron:dev           # Dev with hot reload
+npm run electron:build:mac     # Build macOS app (arm64 + x64) → release/
+npm run electron:build:win     # Build Windows
+npm run electron:build:linux   # Build Linux
 ```
 
 ---
