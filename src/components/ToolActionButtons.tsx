@@ -3,8 +3,8 @@ import { FileCode, Eraser, Download } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { downloadAsFile } from "@/utils/download";
 
-/** Shared style for tool bar actions (Sample, Clear, Save, Upload) so they stay consistent across pages. */
-export const toolButtonClass = "h-7 text-xs";
+/** Shared style for tool bar actions (Sample, Clear, Save, Upload) – matches --text-content across pages. */
+export const toolButtonClass = "h-8 text-sm";
 
 const iconClass = "h-3.5 w-3.5 mr-1.5";
 
@@ -19,7 +19,7 @@ export function SampleButton({ onClick, disabled, className }: SampleButtonProps
     <Button
       type="button"
       size="sm"
-      variant="outline"
+      variant="toolbar"
       className={cn(toolButtonClass, className)}
       onClick={onClick}
       disabled={disabled}
@@ -41,7 +41,7 @@ export function ClearButton({ onClick, disabled, className }: ClearButtonProps) 
     <Button
       type="button"
       size="sm"
-      variant="outline"
+      variant="toolbar"
       className={cn(toolButtonClass, className)}
       onClick={onClick}
       disabled={disabled}
@@ -77,7 +77,7 @@ export function SaveButton({
     <Button
       type="button"
       size="sm"
-      variant="outline"
+      variant="toolbar"
       className={cn(toolButtonClass, className)}
       onClick={onClick}
       disabled={disabled}

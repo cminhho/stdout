@@ -6,7 +6,7 @@ import CodeEditor from "@/components/CodeEditor";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ClearButton } from "@/components/ToolActionButtons";
+import { ClearButton, toolButtonClass } from "@/components/ToolActionButtons";
 
 const generatePassword = (length: number, opts: { upper: boolean; lower: boolean; digits: boolean; symbols: boolean }): string => {
   let chars = "";
@@ -87,7 +87,7 @@ const PasswordPage = () => {
                     {k === "upper" ? "A-Z" : k === "lower" ? "a-z" : k === "digits" ? "0-9" : "!@#$"}
                   </label>
                 ))}
-                <Button size="sm" className="h-7 text-xs" onClick={generate}>Generate</Button>
+                <Button size="sm" variant="toolbar" className={toolButtonClass} onClick={generate}>Generate</Button>
                 {passwordText && <ClearButton onClick={() => setPasswords([])} />}
               </div>
             }

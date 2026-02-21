@@ -1,11 +1,12 @@
 import { useState } from "react";
 import ToolLayout from "@/components/ToolLayout";
+import { SelectWithOptions } from "@/components/ui/select";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
 import PanelHeader from "@/components/PanelHeader";
 import { Button } from "@/components/ui/button";
 import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
+import { ClearButton, SampleButton, toolButtonClass } from "@/components/ToolActionButtons";
 
 const SAMPLE_INPUT = "banana\napple\ncherry\napple\nbanana";
 
@@ -63,16 +64,19 @@ const ListCollatorPage = () => {
                 <label className="flex items-center gap-1.5 text-xs text-muted-foreground whitespace-nowrap">
                   <input type="checkbox" checked={removeEmpty} onChange={(e) => setRemoveEmpty(e.target.checked)} className="rounded border-input" /> No empty
                 </label>
-                <select
+                <SelectWithOptions
+                  size="sm"
                   value={sortOrder}
-                  onChange={(e) => setSortOrder(e.target.value as "asc" | "desc" | "none")}
-                  className="h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0"
-                >
-                  <option value="asc">A→Z</option>
-                  <option value="desc">Z→A</option>
-                  <option value="none">No sort</option>
-                </select>
-                <Button size="sm" className="h-7 text-xs" onClick={process}>Process</Button>
+                  onValueChange={(v) => setSortOrder(v as "asc" | "desc" | "none")}
+                  options={[
+                    { value: "asc", label: "A→Z" },
+                    { value: "desc", label: "Z→A" },
+                    { value: "none", label: "No sort" },
+                  ]}
+                  title="Sort order"
+                  aria-label="Sort order"
+                />
+                <Button size="sm" variant="toolbar" className={toolButtonClass} onClick={process}>Process</Button>
               </div>
             }
           />

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SelectWithOptions } from "@/components/ui/select";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { type EscaperType } from "@/utils/escaper";
 import EscaperPage from "./EscaperPage";
@@ -27,17 +28,14 @@ const UnifiedEscaperPage = () => {
       title={title}
       description={description}
       formatSelector={
-        <select
+        <SelectWithOptions
+        size="sm"
           value={type}
-          onChange={(e) => setType(e.target.value as EscaperType)}
-          className="h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0"
-        >
-          {ESCAPER_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
+          onValueChange={setType}
+          options={ESCAPER_OPTIONS}
+          title="Escape format"
+          aria-label="Escape format"
+        />
       }
     />
   );

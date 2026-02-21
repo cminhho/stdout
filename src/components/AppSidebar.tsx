@@ -126,7 +126,7 @@ const AppSidebar = () => {
   if (sidebarCollapsed) {
     return (
       <aside
-        className={`w-12 shrink-0 flex flex-col border-r bg-sidebar border-sidebar-border ${isElectron ? "h-full min-h-0" : "h-screen sticky top-0"}`}
+        className={`w-12 shrink-0 flex flex-col border-r border-sidebar-border ${isElectron ? "h-full min-h-0 sidebar-glass" : "h-screen sticky top-0 bg-sidebar"}`}
       >
         <div className="flex items-center justify-center py-2.5 border-b border-sidebar-border">
           <Tooltip>
@@ -176,7 +176,7 @@ const AppSidebar = () => {
 
   return (
     <aside
-      className={`w-80 shrink-0 flex flex-col border-r bg-sidebar border-sidebar-border ${isElectron ? "h-full min-h-0" : "h-screen sticky top-0"}`}
+      className={`w-80 shrink-0 flex flex-col border-r border-sidebar-border ${isElectron ? "h-full min-h-0 sidebar-glass" : "h-screen sticky top-0 bg-sidebar"}`}
     >
       <div className="flex items-center justify-between px-4 py-3">
         <Tooltip>

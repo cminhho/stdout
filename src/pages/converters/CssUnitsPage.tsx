@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
+import { SelectWithOptions } from "@/components/ui/select";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CopyButton from "@/components/CopyButton";
 import { CSS_UNITS_LIST, CSS_UNITS_DEFAULT_BASE, convertToAllUnits } from "@/utils/cssUnits";
@@ -28,11 +29,14 @@ const CssUnitsPage = () => {
             </div>
             <div>
               <label className="text-xs text-muted-foreground block mb-1">From</label>
-              <select value={fromUnit} onChange={(e) => setFromUnit(e.target.value)} className="tool-select">
-                {CSS_UNITS_LIST.map((u) => (
-                <option key={u} value={u}>{u}</option>
-              ))}
-              </select>
+              <SelectWithOptions
+                size="sm"
+                value={fromUnit}
+                onValueChange={setFromUnit}
+                options={CSS_UNITS_LIST.map((u) => ({ value: u, label: u }))}
+                title="From unit"
+                aria-label="From unit"
+              />
             </div>
             <div>
               <label className="text-xs text-muted-foreground block mb-1">Base font-size</label>

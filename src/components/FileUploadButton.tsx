@@ -76,7 +76,7 @@ const FileUploadButton = ({
           <Button
             type="button"
             size="sm"
-            variant="outline"
+            variant="toolbar"
             className={cn(toolButtonClass, buttonClassName)}
             disabled={isDisabled}
             isLoading={loading}

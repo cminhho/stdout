@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
+import { SelectWithOptions } from "@/components/ui/select";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
 import PanelHeader from "@/components/PanelHeader";
@@ -9,7 +10,12 @@ import { Input } from "@/components/ui/input";
 
 type ViewMode = "input" | "table";
 
-const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
+const DELIMITER_OPTIONS = [
+  { value: ",", label: "Comma (,)" },
+  { value: "\t", label: "Tab" },
+  { value: ";", label: "Semicolon (;)" },
+  { value: "|", label: "Pipe (|)" },
+] as const;
 
 const SAMPLE_CSV = "name,age,city\nAlice,30,NYC\nBob,25,LA\nCarol,28,Chicago";
 
@@ -58,12 +64,14 @@ const CsvViewerPage = () => {
     <ToolLayout title={tool?.label ?? "CSV Viewer"} description={tool?.description ?? "View and search CSV files in a table"}>
       <div className="flex flex-col flex-1 min-h-0 gap-3">
         <div className="tool-toolbar flex flex-wrap items-center gap-2 text-left">
-          <select value={delimiter} onChange={(e) => setDelimiter(e.target.value)} className={selectClass}>
-            <option value=",">Comma (,)</option>
-            <option value="	">Tab</option>
-            <option value=";">Semicolon (;)</option>
-            <option value="|">Pipe (|)</option>
-          </select>
+          <SelectWithOptions
+              size="sm"
+              value={delimiter}
+              onValueChange={setDelimiter}
+              options={DELIMITER_OPTIONS.map((o) => ({ value: o.value, label: o.label }))}
+              title="Delimiter"
+              aria-label="CSV delimiter"
+            />
           {parsed && (
             <>
               <div className="flex rounded-md border border-border overflow-hidden">

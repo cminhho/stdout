@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import { SelectWithOptions } from "@/components/ui/select";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { ClearButton, SampleButton } from "@/components/ToolActionButtons";
 import FileUploadButton from "@/components/FileUploadButton";
@@ -16,8 +17,6 @@ import {
   ASCII_ART_CHAR_STYLES,
   ASCII_ART_SPACING_OPTIONS,
 } from "@/utils/asciiArt";
-
-const selectClass = "h-7 rounded border border-input bg-background pl-2 pr-6 text-xs min-w-0";
 
 const AsciiArtPage = () => {
   const tool = useCurrentTool();
@@ -37,16 +36,22 @@ const AsciiArtPage = () => {
         onClear: () => setInput(""),
         toolbar: (
           <>
-            <select value={charStyle} onChange={(e) => setCharStyle(e.target.value as AsciiArtCharStyle)} className={selectClass}>
-              {ASCII_ART_CHAR_STYLES.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
-              ))}
-            </select>
-            <select value={spacing} onChange={(e) => setSpacing(Number(e.target.value))} className={selectClass}>
-              {ASCII_ART_SPACING_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
-              ))}
-            </select>
+            <SelectWithOptions
+              size="sm"
+              value={charStyle}
+              onValueChange={setCharStyle}
+              options={ASCII_ART_CHAR_STYLES}
+              title="Character style"
+              aria-label="Character style"
+            />
+            <SelectWithOptions
+              size="sm"
+              value={String(spacing)}
+              onValueChange={(v) => setSpacing(Number(v))}
+              options={ASCII_ART_SPACING_OPTIONS.map((o) => ({ value: String(o.value), label: o.label }))}
+              title="Spacing"
+              aria-label="Spacing"
+            />
             <SampleButton onClick={() => setInput(ASCII_ART_SAMPLE)} />
             <ClearButton onClick={() => setInput("")} />
             <FileUploadButton accept={ASCII_ART_FILE_ACCEPT} onText={setInput} />

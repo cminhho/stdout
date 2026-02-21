@@ -284,20 +284,19 @@ const getTokenizer = (lang: Language) => {
   }
 };
 
-// ── Token colors (CSS variables) ─────────────────────────────────────
-
+/* Token colors from CSS variables (JSON/code dark theme: key white, string green, number orange, boolean cyan) */
 const tokenColors: Record<Token["type"], string> = {
-  key: "hsl(var(--accent))",
-  string: "hsl(var(--code-text))",
-  number: "hsl(35 90% 65%)",
-  boolean: "hsl(280 60% 70%)",
-  null: "hsl(280 60% 70%)",
-  bracket: "hsl(var(--muted-foreground))",
-  punctuation: "hsl(var(--muted-foreground))",
+  key: "hsl(var(--code-key))",
+  string: "hsl(var(--code-string))",
+  number: "hsl(var(--code-number))",
+  boolean: "hsl(var(--code-boolean))",
+  null: "hsl(var(--code-null))",
+  bracket: "hsl(var(--code-bracket))",
+  punctuation: "hsl(var(--code-punctuation))",
   tag: "hsl(0 70% 65%)",
-  attr: "hsl(35 90% 65%)",
-  keyword: "hsl(280 60% 70%)",
-  comment: "hsl(var(--muted-foreground) / 0.6)",
+  attr: "hsl(var(--code-number))",
+  keyword: "hsl(var(--code-boolean))",
+  comment: "hsl(var(--code-comment))",
   text: "hsl(var(--foreground))",
 };
 
@@ -373,7 +372,7 @@ const CodeEditor = ({
         }}
       >
         <div
-          className="overflow-auto p-3 font-mono text-xs"
+          className="overflow-auto p-3 font-mono text-sm leading-relaxed"
           style={
             fillHeight
               ? { height: "100%", minHeight: 0 }
@@ -409,9 +408,9 @@ const CodeEditor = ({
             {lines.map((_, i) => (
               <div
                 key={i}
-                className="text-right pr-2 leading-relaxed text-xs font-mono"
+                className="text-right pr-2 leading-relaxed text-sm font-mono"
                 style={{
-                  height: "1.625em",
+                  height: "1.5em",
                   color: errorLines?.has(i + 1) ? "hsl(var(--destructive))" : "hsl(var(--muted-foreground) / 0.5)",
                   fontWeight: errorLines?.has(i + 1) ? 600 : 400,
                 }}
@@ -426,7 +425,7 @@ const CodeEditor = ({
       <div
         ref={highlightRef}
         aria-hidden
-        className="absolute top-0 bottom-0 right-0 overflow-hidden pointer-events-none z-[1] p-3 font-mono text-xs leading-relaxed whitespace-pre"
+        className="absolute top-0 bottom-0 right-0 overflow-hidden pointer-events-none z-[1] p-3 font-mono text-sm leading-relaxed whitespace-pre"
         style={{ left: gutterWidth }}
       >
         {lines.map((line, i) => (
@@ -434,7 +433,7 @@ const CodeEditor = ({
             key={i}
             className="whitespace-pre"
             style={{
-              height: "1.625em",
+              height: "1.5em",
               background: errorLines?.has(i + 1) ? "hsl(var(--destructive) / 0.08)" : "transparent",
             }}
           >
@@ -459,7 +458,7 @@ const CodeEditor = ({
         readOnly={readOnly}
         placeholder={placeholder}
         spellCheck={false}
-        className="relative z-[3] w-full h-full p-3 font-mono text-xs leading-relaxed bg-transparent border-none outline-none resize-y overflow-auto"
+        className="relative z-[3] w-full h-full p-3 font-mono text-sm leading-relaxed bg-transparent border-none outline-none resize-y overflow-auto"
         style={{
           paddingLeft: contentPaddingLeft,
           color: "transparent",

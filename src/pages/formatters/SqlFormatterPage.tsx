@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import CodeEditor from "@/components/CodeEditor";
 import FileUploadButton from "@/components/FileUploadButton";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
+import { SelectWithOptions } from "@/components/ui/select";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { ClearButton, SampleButton, SaveButton } from "@/components/ToolActionButtons";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
@@ -18,6 +19,25 @@ import {
   SQL_OUTPUT_FILENAME,
   SQL_OUTPUT_PLACEHOLDER,
 } from "@/utils/sqlFormat";
+
+const DIALECT_OPTIONS: { value: SqlDialect; label: string }[] = [
+  { value: "standard", label: "Standard" },
+  { value: "mysql", label: "MySQL" },
+  { value: "mariadb", label: "MariaDB" },
+  { value: "postgresql", label: "PostgreSQL" },
+  { value: "plsql", label: "PL/SQL" },
+];
+
+const KEYWORD_CASE_OPTIONS: { value: SqlKeywordCase; label: string }[] = [
+  { value: "upper", label: "Keywords: Upper" },
+  { value: "lower", label: "Keywords: Lower" },
+];
+
+const IDENTIFIER_CASE_OPTIONS: { value: SqlIdentifierCase; label: string }[] = [
+  { value: "as-is", label: "Identifiers: As-is" },
+  { value: "upper", label: "Identifiers: Upper" },
+  { value: "lower", label: "Identifiers: Lower" },
+];
 
 const SqlFormatterPage = () => {
   const tool = useCurrentTool();
@@ -44,13 +64,14 @@ const SqlFormatterPage = () => {
             <SampleButton onClick={loadSample} />
             <ClearButton onClick={clearInput} />
             <FileUploadButton accept={SQL_FILE_ACCEPT} onText={setInput} />
-            <select value={dialect} onChange={(e) => setDialect(e.target.value as SqlDialect)} title="Dialect">
-              <option value="standard">Standard</option>
-              <option value="mysql">MySQL</option>
-              <option value="mariadb">MariaDB</option>
-              <option value="postgresql">PostgreSQL</option>
-              <option value="plsql">PL/SQL</option>
-            </select>
+            <SelectWithOptions<SqlDialect>
+              size="sm"
+              value={dialect}
+              onValueChange={setDialect}
+              options={DIALECT_OPTIONS}
+              title="Dialect"
+              aria-label="SQL dialect"
+            />
           </>
         ),
         onClear: clearInput,
@@ -68,15 +89,22 @@ const SqlFormatterPage = () => {
         copyText: output,
         toolbar: (
           <>
-            <select value={keywordCase} onChange={(e) => setKeywordCase(e.target.value as SqlKeywordCase)} title="Keyword case">
-              <option value="upper">Keywords: Upper</option>
-              <option value="lower">Keywords: Lower</option>
-            </select>
-            <select value={identifierCase} onChange={(e) => setIdentifierCase(e.target.value as SqlIdentifierCase)} title="Identifier case">
-              <option value="as-is">Identifiers: As-is</option>
-              <option value="upper">Identifiers: Upper</option>
-              <option value="lower">Identifiers: Lower</option>
-            </select>
+            <SelectWithOptions<SqlKeywordCase>
+              size="sm"
+              value={keywordCase}
+              onValueChange={setKeywordCase}
+              options={KEYWORD_CASE_OPTIONS}
+              title="Keyword case"
+              aria-label="Keyword case"
+            />
+            <SelectWithOptions<SqlIdentifierCase>
+              size="sm"
+              value={identifierCase}
+              onValueChange={setIdentifierCase}
+              options={IDENTIFIER_CASE_OPTIONS}
+              title="Identifier case"
+              aria-label="Identifier case"
+            />
             <IndentSelect value={indent} onChange={setIndent} />
             {output ? (
               <SaveButton content={output} filename={SQL_OUTPUT_FILENAME} mimeType={SQL_MIME_TYPE} />

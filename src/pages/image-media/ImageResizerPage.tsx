@@ -1,11 +1,12 @@
 import { useState, useRef, useCallback } from "react";
 import ToolLayout from "@/components/ToolLayout";
+import { SelectWithOptions } from "@/components/ui/select";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton, SaveButton } from "@/components/ToolActionButtons";
+import { ClearButton, SaveButton, toolButtonClass } from "@/components/ToolActionButtons";
 import { Upload } from "lucide-react";
 
 const ImageResizerPage = () => {
@@ -120,11 +121,18 @@ const ImageResizerPage = () => {
                   <input type="checkbox" checked={keepRatio} onChange={(e) => setKeepRatio(e.target.checked)} className="accent-primary" />
                   Keep ratio
                 </label>
-                <select value={format} onChange={(e) => setFormat(e.target.value as "png" | "jpeg" | "webp")} className="rounded-md border px-2 py-1 text-xs bg-background border-border text-foreground">
-                  <option value="png">PNG</option>
-                  <option value="jpeg">JPEG</option>
-                  <option value="webp">WebP</option>
-                </select>
+                <SelectWithOptions
+                  size="sm"
+                  value={format}
+                  onValueChange={(v) => setFormat(v as "png" | "jpeg" | "webp")}
+                  options={[
+                    { value: "png", label: "PNG" },
+                    { value: "jpeg", label: "JPEG" },
+                    { value: "webp", label: "WebP" },
+                  ]}
+                  title="Output format"
+                  aria-label="Output format"
+                />
                 {format !== "png" && (
                   <div className="flex items-center gap-1">
                     <label className="text-xs text-muted-foreground">Quality:</label>
@@ -134,7 +142,7 @@ const ImageResizerPage = () => {
                 )}
               </div>
               <div className="flex gap-2">
-                <Button size="sm" onClick={resize}>Resize</Button>
+                <Button size="sm" variant="toolbar" className={toolButtonClass} onClick={resize}>Resize</Button>
                 <SaveButton label="Download" onClick={download} className="h-7 text-xs" />
               </div>
             </div>
