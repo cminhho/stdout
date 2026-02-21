@@ -2,9 +2,6 @@ import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { SelectWithOptions } from "@/components/ui/select";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
-import FileUploadButton from "@/components/FileUploadButton";
 import type { IndentOption } from "@/components/IndentSelect";
 import {
   processAsciiArtForLayout,
@@ -34,8 +31,13 @@ const AsciiArtPage = () => {
     <TwoPanelToolLayout
       tool={tool}
       inputPane={{
-        onClear: () => setInput(""),
-        toolbar: (
+        inputToolbar: {
+          onSample: () => setInput(ASCII_ART_SAMPLE),
+          setInput,
+          fileAccept: ASCII_ART_FILE_ACCEPT,
+          onFileText: setInput,
+        },
+        inputToolbarExtra: (
           <>
             <SelectWithOptions
               size="sm"
@@ -53,9 +55,6 @@ const AsciiArtPage = () => {
               title="Spacing"
               aria-label="Spacing"
             />
-            <SampleButton onClick={() => setInput(ASCII_ART_SAMPLE)} />
-            <ClearButton onClick={() => setInput("")} />
-            <FileUploadButton accept={ASCII_ART_FILE_ACCEPT} onText={setInput} />
           </>
         ),
         inputEditor: {

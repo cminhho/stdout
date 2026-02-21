@@ -3,7 +3,10 @@
  */
 
 export const HTML_ENTITY_FILE_ACCEPT = ".html,.htm,text/html,text/plain";
-export const HTML_ENTITY_SAMPLE = "<div>Hello &amp; World</div>";
+/** Sample for Encode mode (plain HTML with special chars). */
+export const HTML_ENTITY_SAMPLE_ENCODE = "<div>Hello & World</div>";
+/** Sample for Decode mode (entity-encoded HTML). */
+export const HTML_ENTITY_SAMPLE_DECODE = "<div>Hello &amp; World</div>";
 export const HTML_ENTITY_PLACEHOLDER_INPUT = "<div>Hello</div>";
 export const HTML_ENTITY_PLACEHOLDER_OUTPUT = "Result will appear here...";
 export const HTML_ENTITY_OUTPUT_FILENAME = "output.html";

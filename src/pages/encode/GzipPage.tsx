@@ -1,23 +1,34 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import { SegmentGroup } from "@/components/SegmentGroup";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import { Button } from "@/components/ui/button";
 import type { IndentOption } from "@/components/IndentSelect";
 import {
   processGzipForLayout,
   type GzipMode,
   GZIP_FILE_ACCEPT,
   GZIP_SAMPLE,
+  GZIP_SAMPLE_DECODE,
   GZIP_PLACEHOLDER_INPUT,
   GZIP_PLACEHOLDER_OUTPUT,
   GZIP_OUTPUT_FILENAME,
   GZIP_MIME_TYPE,
 } from "@/utils/gzip";
 
+const MODE_OPTIONS: { value: GzipMode; label: string }[] = [
+  { value: "compress", label: "Compress" },
+  { value: "decompress", label: "Decompress" },
+];
+
 const GzipPage = () => {
   const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<GzipMode>("compress");
+
+  const setModeWithCleanup = useCallback((next: GzipMode) => {
+    setMode(next);
+    setInput("");
+  }, []);
 
   const format = useCallback(
     (inputValue: string, _indent: IndentOption) => processGzipForLayout(inputValue, mode),
@@ -29,20 +40,18 @@ const GzipPage = () => {
       tool={tool}
       inputPane={{
         inputToolbar: {
-          onSample: () => setInput(GZIP_SAMPLE),
+          onSample: () => setInput(mode === "compress" ? GZIP_SAMPLE : GZIP_SAMPLE_DECODE),
           setInput,
           fileAccept: GZIP_FILE_ACCEPT,
           onFileText: setInput,
         },
         inputToolbarExtra: (
-          <>
-            <Button size="sm" variant={mode === "compress" ? "default" : "outline"} className="h-7 text-xs" onClick={() => setMode("compress")}>
-              Compress
-            </Button>
-            <Button size="sm" variant={mode === "decompress" ? "default" : "outline"} className="h-7 text-xs" onClick={() => setMode("decompress")}>
-              Decompress
-            </Button>
-          </>
+          <SegmentGroup<GzipMode>
+            value={mode}
+            onValueChange={setModeWithCleanup}
+            options={MODE_OPTIONS}
+            ariaLabel="Mode"
+          />
         ),
         inputEditor: {
           value: input,

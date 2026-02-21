@@ -1,15 +1,8 @@
 import { useState, useMemo } from "react";
-import ToolLayout from "@/components/ToolLayout";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { SelectWithOptions } from "@/components/ui/select";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import CodeEditor from "@/components/CodeEditor";
-import PanelHeader from "@/components/PanelHeader";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
-import FileUploadButton from "@/components/FileUploadButton";
 import { Input } from "@/components/ui/input";
-
-type ViewMode = "input" | "table";
 
 const DELIMITER_OPTIONS = [
   { value: ",", label: "Comma (,)" },
@@ -19,6 +12,7 @@ const DELIMITER_OPTIONS = [
 ] as const;
 
 const SAMPLE_CSV = "name,age,city\nAlice,30,NYC\nBob,25,LA\nCarol,28,Chicago";
+const CSV_PLACEHOLDER = "name,age,city\nAlice,30,NYC\nBob,25,LA";
 
 const CsvViewerPage = () => {
   const tool = useCurrentTool();
@@ -27,7 +21,6 @@ const CsvViewerPage = () => {
   const [search, setSearch] = useState("");
   const [sortCol, setSortCol] = useState(-1);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
-  const [viewMode, setViewMode] = useState<ViewMode>("table");
 
   const parsed = useMemo(() => {
     if (!csv.trim()) return null;
@@ -62,60 +55,46 @@ const CsvViewerPage = () => {
   };
 
   return (
-    <ToolLayout title={tool?.label ?? "CSV Viewer"} description={tool?.description ?? "View and search CSV files in a table"}>
-      <div className="flex flex-col flex-1 min-h-0 gap-3">
-        <div className="tool-toolbar flex flex-wrap items-center gap-2 text-left">
+    <TwoPanelToolLayout
+      tool={tool}
+      inputPane={{
+        inputToolbar: {
+          onSample: () => setCsv(SAMPLE_CSV),
+          setInput: setCsv,
+          fileAccept: ".csv,.tsv,.txt",
+          onFileText: setCsv,
+        },
+        inputToolbarExtra: (
           <SelectWithOptions
-              size="sm"
-              value={delimiter}
-              onValueChange={setDelimiter}
-              options={DELIMITER_OPTIONS.map((o) => ({ value: o.value, label: o.label }))}
-              title="Delimiter"
-              aria-label="CSV delimiter"
+            size="sm"
+            value={delimiter}
+            onValueChange={setDelimiter}
+            options={DELIMITER_OPTIONS.map((o) => ({ value: o.value, label: o.label }))}
+            title="Delimiter"
+            aria-label="CSV delimiter"
+          />
+        ),
+        inputEditor: {
+          value: csv,
+          onChange: setCsv,
+          language: "text",
+          placeholder: CSV_PLACEHOLDER,
+        },
+      }}
+      outputPane={{
+        title: "Table",
+        toolbar: parsed ? (
+          <>
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search..."
+              className="input-compact flex-1 min-w-[160px] max-w-xs h-7"
             />
-          {parsed && (
-            <>
-              <div className="flex rounded-md border border-border overflow-hidden">
-                <button
-                  type="button"
-                  onClick={() => setViewMode("input")}
-                  className={`px-2.5 py-1.5 text-xs font-medium transition-colors ${viewMode === "input" ? "bg-primary text-primary-foreground" : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"}`}
-                >
-                  Input
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setViewMode("table")}
-                  className={`px-2.5 py-1.5 text-xs font-medium transition-colors ${viewMode === "table" ? "bg-primary text-primary-foreground" : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"}`}
-                >
-                  Table
-                </button>
-              </div>
-              <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search..." className="input-compact flex-1 min-w-[160px] max-w-xs" />
-              <span className="text-xs text-muted-foreground">{filtered?.rows.length}/{parsed.rows.length} rows</span>
-            </>
-          )}
-        </div>
-
-        {(!parsed || viewMode === "input") && (
-          <div className="tool-panel flex flex-col flex-1 min-h-0">
-            <PanelHeader
-              label={parsed ? "CSV Input" : "Or paste CSV"}
-              extra={
-                <div className="flex items-center gap-2">
-                  <SampleButton onClick={() => setCsv(SAMPLE_CSV)} />
-                  <ClearButton onClick={() => setCsv("")} />
-                  <FileUploadButton accept=".csv,.tsv,.txt" onText={setCsv} />
-                </div>
-              }
-            />
-            <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
-              <CodeEditor value={csv} onChange={setCsv} language="text" placeholder="name,age,city&#10;Alice,30,NYC&#10;Bob,25,LA" fillHeight />
-            </div>
-          </div>
-        )}
-
-        {parsed && viewMode === "table" && filtered && filtered.headers.length > 0 && (
+            <span className="text-xs text-muted-foreground shrink-0">{filtered?.rows.length ?? 0}/{parsed.rows.length} rows</span>
+          </>
+        ) : undefined,
+        children: parsed && filtered && filtered.headers.length > 0 ? (
           <div className="flex-1 min-h-0 overflow-auto rounded-md border border-border bg-card">
             <table className="w-full text-xs">
               <thead>
@@ -139,11 +118,19 @@ const CsvViewerPage = () => {
                 ))}
               </tbody>
             </table>
-            {filtered.rows.length > 500 && <div className="text-xs text-muted-foreground text-center py-2">Showing first 500 of {filtered.rows.length} rows</div>}
+            {filtered.rows.length > 500 && (
+              <div className="text-xs text-muted-foreground text-center py-2">
+                Showing first 500 of {filtered.rows.length} rows
+              </div>
+            )}
           </div>
-        )}
-      </div>
-    </ToolLayout>
+        ) : (
+          <div className="flex-1 min-h-0 flex items-center justify-center rounded-md border border-border bg-muted/20 text-sm text-muted-foreground">
+            Paste CSV or upload a file to see table
+          </div>
+        ),
+      }}
+    />
   );
 };
 

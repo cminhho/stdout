@@ -1,9 +1,6 @@
-import { useState, useCallback, useMemo } from "react";
-import ToolLayout from "@/components/ToolLayout";
+import { useState, useMemo, useCallback } from "react";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import PanelHeader from "@/components/PanelHeader";
-import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton } from "@/components/ClearButton";
 import { Input } from "@/components/ui/input";
 
 interface HarEntry {
@@ -13,22 +10,38 @@ interface HarEntry {
   time: number;
 }
 
+const SAMPLE_HAR = JSON.stringify(
+  {
+    log: {
+      entries: [
+        {
+          startedDateTime: "2024-01-01T00:00:00.000Z",
+          request: { method: "GET", url: "https://example.com/", headers: [] },
+          response: { status: 200, statusText: "OK", content: { size: 1024, mimeType: "text/html" }, headers: [] },
+          time: 100,
+        },
+      ],
+    },
+  },
+  null,
+  2
+);
+
 const HarViewerPage = () => {
   const tool = useCurrentTool();
-  const [entries, setEntries] = useState<HarEntry[]>([]);
+  const [harText, setHarText] = useState("");
   const [selected, setSelected] = useState<HarEntry | null>(null);
   const [filter, setFilter] = useState("");
-  const [error, setError] = useState("");
 
-  const loadHarFromText = useCallback((text: string) => {
+  const { entries, error } = useMemo(() => {
+    if (!harText.trim()) return { entries: [] as HarEntry[], error: "" };
     try {
-      const har = JSON.parse(text);
-      setEntries(har.log?.entries || []);
-      setError("");
+      const har = JSON.parse(harText);
+      return { entries: har.log?.entries ?? [], error: "" };
     } catch (err) {
-      setError((err as Error).message);
+      return { entries: [], error: (err as Error).message };
     }
-  }, []);
+  }, [harText]);
 
   const filtered = useMemo(() => {
     if (!filter) return entries;
@@ -43,85 +56,120 @@ const HarViewerPage = () => {
   };
 
   const clearHar = useCallback(() => {
-    setEntries([]);
+    setHarText("");
     setSelected(null);
-    setError("");
     setFilter("");
   }, []);
 
   return (
-    <ToolLayout title={tool?.label ?? "HAR Viewer"} description={tool?.description ?? "Inspect HAR (HTTP Archive) files"}>
-      <div className="space-y-3 flex flex-col flex-1 min-h-0">
-        <PanelHeader
-          label="HAR File"
-          extra={
-            <div className="flex items-center gap-2">
-              <FileUploadButton accept=".har,.json" onText={loadHarFromText} />
-              {entries.length > 0 && <ClearButton onClick={clearHar} />}
-              {entries.length > 0 && (
-                <>
-                  <Input value={filter} onChange={(e) => setFilter(e.target.value)} placeholder="Filter..." className="input-compact flex-1 min-w-0 max-w-[140px] font-mono h-7" />
-                  <span className="text-xs text-muted-foreground shrink-0">{filtered.length}/{entries.length}</span>
-                </>
-              )}
-            </div>
-          }
-        />
-
-        {error && <div className="code-block text-destructive text-xs">⚠ {error}</div>}
-
-        {filtered.length > 0 && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-            <div className="code-block max-h-[65vh] overflow-y-auto space-y-0.5 p-2">
-              {filtered.map((entry, i) => {
-                const url = new URL(entry.request.url);
-                return (
-                  <div key={i} onClick={() => setSelected(entry)} className={`flex items-center gap-2 text-xs font-mono px-2 py-1 rounded cursor-pointer transition-colors ${selected === entry ? "bg-primary/15 text-primary" : "hover:bg-muted"}`}>
-                    <span className={`w-10 shrink-0 font-medium ${statusColor(entry.response.status)}`}>{entry.response.status}</span>
-                    <span className="w-12 shrink-0 text-muted-foreground">{entry.request.method}</span>
-                    <span className="truncate">{url.pathname}{url.search}</span>
-                    <span className="ml-auto text-muted-foreground shrink-0">{entry.time.toFixed(0)}ms</span>
-                  </div>
-                );
-              })}
-            </div>
-
-            {selected && (
-              <div className="code-block max-h-[65vh] overflow-y-auto p-3 space-y-3 text-xs">
-                <div>
-                  <span className="text-muted-foreground">URL: </span>
-                  <span className="text-foreground break-all">{selected.request.url}</span>
-                </div>
-                <div className="flex gap-4">
-                  <div><span className="text-muted-foreground">Method: </span>{selected.request.method}</div>
-                  <div><span className="text-muted-foreground">Status: </span><span className={statusColor(selected.response.status)}>{selected.response.status} {selected.response.statusText}</span></div>
-                  <div><span className="text-muted-foreground">Time: </span>{selected.time.toFixed(0)}ms</div>
-                  <div><span className="text-muted-foreground">Size: </span>{(selected.response.content.size / 1024).toFixed(1)}KB</div>
-                </div>
-                <div>
-                  <div className="text-muted-foreground mb-1">Request Headers:</div>
-                  {selected.request.headers.slice(0, 20).map((h, i) => (
-                    <div key={i}><span className="text-primary">{h.name}:</span> {h.value}</div>
-                  ))}
-                </div>
-                <div>
-                  <div className="text-muted-foreground mb-1">Response Headers:</div>
-                  {selected.response.headers.slice(0, 20).map((h, i) => (
-                    <div key={i}><span className="text-primary">{h.name}:</span> {h.value}</div>
-                  ))}
-                </div>
+    <TwoPanelToolLayout
+      tool={tool}
+      inputPane={{
+        inputToolbar: {
+          onSample: () => setHarText(SAMPLE_HAR),
+          setInput: setHarText,
+          fileAccept: ".har,.json",
+          onFileText: setHarText,
+        },
+        onClear: clearHar,
+        inputEditor: {
+          value: harText,
+          onChange: setHarText,
+          language: "json",
+          placeholder: '{"log":{"entries":[]}}',
+        },
+      }}
+      outputPane={{
+        title: "Entries",
+        toolbar:
+          entries.length > 0 ? (
+            <>
+              <Input
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                placeholder="Filter..."
+                className="input-compact flex-1 min-w-0 max-w-[140px] font-mono h-7"
+              />
+              <span className="text-xs text-muted-foreground shrink-0">{filtered.length}/{entries.length}</span>
+            </>
+          ) : undefined,
+        children: (
+          <>
+            {error && <div className="code-block text-destructive text-xs mb-2">⚠ {error}</div>}
+            {entries.length === 0 && !error && (
+              <div className="flex-1 min-h-0 flex items-center justify-center rounded-md border border-border bg-muted/20 text-sm text-muted-foreground">
+                Paste HAR JSON or upload a .har file to inspect
               </div>
             )}
-          </div>
-        )}
-
-        {entries.length === 0 && !error && (
-          <div className="tool-card text-center py-12 text-sm text-muted-foreground">
-            Upload a .har file to inspect HTTP requests
-          </div>
-        )}
-      </div>
-    </ToolLayout>
+            {filtered.length > 0 && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1 min-h-0">
+                <div className="code-block max-h-full overflow-y-auto space-y-0.5 p-2">
+                  {filtered.map((entry, i) => {
+                    try {
+                      const url = new URL(entry.request.url);
+                      return (
+                        <div
+                          key={i}
+                          onClick={() => setSelected(entry)}
+                          className={`flex items-center gap-2 text-xs font-mono px-2 py-1 rounded cursor-pointer transition-colors ${selected === entry ? "bg-primary/15 text-primary" : "hover:bg-muted"}`}
+                        >
+                          <span className={`w-10 shrink-0 font-medium ${statusColor(entry.response.status)}`}>{entry.response.status}</span>
+                          <span className="w-12 shrink-0 text-muted-foreground">{entry.request.method}</span>
+                          <span className="truncate">{url.pathname}{url.search}</span>
+                          <span className="ml-auto text-muted-foreground shrink-0">{entry.time.toFixed(0)}ms</span>
+                        </div>
+                      );
+                    } catch {
+                      return (
+                        <div
+                          key={i}
+                          onClick={() => setSelected(entry)}
+                          className={`flex items-center gap-2 text-xs font-mono px-2 py-1 rounded cursor-pointer transition-colors truncate ${selected === entry ? "bg-primary/15 text-primary" : "hover:bg-muted"}`}
+                        >
+                          <span className={statusColor(entry.response.status)}>{entry.response.status}</span>
+                          <span className="text-muted-foreground">{entry.request.method}</span>
+                          <span className="truncate">{entry.request.url}</span>
+                        </div>
+                      );
+                    }
+                  })}
+                </div>
+                {selected ? (
+                  <div className="code-block max-h-full overflow-y-auto p-3 space-y-3 text-xs">
+                    <div>
+                      <span className="text-muted-foreground">URL: </span>
+                      <span className="text-foreground break-all">{selected.request.url}</span>
+                    </div>
+                    <div className="flex gap-4 flex-wrap">
+                      <div><span className="text-muted-foreground">Method: </span>{selected.request.method}</div>
+                      <div><span className="text-muted-foreground">Status: </span><span className={statusColor(selected.response.status)}>{selected.response.status} {selected.response.statusText}</span></div>
+                      <div><span className="text-muted-foreground">Time: </span>{selected.time.toFixed(0)}ms</div>
+                      <div><span className="text-muted-foreground">Size: </span>{(selected.response.content.size / 1024).toFixed(1)}KB</div>
+                    </div>
+                    <div>
+                      <div className="text-muted-foreground mb-1">Request Headers:</div>
+                      {selected.request.headers.slice(0, 20).map((h, i) => (
+                        <div key={i}><span className="text-primary">{h.name}:</span> {h.value}</div>
+                      ))}
+                    </div>
+                    <div>
+                      <div className="text-muted-foreground mb-1">Response Headers:</div>
+                      {selected.response.headers.slice(0, 20).map((h, i) => (
+                        <div key={i}><span className="text-primary">{h.name}:</span> {h.value}</div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center text-sm text-muted-foreground border border-border rounded-md bg-muted/20">
+                    Select an entry
+                  </div>
+                )}
+              </div>
+            )}
+          </>
+        ),
+      }}
+    />
   );
 };
 

@@ -13,7 +13,10 @@ export const base64Decode = (s: string): string =>
   decodeURIComponent(escape(atob(s)));
 
 export const BASE64_FILE_ACCEPT = ".txt,text/plain,application/octet-stream";
+/** Sample for Encode mode (plain text). */
 export const BASE64_SAMPLE = "Hello, Base64!";
+/** Sample for Decode mode (base64 of BASE64_SAMPLE). */
+export const BASE64_SAMPLE_DECODE = "SGVsbG8sIEJhc2U2NCE=";
 export const BASE64_PLACEHOLDER_INPUT = "Enter text...";
 export const BASE64_PLACEHOLDER_OUTPUT = "Result will appear here...";
 export const BASE64_OUTPUT_FILENAME = "output.txt";

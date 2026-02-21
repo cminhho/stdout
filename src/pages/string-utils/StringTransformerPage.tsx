@@ -1,13 +1,28 @@
 import { useState, useMemo } from "react";
-import ToolLayout from "@/components/ToolLayout";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import { Button } from "@/components/ui/button";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import PanelHeader from "@/components/PanelHeader";
-import CodeEditor from "@/components/CodeEditor";
-import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
 
 const SAMPLE_INPUT = "hello world example";
+const TRANSFORM_NAMES = [
+  "camelCase",
+  "PascalCase",
+  "snake_case",
+  "SCREAMING_SNAKE",
+  "kebab-case",
+  "dot.case",
+  "Title Case",
+  "UPPERCASE",
+  "lowercase",
+  "Reverse",
+  "Slug",
+  "Trim Lines",
+  "Remove Empty Lines",
+  "Sort Lines (A-Z)",
+  "Unique Lines",
+  "Escape Quotes",
+  "Unescape Quotes",
+] as const;
 
 const transforms: Record<string, (s: string) => string> = {
   "camelCase": (s) => s.replace(/[-_\s]+(.)?/g, (_, c) => c ? c.toUpperCase() : "").replace(/^[A-Z]/, (c) => c.toLowerCase()),
@@ -32,70 +47,61 @@ const transforms: Record<string, (s: string) => string> = {
 const StringTransformerPage = () => {
   const tool = useCurrentTool();
   const [input, setInput] = useState("");
-  const [selected, setSelected] = useState("camelCase");
+  const [selected, setSelected] = useState<(typeof TRANSFORM_NAMES)[number]>("camelCase");
 
   const output = useMemo(() => {
     if (!input) return "";
     return transforms[selected]?.(input) ?? input;
   }, [input, selected]);
 
-  const stats = useMemo(() => {
-    if (!input) return null;
-    const chars = input.length;
-    const words = input.trim() ? input.trim().split(/\s+/).length : 0;
-    const lines = input.split("\n").length;
-    const bytes = new TextEncoder().encode(input).length;
-    return { chars, words, lines, bytes };
-  }, [input]);
-
   return (
-    <ToolLayout title={tool?.label ?? "String Utilities"} description={tool?.description ?? "Convert between camelCase, snake_case, and more"}>
-      {stats && (
-        <div className="flex flex-wrap gap-2 text-xs mb-3">
-          {Object.entries(stats).map(([label, value]) => (
-            <span key={label} className="px-2 py-0.5 rounded bg-muted text-muted-foreground capitalize">
-              {label}: <span className="font-mono font-medium text-foreground">{value}</span>
-            </span>
-          ))}
-        </div>
-      )}
-
-      <div className="flex flex-wrap gap-1.5 mb-3">
-        {Object.keys(transforms).map((name) => (
-          <button
-            key={name}
-            onClick={() => setSelected(name)}
-            className={`px-2.5 py-1 rounded-md text-xs font-mono transition-colors ${selected === name ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground"}`}
+    <TwoPanelToolLayout
+      tool={tool}
+      inputPane={{
+        inputToolbar: {
+          onSample: () => setInput(SAMPLE_INPUT),
+          setInput,
+          fileAccept: ".txt,text/plain",
+          onFileText: setInput,
+        },
+        inputEditor: {
+          value: input,
+          onChange: setInput,
+          language: "text",
+          placeholder: "Enter text to transform...",
+        },
+      }}
+      outputPane={{
+        title: `Result (${selected})`,
+        copyText: output || undefined,
+        toolbar: (
+          <div
+            role="group"
+            aria-label="Transform type"
+            className="flex flex-wrap gap-1.5 rounded-lg border border-input bg-muted/50 p-1"
           >
-            {name}
-          </button>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader
-            label="Input"
-            extra={
-              <div className="flex items-center gap-2">
-                <SampleButton onClick={() => setInput(SAMPLE_INPUT)} />
-                <ClearButton onClick={() => setInput("")} />
-                <FileUploadButton accept=".txt,text/plain" onText={setInput} />
-              </div>
-            }
-          />
-          <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor value={input} onChange={setInput} language="text" placeholder="Enter text to transform..." fillHeight />
+            {TRANSFORM_NAMES.map((name) => (
+              <Button
+                key={name}
+                type="button"
+                variant={selected === name ? "default" : "ghost"}
+                size="xs"
+                className="min-w-0 font-mono"
+                aria-pressed={selected === name}
+                onClick={() => setSelected(name)}
+              >
+                {name}
+              </Button>
+            ))}
           </div>
-        </div>
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label={`Result (${selected})`} text={output} />
-          <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor value={output} readOnly language="text" placeholder="Result will appear here..." fillHeight />
-          </div>
-        </div>
-      </div>
-    </ToolLayout>
+        ),
+        outputEditor: {
+          value: output,
+          language: "text",
+          placeholder: "Result will appear here...",
+        },
+      }}
+    />
   );
 };
 

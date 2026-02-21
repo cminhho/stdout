@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import { SegmentGroup } from "@/components/SegmentGroup";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import { Button } from "@/components/ui/button";
 import type { IndentOption } from "@/components/IndentSelect";
 import {
   processEnvNetlifyForLayout,
@@ -13,6 +13,12 @@ import {
   ENV_NETLIFY_PLACEHOLDER_OUTPUT,
   ENV_NETLIFY_MIME_TYPE,
 } from "@/utils/envNetlify";
+
+const OUTPUT_FORMAT_OPTIONS: { value: EnvOutputFormat; label: string }[] = [
+  { value: "netlify", label: "netlify.toml" },
+  { value: "docker", label: "Dockerfile" },
+  { value: "yaml", label: "YAML" },
+];
 
 const EnvNetlifyPage = () => {
   const tool = useCurrentTool();
@@ -36,21 +42,6 @@ const EnvNetlifyPage = () => {
           fileAccept: ENV_NETLIFY_FILE_ACCEPT,
           onFileText: setInput,
         },
-        inputToolbarExtra: (
-          <>
-            {(["netlify", "docker", "yaml"] as const).map((f) => (
-              <Button
-                key={f}
-                size="sm"
-                variant={outputFormat === f ? "default" : "outline"}
-                onClick={() => setOutputFormat(f)}
-                className="h-7 text-xs"
-              >
-                {f === "netlify" ? "netlify.toml" : f === "docker" ? "Dockerfile" : "YAML"}
-              </Button>
-            ))}
-          </>
-        ),
         inputEditor: {
           value: input,
           onChange: setInput,
@@ -67,6 +58,14 @@ const EnvNetlifyPage = () => {
           indentSpaceOptions: [2, 4],
           indentIncludeTab: false,
         },
+        outputToolbarExtra: (
+          <SegmentGroup<EnvOutputFormat>
+            value={outputFormat}
+            onValueChange={setOutputFormat}
+            options={OUTPUT_FORMAT_OPTIONS}
+            ariaLabel="Output format"
+          />
+        ),
         outputEditor: {
           value: "",
           language: outputLang,

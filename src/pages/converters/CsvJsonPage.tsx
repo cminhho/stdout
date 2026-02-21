@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import { SegmentGroup } from "@/components/SegmentGroup";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import { Button } from "@/components/ui/button";
 import type { IndentOption } from "@/components/IndentSelect";
 import type { CsvJsonMode } from "@/utils/csvJson";
 import {
@@ -18,10 +18,20 @@ import {
   CSV_JSON_MIME_CSV,
 } from "@/utils/csvJson";
 
+const MODE_OPTIONS: { value: CsvJsonMode; label: string }[] = [
+  { value: "csv2json", label: "CSV → JSON" },
+  { value: "json2csv", label: "JSON → CSV" },
+];
+
 const CsvJsonPage = () => {
   const tool = useCurrentTool();
   const [mode, setMode] = useState<CsvJsonMode>("csv2json");
   const [input, setInput] = useState("");
+
+  const setModeWithCleanup = useCallback((next: CsvJsonMode) => {
+    setMode(next);
+    setInput("");
+  }, []);
 
   const format = useCallback(
     (inputValue: string, indent: IndentOption) => processCsvJson(inputValue, indent, mode),
@@ -44,14 +54,12 @@ const CsvJsonPage = () => {
           onFileText: setInput,
         },
         inputToolbarExtra: (
-          <>
-            <Button size="sm" variant={mode === "csv2json" ? "default" : "outline"} onClick={() => setMode("csv2json")} className="h-7 text-xs">
-              CSV → JSON
-            </Button>
-            <Button size="sm" variant={mode === "json2csv" ? "default" : "outline"} onClick={() => setMode("json2csv")} className="h-7 text-xs">
-              JSON → CSV
-            </Button>
-          </>
+          <SegmentGroup<CsvJsonMode>
+            value={mode}
+            onValueChange={setModeWithCleanup}
+            options={MODE_OPTIONS}
+            ariaLabel="Conversion direction"
+          />
         ),
         inputEditor: {
           value: input,

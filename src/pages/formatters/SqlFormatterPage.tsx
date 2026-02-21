@@ -1,11 +1,8 @@
 import { useMemo, useState } from "react";
 import CodeEditor from "@/components/CodeEditor";
-import FileUploadButton from "@/components/FileUploadButton";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 import { SelectWithOptions } from "@/components/ui/select";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
 import { SaveButton } from "@/components/SaveButton";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import {
@@ -54,38 +51,32 @@ const SqlFormatterPage = () => {
     [input, indent, dialect, keywordCase, identifierCase]
   );
 
-  const loadSample = () => setInput(SQL_FORMATTER_SAMPLE);
-  const clearInput = () => setInput("");
-
   return (
     <TwoPanelToolLayout
       tool={tool}
       inputPane={{
-        toolbar: (
-          <>
-            <SampleButton onClick={loadSample} />
-            <ClearButton onClick={clearInput} />
-            <FileUploadButton accept={SQL_FILE_ACCEPT} onText={setInput} />
-            <SelectWithOptions<SqlDialect>
-              size="sm"
-              value={dialect}
-              onValueChange={setDialect}
-              options={DIALECT_OPTIONS}
-              title="Dialect"
-              aria-label="SQL dialect"
-            />
-          </>
-        ),
-        onClear: clearInput,
-        children: (
-          <CodeEditor
-            value={input}
-            onChange={setInput}
-            language={SQL_LANGUAGE}
-            placeholder={SQL_INPUT_PLACEHOLDER}
-            fillHeight
+        inputToolbar: {
+          onSample: () => setInput(SQL_FORMATTER_SAMPLE),
+          setInput,
+          fileAccept: SQL_FILE_ACCEPT,
+          onFileText: setInput,
+        },
+        inputToolbarExtra: (
+          <SelectWithOptions<SqlDialect>
+            size="sm"
+            value={dialect}
+            onValueChange={setDialect}
+            options={DIALECT_OPTIONS}
+            title="Dialect"
+            aria-label="SQL dialect"
           />
         ),
+        inputEditor: {
+          value: input,
+          onChange: setInput,
+          language: SQL_LANGUAGE,
+          placeholder: SQL_INPUT_PLACEHOLDER,
+        },
       }}
       outputPane={{
         copyText: output,
