@@ -276,7 +276,7 @@ const AppSidebar = () => {
               href="https://www.buymeacoffee.com/chungho"
               target="_blank"
               rel="noopener noreferrer"
-              className="sidebar-donate-link text-[11px]"
+              className="sidebar-donate-link"
               title="Support the project — Buy me a coffee"
               aria-label="Buy me a coffee"
             >

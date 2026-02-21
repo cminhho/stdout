@@ -189,7 +189,7 @@ const ResizableTwoPanel = ({
       <Pane
         pane={{ ...input, title: input.title ?? DEFAULT_INPUT_TITLE }}
         resizerSide={isLg ? "right" : undefined}
-        className="min-w-0 flex-1 lg:flex-none lg:shrink-0"
+        className="min-w-0 flex-1 lg:flex-none lg:shrink-0 p-2"
         style={isLg ? { width: `${inputPercent}%`, minWidth: 120 } : undefined}
       />
 
@@ -210,7 +210,7 @@ const ResizableTwoPanel = ({
       <Pane
         pane={{ ...output, title: output.title ?? DEFAULT_OUTPUT_TITLE }}
         resizerSide={isLg ? "left" : undefined}
-        className="flex-1 min-w-0 lg:min-h-0"
+        className="flex-1 min-w-0 lg:min-h-0 p-2"
       />
     </div>
   );
