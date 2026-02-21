@@ -1,0 +1,45 @@
+# Build macOS app and publish to GitHub Release for Homebrew Cask.
+# Trigger: push tag v* (e.g. git tag v1.0.0 && git push origin v1.0.0)
+
+name: Release macOS
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release-mac:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build macOS app (universal zip + dmg)
+        run: npm run electron:build:mac
+        env:
+          ELECTRON_BUILD: 1
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Create Release and upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/stdout-${{ steps.version.outputs.VERSION }}-mac.zip
+            release/stdout-${{ steps.version.outputs.VERSION }}.dmg
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
