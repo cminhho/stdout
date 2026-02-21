@@ -143,7 +143,7 @@ const ImageResizerPage = () => {
                 )}
               </div>
               <div className="flex gap-2">
-                <Button size="sm" variant="toolbar" onClick={resize}>Resize</Button>
+                <Button size="sm" variant="secondary" onClick={resize}>Resize</Button>
                 <SaveButton label="Download" onClick={download} className="h-7 text-xs" />
               </div>
             </div>

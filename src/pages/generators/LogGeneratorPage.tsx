@@ -143,7 +143,7 @@ const LogGeneratorPage = () => {
                     className="h-7 w-16 font-mono text-xs"
                   />
                 </div>
-                <Button size="sm" variant="toolbar" onClick={generate}>Generate</Button>
+                <Button size="sm" variant="secondary" onClick={generate}>Generate</Button>
                 {output && <SaveButton label="Save .log" onClick={download} className="h-7 text-xs" />}
                 {output && <ClearButton onClick={() => setOutput("")} />}
               </div>

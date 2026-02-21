@@ -102,7 +102,7 @@ const UuidPage = () => {
                   <input type="checkbox" checked={hyphens} onChange={(e) => setHyphens(e.target.checked)} className="accent-primary rounded border-input" />
                   Hyphens
                 </label>
-                <Button size="sm" variant="toolbar" onClick={generate}>Generate</Button>
+                <Button size="sm" variant="secondary" onClick={generate}>Generate</Button>
                 {outputText && <ClearButton onClick={() => setUuids([])} />}
               </div>
             }

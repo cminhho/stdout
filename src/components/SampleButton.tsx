@@ -5,11 +5,12 @@ export interface SampleButtonProps {
   onClick: () => void;
   disabled?: boolean;
   className?: string;
+  variant?: React.ComponentProps<typeof Button>["variant"];
 }
 
-export function SampleButton({ onClick, disabled, className }: SampleButtonProps) {
+export function SampleButton({ onClick, disabled, className, variant = "secondary" }: SampleButtonProps) {
   return (
-    <Button type="button" size="sm" variant="toolbar" className={className} onClick={onClick} disabled={disabled}>
+    <Button type="button" size="sm" variant={variant} className={className} onClick={onClick} disabled={disabled}>
       <FileCode className="h-3.5 w-3.5 mr-1.5" />
       Sample
     </Button>

@@ -4,6 +4,8 @@ import { Upload } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { readFileAsText } from "@/utils/fileUpload";
 
+type ButtonVariant = React.ComponentProps<typeof Button>["variant"];
+
 export type FileUploadButtonProps = {
   accept: string;
   children?: React.ReactNode;
@@ -11,6 +13,7 @@ export type FileUploadButtonProps = {
   buttonClassName?: string;
   disabled?: boolean;
   multiple?: boolean;
+  variant?: ButtonVariant;
 } & (
   | { onText: (text: string) => void; onSelect?: never }
   | { onSelect: (file: File) => void | Promise<void>; onText?: never }
@@ -29,6 +32,7 @@ const FileUploadButton = ({
   buttonClassName,
   disabled = false,
   multiple = false,
+  variant = "secondary",
 }: FileUploadButtonProps) => {
   const id = useId();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -75,7 +79,7 @@ const FileUploadButton = ({
           <Button
             type="button"
             size="sm"
-            variant="toolbar"
+            variant={variant}
             className={buttonClassName}
             disabled={isDisabled}
             isLoading={loading}

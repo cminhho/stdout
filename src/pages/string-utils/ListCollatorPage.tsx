@@ -71,7 +71,7 @@ const ListCollatorPage = () => {
               title="Sort order"
               aria-label="Sort order"
             />
-            <Button size="sm" variant="toolbar" onClick={process}>Process</Button>
+            <Button size="sm" variant="secondary" onClick={process}>Process</Button>
           </>
         ),
         outputEditor: {

@@ -14,8 +14,7 @@ const buttonVariants = cva(
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         /* Same as input/select: bg, text, border – consistent control in dark/light */
         outline: "border border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground",
-        secondary: "border border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground",
-        toolbar: "border border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground",
+        secondary: "border border-input bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:text-secondary-foreground",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },
