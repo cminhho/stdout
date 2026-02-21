@@ -11,6 +11,8 @@ on:
 jobs:
   release-mac:
     runs-on: macos-latest
+    permissions:
+      contents: write  # create release and upload assets
     steps:
       - name: Checkout
         uses: actions/checkout@v4
