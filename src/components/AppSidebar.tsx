@@ -179,14 +179,13 @@ const AppSidebar = () => {
       className={`w-80 shrink-0 flex flex-col border-r border-sidebar-border ${isElectron ? "h-full min-h-0 sidebar-glass" : "h-screen sticky top-0 bg-sidebar"}`}
     >
       <div className="flex items-center justify-between px-4 py-3">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <NavLink to="/" className="flex items-center justify-center w-8 h-8 rounded-md text-inherit no-underline hover:opacity-90 hover:bg-sidebar-accent transition-colors shrink-0" aria-label="Home">
-              <Terminal className="h-4 w-4 text-primary" />
-            </NavLink>
-          </TooltipTrigger>
-          <TooltipContent side="right">stdout</TooltipContent>
-        </Tooltip>
+        <NavLink
+          to="/"
+          className="text-sm font-semibold text-foreground no-underline hover:opacity-80 truncate min-w-0"
+          aria-label="Home"
+        >
+          stdout
+        </NavLink>
         <div className="flex items-center gap-2 shrink-0">
           <button onClick={toggleSidebar} className="text-muted-foreground hover:text-foreground transition-colors p-1" title="Collapse sidebar">
             <PanelLeftClose className="h-4 w-4" />
