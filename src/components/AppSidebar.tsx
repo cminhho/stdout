@@ -166,7 +166,7 @@ const AppSidebar = () => {
             );
           })}
         </nav>
-        <div className="sidebar-pad border-t border-sidebar-border flex justify-center">
+        <div className="sidebar-footer-pad border-t border-sidebar-border flex justify-center">
           <Tooltip>
             <TooltipTrigger asChild>
               <NavLink to="/settings" className="text-muted-foreground hover:text-foreground transition-colors">
@@ -247,7 +247,7 @@ const AppSidebar = () => {
         )}
       </nav>
 
-      <div className="flex items-center justify-between gap-2 sidebar-pad border-t border-sidebar-border">
+      <div className="flex items-center justify-between gap-2 sidebar-footer-pad border-t border-sidebar-border">
         {isDesktop ? (
           <Tooltip>
             <TooltipTrigger asChild>

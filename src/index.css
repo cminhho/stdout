@@ -424,6 +424,13 @@
     padding: var(--spacing-sidebar-y) var(--spacing-sidebar-x);
   }
 
+  .sidebar-footer-pad {
+    padding-top: var(--spacing-sidebar-gap);
+    padding-bottom: var(--spacing-sidebar-gap);
+    padding-left: var(--spacing-sidebar-x);
+    padding-right: var(--spacing-sidebar-x);
+  }
+
   .sidebar-link {
     @apply flex items-center gap-2 rounded-lg font-medium transition-colors duration-150;
     padding: var(--spacing-sidebar-y) var(--spacing-sidebar-x);

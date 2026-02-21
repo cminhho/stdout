@@ -33,7 +33,10 @@ interface CodeEditorProps {
   value: string;
   /** Called on content change. Second arg provides lines array for line-by-line consumers. */
   onChange?: (value: string, meta?: CodeEditorChangeMeta) => void;
-  /** Syntax highlighting language. */
+  /**
+   * Syntax highlighting language. Drives tokenization and is exposed as data-language on the root
+   * for styling, testing, and accessibility. Default "json"; set explicitly for correct highlighting.
+   */
   language?: Language;
   readOnly?: boolean;
   placeholder?: string;
@@ -48,6 +51,8 @@ interface CodeEditorProps {
   showLineNumbers?: boolean;
   /** When set, renders this content instead of the code textarea (e.g. JSON tree view). Same wrapper/border/scroll. */
   customContent?: React.ReactNode;
+  /** Optional aria-label for the code textarea (defaults to code view + language when readOnly). */
+  ariaLabel?: string;
 }
 
 // ── Syntax tokenizers ────────────────────────────────────────────────
@@ -166,12 +171,14 @@ const tokenizeSql = (line: string): Token[] => {
   return tokens;
 };
 
+const REGEX_YAML = /(#.*$)|([a-zA-Z_][\w.-]*)(\s*:)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(true|false|yes|no|on|off)\b|(null|~)\b|([-+]?\d+\.?\d*(?:[eE][+-]?\d+)?)\b|(-\s)|([|>][-+]?)|(.+)/g;
+
 const tokenizeYaml = (line: string): Token[] => {
   const tokens: Token[] = [];
-  const regex = /(#.*$)|([a-zA-Z_][\w.-]*)(\s*:)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(true|false|yes|no|on|off)\b|(null|~)\b|([-+]?\d+\.?\d*(?:[eE][+-]?\d+)?)\b|(-\s)|([|>][-+]?)|(.+)/g;
+  REGEX_YAML.lastIndex = 0;
   let match: RegExpExecArray | null;
   let lastIndex = 0;
-  while ((match = regex.exec(line)) !== null) {
+  while ((match = REGEX_YAML.exec(line)) !== null) {
     if (match.index > lastIndex) tokens.push({ type: "text", value: line.slice(lastIndex, match.index) });
     if (match[1]) tokens.push({ type: "comment", value: match[1] });
     else if (match[2]) { tokens.push({ type: "key", value: match[2] }); tokens.push({ type: "punctuation", value: match[3] }); }
@@ -182,7 +189,7 @@ const tokenizeYaml = (line: string): Token[] => {
     else if (match[8]) tokens.push({ type: "punctuation", value: match[8] });
     else if (match[9]) tokens.push({ type: "keyword", value: match[9] });
     else if (match[10]) tokens.push({ type: "text", value: match[10] });
-    lastIndex = regex.lastIndex;
+    lastIndex = REGEX_YAML.lastIndex;
   }
   if (lastIndex < line.length) tokens.push({ type: "text", value: line.slice(lastIndex) });
   return tokens;
@@ -227,24 +234,26 @@ const tokenizeCsv = (line: string): Token[] => {
   return tokens;
 };
 
+const REGEX_CODE_KEYWORDS =
+  /\b(interface|type|class|function|const|let|var|import|export|from|return|if|else|for|while|switch|case|break|continue|new|this|extends|implements|public|private|protected|static|readonly|abstract|async|await|try|catch|throw|finally|void|null|undefined|true|false|struct|func|package|data|val|var|fun|override|companion|object|sealed|enum|int|string|boolean|number|float|double|long|byte|char|short)\b/g;
+const REGEX_CODE = /(\/\/.*$|\/\*[\s\S]*?\*\/)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)|(\b\d+\.?\d*\b)|([{}[\]().,;:=<>!+\-*/&|?@])|(\w+)|(\s+)/g;
+
 const tokenizeCode = (line: string): Token[] => {
   const tokens: Token[] = [];
-  const keywords = /\b(interface|type|class|function|const|let|var|import|export|from|return|if|else|for|while|switch|case|break|continue|new|this|extends|implements|public|private|protected|static|readonly|abstract|async|await|try|catch|throw|finally|void|null|undefined|true|false|struct|func|package|data|val|var|fun|override|companion|object|sealed|enum|int|string|boolean|number|float|double|long|byte|char|short)\b/g;
-  const regex = /(\/\/.*$|\/\*[\s\S]*?\*\/)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)|(\b\d+\.?\d*\b)|([{}[\]().,;:=<>!+\-*/&|?@])|(\w+)|(\s+)/g;
+  REGEX_CODE.lastIndex = 0;
   let match: RegExpExecArray | null;
   let lastIndex = 0;
-  while ((match = regex.exec(line)) !== null) {
+  while ((match = REGEX_CODE.exec(line)) !== null) {
     if (match.index > lastIndex) tokens.push({ type: "text", value: line.slice(lastIndex, match.index) });
     if (match[1]) tokens.push({ type: "comment", value: match[1] });
     else if (match[2]) tokens.push({ type: "string", value: match[2] });
     else if (match[3]) tokens.push({ type: "number", value: match[3] });
     else if (match[4]) tokens.push({ type: "bracket", value: match[4] });
     else if (match[5]) {
-      if (keywords.test(match[5])) { keywords.lastIndex = 0; tokens.push({ type: "keyword", value: match[5] }); }
-      else tokens.push({ type: "text", value: match[5] });
-    }
-    else if (match[6]) tokens.push({ type: "text", value: match[6] });
-    lastIndex = regex.lastIndex;
+      REGEX_CODE_KEYWORDS.lastIndex = 0;
+      tokens.push({ type: REGEX_CODE_KEYWORDS.test(match[5]) ? "keyword" : "text", value: match[5] });
+    } else if (match[6]) tokens.push({ type: "text", value: match[6] });
+    lastIndex = REGEX_CODE.lastIndex;
   }
   if (lastIndex < line.length) tokens.push({ type: "text", value: line.slice(lastIndex) });
   return tokens;
@@ -361,6 +370,7 @@ const CodeEditor = ({
   onKeyDown: onKeyDownProp,
   showLineNumbers = true,
   customContent,
+  ariaLabel,
 }: CodeEditorProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const highlightRef = useRef<HTMLDivElement>(null);
@@ -370,6 +380,8 @@ const CodeEditor = ({
   const lines = useMemo(() => (value ? value.split("\n") : [""]), [value]);
   const tokenizer = useMemo(() => getTokenizer(language), [language]);
   const tokenizedLines = useMemo(() => lines.map((line) => tokenizer(line)), [lines, tokenizer]);
+
+  const textareaAriaLabel = ariaLabel ?? (readOnly ? `Code view, ${language}` : undefined);
 
   useCodeEditorScrollSync(textareaRef, highlightRef, gutterRef);
 
@@ -407,6 +419,7 @@ const CodeEditor = ({
     return (
       <div
         className={`code-editor-wrapper relative z-0 rounded-md border overflow-hidden ${fillHeight ? "h-full min-h-0" : ""} ${className}`}
+        data-language={language}
         style={{
           background: "hsl(var(--code-bg))",
           borderColor: "hsl(var(--code-border))",
@@ -430,6 +443,7 @@ const CodeEditor = ({
   return (
     <div
       className={`code-editor-wrapper relative z-0 rounded-md border overflow-hidden ${focused ? "ring-1 ring-ring" : ""} ${fillHeight ? "h-full min-h-0" : ""} ${className}`}
+      data-language={language}
       style={{
         background: "hsl(var(--code-bg))",
         borderColor: "hsl(var(--code-border))",
@@ -502,6 +516,7 @@ const CodeEditor = ({
         readOnly={readOnly}
         placeholder={placeholder}
         spellCheck={false}
+        aria-label={textareaAriaLabel}
         className="relative z-[3] w-full h-full font-mono text-sm bg-transparent border-none outline-none resize-y overflow-auto"
         style={{
           padding: "var(--spacing-code-editor)",
