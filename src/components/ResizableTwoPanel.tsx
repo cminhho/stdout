@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import PanelHeader from "@/components/PanelHeader";
 import { cn } from "@/utils/cn";
 
+const BREAKPOINT_LG = 1024;
 const DEFAULT_RESIZER_WIDTH = 16;
 const DEFAULT_MIN_INPUT_PERCENT = 20;
 const DEFAULT_MAX_INPUT_PERCENT = 80;
@@ -19,7 +20,7 @@ const PANEL_BODY_INNER_BASE =
 function useIsLg(): boolean {
   const [isLg, setIsLg] = useState(false);
   useEffect(() => {
-    const m = window.matchMedia("(min-width: 1024px)");
+    const m = window.matchMedia(`(min-width: ${BREAKPOINT_LG}px)`);
     const fn = () => setIsLg(m.matches);
     fn();
     m.addEventListener("change", fn);
@@ -181,13 +182,14 @@ const ResizableTwoPanel = ({
         "flex flex-col lg:flex-row flex-1 min-h-0 w-full",
         "gap-[var(--spacing-panel-gap)] lg:gap-0",
         "m-0 p-0",
+        !isLg && "two-panel-stacked",
         className
       )}
     >
       <Pane
         pane={{ ...input, title: input.title ?? DEFAULT_INPUT_TITLE }}
         resizerSide={isLg ? "right" : undefined}
-        className="min-w-0 flex-1 lg:flex-none lg:shrink-0 p-2"
+        className="min-w-0 flex-1 lg:flex-none lg:shrink-0"
         style={isLg ? { width: `${inputPercent}%`, minWidth: 120 } : undefined}
       />
 
@@ -198,7 +200,7 @@ const ResizableTwoPanel = ({
         aria-label="Resize panels"
         tabIndex={0}
         onMouseDown={onResizerMouseDown}
-        className={cn(RESIZER_BASE_CLASS, "panel-resizer p-0")}
+        className={cn(RESIZER_BASE_CLASS, "panel-resizer p-0 touch-none")}
         style={{ width: resizerWidth, minWidth: resizerWidth }}
       >
         {/* Full-height line: absolute so it always spans top-to-bottom regardless of flex context */}
@@ -208,7 +210,7 @@ const ResizableTwoPanel = ({
       <Pane
         pane={{ ...output, title: output.title ?? DEFAULT_OUTPUT_TITLE }}
         resizerSide={isLg ? "left" : undefined}
-        className="flex-1 min-w-0 lg:min-h-0 p-2"
+        className="flex-1 min-w-0 lg:min-h-0"
       />
     </div>
   );

@@ -269,18 +269,18 @@ const AppSidebar = () => {
         )}
       </nav>
 
-      <footer className="flex items-center justify-between gap-2 sidebar-footer-pad border-t border-sidebar-border flex-shrink-0" aria-label="Sidebar footer">
+      <footer className="flex items-center justify-between gap-1.5 sidebar-footer-pad border-t border-sidebar-border flex-shrink-0" aria-label="Sidebar footer">
         <Tooltip>
           <TooltipTrigger asChild>
             <a
               href="https://www.buymeacoffee.com/chungho"
               target="_blank"
               rel="noopener noreferrer"
-              className="sidebar-donate-link"
+              className="sidebar-donate-link text-[11px]"
               title="Support the project — Buy me a coffee"
               aria-label="Buy me a coffee"
             >
-              <Coffee className="sidebar-donate-link-icon" aria-hidden />
+              <Coffee className="sidebar-donate-link-icon shrink-0" aria-hidden />
               <span className="truncate">Buy me a coffee</span>
             </a>
           </TooltipTrigger>

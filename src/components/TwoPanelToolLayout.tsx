@@ -369,6 +369,7 @@ const TwoPanelToolLayout = ({
             "px-[var(--spacing-panel-inner-x)]"
           )}
         >
+          {/* Chrome spacing aligns with panes via --spacing-panel-inner-x; responsive via CSS @media (max-width: 1023px). */}
           {formatError ? (
             <div
               className="rounded-md border border-destructive/25 bg-destructive/10 px-2.5 py-1.5 text-xs text-destructive transition-colors duration-150"
