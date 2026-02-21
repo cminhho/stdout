@@ -78,6 +78,7 @@ Built for **trust, performance, and extensibility**.
 
 - 100% client-side processing
 - No data collection
+- **Works offline** — No remote APIs or CDN fonts; web build uses PWA cache after first load; desktop app runs fully offline
 - Modular architecture
 - Easy to extend with new tools
 

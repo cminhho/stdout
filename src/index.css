@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
-
+/* Fonts: system stack only so the app runs fully offline (no Google Fonts). */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -73,8 +72,8 @@
     --outline-button-border: 216 12% 32%;
     --outline-button-foreground: 210 40% 98%;
 
-    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-    --font-sans: 'Inter', system-ui, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    --font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
     /* Typography scale (across pages) */
     --text-nav: 0.75rem;
     --text-ui: 0.8125rem;

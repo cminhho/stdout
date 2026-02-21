@@ -134,17 +134,19 @@ const AppSidebar = () => {
   if (sidebarCollapsed) {
     return (
       <aside className={`w-12 ${SIDEBAR_ASIDE_BASE} ${SIDEBAR_ASIDE_LAYOUT}`}>
-        <div className="flex items-center justify-center sidebar-pad border-b border-sidebar-border">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button onClick={toggleSidebar} className="text-muted-foreground hover:text-foreground transition-colors">
-                <PanelLeftOpen className="h-4 w-4" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="right">Expand sidebar</TooltipContent>
-          </Tooltip>
-        </div>
-        <nav className="flex-1 overflow-y-auto space-y-[var(--spacing-sidebar-gap)] [padding:var(--spacing-sidebar-y)_0]">
+        {!isDesktop && (
+          <div className="flex items-center justify-center sidebar-pad border-b border-sidebar-border">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button onClick={toggleSidebar} className="text-muted-foreground hover:text-foreground transition-colors">
+                  <PanelLeftOpen className="h-4 w-4" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right">Expand sidebar</TooltipContent>
+            </Tooltip>
+          </div>
+        )}
+        <nav className="flex-1 overflow-y-auto space-y-[var(--spacing-sidebar-gap)] [padding:var(--spacing-sidebar-y)_0] sidebar-pad">
           {visibleItems.map((item) => {
             const Icon = getIcon(item.icon);
             return (
@@ -182,21 +184,18 @@ const AppSidebar = () => {
 
   return (
     <aside className={`w-80 ${SIDEBAR_ASIDE_BASE} ${SIDEBAR_ASIDE_LAYOUT}`}>
-      <div className="flex items-center justify-between sidebar-pad">
-        <NavLink
-          to="/"
-          className="text-sm font-semibold text-foreground no-underline hover:opacity-80 truncate min-w-0"
-          aria-label="Home"
-        >
-          stdout
-        </NavLink>
-        <div className="flex items-center gap-2 shrink-0">
-          <button onClick={toggleSidebar} className="text-muted-foreground hover:text-foreground transition-colors p-1" title="Collapse sidebar">
-            <PanelLeftClose className="h-4 w-4" />
-          </button>
+      {!isDesktop && (
+        <div className="flex items-center justify-end sidebar-pad border-b border-sidebar-border">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button onClick={toggleSidebar} className="text-muted-foreground hover:text-foreground transition-colors p-1" title="Collapse sidebar">
+                <PanelLeftClose className="h-4 w-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">Collapse sidebar</TooltipContent>
+          </Tooltip>
         </div>
-      </div>
-
+      )}
       <div className="sidebar-pad">
         <div className="relative">
           <Search className="absolute left-[var(--spacing-sidebar-x)] top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

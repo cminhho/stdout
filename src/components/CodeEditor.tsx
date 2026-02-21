@@ -308,7 +308,7 @@ const getTokenizer = (lang: Language) => {
 /** Line height multiplier; must match gutter/highlight row height so cursor aligns. */
 const CODE_LINE_HEIGHT = 1.5;
 
-/* Token colors from CSS variables (JSON/code dark theme: key white, string green, number orange, boolean cyan) */
+/* Token colors from CSS variables (key, string green, number orange, boolean/keyword purple, comment gray) */
 const tokenColors: Record<Token["type"], string> = {
   key: "hsl(var(--code-key))",
   string: "hsl(var(--code-string))",

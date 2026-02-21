@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="light">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,6 +9,24 @@
     <link rel="apple-touch-icon" href="/favicon.svg" />
     <meta name="description" content="Your standard output for dev tools. Format, convert, encode, generate — all in one place." />
     <meta name="theme-color" content="#fafafa" />
+    <script>
+      (function () {
+        var STORAGE_KEY = "stdout-settings";
+        var THEME_COLORS = { light: "#fafafa", dark: "#252a31", "deep-dark": "#121212" };
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          var theme = raw ? (JSON.parse(raw).theme) : null;
+          var resolved = theme === "dark" || theme === "light" || theme === "deep-dark"
+            ? theme
+            : (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.classList.add(resolved);
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute("content", THEME_COLORS[resolved] || THEME_COLORS.light);
+        } catch (e) {
+          document.documentElement.classList.add("light");
+        }
+      })();
+    </script>
 
     <meta property="og:title" content="stdout" />
     <meta property="og:description" content="Your standard output for dev tools. Format, convert, encode, generate — all in one place." />
