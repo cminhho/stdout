@@ -70,7 +70,7 @@ const MimeTypesPage = () => {
       title={tool?.label ?? "List of MIME Types"}
       description={tool?.description ?? "Reference table of common MIME types"}
     >
-      <div className="space-y-4">
+      <div className="tool-content-stack flex flex-col">
         <div className="max-w-md">
           <Label className="text-xs text-muted-foreground mb-1 block">Search</Label>
           <Input

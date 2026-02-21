@@ -51,7 +51,7 @@ const PasswordPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "Password Generator"} description={tool?.description ?? "Generate secure passwords with custom rules"}>
-      <div className="flex flex-col flex-1 min-h-0 w-full gap-4">
+      <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack">
         <div className="tool-panel flex flex-col flex-1 min-h-0">
           <PanelHeader
             label={passwords.length ? `Password${passwords.length > 1 ? "s" : ""}` : "Password"}

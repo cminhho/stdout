@@ -37,7 +37,7 @@ const TimestampPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "Epoch Timestamp"} description={tool?.description ?? "Convert between Unix timestamps and dates"}>
-      <div className="flex flex-col flex-1 min-h-0 w-full gap-4">
+      <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack">
         <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0">
           <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer">
             <input type="checkbox" checked={live} onChange={(e) => setLive(e.target.checked)} className="accent-primary rounded" />
@@ -65,7 +65,7 @@ const TimestampPage = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+        <div className="grid grid-cols-1 lg:grid-cols-2 tool-content-grid flex-1 min-h-0">
           <div className="tool-panel flex flex-col flex-1 min-h-0">
             <PanelHeader label="Timestamp → Date" text={unix} />
             <div className="shrink-0">

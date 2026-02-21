@@ -179,7 +179,7 @@ const HomePage = () => {
             {visibleTools.length === 0 ? (
               <p className="text-sm text-muted-foreground">No tools available.</p>
             ) : (
-              <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              <ul className="grid grid-cols-1 tool-content-grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {visibleTools.map((t) => (
                   <li key={t.id}>
                     <ToolCard tool={t} />

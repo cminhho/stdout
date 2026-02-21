@@ -7,7 +7,7 @@
 @layer base {
   /*
    * Dark theme: DevUtils-style charcoal palette (#262626, #313131, #363636).
-   * Light: warm, soft. Sidebar glass (Electron only) via .sidebar-glass.
+   * Light: warm, soft. Sidebar glass (desktop app window) via .sidebar-glass.
    */
   :root,
   .dark {
@@ -54,7 +54,7 @@
     --sidebar-border: 0 0% 24%;
     --sidebar-ring: 217 91% 56%;
 
-    /* Electron header #313131; active tab #444444 */
+    /* Title bar / header; active tab */
     --header-bg: 0 0% 19%;
     --header-tab-bg: 0 0% 27%;
 
@@ -82,7 +82,23 @@
     --text-nav: 0.75rem;
     --text-ui: 0.8125rem;
     --text-content: 0.875rem;
-    /* Liquid Glass (Electron): stronger blur + visible edge */
+    /* Layout spacing: content, panels, toolbars – tune here for consistent density */
+    --spacing-content-x: 1.25rem;
+    --spacing-content-y: 1rem;
+    --spacing-content-x-md: 1.5rem;
+    --spacing-content-y-md: 1.25rem;
+    --spacing-panel-gap: 0.5rem;
+    --spacing-toolbar-mb: 0.75rem;
+    --spacing-title-mb: 0.75rem;
+    --spacing-section-mb: 0.75rem;
+    --spacing-code-editor: 0.75rem;
+    --spacing-grid-gap: 0.75rem;
+    /* Sidebar: horizontal/vertical block padding, gap between items, nested indent */
+    --spacing-sidebar-x: 0.75rem;
+    --spacing-sidebar-y: 0.625rem;
+    --spacing-sidebar-gap: 0.25rem;
+    --spacing-sidebar-indent: 0.5rem;
+    /* Liquid Glass (desktop): blur + visible edge */
     --glass-blur: 44px;
     --glass-saturate: 200%;
     --glass-border-opacity: 0.14;
@@ -174,41 +190,41 @@
     transition: background-color 0.2s ease, color 0.2s ease;
   }
 
-  /* Electron: fill viewport, no body scroll; only inner content areas scroll */
-  html.electron,
-  html.electron body,
-  html.electron #root {
+  /* Desktop app window: fill viewport, no body scroll; only inner content scrolls */
+  html.desktop,
+  html.desktop body,
+  html.desktop #root {
     height: 100%;
     overflow: hidden;
     margin: 0;
   }
-  html.electron #root {
+  html.desktop #root {
     min-height: 0;
     display: flex;
     flex-direction: column;
   }
 
-  /* Content area behind sidebar: subtle gradient so glass blur has depth */
-  html.electron .electron-layout {
+  /* Content area behind sidebar: gradient so glass blur has depth */
+  html.desktop .desktop-layout {
     background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(0 0% 22%), hsl(0 0% 14%));
   }
-  html.electron.light .electron-layout {
+  html.desktop.light .desktop-layout {
     background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(32 30% 97%), hsl(32 25% 92%));
   }
 
-  /* Electron title bar: Liquid Glass – more transparent, strong blur, visible edge + shine */
-  .electron-title-bar {
+  /* Title bar: Liquid Glass – translucent, blur, edge + shine */
+  .desktop-title-bar {
     background: hsl(var(--header-bg) / 0.48);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     border-bottom: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));
     box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / var(--glass-highlight));
   }
-  .light .electron-title-bar {
+  .light .desktop-title-bar {
     border-bottom-color: hsl(0 0% 0% / var(--glass-border-opacity));
     box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / 0.5);
   }
-  .electron-title-bar .title-tab {
+  .desktop-title-bar .title-tab {
     background: hsl(var(--header-tab-bg));
     border: 1px solid hsl(var(--border));
     border-bottom: none;
@@ -219,34 +235,33 @@
     align-items: center;
     justify-content: center;
   }
-  .electron-title-bar .electron-title-plain {
-    /* macOS: plain centered title, no pill */
+  .desktop-title-bar .desktop-title-plain {
     padding: 0 8px;
   }
 
-  /* macOS-style thin scrollbars in Electron */
-  html.electron {
+  /* Thin scrollbars in desktop window */
+  html.desktop {
     scrollbar-width: thin;
     scrollbar-color: hsl(0 0% 50% / 0.4) transparent;
   }
-  html.electron ::-webkit-scrollbar {
+  html.desktop ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
-  html.electron ::-webkit-scrollbar-track {
+  html.desktop ::-webkit-scrollbar-track {
     background: transparent;
   }
-  html.electron ::-webkit-scrollbar-thumb {
+  html.desktop ::-webkit-scrollbar-thumb {
     background: hsl(0 0% 50% / 0.4);
     border-radius: 4px;
   }
-  html.electron ::-webkit-scrollbar-thumb:hover {
+  html.desktop ::-webkit-scrollbar-thumb:hover {
     background: hsl(0 0% 50% / 0.55);
   }
-  .light.electron ::-webkit-scrollbar-thumb {
+  .light.desktop ::-webkit-scrollbar-thumb {
     background: hsl(0 0% 0% / 0.2);
   }
-  .light.electron ::-webkit-scrollbar-thumb:hover {
+  .light.desktop ::-webkit-scrollbar-thumb:hover {
     background: hsl(0 0% 0% / 0.3);
   }
 
@@ -257,7 +272,8 @@
 
 @layer components {
   .code-block {
-    @apply rounded-xl border font-mono leading-relaxed p-4 overflow-auto transition-colors duration-150;
+    @apply rounded-xl border font-mono leading-relaxed overflow-auto transition-colors duration-150;
+    padding: var(--spacing-code-editor);
     font-size: var(--text-content);
     background: hsl(var(--code-bg));
     border-color: hsl(var(--code-border));
@@ -265,13 +281,15 @@
   }
 
   .tool-card {
-    @apply rounded-xl border p-5 transition-colors duration-150;
+    @apply rounded-xl border transition-colors duration-150;
+    padding: var(--spacing-content-y-md);
     background: hsl(var(--card));
     border-color: hsl(var(--border));
   }
 
   .tool-textarea {
-    @apply w-full rounded-xl border p-4 font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background resize-y transition-colors duration-150;
+    @apply w-full rounded-xl border font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background resize-y transition-colors duration-150;
+    padding: var(--spacing-code-editor);
     font-size: var(--text-content);
     background: hsl(var(--code-bg));
     border-color: hsl(var(--code-border));
@@ -285,10 +303,34 @@
     width: 100%;
     height: 100%;
     min-height: 0;
+    padding: var(--spacing-content-y) var(--spacing-content-x);
+  }
+  @media (min-width: 768px) {
+    .tool-layout-inner {
+      padding: var(--spacing-content-y-md) var(--spacing-content-x-md);
+    }
+  }
+  .tool-layout-title {
+    margin-bottom: var(--spacing-title-mb);
+  }
+  .tool-layout-section {
+    margin-bottom: var(--spacing-section-mb);
+  }
+  .code-editor-wrapper .code-editor-pad {
+    padding: var(--spacing-code-editor);
+  }
+
+  /* Use with grid/flex for consistent gap from --spacing-grid-gap */
+  .tool-content-grid {
+    gap: var(--spacing-grid-gap);
+  }
+  .tool-content-stack {
+    gap: var(--spacing-grid-gap);
   }
 
   .tool-layout-content > .tool-toolbar {
     flex-shrink: 0;
+    margin-bottom: var(--spacing-toolbar-mb);
   }
 
   .tool-layout-content > .grid {
@@ -304,7 +346,9 @@
   }
 
   .tool-panel {
-    @apply flex flex-col gap-3;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-panel-gap);
     width: 100%;
     min-height: 0;
     flex: 1;
@@ -329,7 +373,8 @@
 
   /* Toolbar: top, fit height */
   .tool-toolbar {
-    @apply flex items-center gap-3 mb-4 flex-wrap flex-shrink-0;
+    @apply flex items-center gap-3 flex-wrap flex-shrink-0;
+    margin-bottom: var(--spacing-toolbar-mb);
   }
 
   /* Unified control: button, select, input – same bg, text, border, font (dark + light) */
@@ -375,8 +420,20 @@
     accent-color: hsl(var(--primary));
   }
 
+  .sidebar-pad {
+    padding: var(--spacing-sidebar-y) var(--spacing-sidebar-x);
+  }
+
+  .sidebar-footer-pad {
+    padding-top: var(--spacing-sidebar-gap);
+    padding-bottom: var(--spacing-sidebar-gap);
+    padding-left: var(--spacing-sidebar-x);
+    padding-right: var(--spacing-sidebar-x);
+  }
+
   .sidebar-link {
-    @apply flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium transition-colors duration-150;
+    @apply flex items-center gap-2 rounded-lg font-medium transition-colors duration-150;
+    padding: var(--spacing-sidebar-y) var(--spacing-sidebar-x);
     font-size: var(--text-nav);
     color: hsl(var(--sidebar-foreground));
   }
@@ -391,7 +448,7 @@
     color: hsl(var(--primary-foreground));
   }
 
-  /* Liquid Glass: sidebar (Electron) – very translucent, strong blur, visible edge + left shine */
+  /* Liquid Glass: sidebar in desktop window – translucent, blur, edge + shine */
   .sidebar-glass {
     background: hsl(0 0% 10% / 0.42);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
@@ -407,7 +464,7 @@
     box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / 0.6);
   }
 
-  /* Reusable Liquid Glass surface (e.g. cards, panels in Electron) */
+  /* Reusable Liquid Glass surface (e.g. cards, panels in desktop app) */
   .glass-surface {
     background: hsl(var(--background) / 0.7);
     backdrop-filter: blur(24px) saturate(160%);

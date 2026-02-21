@@ -127,7 +127,7 @@ const RegexTesterPage = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 tool-content-grid">
           {/* Test String */}
           <div className="tool-panel flex flex-col min-h-0">
             <PanelHeader

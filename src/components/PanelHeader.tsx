@@ -14,7 +14,7 @@ interface PanelHeaderProps {
  * Use in every tool-panel for consistent alignment across all tools.
  */
 const PanelHeader = ({ label, text, onClear, extra }: PanelHeaderProps) => (
-  <div className="flex items-center justify-between min-h-[32px]">
+  <div className="flex items-center justify-between min-h-[28px]">
     <span className="text-sm font-medium text-foreground uppercase tracking-wider select-none">
       {label}
     </span>

@@ -16,7 +16,7 @@ const NumberBasePage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "Number Base"} description={tool?.description ?? "Convert numbers between bases (bin, oct, dec, hex)"}>
-      <div className="flex flex-col flex-1 min-h-0 w-full gap-4">
+      <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack">
         <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0">
           <div className="flex items-center gap-2 min-w-0 flex-1 max-w-sm">
             <Label className="text-xs text-muted-foreground shrink-0">Input</Label>

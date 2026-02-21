@@ -38,14 +38,14 @@ const QrCodePage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "QR Code"} description={tool?.description ?? "Generate QR codes from text or URLs"}>
-      <div className="flex flex-col flex-1 min-h-0 w-full gap-4">
+      <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack">
         <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0">
           <Button size="sm" onClick={generate} disabled={!input.trim()}>
             Generate QR Code
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+        <div className="grid grid-cols-1 lg:grid-cols-2 tool-content-grid flex-1 min-h-0">
           <div className="tool-panel flex flex-col flex-1 min-h-0">
             <PanelHeader
               label="Content"

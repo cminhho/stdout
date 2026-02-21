@@ -34,7 +34,7 @@ const CssInlinerPage = () => {
       title={tool?.label ?? "CSS Inliner (Email)"}
       description={tool?.description ?? "Inline CSS styles into HTML for email templates"}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 tool-content-grid tool-layout-section">
         <div className="tool-panel flex flex-col min-h-0">
           <PanelHeader
             label="HTML"

@@ -88,7 +88,7 @@ const ImageResizerPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "Image Resizer"} description={tool?.description ?? "Resize images with format conversion"}>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1 min-h-0">
+      <div className="grid grid-cols-1 lg:grid-cols-2 tool-content-grid flex-1 min-h-0">
         <div className="tool-panel flex flex-col min-h-0">
           <PanelHeader
             label="Upload Image"

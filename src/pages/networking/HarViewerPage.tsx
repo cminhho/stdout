@@ -102,7 +102,7 @@ const HarViewerPage = () => {
               </div>
             )}
             {filtered.length > 0 && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1 min-h-0">
+              <div className="grid grid-cols-1 lg:grid-cols-2 tool-content-grid flex-1 min-h-0">
                 <div className="code-block max-h-full overflow-y-auto space-y-0.5 p-2">
                   {filtered.map((entry, i) => {
                     try {

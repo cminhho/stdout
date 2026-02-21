@@ -360,17 +360,17 @@ const TwoPanelToolLayout = ({
   return (
     <ToolLayout title={title} description={description}>
       {formatError ? (
-        <div className="mb-3 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+        <div className="tool-layout-section rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
           Format failed: {formatError.message}
         </div>
       ) : null}
       {showValidationListResolved ? (
-        <div className="mb-3">
+        <div className="tool-layout-section">
           <ValidationErrorList errors={effectiveValidationErrors} />
         </div>
       ) : null}
       {topSection ? (
-        <div className="mb-3 flex flex-col gap-2">
+        <div className="tool-layout-section flex flex-col gap-2">
           {topSection}
         </div>
       ) : null}

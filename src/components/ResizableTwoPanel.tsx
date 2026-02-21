@@ -2,7 +2,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import PanelHeader from "@/components/PanelHeader";
 import { cn } from "@/utils/cn";
 
-const DEFAULT_RESIZER_WIDTH = 20;
+const DEFAULT_RESIZER_WIDTH = 16;
 const DEFAULT_MIN_INPUT_PERCENT = 20;
 const DEFAULT_MAX_INPUT_PERCENT = 80;
 const DEFAULT_INPUT_PERCENT = 50;
@@ -161,7 +161,7 @@ const ResizableTwoPanel = ({
   return (
     <div
       ref={containerRef}
-      className={cn("flex flex-col lg:flex-row flex-1 min-h-0 w-full gap-4 lg:gap-0", className)}
+      className={cn("flex flex-col lg:flex-row flex-1 min-h-0 w-full gap-3 lg:gap-0", className)}
     >
       <Pane
         pane={{ ...input, title: input.title ?? DEFAULT_INPUT_TITLE }}

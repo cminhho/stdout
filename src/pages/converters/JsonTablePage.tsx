@@ -16,7 +16,7 @@ const JsonTablePage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "JSON → Table"} description={tool?.description ?? "Visualize JSON data as a table"}>
-      <div className="flex flex-col flex-1 min-h-0 gap-4">
+      <div className="flex flex-col flex-1 min-h-0 tool-content-stack">
         <div className="tool-panel flex-1 min-h-0 max-h-[50%] flex flex-col min-h-0">
           <PanelHeader
             label="JSON Input"
