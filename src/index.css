@@ -93,6 +93,10 @@
     --spacing-section-mb: 0.75rem;
     --spacing-code-editor: 0.75rem;
     --spacing-grid-gap: 0.75rem;
+    /* Sidebar: horizontal/vertical block padding and gap between items */
+    --spacing-sidebar-x: 0.75rem;
+    --spacing-sidebar-y: 0.625rem;
+    --spacing-sidebar-gap: 0.25rem;
     /* Liquid Glass (Electron): stronger blur + visible edge */
     --glass-blur: 44px;
     --glass-saturate: 200%;
@@ -416,8 +420,13 @@
     accent-color: hsl(var(--primary));
   }
 
+  .sidebar-pad {
+    padding: var(--spacing-sidebar-y) var(--spacing-sidebar-x);
+  }
+
   .sidebar-link {
-    @apply flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium transition-colors duration-150;
+    @apply flex items-center gap-2 rounded-lg font-medium transition-colors duration-150;
+    padding: var(--spacing-sidebar-y) var(--spacing-sidebar-x);
     font-size: var(--text-nav);
     color: hsl(var(--sidebar-foreground));
   }

@@ -85,7 +85,7 @@ const SidebarGroupSection = ({
         <ChevronRight className={`h-4 w-4 shrink-0 transition-transform ${isOpen ? "rotate-90" : "rotate-0"}`} />
       </button>
       {isOpen && (
-        <div className="ml-3 pl-2 border-l border-border space-y-1 mt-1">
+        <div className="ml-[var(--spacing-sidebar-x)] pl-2 border-l border-border space-y-[var(--spacing-sidebar-gap)] mt-[var(--spacing-sidebar-gap)]">
           {filteredItems.map((item) => {
             const Icon = getIcon(item.icon);
             return (
@@ -128,7 +128,7 @@ const AppSidebar = () => {
       <aside
         className={`w-12 shrink-0 flex flex-col border-r border-sidebar-border ${isElectron ? "h-full min-h-0 sidebar-glass" : "h-screen sticky top-0 bg-sidebar"}`}
       >
-        <div className="flex items-center justify-center py-2.5 border-b border-sidebar-border">
+        <div className="flex items-center justify-center sidebar-pad border-b border-sidebar-border">
           <Tooltip>
             <TooltipTrigger asChild>
               <button onClick={toggleSidebar} className="text-muted-foreground hover:text-foreground transition-colors">
@@ -138,7 +138,7 @@ const AppSidebar = () => {
             <TooltipContent side="right">Expand sidebar</TooltipContent>
           </Tooltip>
         </div>
-        <nav className="flex-1 py-2 overflow-y-auto space-y-1">
+        <nav className="flex-1 overflow-y-auto space-y-[var(--spacing-sidebar-gap)] [padding:var(--spacing-sidebar-y)_0]">
           {visibleItems.map((item) => {
             const Icon = getIcon(item.icon);
             return (
@@ -146,7 +146,7 @@ const AppSidebar = () => {
                 <TooltipTrigger asChild>
                   <NavLink
                     to={item.path}
-                    className={`flex items-center justify-center py-2 transition-colors rounded-md mx-1 ${
+                    className={`flex items-center justify-center py-[var(--spacing-sidebar-y)] transition-colors rounded-md mx-1 ${
                       location.pathname === item.path
                         ? "text-primary bg-primary/12"
                         : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent"
@@ -160,7 +160,7 @@ const AppSidebar = () => {
             );
           })}
         </nav>
-        <div className="py-2 border-t border-sidebar-border flex justify-center">
+        <div className="sidebar-pad border-t border-sidebar-border flex justify-center">
           <Tooltip>
             <TooltipTrigger asChild>
               <NavLink to="/settings" className="text-muted-foreground hover:text-foreground transition-colors">
@@ -178,7 +178,7 @@ const AppSidebar = () => {
     <aside
       className={`w-80 shrink-0 flex flex-col border-r border-sidebar-border ${isElectron ? "h-full min-h-0 sidebar-glass" : "h-screen sticky top-0 bg-sidebar"}`}
     >
-      <div className="flex items-center justify-between px-3 py-2.5">
+      <div className="flex items-center justify-between sidebar-pad">
         <NavLink
           to="/"
           className="text-sm font-semibold text-foreground no-underline hover:opacity-80 truncate min-w-0"
@@ -193,11 +193,12 @@ const AppSidebar = () => {
         </div>
       </div>
 
-      <div className="px-3 py-2">
+      <div className="sidebar-pad">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-[var(--spacing-sidebar-x)] top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
-            className="w-full rounded-md border px-3 py-2 pl-9 text-sm bg-background border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            className="w-full rounded-md border py-2 pr-[var(--spacing-sidebar-x)] text-sm bg-background border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            style={{ paddingLeft: "calc(var(--spacing-sidebar-x) + 1rem)" }}
             placeholder="Search tools..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -215,11 +216,11 @@ const AppSidebar = () => {
         </div>
       </div>
 
-      <nav className="flex-1 px-3 py-2.5 space-y-1 overflow-y-auto min-w-0">
+      <nav className="flex-1 sidebar-pad overflow-y-auto min-w-0 space-y-[var(--spacing-sidebar-gap)]">
         {search && searchResults ? (
           searchResults.length > 0 ? (
-            <div className="space-y-1">
-              <div className="text-xs text-muted-foreground uppercase tracking-wider px-1 pb-1.5">
+            <div className="space-y-[var(--spacing-sidebar-gap)]">
+              <div className="text-xs text-muted-foreground uppercase tracking-wider px-1 pb-[var(--spacing-sidebar-gap)]">
                 {searchResults.length} result{searchResults.length !== 1 ? "s" : ""}
               </div>
               {searchResults.map((item) => {
@@ -241,7 +242,7 @@ const AppSidebar = () => {
             <div className="text-sm text-muted-foreground text-center py-4">No tools found</div>
           )
         ) : sidebarMode === "flat" ? (
-          <div className="space-y-1">
+          <div className="space-y-[var(--spacing-sidebar-gap)]">
             {visibleItems.map((item) => {
               const Icon = getIcon(item.icon);
               return (
@@ -268,7 +269,7 @@ const AppSidebar = () => {
         )}
       </nav>
 
-      <div className="flex items-center justify-between gap-2 px-3 py-2.5 border-t border-sidebar-border">
+      <div className="flex items-center justify-between gap-2 sidebar-pad border-t border-sidebar-border">
         {isElectron ? (
           <Tooltip>
             <TooltipTrigger asChild>
