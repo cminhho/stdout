@@ -375,7 +375,7 @@ const TwoPanelToolLayout = ({
         </div>
       ) : null}
       <ResizableTwoPanel
-        defaultInputPercent={defaultInputPercent}
+        defaultInputPercent={defaultInputPercent ?? 40}
         minInputPercent={minInputPercent}
         maxInputPercent={maxInputPercent}
         resizerWidth={resizerWidth}
