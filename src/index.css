@@ -7,7 +7,7 @@
 @layer base {
   /*
    * Dark theme: DevUtils-style charcoal palette (#262626, #313131, #363636).
-   * Light: warm, soft. Sidebar glass (Electron only) via .sidebar-glass.
+   * Light: warm, soft. Sidebar glass (desktop app window) via .sidebar-glass.
    */
   :root,
   .dark {
@@ -54,7 +54,7 @@
     --sidebar-border: 0 0% 24%;
     --sidebar-ring: 217 91% 56%;
 
-    /* Electron header #313131; active tab #444444 */
+    /* Title bar / header; active tab */
     --header-bg: 0 0% 19%;
     --header-tab-bg: 0 0% 27%;
 
@@ -98,7 +98,7 @@
     --spacing-sidebar-y: 0.625rem;
     --spacing-sidebar-gap: 0.25rem;
     --spacing-sidebar-indent: 0.5rem;
-    /* Liquid Glass (Electron): stronger blur + visible edge */
+    /* Liquid Glass (desktop): blur + visible edge */
     --glass-blur: 44px;
     --glass-saturate: 200%;
     --glass-border-opacity: 0.14;
@@ -190,41 +190,41 @@
     transition: background-color 0.2s ease, color 0.2s ease;
   }
 
-  /* Electron: fill viewport, no body scroll; only inner content areas scroll */
-  html.electron,
-  html.electron body,
-  html.electron #root {
+  /* Desktop app window: fill viewport, no body scroll; only inner content scrolls */
+  html.desktop,
+  html.desktop body,
+  html.desktop #root {
     height: 100%;
     overflow: hidden;
     margin: 0;
   }
-  html.electron #root {
+  html.desktop #root {
     min-height: 0;
     display: flex;
     flex-direction: column;
   }
 
-  /* Content area behind sidebar: subtle gradient so glass blur has depth */
-  html.electron .electron-layout {
+  /* Content area behind sidebar: gradient so glass blur has depth */
+  html.desktop .desktop-layout {
     background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(0 0% 22%), hsl(0 0% 14%));
   }
-  html.electron.light .electron-layout {
+  html.desktop.light .desktop-layout {
     background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(32 30% 97%), hsl(32 25% 92%));
   }
 
-  /* Electron title bar: Liquid Glass – more transparent, strong blur, visible edge + shine */
-  .electron-title-bar {
+  /* Title bar: Liquid Glass – translucent, blur, edge + shine */
+  .desktop-title-bar {
     background: hsl(var(--header-bg) / 0.48);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     border-bottom: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));
     box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / var(--glass-highlight));
   }
-  .light .electron-title-bar {
+  .light .desktop-title-bar {
     border-bottom-color: hsl(0 0% 0% / var(--glass-border-opacity));
     box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / 0.5);
   }
-  .electron-title-bar .title-tab {
+  .desktop-title-bar .title-tab {
     background: hsl(var(--header-tab-bg));
     border: 1px solid hsl(var(--border));
     border-bottom: none;
@@ -235,34 +235,33 @@
     align-items: center;
     justify-content: center;
   }
-  .electron-title-bar .electron-title-plain {
-    /* macOS: plain centered title, no pill */
+  .desktop-title-bar .desktop-title-plain {
     padding: 0 8px;
   }
 
-  /* macOS-style thin scrollbars in Electron */
-  html.electron {
+  /* Thin scrollbars in desktop window */
+  html.desktop {
     scrollbar-width: thin;
     scrollbar-color: hsl(0 0% 50% / 0.4) transparent;
   }
-  html.electron ::-webkit-scrollbar {
+  html.desktop ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
-  html.electron ::-webkit-scrollbar-track {
+  html.desktop ::-webkit-scrollbar-track {
     background: transparent;
   }
-  html.electron ::-webkit-scrollbar-thumb {
+  html.desktop ::-webkit-scrollbar-thumb {
     background: hsl(0 0% 50% / 0.4);
     border-radius: 4px;
   }
-  html.electron ::-webkit-scrollbar-thumb:hover {
+  html.desktop ::-webkit-scrollbar-thumb:hover {
     background: hsl(0 0% 50% / 0.55);
   }
-  .light.electron ::-webkit-scrollbar-thumb {
+  .light.desktop ::-webkit-scrollbar-thumb {
     background: hsl(0 0% 0% / 0.2);
   }
-  .light.electron ::-webkit-scrollbar-thumb:hover {
+  .light.desktop ::-webkit-scrollbar-thumb:hover {
     background: hsl(0 0% 0% / 0.3);
   }
 
@@ -442,7 +441,7 @@
     color: hsl(var(--primary-foreground));
   }
 
-  /* Liquid Glass: sidebar (Electron) – very translucent, strong blur, visible edge + left shine */
+  /* Liquid Glass: sidebar in desktop window – translucent, blur, edge + shine */
   .sidebar-glass {
     background: hsl(0 0% 10% / 0.42);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
@@ -458,7 +457,7 @@
     box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / 0.6);
   }
 
-  /* Reusable Liquid Glass surface (e.g. cards, panels in Electron) */
+  /* Reusable Liquid Glass surface (e.g. cards, panels in desktop app) */
   .glass-surface {
     background: hsl(var(--background) / 0.7);
     backdrop-filter: blur(24px) saturate(160%);

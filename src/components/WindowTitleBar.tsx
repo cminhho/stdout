@@ -3,28 +3,29 @@ import { useLocation } from "react-router-dom";
 import { useToolEngine } from "@/hooks/useToolEngine";
 
 /**
- * Custom title bar for Electron (macOS hiddenInset or frameless).
- * - Provides drag region (-webkit-app-region: drag) so the window can be moved.
- * - On macOS with hiddenInset, OS draws traffic lights; we add left padding so content doesn't overlap.
- * - Content below does NOT need margin-top: this bar is just the first block in the layout.
+ * Title bar for frameless / custom-window desktop apps.
+ * - Drag region so the window can be moved.
+ * - When the OS draws window controls in the title bar (e.g. traffic lights), we reserve space.
+ * - Otherwise we render in-window close/minimize/maximize controls.
  */
-const ElectronTitleBar = () => {
+const WindowTitleBar = () => {
   const location = useLocation();
   const { tools } = useToolEngine();
-  const isMac = window.electronAPI?.platform === "darwin";
-  const hasWindowControls = !isMac && window.electronAPI?.window;
+  const hasSystemTitleBarControls = window.electronAPI?.platform === "darwin";
+  const hasWindowAPI = !!window.electronAPI?.window;
 
   const currentTool = tools.find((t) => t.path === location.pathname);
   const title = location.pathname === "/" ? "stdout" : currentTool?.label ?? "stdout";
 
   return (
     <header
-      className="electron-title-bar flex items-center shrink-0 h-10 px-3 gap-3"
+      className="desktop-title-bar flex items-center shrink-0 h-10 px-3 gap-3"
       style={{ WebkitAppRegion: "drag" } as React.CSSProperties}
     >
-      {/* macOS hiddenInset: traffic lights are drawn by OS at ~14,14; leave space so we don't overlap */}
-      {isMac && <div className="w-[72px] shrink-0" style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties} />}
-      {hasWindowControls && (
+      {hasSystemTitleBarControls && (
+        <div className="w-[72px] shrink-0" style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties} />
+      )}
+      {!hasSystemTitleBarControls && hasWindowAPI && (
         <div className="flex items-center gap-1 shrink-0" style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties}>
           <button
             type="button"
@@ -48,7 +49,7 @@ const ElectronTitleBar = () => {
       )}
       <div className="flex-1 min-w-0 flex justify-center pointer-events-none px-2">
         <span
-          className={`text-xs font-medium text-foreground truncate ${isMac ? "electron-title-plain" : "title-tab"}`}
+          className={`text-xs font-medium text-foreground truncate ${hasSystemTitleBarControls ? "desktop-title-plain" : "title-tab"}`}
         >
           {title}
         </span>
@@ -58,4 +59,4 @@ const ElectronTitleBar = () => {
   );
 };
 
-export default ElectronTitleBar;
+export default WindowTitleBar;

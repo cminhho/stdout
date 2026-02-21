@@ -48,10 +48,10 @@ const groupIconMap: Record<string, React.ElementType> = {
 
 const getIcon = (name: string) => iconMap[name] || Braces;
 
-const isElectron = typeof window !== "undefined" && !!window.electronAPI;
+const isDesktop = typeof window !== "undefined" && !!window.electronAPI;
 
 const SIDEBAR_ASIDE_BASE = "shrink-0 flex flex-col border-r border-sidebar-border";
-const SIDEBAR_ASIDE_LAYOUT = isElectron ? "h-full min-h-0 sidebar-glass" : "h-screen sticky top-0 bg-sidebar";
+const SIDEBAR_ASIDE_LAYOUT = isDesktop ? "h-full min-h-0 sidebar-glass" : "h-screen sticky top-0 bg-sidebar";
 const SIDEBAR_ICON_BTN = "flex items-center justify-center w-8 h-8 shrink-0 rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors";
 
 type SidebarItem = { path: string; icon: string; label: string };
@@ -248,7 +248,7 @@ const AppSidebar = () => {
       </nav>
 
       <div className="flex items-center justify-between gap-2 sidebar-pad border-t border-sidebar-border">
-        {isElectron ? (
+        {isDesktop ? (
           <Tooltip>
             <TooltipTrigger asChild>
               <a

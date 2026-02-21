@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import AppSidebar from "@/components/AppSidebar";
-import ElectronTitleBar from "@/components/ElectronTitleBar";
+import WindowTitleBar from "@/components/WindowTitleBar";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import { useToolTracking } from "@/hooks/useToolTracking";
 import SettingsPage from "@/pages/SettingsPage";
@@ -56,16 +56,16 @@ const ToolRoutes = () => {
   );
 };
 
-/** Use HashRouter under file: protocol (Electron) so routes work; BrowserRouter for web. */
+/** HashRouter for file: protocol (desktop app); BrowserRouter for web. */
 const Router = window.location.protocol === "file:" ? HashRouter : BrowserRouter;
 
-const isElectron = typeof window !== "undefined" && !!window.electronAPI;
+const isDesktop = typeof window !== "undefined" && !!window.electronAPI;
 
 const App = () => {
   useEffect(() => {
-    if (isElectron) {
-      document.documentElement.classList.add("electron");
-      return () => document.documentElement.classList.remove("electron");
+    if (isDesktop) {
+      document.documentElement.classList.add("desktop");
+      return () => document.documentElement.classList.remove("desktop");
     }
   }, []);
 
@@ -76,13 +76,13 @@ const App = () => {
           <Toaster />
           <div
             className={
-              isElectron
+              isDesktop
                 ? "flex flex-col h-full overflow-hidden"
                 : "flex flex-col min-h-screen"
             }
           >
-            {isElectron && <ElectronTitleBar />}
-            <div className="electron-layout flex flex-1 min-h-0 overflow-hidden min-w-0">
+            {isDesktop && <WindowTitleBar />}
+            <div className="desktop-layout flex flex-1 min-h-0 overflow-hidden min-w-0">
               <AppSidebar />
               <main className="flex-1 min-h-0 min-w-0 overflow-auto flex flex-col">
                 <ToolRoutes />
