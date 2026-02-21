@@ -6,22 +6,22 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/utils/cn";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-3.5 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 active:opacity-90",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 active:opacity-90",
-        outline: "border border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground active:opacity-90",
-        secondary: "border border-input bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:text-secondary-foreground active:opacity-90",
-        ghost: "hover:bg-accent hover:text-accent-foreground active:opacity-90",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/95",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 active:bg-destructive/95",
+        outline: "border border-outlineButton-border bg-outlineButton-bg text-outlineButton-foreground hover:bg-muted hover:border-border hover:text-foreground active:bg-secondary active:border-border",
+        secondary: "border border-border bg-secondary text-secondary-foreground hover:bg-secondary/80 active:bg-secondary/70",
+        ghost: "text-foreground hover:bg-muted hover:text-foreground active:bg-muted/80",
         link: "text-primary underline-offset-4 hover:underline active:opacity-90",
       },
       size: {
-        default: "h-9 px-3.5 py-2",
-        sm: "h-8 px-2.5 text-sm",
-        xs: "h-7 px-2 text-xs",
-        lg: "h-10 px-6 py-2",
+        default: "h-9 px-3 py-2",
+        sm: "h-8 px-2 py-1.5 text-sm",
+        xs: "h-7 px-2 py-1 text-xs",
+        lg: "h-10 px-5 py-2",
         icon: "h-9 w-9 [&_svg]:size-3.5",
         "icon-sm": "h-7 w-7 [&_svg]:size-3",
       },
@@ -54,7 +54,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {isLoading ? (
           <>
-            <Loader2 className="h-4 w-4 animate-spin shrink-0" aria-hidden />
+            <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" aria-hidden />
             {children}
           </>
         ) : (

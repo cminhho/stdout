@@ -92,24 +92,40 @@ const SidebarGroupSection = ({
   );
   if (filteredItems.length === 0) return null;
   const isOpen = !!searchQuery || open;
+  const contentId = `sidebar-group-${group.label.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "") || "group"}`;
 
   return (
-    <div>
-      <button type="button" onClick={() => setOpen(!open)} className="sidebar-link w-full justify-between">
-        <span className="flex items-center min-w-0 gap-2">
+    <section role="group" aria-label={group.label} className="space-y-0.5">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="sidebar-link w-full justify-between"
+        aria-expanded={isOpen}
+        aria-controls={contentId}
+      >
+        <span className="flex items-center min-w-0 gap-1.5">
           <GroupIcon className="h-[14px] w-[14px] shrink-0 opacity-90" />
-          <span className="truncate">{group.label}</span>
+          <span className="truncate text-left">{group.label}</span>
         </span>
-        <ChevronRight className={`h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform ${isOpen ? "rotate-90" : ""}`} />
+        <ChevronRight
+          className={`h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform duration-150 ${isOpen ? "rotate-90" : ""}`}
+          aria-hidden
+        />
       </button>
       {isOpen && (
-        <div className="ml-[var(--spacing-sidebar-x)] pl-[var(--spacing-sidebar-indent)] border-l border-sidebar-border space-y-0.5 mt-0.5">
+        <ul
+          id={contentId}
+          role="list"
+          className="ml-[var(--spacing-sidebar-x)] pl-[var(--spacing-sidebar-indent)] space-y-0.5 mt-1 list-none"
+        >
           {filteredItems.map((item) => (
-            <SidebarNavItem key={item.path} item={item} isActive={pathname === item.path} />
+            <li key={item.path}>
+              <SidebarNavItem item={item} isActive={pathname === item.path} />
+            </li>
           ))}
-        </div>
+        </ul>
       )}
-    </div>
+    </section>
   );
 };
 
@@ -145,7 +161,7 @@ const AppSidebar = () => {
             </Tooltip>
           </div>
         )}
-        <nav className="flex-1 overflow-y-auto space-y-0.5 [padding:var(--spacing-sidebar-item-y)_0] sidebar-pad">
+        <nav className="flex-1 overflow-y-auto space-y-0.5 [padding:var(--spacing-sidebar-item-y)_0] sidebar-pad" aria-label="Tools">
           {visibleItems.map((item) => {
             const Icon = getIcon(item.icon);
             return (
@@ -153,9 +169,9 @@ const AppSidebar = () => {
                 <TooltipTrigger asChild>
                   <NavLink
                     to={item.path}
-                    className={`flex items-center justify-center py-[var(--spacing-sidebar-item-y)] transition-colors rounded-md mx-[var(--spacing-sidebar-gap)] border-l-2 border-transparent ${
+                    className={`flex items-center justify-center py-[var(--spacing-sidebar-item-y)] transition-colors rounded-md mx-[var(--spacing-sidebar-gap)] ${
                       location.pathname === item.path
-                        ? "text-foreground bg-sidebar-accent border-sidebar-primary"
+                        ? "text-foreground bg-sidebar-accent"
                         : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent"
                     }`}
                   >
@@ -167,7 +183,7 @@ const AppSidebar = () => {
             );
           })}
         </nav>
-        <div className="sidebar-footer-pad border-t border-sidebar-border flex justify-center">
+        <footer className="sidebar-footer-pad border-t border-sidebar-border flex items-center justify-center min-h-9 flex-shrink-0" aria-label="Sidebar footer">
           <Tooltip>
             <TooltipTrigger asChild>
               <NavLink to="/settings" className="btn-icon-chrome shrink-0" aria-label="Settings">
@@ -176,7 +192,7 @@ const AppSidebar = () => {
             </TooltipTrigger>
             <TooltipContent side="right">Settings</TooltipContent>
           </Tooltip>
-        </div>
+        </footer>
       </aside>
     );
   }
@@ -195,7 +211,7 @@ const AppSidebar = () => {
             </Tooltip>
         </div>
       )}
-      <div className="px-[var(--spacing-sidebar-x)] pt-[var(--spacing-sidebar-y)] pb-[var(--spacing-sidebar-gap)]">
+      <div className="px-[var(--spacing-sidebar-x)] pt-[var(--spacing-sidebar-y)] pb-[var(--spacing-sidebar-gap)]" role="search" aria-label="Search tools">
         <div className="relative">
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" aria-hidden />
           <input
@@ -214,26 +230,32 @@ const AppSidebar = () => {
         </div>
       </div>
 
-      <nav className="flex-1 sidebar-pad overflow-y-auto min-w-0 space-y-0.5">
+      <nav className="flex-1 sidebar-pad overflow-y-auto min-w-0 space-y-0.5" aria-label="Tools">
         {search && searchResults !== null ? (
           searchResults.length > 0 ? (
             <div className="space-y-0.5">
-              <div className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium px-[var(--spacing-sidebar-x)] pb-1">
+              <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium px-[var(--spacing-sidebar-x)] pb-1" aria-live="polite">
                 {searchResults.length} result{searchResults.length !== 1 ? "s" : ""}
-              </div>
-              {searchResults.map((item) => (
-                <SidebarNavItem key={item.path} item={item} isActive={location.pathname === item.path} onClick={() => setSearch("")} />
-              ))}
+              </p>
+              <ul role="list" className="space-y-0.5 list-none">
+                {searchResults.map((item) => (
+                  <li key={item.path}>
+                    <SidebarNavItem item={item} isActive={location.pathname === item.path} onClick={() => setSearch("")} />
+                  </li>
+                ))}
+              </ul>
             </div>
           ) : (
-            <div className="text-xs text-muted-foreground text-center py-4 px-[var(--spacing-sidebar-x)]">No tools found</div>
+            <p className="text-xs text-muted-foreground text-center py-4 px-[var(--spacing-sidebar-x)]">No tools found</p>
           )
         ) : sidebarMode === "flat" ? (
-          <div className="space-y-0.5">
+          <ul role="list" className="space-y-0.5 list-none">
             {visibleItems.map((item) => (
-              <SidebarNavItem key={item.path} item={item} isActive={location.pathname === item.path} />
+              <li key={item.path}>
+                <SidebarNavItem item={item} isActive={location.pathname === item.path} />
+              </li>
             ))}
-          </div>
+          </ul>
         ) : (
           groups.map((group) => (
             <SidebarGroupSection
@@ -247,7 +269,7 @@ const AppSidebar = () => {
         )}
       </nav>
 
-      <div className="flex items-center justify-between gap-2 sidebar-footer-pad border-t border-sidebar-border">
+      <footer className="flex items-center justify-between gap-2 sidebar-footer-pad border-t border-sidebar-border min-h-9 flex-shrink-0" aria-label="Sidebar footer">
         {isDesktop ? (
           <Tooltip>
             <TooltipTrigger asChild>
@@ -269,7 +291,7 @@ const AppSidebar = () => {
             href="https://www.buymeacoffee.com/chungho"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-md border border-sidebar-border bg-sidebar-accent text-sm font-medium text-sidebar-accent-foreground opacity-90 hover:opacity-100 hover:brightness-110 transition-colors min-w-0 px-[var(--spacing-sidebar-x)] py-[var(--spacing-sidebar-y)]"
+            className="inline-flex items-center gap-1.5 rounded-md border border-sidebar-border bg-sidebar-accent/80 text-xs font-medium text-sidebar-accent-foreground opacity-90 hover:opacity-100 hover:bg-sidebar-accent transition-colors min-w-0 px-2 py-1.5"
             title="Buy me a coffee"
           >
             <Coffee className="h-3.5 w-3.5 shrink-0" />
@@ -284,7 +306,7 @@ const AppSidebar = () => {
           </TooltipTrigger>
           <TooltipContent side="right">Settings</TooltipContent>
         </Tooltip>
-      </div>
+      </footer>
     </aside>
   );
 };

@@ -23,7 +23,7 @@ const WindowTitleBar = () => {
 
   return (
     <header
-      className="desktop-title-bar flex items-center shrink-0 h-9 px-2 gap-1"
+      className="desktop-title-bar relative flex items-center shrink-0 h-9 px-2 gap-1"
       style={{ WebkitAppRegion: "drag" } as React.CSSProperties}
     >
       <div className="shrink-0" style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties}>
@@ -62,14 +62,14 @@ const WindowTitleBar = () => {
           />
         </div>
       )}
-      <div className="flex-1 min-w-0 flex items-center justify-center pointer-events-none px-2">
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-2">
         <span
-          className={`text-[13px] font-medium text-foreground/90 truncate ${hasSystemTitleBarControls ? "desktop-title-plain" : "title-tab"}`}
+          className={`text-[13px] font-medium text-foreground/90 truncate max-w-full ${hasSystemTitleBarControls ? "desktop-title-plain" : "title-tab"}`}
         >
           {title}
         </span>
       </div>
-      <div className="w-8 shrink-0" />
+      <div className="w-8 shrink-0" style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties} />
     </header>
   );
 };

@@ -161,7 +161,7 @@ const ResizableTwoPanel = ({
   return (
     <div
       ref={containerRef}
-      className={cn("flex flex-col lg:flex-row flex-1 min-h-0 w-full gap-3 lg:gap-0", className)}
+      className={cn("flex flex-col lg:flex-row flex-1 min-h-0 w-full gap-2 lg:gap-0", className)}
     >
       <Pane
         pane={{ ...input, title: input.title ?? DEFAULT_INPUT_TITLE }}
@@ -173,12 +173,13 @@ const ResizableTwoPanel = ({
         role="separator"
         aria-orientation="vertical"
         aria-valuenow={inputPercent}
+        aria-label="Resize panels"
         tabIndex={0}
         onMouseDown={onResizerMouseDown}
-        className={RESIZER_BASE_CLASS}
+        className={cn(RESIZER_BASE_CLASS, "group hover:bg-muted/30 transition-colors")}
         style={{ width: resizerWidth, minWidth: resizerWidth }}
       >
-        <div className="w-0.5 h-8 rounded-full bg-border" />
+        <div className="w-0.5 h-8 rounded-full bg-border group-hover:bg-muted-foreground/50 transition-colors" />
       </div>
 
       <Pane pane={{ ...output, title: output.title ?? DEFAULT_OUTPUT_TITLE }} className="flex-1 min-w-0 lg:min-h-0" />

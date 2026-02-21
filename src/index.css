@@ -497,6 +497,7 @@
     padding-right: var(--spacing-sidebar-x);
   }
 
+  /* Sidebar nav items: no left border (VS Code/Linear/Notion style – active by background only) */
   .sidebar-link {
     @apply flex items-center rounded-md transition-colors duration-150 min-w-0;
     gap: 0.5rem;
@@ -504,7 +505,6 @@
     font-size: var(--text-nav);
     font-weight: 500;
     color: hsl(var(--sidebar-foreground));
-    border-left: 2px solid transparent;
   }
 
   .sidebar-link:hover {
@@ -515,13 +515,11 @@
   .sidebar-link.active {
     background: hsl(var(--sidebar-accent));
     color: hsl(var(--sidebar-foreground));
-    border-left-color: hsl(var(--sidebar-primary));
   }
 
   .sidebar-link.active:hover {
     background: hsl(var(--sidebar-accent));
     color: hsl(var(--sidebar-foreground));
-    border-left-color: hsl(var(--sidebar-primary));
   }
 
   /* Sidebar search: compact, theme-aligned (industry practice: single-line, muted field) */

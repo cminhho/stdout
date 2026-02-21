@@ -26,7 +26,8 @@ export interface SegmentGroupProps<T extends string> {
 
 /**
  * Segmented control: one-of-many selection with clear active state.
- * Accessible (role="group", aria-pressed), reusable across tools (e.g. JSON↔YAML direction, compress/decompress).
+ * Container uses border-border and bg-muted/30; active = primary, inactive = ghost (muted hover).
+ * Accessible (role="group", aria-pressed). Use for e.g. JSON↔YAML direction, compress/decompress.
  */
 function SegmentGroupInner<T extends string>(
   {
@@ -46,7 +47,7 @@ function SegmentGroupInner<T extends string>(
       role="group"
       aria-label={ariaLabel}
       className={cn(
-        "flex rounded-lg border border-input bg-muted/30 p-0.5",
+        "flex rounded-md border border-border bg-muted/30 p-0.5",
         className
       )}
     >
@@ -58,7 +59,7 @@ function SegmentGroupInner<T extends string>(
             type="button"
             variant={isActive ? "default" : "ghost"}
             size={size}
-            className="min-w-0 rounded-md px-2.5 transition-colors"
+            className="min-w-0 px-2.5"
             aria-pressed={isActive}
             disabled={disabled}
             onClick={() => onValueChange(option.value)}
