@@ -24,6 +24,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify version matches tag
+        run: |
+          TAG_VERSION="${GITHUB_REF#refs/tags/v}"
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+            echo "::error::Tag version ($TAG_VERSION) does not match package.json version ($PKG_VERSION). Bump package.json before pushing the tag."
+            exit 1
+          fi
+
       - name: Build macOS app (universal zip + dmg)
         run: npm run electron:build:mac
         env:
