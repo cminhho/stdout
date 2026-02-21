@@ -82,6 +82,11 @@
     --text-nav: 0.75rem;
     --text-ui: 0.8125rem;
     --text-content: 0.875rem;
+    /* Liquid Glass (Electron): stronger blur + visible edge */
+    --glass-blur: 44px;
+    --glass-saturate: 200%;
+    --glass-border-opacity: 0.14;
+    --glass-highlight: 0.1;
   }
 
   .light {
@@ -147,6 +152,12 @@
     --header-bg: 0 0% 96%;
     --header-tab-bg: 0 0% 100%;
 
+    /* Liquid Glass – light: same blur, visible edge */
+    --glass-blur: 44px;
+    --glass-saturate: 200%;
+    --glass-border-opacity: 0.14;
+    --glass-highlight: 0.08;
+
     --text-nav: 0.75rem;
     --text-ui: 0.8125rem;
     --text-content: 0.875rem;
@@ -177,10 +188,25 @@
     flex-direction: column;
   }
 
-  /* Electron title bar: header bg #313131; title tab #444444; border rõ như DevUtils */
+  /* Content area behind sidebar: subtle gradient so glass blur has depth */
+  html.electron .electron-layout {
+    background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(0 0% 22%), hsl(0 0% 14%));
+  }
+  html.electron.light .electron-layout {
+    background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(32 30% 97%), hsl(32 25% 92%));
+  }
+
+  /* Electron title bar: Liquid Glass – more transparent, strong blur, visible edge + shine */
   .electron-title-bar {
-    background: hsl(var(--header-bg));
-    border-bottom: 1px solid hsl(var(--border));
+    background: hsl(var(--header-bg) / 0.48);
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    border-bottom: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));
+    box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / var(--glass-highlight));
+  }
+  .light .electron-title-bar {
+    border-bottom-color: hsl(0 0% 0% / var(--glass-border-opacity));
+    box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / 0.5);
   }
   .electron-title-bar .title-tab {
     background: hsl(var(--header-tab-bg));
@@ -192,6 +218,36 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+  }
+  .electron-title-bar .electron-title-plain {
+    /* macOS: plain centered title, no pill */
+    padding: 0 8px;
+  }
+
+  /* macOS-style thin scrollbars in Electron */
+  html.electron {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(0 0% 50% / 0.4) transparent;
+  }
+  html.electron ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  html.electron ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  html.electron ::-webkit-scrollbar-thumb {
+    background: hsl(0 0% 50% / 0.4);
+    border-radius: 4px;
+  }
+  html.electron ::-webkit-scrollbar-thumb:hover {
+    background: hsl(0 0% 50% / 0.55);
+  }
+  .light.electron ::-webkit-scrollbar-thumb {
+    background: hsl(0 0% 0% / 0.2);
+  }
+  .light.electron ::-webkit-scrollbar-thumb:hover {
+    background: hsl(0 0% 0% / 0.3);
   }
 
   code, pre, .font-mono {
@@ -335,17 +391,32 @@
     color: hsl(var(--primary-foreground));
   }
 
-  /* Sidebar glass (Electron): frosted glass – dark theme */
+  /* Liquid Glass: sidebar (Electron) – very translucent, strong blur, visible edge + left shine */
   .sidebar-glass {
-    background: rgba(26, 26, 26, 0.72);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: hsl(0 0% 10% / 0.42);
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    border-right: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));
+    box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / var(--glass-highlight));
   }
-  /* Sidebar glass – light theme */
   .light .sidebar-glass {
-    background: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: hsl(0 0% 100% / 0.5);
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    border-right: 1px solid hsl(0 0% 0% / var(--glass-border-opacity));
+    box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / 0.6);
+  }
+
+  /* Reusable Liquid Glass surface (e.g. cards, panels in Electron) */
+  .glass-surface {
+    background: hsl(var(--background) / 0.7);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border: 1px solid hsl(var(--border) / 0.6);
+  }
+  .light .glass-surface {
+    background: hsl(var(--background) / 0.75);
+    border-color: hsl(var(--border) / 0.7);
   }
 
   .prose-markdown {

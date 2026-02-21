@@ -82,7 +82,7 @@ const App = () => {
             }
           >
             {isElectron && <ElectronTitleBar />}
-            <div className="flex flex-1 min-h-0 overflow-hidden min-w-0">
+            <div className="electron-layout flex flex-1 min-h-0 overflow-hidden min-w-0">
               <AppSidebar />
               <main className="flex-1 min-h-0 min-w-0 overflow-auto flex flex-col">
                 <ToolRoutes />

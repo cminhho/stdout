@@ -47,7 +47,11 @@ const ElectronTitleBar = () => {
         </div>
       )}
       <div className="flex-1 min-w-0 flex justify-center pointer-events-none px-2">
-        <span className="title-tab text-xs font-medium text-foreground truncate">{title}</span>
+        <span
+          className={`text-xs font-medium text-foreground truncate ${isMac ? "electron-title-plain" : "title-tab"}`}
+        >
+          {title}
+        </span>
       </div>
       <div className="w-[72px] shrink-0" />
     </header>
