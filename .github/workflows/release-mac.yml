@@ -1,61 +1,58 @@
-# Build macOS app and publish to GitHub Release for Homebrew Cask.
-# Trigger: push tag v* (e.g. git tag v1.0.0 && git push origin v1.0.0)
-#
-# Requirements:
-# 1. package.json "version" must match the tag (e.g. tag v1.1.0 → "version": "1.1.0"). The workflow fails early if not.
-# 2. Job has permissions: contents: write. generate_release_notes is false to avoid 403 with default GITHUB_TOKEN.
-#    Optional: add repo secret GH_PAT (PAT with repo scope) and use it below for broader release permissions.
-
+# Release macOS: push tag v* (e.g. v1.0.0). package.json version must match tag. generate_release_notes: false (GITHUB_TOKEN 403).
 name: Release macOS
 
 on:
   push:
-    tags:
-      - 'v*'
+    tags: ['v*']
+
+env:
+  ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
+  ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
 
 jobs:
   release-mac:
     runs-on: macos-latest
+    timeout-minutes: 45
     permissions:
-      contents: write  # create release and upload assets
+      contents: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Version check
+        id: ver
+        run: |
+          tag="${GITHUB_REF#refs/tags/v}"
+          pkg=$(sed -n 's/.*"version" *: *"\([^"]*\)".*/\1/p' package.json)
+          [ "$tag" = "$pkg" ] || { echo "::error::Tag v$tag != package.json $pkg"; exit 1; }
+          echo "VERSION=$tag" >> $GITHUB_OUTPUT
+
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/.cache/electron
+            ${{ github.workspace }}/.cache/electron-builder
+          key: macos-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: macos-${{ runner.os }}-
 
-      - name: Verify version matches tag
-        run: |
-          TAG_VERSION="${GITHUB_REF#refs/tags/v}"
-          PKG_VERSION=$(node -p "require('./package.json').version")
-          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
-            echo "::error::Tag version ($TAG_VERSION) does not match package.json version ($PKG_VERSION). Bump package.json before pushing the tag."
-            exit 1
-          fi
+      - run: npm ci --legacy-peer-deps
 
-      - name: Build macOS app (universal zip + dmg)
-        run: npm run electron:build:mac
+      - name: Build
+        run: npm run electron:build:mac:ci
         env:
           ELECTRON_BUILD: 1
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get version from tag
-        id: version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
-
-      - name: Create Release and upload assets
-        uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v2
         with:
-          files: |
-            release/stdout-${{ steps.version.outputs.VERSION }}-mac.zip
-            release/stdout-${{ steps.version.outputs.VERSION }}.dmg
+          files: release/stdout-${{ steps.ver.outputs.VERSION }}-mac.zip
           generate_release_notes: false
+          fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}

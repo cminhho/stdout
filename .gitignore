@@ -1,3 +1,6 @@
+# Project config (tracked)
+!.npmrc
+
 # Logs
 logs
 *.log
@@ -10,6 +13,7 @@ lerna-debug.log*
 node_modules
 dist
 release
+.firebase
 dist/stats.html
 dist-ssr
 *.local

@@ -140,7 +140,6 @@ const JsonPathPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       topSection={
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-1.5 min-w-0">
