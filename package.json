@@ -37,7 +37,7 @@
     "electron:dev": "concurrently -k \"vite\" \"wait-on http://localhost:8080 && cross-env NODE_ENV=development electron .\"",
     "electron:build": "cross-env ELECTRON_BUILD=1 vite build && electron-builder",
     "electron:build:mac": "cross-env ELECTRON_BUILD=1 vite build && electron-builder --mac --arm64 --x64",
-    "electron:build:mac:ci": "cross-env ELECTRON_BUILD=1 vite build && electron-builder --mac --arm64 --x64 zip",
+    "electron:build:mac:ci": "cross-env ELECTRON_BUILD=1 vite build && electron-builder --mac zip --arm64 --x64",
     "electron:build:win": "cross-env ELECTRON_BUILD=1 vite build && electron-builder --win",
     "electron:build:linux": "cross-env ELECTRON_BUILD=1 vite build && electron-builder --linux",
     "electron:build:all": "cross-env ELECTRON_BUILD=1 vite build && electron-builder -mwl",

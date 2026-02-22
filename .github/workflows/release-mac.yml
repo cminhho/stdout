@@ -51,7 +51,9 @@ jobs:
 
       - uses: softprops/action-gh-release@v2
         with:
-          files: release/stdout-${{ steps.ver.outputs.VERSION }}-mac.zip
+          files: |
+            release/stdout-${{ steps.ver.outputs.VERSION }}-mac.zip
+            release/stdout-${{ steps.ver.outputs.VERSION }}-arm64-mac.zip
           generate_release_notes: false
           fail_on_unmatched_files: true
         env:

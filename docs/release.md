@@ -34,7 +34,7 @@ How to cut a new version and publish the macOS app (GitHub Release + Homebrew Ca
 
 3. **GitHub Actions**
 
-   Pushing the tag runs the **Release macOS** workflow: build on `macos-latest`, upload `release/stdout-X.Y.Z-mac.zip` to the [GitHub Release](https://github.com/cminhho/stdout/releases) for that tag.
+   Pushing the tag runs the **Release macOS** workflow: build on `macos-latest`, then upload two artifacts to the [GitHub Release](https://github.com/cminhho/stdout/releases) for that tag: `stdout-X.Y.Z-mac.zip` (x64) and `stdout-X.Y.Z-arm64-mac.zip` (arm64).
 
 ## Requirements
 
