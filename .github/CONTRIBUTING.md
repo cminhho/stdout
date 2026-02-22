@@ -26,8 +26,8 @@ If you use [git-flow](https://github.com/nvie/gitflow): run `git flow init` (acc
 ## How to contribute
 
 - **Bug reports & feature ideas:** Open a [GitHub Issue](https://github.com/cminhho/stdout/issues). Use the issue templates (Bug report / Feature request) when possible.
-- **Code changes:** Open a Pull Request. Keep PRs focused (one feature/fix per PR when possible). The [PR template](.github/PULL_REQUEST_TEMPLATE.md) will guide you.
-- **New tools:** Register your tool in `src/tools/registry.ts` (see existing entries for structure), implement the page under `src/pages/`, and add the lazy-loaded component to the registry. Core logic should live in `src/utils/` when it’s pure logic.
+- **Code changes:** Open a Pull Request. Keep PRs focused (one feature/fix per PR when possible). The [PR template](PULL_REQUEST_TEMPLATE.md) will guide you.
+- **New tools:** Register your tool in `src/tools/registry.ts` (see existing entries for structure), implement the page under `src/pages/`, and add the lazy-loaded component to the registry. Core logic should live in `src/utils/` when it's pure logic.
 
 ## Setup
 
@@ -50,4 +50,4 @@ Lint: `npm run lint`.
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the same [MIT License](LICENSE) that covers this project.
+By contributing, you agree that your contributions will be licensed under the same [MIT License](../LICENSE) that covers this project.
