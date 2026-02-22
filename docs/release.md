@@ -41,6 +41,10 @@ How to cut a new version and publish the macOS app (GitHub Release + Homebrew Ca
 - `package.json` version must match the tag (e.g. tag `v1.1.0` ↔ `"version": "1.1.0"`). The workflow fails if they differ; the release script keeps them in sync.
 - For maintainers: optional repo secret `GH_PAT` (PAT with repo scope) if you need broader release permissions than the default `GITHUB_TOKEN`.
 
+## Troubleshooting
+
+- **403 on “Create GitHub Release”**: The workflow needs `permissions: contents: write` and `generate_release_notes: false`. These are already set in [release-mac.yml](../.github/workflows/release-mac.yml). If a run still fails with 403, the tag may point to an older commit that doesn’t have this workflow. Fix: push the current workflow to `main`, then create a **new** tag from that commit (e.g. `npm run release` → push `main` and `v1.1.1`). The new run will use the fixed workflow.
+
 ## After release
 
 - **Homebrew Cask**: If you use a tap (e.g. `cminhho/tap`), update the cask to point at the new release URL/sha.

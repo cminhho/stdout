@@ -25,6 +25,10 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License" /></a>
 </p>
 
+<p align="center">
+  <strong>stdout</strong> = <em>standard output</em> — the output stream (same idea as terminal <code>stdout</code>). One app for everything that goes to that stream: format, convert, encode, generate.
+</p>
+
 ---
 
 ## Overview
@@ -34,6 +38,8 @@ Stdout runs in the browser or as a desktop app. No backend and no data collectio
 ---
 
 ## Why Stdout
+
+*stdout* = standard output — the stream where results go. The app is that stream for dev tools: one place, no server.
 
 | Need | Stdout |
 |------|--------|
