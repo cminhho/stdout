@@ -185,6 +185,16 @@ npm run electron:build:linux   # Build Linux
 npm run deploy   # build + compress + firebase deploy
 ```
 
+**Release (bump version + tag → GitHub Release)**
+
+```bash
+npm run release        # patch (e.g. 1.1.0 → 1.1.1)
+npm run release:minor  # minor; npm run release:major for major
+# Then push: git push origin <branch> && git push origin v<version>
+```
+
+See [docs/release.md](docs/release.md) for the full flow.
+
 ### Tech stack
 
 | Layer | Technology |

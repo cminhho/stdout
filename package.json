@@ -40,7 +40,11 @@
     "electron:build:mac:ci": "cross-env ELECTRON_BUILD=1 vite build && electron-builder --mac --arm64 --x64 zip",
     "electron:build:win": "cross-env ELECTRON_BUILD=1 vite build && electron-builder --win",
     "electron:build:linux": "cross-env ELECTRON_BUILD=1 vite build && electron-builder --linux",
-    "electron:build:all": "cross-env ELECTRON_BUILD=1 vite build && electron-builder -mwl"
+    "electron:build:all": "cross-env ELECTRON_BUILD=1 vite build && electron-builder -mwl",
+    "release": "node scripts/release.mjs",
+    "release:patch": "node scripts/release.mjs patch",
+    "release:minor": "node scripts/release.mjs minor",
+    "release:major": "node scripts/release.mjs major"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.3.2",
