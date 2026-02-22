@@ -1,16 +1,50 @@
-# 🛠️ Stdout - Developer Tools pack
+<p align="center">
+  <img src="public/favicon.svg" width="96" height="96" alt="Stdout" />
+</p>
 
-**Your standard output for dev tools.**  
-Format, convert, encode, generate — all in one place.
+<h1 align="center">Stdout</h1>
 
-Stdout is a lightweight, in-browser developer tools platform.  
-No backend. Everything runs locally in your browser.
+<p align="center">
+  <strong>Developer tools for format, convert, encode, and generate — all in one place.</strong>
+</p>
 
-Built for **trust, performance, and extensibility**.
+<p align="center">
+  <a href="#features">Features</a> •
+  <a href="#why-stdout">Why Stdout</a> •
+  <a href="#philosophy">Philosophy</a> •
+  <a href="#installation">Installation</a> •
+  <a href="#development">Development</a> •
+  <a href="#contributing">Contributing</a> •
+  <a href="#license">License</a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux%20%7C%20Web-lightgrey" alt="Platform" />
+  <img src="https://img.shields.io/badge/electron-33+-47848F?logo=electron" alt="Electron" />
+  <img src="https://img.shields.io/badge/react-19-61DAFB?logo=react" alt="React" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License" /></a>
+</p>
 
 ---
 
-## ✨ Features
+## Overview
+
+Stdout runs in the browser or as a desktop app. No backend and no data collection — everything stays on your machine. Use it to format JSON/XML/HTML, convert units and encodings, generate test data, and more, with a modular UI that works offline.
+
+---
+
+## Why Stdout
+
+| Need | Stdout |
+|------|--------|
+| Format or convert without sending data anywhere | 100% client-side; nothing leaves your device |
+| One place for JSON, XML, Base64, hashes, etc. | 70+ tools in a single app (web or desktop) |
+| No signup, no API keys | Run locally; works offline after first load |
+| Quick dev tasks (decode JWT, test regex, build cURL) | Focused tools with copy/paste and samples |
+
+---
+
+## Features
 
 | Tool | Description |
 |------|-------------|
@@ -18,8 +52,8 @@ Built for **trust, performance, and extensibility**.
 | XML Format/Validate | Beautify, minify & validate XML |
 | HTML Beautify/Minify/Validate | Beautify, minify & validate HTML |
 | SQL Formatter | Format and beautify SQL queries |
-| CSS Beautifier/Minifier | Beautify or minify CSS (format/minify) |
-| JS Beautifier/Minifier | Beautify or minify JavaScript (format/minify) |
+| CSS Beautifier/Minifier | Beautify or minify CSS |
+| JS Beautifier/Minifier | Beautify or minify JavaScript |
 | CSS Inliner (Email) | Inline CSS styles into HTML for email templates |
 | JSONPath Tester | Test JSONPath expressions against JSON data |
 | Schema Diff | Compare two JSON schemas side by side |
@@ -29,90 +63,97 @@ Built for **trust, performance, and extensibility**.
 | XPath Tester | Run XPath expressions against XML |
 | Credit Card Generator & Validator | Luhn check and generate test card numbers |
 | Cron Parser | Build and parse cron expressions (Quartz-style) |
-| JSON ↔ YAML | Convert between JSON and YAML formats |
-| CSV ↔ JSON | Convert between CSV and JSON formats |
-| JSON → Table | Visualize JSON data as a table |
+| JSON ↔ YAML | Convert between JSON and YAML |
+| CSV ↔ JSON | Convert between CSV and JSON |
+| JSON → Table | Visualize JSON as a table |
 | JSON → Types | Generate TypeScript types from JSON |
 | JSON ↔ Query String | Convert between JSON and URL query strings |
 | Epoch Timestamp | Convert between Unix timestamps and dates |
-| Number Base | Convert numbers between bases (bin, oct, dec, hex) |
-| Color Converter | Convert colors between HEX, RGB, HSL formats |
-| Image ↔ Base64 | Convert images to/from Base64 strings |
-| .env Converter | Convert .env files to Netlify, Docker, YAML formats |
-| CSS Units | Convert between CSS units (px, rem, em, vw) |
-| XSD Generator | Generate minimal XSD schema from XML |
-| XSLT Transformer | Transform XML using XSLT stylesheet |
+| Number Base | Convert between bin, oct, dec, hex |
+| Color Converter | Convert between HEX, RGB, HSL |
+| Image ↔ Base64 | Convert images to/from Base64 |
+| .env Converter | Convert .env to Netlify, Docker, YAML formats |
+| CSS Units | Convert between px, rem, em, vw |
+| XSD Generator | Generate minimal XSD from XML |
+| XSLT Transformer | Transform XML using XSLT |
 | XML ↔ JSON | Convert between XML and JSON |
 | CSV → XML | Convert CSV to XML (first row as element names) |
 | URL Encode/Decode | Encode and decode URL components |
-| Base64 String Encode/Decode | Encode and decode Base64 strings |
+| Base64 Encode/Decode | Encode and decode Base64 strings |
 | HTML Entity Encode/Decode | Encode and decode HTML entities |
 | JWT Debugger | Decode and inspect JWT tokens |
 | QR Code | Generate QR codes from text or URLs |
 | Gzip | Compress and decompress with Gzip |
 | Certificate Inspector | Inspect and decode X.509 certificates |
-| Convert File Encoding | Decode bytes from charset or encode text to UTF-8 |
+| File Encoding | Decode bytes from charset or encode to UTF-8 |
 | Message Digester | MD5, SHA-1, SHA-256 hashes |
 | HMAC Generator | Generate HMAC signatures |
-| String Utilities | Convert between camelCase, snake_case, and more |
-| String Escaper (JSON, XML, CSV, SQL, Java, JS) | Escape or unescape text for JSON, XML, CSV, SQL, Java/.NET, JavaScript string literals |
-| List Collator | Merge, sort, and deduplicate lists |
-| Text Analyzer | Count words, characters, sentences in text |
+| String Utilities | camelCase, snake_case, and more |
+| String Escaper | Escape/unescape for JSON, XML, CSV, SQL, Java, JS |
+| List Collator | Merge, sort, deduplicate lists |
+| Text Analyzer | Count words, characters, sentences |
 | Text Diff | Compare two texts and highlight differences |
 | Lorem Ipsum | Generate placeholder text |
 | URL Parser | Parse and inspect URL / query string |
-| List of MIME Types | Reference table of common MIME types |
-| Markdown Preview | Live preview of Markdown with GFM support |
-| UUID Generator | Generate UUIDs (v1, v4, v7) |
-| Password Generator | Generate secure passwords with custom rules |
-| Random String | Generate cryptographically secure random strings |
-| Mock Payload | Generate mock JSON data from a schema |
+| MIME Types | Reference table of common MIME types |
+| Markdown Preview | Live preview with GFM support |
+| UUID Generator | UUIDs v1, v4, v7 |
+| Password Generator | Secure passwords with custom rules |
+| Random String | Cryptographically secure random strings |
+| Mock Payload | Generate mock JSON from a schema |
 | ASCII Art | Turn text into ASCII art |
-| Log Generator | Generate synthetic log data for testing |
-| SVG Viewer | View, edit, and export SVG graphics |
+| Log Generator | Synthetic log data for testing |
+| SVG Viewer | View, edit, export SVG |
 | Image Resizer | Resize images with format conversion |
 | cURL Builder | Build cURL commands visually |
 | HAR Viewer | Inspect HAR (HTTP Archive) files |
-| CSV Viewer | View and search CSV files in a table |
+| CSV Viewer | View and search CSV in a table |
 | Math Calculator | Evaluate math expressions |
 
-- 100% client-side processing
-- No data collection
-- **Works offline** — No remote APIs or CDN fonts; web build uses PWA cache after first load; desktop app runs fully offline
-- Modular architecture
-- Easy to extend with new tools
+- 100% client-side — no server, no data collection
+- Works offline (PWA cache for web; desktop app fully offline)
+- Modular architecture, easy to extend
 
 ---
 
-## 🚀 Philosophy
+## Philosophy
 
-- **Privacy First** — No server, no tracking, no data leaves your browser.
+- **Privacy first** — No server, no tracking; data stays in your browser.
 - **Lightweight** — Minimal dependencies.
 - **Modular** — Each tool is isolated and independently extendable.
-- **Open Source (MIT)** — Free to use, modify, and distribute.
+- **Open source (MIT)** — Free to use, modify, and distribute.
 
 ---
 
-## 📦 Installation
+## Installation
 
-### Get the app
-
-**macOS (desktop app)**
+### macOS (desktop)
 
 ```bash
 brew tap cminhho/tap
 brew install --cask cminhho/tap/stdout
 ```
 
-Then open **stdout** from Applications or Spotlight. If macOS blocks the first open (“developer cannot be verified”), run once: `xattr -cr /Applications/stdout.app`
+Open **stdout** from Applications or Spotlight. If macOS blocks the first open (“developer cannot be verified”):
 
-**Web** — Run locally (see below) or deploy the built `dist/` to any static host.
+```bash
+xattr -cr /Applications/stdout.app
+```
+
+### Web
+
+Run locally (see [Development](#development)) or deploy the built `dist/` to any static host.
 
 ---
 
-### Development
+## Development
 
-Clone and install:
+### Prerequisites
+
+- **Node.js** 20+ (LTS recommended)
+- **npm** (or compatible package manager)
+
+### Setup
 
 ```bash
 git clone https://github.com/cminhho/stdout.git
@@ -120,61 +161,70 @@ cd stdout
 npm install
 ```
 
+### Commands
+
 **Web (Vite)**
 
 ```bash
-npm run dev          # Dev server
-npm run build        # Production build → dist/
+npm run dev      # Dev server
+npm run build    # Production build → dist/
 ```
 
 **Desktop (Electron)**
 
 ```bash
 npm run electron:dev           # Dev with hot reload
-npm run electron:build:mac     # Build macOS app (arm64 + x64) → release/
+npm run electron:build:mac     # Build macOS (arm64 + x64) → release/
 npm run electron:build:win     # Build Windows
 npm run electron:build:linux   # Build Linux
 ```
 
+**Deploy web to Firebase**
+
+```bash
+npm run deploy   # build + compress + firebase deploy
+```
+
+### Tech stack
+
+| Layer | Technology |
+|-------|------------|
+| Desktop | Electron 33+ |
+| UI | React 19 + TypeScript |
+| Build | Vite 5 |
+| Styling | Tailwind CSS, Radix UI |
+| Package | electron-builder |
+
 ---
 
-## 🛠 Project Structure
+## Project structure
 
 ```
 src/
-  components/     # App + UI primitives (ToolLayout, CodeEditor, ui/)
-  contexts/       # React context (Settings)
-  hooks/          # useToolEngine, useCurrentTool, useToolTracking
-  pages/          # Tool pages by domain (converters, encode, formatters, …)
-  tools/          # Tool registry (registry.ts), routing, types, tracking
-  utils/          # Domain logic + UI helper (encode, validators, cn, …)
+  components/   # App + UI primitives (ToolLayout, CodeEditor, ui/)
+  contexts/     # React context (Settings)
+  hooks/        # useToolEngine, useCurrentTool, useToolTracking
+  pages/        # Tool pages by domain (converters, encode, formatters, …)
+  tools/        # Tool registry (registry.ts), routing, types, tracking
+  utils/        # Domain logic (encode, validators, cn, …)
 ```
 
-Tools are registered in `tools/registry.ts`; each page is self-contained and lazy-loaded.
+Tools are registered in `src/tools/registry.ts`; each page is self-contained and lazy-loaded.
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
-Contributions are welcome.
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Submit a pull request
-
-Please keep tools modular and avoid unnecessary dependencies.
+Contributions are welcome. See [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md) for branch model and workflow. Please keep tools modular and avoid unnecessary dependencies.
 
 ---
 
-## 📄 License
+## Acknowledgments
 
-MIT License
+Stdout builds on open-source projects including [Electron](https://www.electronjs.org/), [React](https://react.dev/), [Vite](https://vitejs.dev/), [Tailwind CSS](https://tailwindcss.com/), and [Radix UI](https://www.radix-ui.com/).
 
-Copyright (c) 2026 Stdout
+---
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction...
+## License
 
-(Include full MIT license text here or create a separate LICENSE file.)
+MIT License. See [LICENSE](LICENSE).
