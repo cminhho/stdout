@@ -39,6 +39,9 @@
 
     --border: 216 12% 24%;
     --input: 216 12% 21%;
+    --input-bg: 224 13% 18%;           /* VS Code input surface (slightly elevated from panel) */
+    --segment-bg: 215 14% 26%;         /* segmented control container (muted) */
+    --segment-border: 216 12% 24%;     /* segment container border (= border) */
     --ring: 221 83% 53%;
 
     --radius: 0.625rem;
@@ -159,6 +162,9 @@
 
     --border: 25 12% 88%;
     --input: 25 12% 91%;
+    --input-bg: 0 0% 100%;
+    --segment-bg: 25 15% 92%;
+    --segment-border: 25 12% 85%;
     --ring: 221 83% 53%;
 
     --radius: 0.625rem;
@@ -236,6 +242,9 @@
 
     --border: 0 0% 16%;
     --input: 0 0% 12%;
+    --input-bg: 0 0% 9%;
+    --segment-bg: 0 0% 14%;
+    --segment-border: 0 0% 16%;
     --ring: 221 83% 53%;
 
     --radius: 0.625rem;
@@ -438,6 +447,17 @@
   }
   .tool-layout-title {
     margin-bottom: var(--spacing-title-mb);
+    gap: var(--spacing-block-gap);
+  }
+  .tool-layout-title h1 {
+    font-size: var(--text-content);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: hsl(var(--foreground));
+  }
+  .tool-layout-title .tool-layout-description {
+    font-size: var(--text-ui);
+    color: hsl(var(--muted-foreground));
   }
   .tool-layout-section {
     margin-bottom: var(--spacing-section-mb);

@@ -47,7 +47,7 @@ function SegmentGroupInner<T extends string>(
       role="group"
       aria-label={ariaLabel}
       className={cn(
-        "flex rounded-md border border-border bg-muted/30 p-0.5",
+        "flex rounded-md border border-segment-border bg-segment-bg p-0.5",
         className
       )}
     >

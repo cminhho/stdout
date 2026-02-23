@@ -21,6 +21,11 @@ export default {
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
+        inputBg: "hsl(var(--input-bg))",
+        segment: {
+          bg: "hsl(var(--segment-bg))",
+          border: "hsl(var(--segment-border))",
+        },
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -67,6 +72,7 @@ export default {
           border: "hsl(var(--outline-button-border))",
           foreground: "hsl(var(--outline-button-foreground))",
         },
+        listFocus: "hsl(var(--list-focus-background))",
       },
       borderRadius: {
         lg: "var(--radius)",

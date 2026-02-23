@@ -20,9 +20,9 @@ const ToolLayout = ({ title, description, contentPadding = true, children }: Too
         )}
       >
         {!isDesktop && (
-          <header className="tool-layout-title flex-shrink-0 flex items-baseline gap-2 flex-wrap">
-            <h1 className="text-base font-semibold tracking-tight text-foreground">{title}</h1>
-            <span className="text-sm text-muted-foreground">· {description}</span>
+          <header className="tool-layout-title flex-shrink-0 flex items-baseline flex-wrap">
+            <h1 id="tool-layout-heading">{title}</h1>
+            <span className="tool-layout-description" aria-hidden="true">· {description}</span>
           </header>
         )}
         <div className="tool-layout-content flex-1 flex flex-col min-h-0">
