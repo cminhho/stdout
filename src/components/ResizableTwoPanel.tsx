@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import PanelResizer from "@/components/PanelResizer";
 import ToolPane from "@/components/ToolPane";
 import type { PaneProps } from "@/components/ToolPane";
@@ -40,7 +41,7 @@ const ResizableTwoPanel = ({
   className,
 }: ResizableTwoPanelProps) => {
   const isLg = useIsLg();
-  const containerRef = React.useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const horizontal = useHorizontalResize(
     defaultInputPercent,

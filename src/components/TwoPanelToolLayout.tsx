@@ -3,7 +3,7 @@ import CodeEditor from "@/components/CodeEditor";
 import FileUploadButton from "@/components/FileUploadButton";
 import IndentSelect, { DEFAULT_INDENT, type IndentOption } from "@/components/IndentSelect";
 import ResizableTwoPanel from "@/components/ResizableTwoPanel";
-import type { PaneProps } from "@/components/ResizableTwoPanel";
+import type { PaneProps } from "@/components/ToolPane";
 import { ClearButton } from "@/components/ClearButton";
 import { SampleButton } from "@/components/SampleButton";
 import { SaveButton } from "@/components/SaveButton";

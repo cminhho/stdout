@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import CodeEditor from "@/components/CodeEditor";
 import FileUploadButton from "@/components/FileUploadButton";
 import ResizableTwoPanel from "@/components/ResizableTwoPanel";
-import { ToolPane, type PaneProps } from "@/components/ResizableTwoPanel";
+import ToolPane, { type PaneProps } from "@/components/ToolPane";
 import { ClearButton } from "@/components/ClearButton";
 import { SampleButton } from "@/components/SampleButton";
 import { SaveButton } from "@/components/SaveButton";
