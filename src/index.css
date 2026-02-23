@@ -11,6 +11,7 @@
    */
   :root,
   .dark {
+    color-scheme: dark;
     /* Base: slate-800 style, foreground ≥ 4.5:1 on background */
     --background: 224 13% 17%;
     --foreground: 210 40% 98%;
@@ -87,6 +88,10 @@
     --text-nav: 0.75rem;
     --text-ui: 0.8125rem;
     --text-content: 0.875rem;
+    /* Responsive: breakpoints align with Tailwind (sm 640px, md 768px, lg 1024px) */
+    --bp-sm: 640px;
+    --bp-md: 768px;
+    --bp-lg: 1024px;
     /*
      * Layout spacing: 8px base grid (VS Code / industry).
      * Scale: 4(0.25) 8(0.5) 12(0.75) 16(1) 20(1.25) 24(1.5) 32(2).
@@ -132,9 +137,17 @@
     --glass-saturate: 200%;
     --glass-border-opacity: 0.14;
     --glass-highlight: 0.1;
+    /* Status (alerts, validation, badges) */
+    --status-success: 142 69% 42%;
+    --status-warning: 38 92% 50%;
+    --status-error: 0 72% 51%;
+    /* Motion: VS Code–style 150–200ms */
+    --transition-duration: 0.15s;
+    --transition-ease: ease;
   }
 
   .light {
+    color-scheme: light;
     /* Warm neutrals (25°), WCAG AA on background; elevated surfaces pure white */
     --background: 25 20% 97%;
     --foreground: 25 25% 18%;
@@ -209,6 +222,12 @@
     --glass-border-opacity: 0.14;
     --glass-highlight: 0.08;
 
+    --status-success: 142 45% 32%;
+    --status-warning: 38 92% 45%;
+    --status-error: 0 72% 45%;
+    --transition-duration: 0.15s;
+    --transition-ease: ease;
+
     --text-nav: 0.75rem;
     --text-ui: 0.8125rem;
     --text-content: 0.875rem;
@@ -216,6 +235,7 @@
 
   /* Deep dark: near-black (0°), OLED-friendly, WCAG AA muted text */
   .deep-dark {
+    color-scheme: dark;
     --background: 0 0% 7%;
     --foreground: 0 0% 96%;
 
@@ -287,10 +307,28 @@
     --glass-saturate: 200%;
     --glass-border-opacity: 0.12;
     --glass-highlight: 0.08;
+
+    --status-success: 142 69% 42%;
+    --status-warning: 38 92% 50%;
+    --status-error: 0 72% 51%;
+    --transition-duration: 0.15s;
+    --transition-ease: ease;
   }
 
   * {
     @apply border-border;
+  }
+
+  /* VS Code–style text selection (primary tint, foreground for contrast) */
+  ::selection {
+    background: hsl(var(--primary) / 0.3);
+    color: hsl(var(--foreground));
+  }
+
+  /* Global focus-visible fallback: ring from token (buttons/inputs often set own ring) */
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px hsl(var(--ring));
   }
 
   body {
@@ -299,10 +337,20 @@
     transition: background-color 0.2s ease, color 0.2s ease;
   }
 
+  /* Web: root fills viewport so flex layout (App) can stretch to full height */
+  #root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
   /* Desktop app window: fill viewport, no body scroll; only inner content scrolls */
-  html.desktop,
-  html.desktop body,
   html.desktop #root {
+    min-height: 0;
+    height: 100%;
+  }
+  html.desktop,
+  html.desktop body {
     height: 100%;
     overflow: hidden;
     margin: 0;
@@ -399,7 +447,7 @@
     font-family: var(--font-mono) !important;
   }
 
-  /* Responsive: slightly tighter panel padding below lg for more content area when stacked */
+  /* Responsive: slightly tighter panel padding below --bp-lg (1024px) when stacked */
   @media (max-width: 1023px) {
     :root {
       --spacing-panel-inner-x: 0.75rem;
@@ -444,6 +492,11 @@
   }
   .tool-layout-inner--padded {
     padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
+  }
+  @media (min-width: 768px) {
+    .tool-layout-inner--padded {
+      padding: var(--spacing-content-y-md) var(--spacing-content-x-md);
+    }
   }
   .tool-layout-title {
     margin-bottom: var(--spacing-title-mb);

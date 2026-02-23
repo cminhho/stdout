@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,11 +18,18 @@
           var resolved = theme === "dark" || theme === "light" || theme === "deep-dark"
             ? theme
             : (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-          document.documentElement.classList.add(resolved);
+          var root = document.documentElement;
+          root.classList.remove("dark", "light", "deep-dark");
+          root.classList.add(resolved);
+          root.style.colorScheme = resolved === "light" ? "light" : "dark";
           var meta = document.querySelector('meta[name="theme-color"]');
           if (meta) meta.setAttribute("content", THEME_COLORS[resolved] || THEME_COLORS.light);
         } catch (e) {
+          document.documentElement.classList.remove("dark");
           document.documentElement.classList.add("light");
+          document.documentElement.style.colorScheme = "light";
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute("content", THEME_COLORS.light);
         }
       })();
     </script>

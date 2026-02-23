@@ -7,7 +7,7 @@ import AppSidebar from "@/components/AppSidebar";
 import WindowTitleBar from "@/components/WindowTitleBar";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import { useToolTracking } from "@/hooks/useToolTracking";
-import SettingsPage from "@/pages/SettingsPage";
+import SettingsPage from "@/pages/settings";
 import NotFound from "@/pages/NotFound";
 import HomePage from "@/pages/HomePage";
 import { isDesktop } from "@/utils/env";

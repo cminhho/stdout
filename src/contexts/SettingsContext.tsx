@@ -9,6 +9,7 @@ function applyResolvedTheme(resolved: "light" | "dark" | "deep-dark") {
   const root = document.documentElement;
   root.classList.remove("dark", "light", "deep-dark");
   root.classList.add(resolved);
+  root.style.colorScheme = resolved === "light" ? "light" : "dark";
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute("content", THEME_COLORS[resolved] ?? THEME_COLORS.light);
 }

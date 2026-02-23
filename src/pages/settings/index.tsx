@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { cn } from "@/utils/cn";
-import { getCurrentVersion, fetchLatestRelease, isNewerVersion } from "@/utils/version";
+import { getCurrentVersion, fetchLatestRelease, isNewerVersion, type LatestRelease } from "@/utils/version";
 import { DEFAULT_TITLE, DEFAULT_DESCRIPTION, SETTINGS_TABS, type SettingsTabId } from "./constants";
 import SettingsGeneralPanel, { type UpdateCheckState } from "./SettingsGeneralPanel";
 import SettingsToolsPanel from "./SettingsToolsPanel";
@@ -13,7 +13,7 @@ const SettingsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [tab, setTab] = useState<SettingsTabId>("general");
   const [updateCheck, setUpdateCheck] = useState<UpdateCheckState>("idle");
-  const [latestRelease, setLatestRelease] = useState<Awaited<ReturnType<typeof fetchLatestRelease>>(null);
+  const [latestRelease, setLatestRelease] = useState<LatestRelease | null>(null);
 
   const currentVersion = getCurrentVersion();
 

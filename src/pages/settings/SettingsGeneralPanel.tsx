@@ -152,3 +152,5 @@ function AboutStats() {
     </div>
   );
 }
+
+export default SettingsGeneralPanel;
