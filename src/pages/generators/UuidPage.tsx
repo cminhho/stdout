@@ -1,9 +1,9 @@
 import { useState, useCallback } from "react";
 import ToolLayout from "@/components/ToolLayout";
+import ToolPane from "@/components/ToolPane";
+import CodeEditor from "@/components/CodeEditor";
 import { SelectWithOptions } from "@/components/ui/select";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import PanelHeader from "@/components/PanelHeader";
-import CodeEditor from "@/components/CodeEditor";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,7 +29,6 @@ const generateUUIDv1Like = (): string => {
   return `${timeLow}-${timeMid}-${timeHi}-${clock}-${node}`;
 };
 
-/** UUID v7 (RFC 9562): time-ordered, 48-bit timestamp ms + version 7 + random */
 const generateUUIDv7 = (): string => {
   const ts = Date.now() & 0xffffffffffff;
   const timeLow = ((ts >> 16) & 0xffffffff).toString(16).padStart(8, "0");
@@ -46,7 +45,7 @@ const generateUUIDv7 = (): string => {
 const UuidPage = () => {
   const tool = useCurrentTool();
   const [uuids, setUuids] = useState<string[]>([]);
-  const [count, setCount] = useState(5);
+  const [count, setCount] = useState(10);
   const [version, setVersion] = useState<"v1" | "v4" | "v7">("v4");
   const [uppercase, setUppercase] = useState(false);
   const [hyphens, setHyphens] = useState(true);
@@ -66,59 +65,69 @@ const UuidPage = () => {
 
   const outputText = uuids.join("\n");
 
-  return (
-    <ToolLayout title={tool?.label ?? "UUID Generator"} description={tool?.description ?? "Generate UUIDs (v1, v4, v7)"}>
-      <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack">
-        <div className="tool-panel flex flex-col flex-1 min-h-0">
-          <PanelHeader
-            label={uuids.length ? `${uuids.length} UUIDs` : "Output"}
-            text={outputText}
-            extra={
-              <div className="flex items-center gap-2 flex-wrap">
-                <div className="flex items-center gap-1.5">
-                  <Label className="text-xs text-muted-foreground shrink-0">Count</Label>
-                  <Input
-                    type="number"
-                    min={1}
-                    max={100}
-                    value={count}
-                    onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
-                    className="h-7 w-14 font-mono text-xs"
-                  />
-                </div>
-                <SelectWithOptions
-                  size="xs"
-                  variant="secondary"
-                  value={version}
-                  onValueChange={(v) => setVersion(v as "v1" | "v4" | "v7")}
-                  options={UUID_VERSION_OPTIONS.map((o) => ({ value: o.value, label: o.label }))}
-                  title="UUID version"
-                  aria-label="UUID version"
-                />
-                <label className="flex items-center gap-1 text-xs text-muted-foreground cursor-pointer whitespace-nowrap">
-                  <input type="checkbox" checked={uppercase} onChange={(e) => setUppercase(e.target.checked)} className="accent-primary rounded border-input" />
-                  Upper
-                </label>
-                <label className="flex items-center gap-1 text-xs text-muted-foreground cursor-pointer whitespace-nowrap">
-                  <input type="checkbox" checked={hyphens} onChange={(e) => setHyphens(e.target.checked)} className="accent-primary rounded border-input" />
-                  Hyphens
-                </label>
-                <Button size="xs" onClick={generate}>Generate</Button>
-                {outputText && <ClearButton onClick={() => setUuids([])} />}
-              </div>
-            }
+  const pane = {
+    title: "Output",
+    copyText: outputText,
+    toolbar: (
+      <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-1.5">
+          <Label className="text-xs text-muted-foreground shrink-0">Count</Label>
+          <Input
+            type="number"
+            min={1}
+            max={100}
+            value={count}
+            onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
+            className="h-7 w-14 font-mono text-xs"
           />
-          <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
-            <CodeEditor
-              value={outputText}
-              readOnly
-              language="text"
-              placeholder="Click Generate to create UUIDs..."
-              fillHeight
-              showLineNumbers={false}
-            />
-          </div>
         </div>
+        <div className="flex items-center gap-1.5">
+          <Label className="text-xs text-muted-foreground shrink-0">Version</Label>
+          <SelectWithOptions
+            size="xs"
+            variant="secondary"
+            value={version}
+            onValueChange={(v) => setVersion(v as "v1" | "v4" | "v7")}
+            options={UUID_VERSION_OPTIONS.map((o) => ({ value: o.value, label: o.label }))}
+            title="UUID version"
+            aria-label="UUID version"
+          />
+        </div>
+        <label className="flex items-center gap-1 text-xs text-muted-foreground cursor-pointer whitespace-nowrap">
+          <input type="checkbox" checked={uppercase} onChange={(e) => setUppercase(e.target.checked)} className="accent-primary rounded border-input" />
+          Upper
+        </label>
+        <label className="flex items-center gap-1 text-xs text-muted-foreground cursor-pointer whitespace-nowrap">
+          <input type="checkbox" checked={hyphens} onChange={(e) => setHyphens(e.target.checked)} className="accent-primary rounded border-input" />
+          Hyphens
+        </label>
+        <Button size="xs" className="h-7 text-xs" onClick={generate}>
+          Generate
+        </Button>
+        <ClearButton onClick={() => setUuids([])} />
+      </div>
+    ),
+    children: (
+      <div className="flex-1 min-h-0 overflow-hidden">
+        <CodeEditor
+          value={outputText}
+          readOnly
+          language="text"
+          placeholder="Click Generate to create UUIDs..."
+          fillHeight
+          showLineNumbers={false}
+        />
+      </div>
+    ),
+  };
+
+  return (
+    <ToolLayout
+      title={tool?.label ?? "UUID Generator"}
+      description={tool?.description ?? "Generate UUIDs (v1, v4, v7)"}
+    >
+      <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack">
+        <ToolPane pane={pane} />
       </div>
     </ToolLayout>
   );

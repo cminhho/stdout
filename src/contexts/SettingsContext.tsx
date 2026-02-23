@@ -3,6 +3,17 @@ import { SettingsContext, loadSettings, saveSettings, type Theme, type SidebarMo
 
 export type { Theme, SidebarMode } from "./settingsStore";
 
+const THEME_COLORS: Record<string, string> = { light: "#fafafa", dark: "#252a31", "deep-dark": "#121212" };
+
+function applyResolvedTheme(resolved: "light" | "dark" | "deep-dark") {
+  const root = document.documentElement;
+  root.classList.remove("dark", "light", "deep-dark");
+  root.classList.add(resolved);
+  root.style.colorScheme = resolved === "light" ? "light" : "dark";
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute("content", THEME_COLORS[resolved] ?? THEME_COLORS.light);
+}
+
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   const [state, setState] = useState(loadSettings);
 
@@ -11,40 +22,24 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   }, [state]);
 
   useEffect(() => {
-    const root = document.documentElement;
-    const themeColors: Record<string, string> = { light: "#fafafa", dark: "#252a31", "deep-dark": "#121212" };
-
-    root.classList.remove("dark", "light", "deep-dark");
-
-    let resolved: "light" | "dark" | "deep-dark";
     if (state.theme === "dark") {
-      resolved = "dark";
-      root.classList.add("dark");
-    } else if (state.theme === "light") {
-      resolved = "light";
-      root.classList.add("light");
-    } else if (state.theme === "deep-dark") {
-      resolved = "deep-dark";
-      root.classList.add("deep-dark");
-    } else {
-      const mq = window.matchMedia("(prefers-color-scheme: dark)");
-      resolved = mq.matches ? "dark" : "light";
-      root.classList.add(resolved);
-      const handler = () => {
-        root.classList.remove("dark", "light");
-        const next = mq.matches ? "dark" : "light";
-        root.classList.add(next);
-        const meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.setAttribute("content", themeColors[next] ?? themeColors.light);
-      };
-      mq.addEventListener("change", handler);
-      const meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) meta.setAttribute("content", themeColors[resolved] ?? themeColors.light);
-      return () => mq.removeEventListener("change", handler);
+      applyResolvedTheme("dark");
+      return;
     }
-
-    const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", themeColors[resolved] ?? themeColors.light);
+    if (state.theme === "light") {
+      applyResolvedTheme("light");
+      return;
+    }
+    if (state.theme === "deep-dark") {
+      applyResolvedTheme("deep-dark");
+      return;
+    }
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const resolve = () => (mq.matches ? "dark" : "light");
+    applyResolvedTheme(resolve());
+    const handler = () => applyResolvedTheme(resolve());
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
   }, [state.theme]);
 
   const setTheme = (theme: Theme) => setState((s) => ({ ...s, theme }));

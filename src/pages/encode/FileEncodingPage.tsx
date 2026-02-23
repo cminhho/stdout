@@ -1,20 +1,14 @@
-import { useState } from "react";
-import ToolLayout from "@/components/ToolLayout";
+import { useState, useMemo, useCallback } from "react";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import FileUploadButton from "@/components/FileUploadButton";
+import ToolAlert from "@/components/ToolAlert";
+import { SegmentGroup } from "@/components/SegmentGroup";
+import { SelectWithOptions } from "@/components/ui/select";
 import { ClearButton } from "@/components/ClearButton";
 import { SampleButton } from "@/components/SampleButton";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import FileUploadButton from "@/components/FileUploadButton";
 import {
   FILE_ENCODING_LABELS,
   decodeBytes,
@@ -35,6 +29,16 @@ const bytesToBase64 = (bytes: Uint8Array): string => {
   return btoa(binary);
 };
 
+const MODE_OPTIONS = [
+  { value: "decode" as const, label: "Decode" },
+  { value: "encode" as const, label: "Encode" },
+];
+
+const BYTES_FORMAT_OPTIONS = [
+  { value: "hex" as const, label: "Hex" },
+  { value: "base64" as const, label: "Base64" },
+];
+
 const SAMPLE_HEX = "48656c6c6f";
 const SAMPLE_BASE64 = "SGVsbG8=";
 const SAMPLE_TEXT = "Hello, UTF-8!";
@@ -42,147 +46,149 @@ const SAMPLE_TEXT = "Hello, UTF-8!";
 const FileEncodingPage = () => {
   const tool = useCurrentTool();
   const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [error, setError] = useState("");
   const [mode, setMode] = useState<"decode" | "encode">("decode");
   const [decodeEncoding, setDecodeEncoding] = useState<string>("utf-8");
   const [bytesFormat, setBytesFormat] = useState<"hex" | "base64">("hex");
 
-  const runDecode = () => {
+  const { output, error } = useMemo(() => {
+    const raw = input.trim();
+    if (!raw) return { output: "", error: "" };
     try {
-      setError("");
-      const raw = input.trim();
-      const bytes =
-        bytesFormat === "hex"
-          ? (() => {
-              const s = raw.replace(/\s/g, "");
-              if (!/^[0-9a-fA-F]*$/.test(s) || s.length % 2 !== 0)
-                throw new Error("Invalid hex: even-length hex string required");
-              const out = new Uint8Array(s.length / 2);
-              for (let i = 0; i < out.length; i++)
-                out[i] = parseInt(s.slice(i * 2, i * 2 + 2), 16);
-              return out;
-            })()
-          : base64ToBytes(raw);
-      setOutput(decodeBytes(bytes, decodeEncoding));
-    } catch (e) {
-      setError((e as Error).message);
-      setOutput("");
-    }
-  };
-
-  const runEncode = () => {
-    try {
-      setError("");
+      if (mode === "decode") {
+        const bytes =
+          bytesFormat === "hex"
+            ? (() => {
+                const s = raw.replace(/\s/g, "");
+                if (!/^[0-9a-fA-F]*$/.test(s) || s.length % 2 !== 0)
+                  throw new Error("Invalid hex: even-length hex string required");
+                const out = new Uint8Array(s.length / 2);
+                for (let i = 0; i < out.length; i++)
+                  out[i] = parseInt(s.slice(i * 2, i * 2 + 2), 16);
+                return out;
+              })()
+            : base64ToBytes(raw);
+        return { output: decodeBytes(bytes, decodeEncoding), error: "" };
+      }
       const bytes = encodeToUtf8Bytes(input);
-      setOutput(bytesFormat === "hex" ? bytesToHex(bytes) : bytesToBase64(bytes));
+      return {
+        output: bytesFormat === "hex" ? bytesToHex(bytes) : bytesToBase64(bytes),
+        error: "",
+      };
     } catch (e) {
-      setError((e as Error).message);
-      setOutput("");
+      return { output: "", error: (e as Error).message };
     }
-  };
+  }, [input, mode, decodeEncoding, bytesFormat]);
 
-  const run = () => (mode === "decode" ? runDecode() : runEncode());
+  const setModeWithCleanup = useCallback((next: "decode" | "encode") => {
+    setMode(next);
+    setInput("");
+  }, []);
 
-  return (
-    <ToolLayout
-      title={tool?.label ?? "Convert File Encoding"}
-      description={tool?.description ?? "Decode bytes from charset or encode text to UTF-8"}
-    >
-      <div className="flex flex-wrap items-center gap-3 mb-4">
+  const handleSample = useCallback(() => {
+    const sample =
+      mode === "decode"
+        ? bytesFormat === "hex"
+          ? SAMPLE_HEX
+          : SAMPLE_BASE64
+        : SAMPLE_TEXT;
+    setInput(sample);
+  }, [mode, bytesFormat]);
+
+  const topSection = (
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-center gap-[var(--spacing-block-gap)]">
         <div className="flex items-center gap-2">
-          <Label className="text-xs text-muted-foreground">Mode</Label>
-          <Select value={mode} onValueChange={(v) => setMode(v as "decode" | "encode")}>
-            <SelectTrigger variant="secondary" className="w-[120px] h-8">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="decode">Decode bytes → text</SelectItem>
-              <SelectItem value="encode">Encode text → UTF-8 bytes</SelectItem>
-            </SelectContent>
-          </Select>
+          <Label className="text-xs text-muted-foreground shrink-0">Mode</Label>
+          <SegmentGroup<"decode" | "encode">
+            value={mode}
+            onValueChange={setModeWithCleanup}
+            options={MODE_OPTIONS}
+            ariaLabel="Decode or encode"
+            size="xs"
+          />
         </div>
         {mode === "decode" && (
           <div className="flex items-center gap-2">
-            <Label className="text-xs text-muted-foreground">From encoding</Label>
-            <Select value={decodeEncoding} onValueChange={setDecodeEncoding}>
-              <SelectTrigger variant="secondary" className="w-[140px] h-8">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {FILE_ENCODING_LABELS.map((enc) => (
-                  <SelectItem key={enc} value={enc}>
-                    {enc}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label className="text-xs text-muted-foreground shrink-0">From encoding</Label>
+            <SelectWithOptions
+              value={decodeEncoding}
+              onValueChange={setDecodeEncoding}
+              options={FILE_ENCODING_LABELS}
+              size="xs"
+              variant="secondary"
+              triggerClassName="min-w-[8.75rem]"
+              aria-label="Source text encoding"
+            />
           </div>
         )}
         <div className="flex items-center gap-2">
-          <Label className="text-xs text-muted-foreground">Bytes as</Label>
-          <Select value={bytesFormat} onValueChange={(v) => setBytesFormat(v as "hex" | "base64")}>
-            <SelectTrigger variant="secondary" className="w-[100px] h-8">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="hex">Hex</SelectItem>
-              <SelectItem value="base64">Base64</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <Button size="xs" onClick={run}>
-          {mode === "decode" ? "Decode" : "Encode"}
-        </Button>
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 tool-content-grid flex-1 min-h-0">
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader
-            label={mode === "decode" ? "Bytes (hex or base64)" : "Text"}
-            extra={
-              <div className="flex items-center gap-2 flex-wrap">
-                <SampleButton onClick={() => { setInput(mode === "decode" ? (bytesFormat === "hex" ? SAMPLE_HEX : SAMPLE_BASE64) : SAMPLE_TEXT); setOutput(""); setError(""); }} />
-                <ClearButton onClick={() => { setInput(""); setOutput(""); setError(""); }} />
-                <FileUploadButton accept=".txt,text/plain" onText={(t) => { setInput(t); setOutput(""); setError(""); }} />
-              </div>
-            }
+          <Label className="text-xs text-muted-foreground shrink-0">Bytes as</Label>
+          <SelectWithOptions<"hex" | "base64">
+            value={bytesFormat}
+            onValueChange={(v) => setBytesFormat(v)}
+            options={BYTES_FORMAT_OPTIONS}
+            size="xs"
+            variant="secondary"
+            triggerClassName="min-w-[5.25rem]"
+            aria-label="Bytes format (hex or base64)"
           />
-          <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor
-              value={input}
-              onChange={setInput}
-              language="text"
-              placeholder={
-                mode === "decode"
-                  ? "Paste hex (e.g. 48656c6c6f) or base64..."
-                  : "Enter text to encode as UTF-8 bytes..."
-              }
-              fillHeight
-            />
-          </div>
-        </div>
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label={mode === "decode" ? "Decoded text" : "UTF-8 bytes"} text={output} />
-          {error && (
-            <div className="code-block text-destructive text-xs shrink-0">⚠ {error}</div>
-          )}
-          <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor
-              value={output || ""}
-              readOnly
-              language="text"
-              placeholder="Result will appear here..."
-              fillHeight
-            />
-          </div>
         </div>
       </div>
       {mode === "encode" && (
-        <p className="text-xs text-muted-foreground mt-2">
+        <p className="text-xs text-muted-foreground">
           Encode output is UTF-8 only (browser limitation). Use Decode mode for other encodings.
         </p>
       )}
-    </ToolLayout>
+    </div>
+  );
+
+  return (
+    <TwoPanelToolLayout
+      tool={tool ?? undefined}
+      title={tool?.label ?? "Convert File Encoding"}
+      description={tool?.description ?? "Decode bytes from charset or encode text to UTF-8"}
+      topSection={topSection}
+      inputPane={{
+        title: mode === "decode" ? "Bytes (hex or base64)" : "Text",
+        toolbar: (
+          <>
+            <SampleButton onClick={handleSample} />
+            <ClearButton onClick={() => setInput("")} />
+            <FileUploadButton accept=".txt,text/plain" onText={setInput} />
+          </>
+        ),
+        inputEditor: {
+          value: input,
+          onChange: setInput,
+          language: "text",
+          placeholder:
+            mode === "decode"
+              ? "Paste hex (e.g. 48656c6c6f) or base64..."
+              : "Enter text to encode as UTF-8 bytes...",
+        },
+      }}
+      outputPane={{
+        title: mode === "decode" ? "Decoded text" : "UTF-8 bytes",
+        copyText: output || undefined,
+        toolbar: <ClearButton onClick={() => setInput("")} />,
+        children: (
+          <div className="flex flex-col flex-1 min-h-0 gap-2">
+            {error && (
+              <ToolAlert variant="error" message={error} prefix="⚠ " className="shrink-0" />
+            )}
+            <div className="flex-1 min-h-0 flex flex-col">
+              <CodeEditor
+                value={output || ""}
+                readOnly
+                language="text"
+                placeholder="Result will appear here..."
+                fillHeight
+              />
+            </div>
+          </div>
+        ),
+      }}
+    />
   );
 };
 

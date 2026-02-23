@@ -23,7 +23,7 @@ export interface SettingsContextType extends SettingsState {
 const STORAGE_KEY = "stdout-settings";
 
 const defaults: SettingsState = {
-  theme: "light",
+  theme: "system",
   sidebarMode: "grouped",
   sidebarCollapsed: false,
   hiddenTools: [],

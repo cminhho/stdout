@@ -12,12 +12,12 @@ const SelectGroup = SelectPrimitive.Group;
 const SelectValue = SelectPrimitive.Value;
 
 const selectTriggerVariants = cva(
-  "flex w-full items-center justify-between gap-2 rounded-md border ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 transition-colors duration-150 [&_svg]:shrink-0",
+  "flex w-full items-center justify-between gap-2 rounded-md border border-border ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 transition-colors duration-150 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default: "border-outlineButton-border bg-outlineButton-bg text-outlineButton-foreground hover:bg-muted hover:text-foreground focus:bg-outlineButton-bg",
-        secondary: "border-border bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:bg-secondary",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:bg-secondary",
       },
       size: {
         default: "h-9 w-full min-w-0 px-2.5 py-2 text-sm [&_svg]:h-3.5 [&_svg]:w-3.5",
@@ -90,7 +90,7 @@ const SelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        "relative z-50 max-h-80 min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+        "relative z-50 max-h-80 min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-[0_4px_16px_rgba(0,0,0,0.2)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
         position === "popper" &&
           "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
         className,
@@ -129,7 +129,7 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-md py-1.5 pl-7 pr-2 text-sm text-popover-foreground outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 focus:bg-muted focus:text-foreground transition-colors duration-150",
+      "relative flex w-full cursor-default select-none items-center rounded-md py-1.5 pl-7 pr-2 text-sm text-popover-foreground outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 focus:bg-listFocus focus:text-foreground transition-colors duration-150",
       className,
     )}
     {...props}
@@ -153,19 +153,38 @@ const SelectSeparator = React.forwardRef<
 ));
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 
-/** Option shape for SelectWithOptions */
+/**
+ * Option shape for select dropdowns (value + label).
+ * Aligns with common patterns (Radix, MUI, Ant Design).
+ */
 export interface SelectOption<T extends string = string> {
   value: T;
   label: string;
 }
 
+/** Build a single option; label defaults to value. */
+export function option<T extends string>(value: T, label?: string): SelectOption<T> {
+  return { value, label: label ?? value };
+}
+
+function normalizeOptions<T extends string>(raw: Array<SelectOption<T> | T>): SelectOption<T>[] {
+  return raw.map((item) =>
+    typeof item === "string" ? { value: item, label: item } : item
+  );
+}
+
 export interface SelectWithOptionsProps<T extends string = string> {
+  /** Current value (must match an option value). */
   value: T;
+  /** Called when user picks an option. */
   onValueChange: (value: T) => void;
-  options: SelectOption<T>[];
+  /** Option list: full objects or plain strings (label = value). */
+  options: ReadonlyArray<SelectOption<T> | T>;
   placeholder?: string;
   size?: "default" | "sm" | "xs" | "lg";
   variant?: "default" | "secondary";
+  disabled?: boolean;
+  /** Tooltip and fallback for aria-label. */
   title?: string;
   "aria-label"?: string;
   className?: string;
@@ -173,9 +192,14 @@ export interface SelectWithOptionsProps<T extends string = string> {
 }
 
 /**
- * Composite select: value + onValueChange + options[] + optional size/variant.
- * Trigger and dropdown use same tokens as SelectTrigger/SelectContent (outlineButton, popover, muted focus).
- * Use for a simple option list; for custom content use Select + SelectTrigger + SelectContent.
+ * Select dropdown from a list of options. Use for simple value picking;
+ * for custom content use Select + SelectTrigger + SelectContent.
+ *
+ * @example
+ * // Full options
+ * <SelectWithOptions value={dialect} onValueChange={setDialect} options={DIALECT_OPTIONS} />
+ * // String shorthand (label = value)
+ * <SelectWithOptions value={unit} onValueChange={setUnit} options={["px", "rem", "em"]} />
  */
 function SelectWithOptions<T extends string = string>({
   value,
@@ -184,24 +208,29 @@ function SelectWithOptions<T extends string = string>({
   placeholder = "Select…",
   size = "default",
   variant = "default",
+  disabled = false,
   title,
   "aria-label": ariaLabel,
   className,
   triggerClassName,
 }: SelectWithOptionsProps<T>) {
+  const items = normalizeOptions(Array.from(options));
+  const a11yLabel = ariaLabel ?? title ?? placeholder;
+
   return (
     <Select value={value} onValueChange={(v) => onValueChange(v as T)}>
       <SelectTrigger
         size={size}
         variant={variant}
+        disabled={disabled}
         className={triggerClassName}
         title={title}
-        aria-label={ariaLabel ?? title}
+        aria-label={a11yLabel}
       >
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent className={className}>
-        {options.map((opt) => (
+        {items.map((opt) => (
           <SelectItem key={opt.value} value={opt.value}>
             {opt.label}
           </SelectItem>

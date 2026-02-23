@@ -11,6 +11,7 @@
    */
   :root,
   .dark {
+    color-scheme: dark;
     /* Base: slate-800 style, foreground ≥ 4.5:1 on background */
     --background: 224 13% 17%;
     --foreground: 210 40% 98%;
@@ -39,6 +40,9 @@
 
     --border: 216 12% 24%;
     --input: 216 12% 21%;
+    --input-bg: 224 13% 18%;           /* VS Code input surface (slightly elevated from panel) */
+    --segment-bg: 215 14% 26%;         /* segmented control container (muted) */
+    --segment-border: 216 12% 24%;     /* segment container border (= border) */
     --ring: 221 83% 53%;
 
     --radius: 0.625rem;
@@ -51,6 +55,7 @@
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 216 12% 22%;
     --sidebar-ring: 221 83% 53%;
+    --sidebar-active-border: 221 83% 53%; /* VS Code activity bar: left accent on active */
 
     --header-bg: 224 13% 15%;
     --header-tab-bg: 215 14% 24%;
@@ -67,6 +72,11 @@
     --code-bracket: 215 9% 62%;
     --code-punctuation: 215 9% 62%;
     --code-comment: 215 9% 48%;
+    --code-tag: 0 70% 65%;           /* HTML/XML tag name (VS Code–style) */
+    --code-gutter-foreground: 215 9% 48%; /* line number gutter (muted) */
+    --code-line-height: 1.5;         /* unitless, editor line height */
+    --code-font-size: 0.875rem;      /* 14px, matches --text-content */
+    --code-gutter-min-width: 36px;   /* min width of line number column */
 
     --outline-button-bg: 215 14% 24%;
     --outline-button-border: 216 12% 32%;
@@ -78,10 +88,13 @@
     --text-nav: 0.75rem;
     --text-ui: 0.8125rem;
     --text-content: 0.875rem;
+    /* Responsive: breakpoints align with Tailwind (sm 640px, md 768px, lg 1024px) */
+    --bp-sm: 640px;
+    --bp-md: 768px;
+    --bp-lg: 1024px;
     /*
-     * Layout spacing: 4px base (VS Code / Linear / Notion).
-     * Scale: 4px(0.25) 8(0.5) 12(0.75) 16(1) 20(1.25) 24(1.5) 32(2).
-     * Content = main padding; panel-gap = between panels; toolbar-mb = below toolbars.
+     * Layout spacing: 8px base grid (VS Code / industry).
+     * Scale: 4(0.25) 8(0.5) 12(0.75) 16(1) 20(1.25) 24(1.5) 32(2).
      */
     --spacing-content-x: 1.25rem;   /* 20px */
     --spacing-content-y: 1rem;      /* 16px */
@@ -91,18 +104,43 @@
     --spacing-panel-inner-x: 1rem;     /* 16px horizontal padding inside each pane */
     --spacing-panel-inner-y: 0.75rem;  /* 12px vertical padding inside pane body */
     --spacing-panel-resizer-gap: 0.25rem; /* 4px between pane content and resizer */
-    --spacing-toolbar-mb: 0.75rem;  /* 12px below toolbar */
-    --spacing-title-mb: 0.75rem;   /* 12px below page title */
-    --spacing-section-mb: 0.75rem; /* 12px between sections */
-    --spacing-block-gap: 0.5rem;   /* 8px between inline blocks (e.g. alerts) */
+    --spacing-toolbar-mb: 0.5rem;   /* 8px below toolbar (VS Code density) */
+    --spacing-title-mb: 0.5rem;     /* 8px below page title */
+    --spacing-section-mb: 0.5rem;   /* 8px between sections */
+    --spacing-block-gap: 0.5rem;    /* 8px between inline blocks */
     --spacing-code-editor: 0.75rem;
-    --spacing-grid-gap: 0.75rem;   /* 12px grid/flex gap */
-    /* Sidebar */
-    --spacing-sidebar-x: 0.75rem;  /* 12px horizontal */
-    --spacing-sidebar-y: 0.625rem; /* 10px vertical block */
+    --spacing-grid-gap: 0.5rem;    /* 8px grid/flex gap */
+    --spacing-tool-layout-x: 0.5rem;  /* 8px horizontal padding for tool layout (dense) */
+    --spacing-tool-layout-y: 0.5rem;  /* 8px vertical padding for tool layout (dense) */
+    /* Workbench (VS Code): editor vs panel surfaces; sidebar/activity bar; list focus for nav */
+    --workbench-editor-bg: var(--code-bg);
+    --workbench-panel-bg: var(--background);
+    --activity-bar-background: var(--sidebar-background);
+    --list-focus-background: var(--sidebar-accent);
+
+    /* Settings page: VS Code–style surfaces (dark default) */
+    --settings-nav-bg: 224 13% 14%;
+    --settings-content-bg: var(--background);
+    --settings-table-header-bg: 215 14% 22%;
+    --settings-table-row-hover-bg: 215 14% 24%;
+    /* Sidebar: VS Code–aligned widths and density */
+    --sidebar-width-collapsed: 48px;   /* activity bar width */
+    --sidebar-width-expanded: 272px;   /* primary sidebar (slightly wider than VS Code default) */
+    --title-bar-height: 35px;           /* VS Code custom title bar */
+    --title-bar-padding-x: 0.5rem;      /* 8px horizontal (8px grid) */
+    --title-bar-gap: 0.25rem;           /* 4px between chrome buttons */
+    --title-bar-font-size: 0.8125rem;   /* 13px – VS Code title */
+    --title-bar-traffic-light-width: 72px; /* macOS: reserve for system controls */
+    --title-bar-end-spacer: 2rem;     /* 32px right drag region */
+    --panel-resizer-width: 16px;      /* two-panel divider hit area (VS Code) */
+    --panel-min-width: 120px;        /* min width per pane when side-by-side */
+    --spacing-two-panel-gap: 0;      /* gap between panes and resizer (0 = flush, VS Code) */
+    --sidebar-item-min-height: 22px;   /* nav item height (VS Code) */
+    --spacing-sidebar-x: 0.5rem;   /* 8px horizontal (tighter) */
+    --spacing-sidebar-y: 0.5rem;   /* 8px vertical block */
     --spacing-sidebar-gap: 0.25rem;
     --spacing-sidebar-indent: 0.5rem;
-    --spacing-sidebar-item-y: 0.375rem; /* 6px item vertical padding */
+    --spacing-sidebar-item-y: 0.25rem; /* 4px item vertical → ~22px with line */
     --spacing-sidebar-header-h: 1.75rem; /* 28px min height for panel header */
     --spacing-footer-min-h: 2.25rem;    /* 36px min height for sidebar footer */
     /* Liquid Glass (desktop): blur + visible edge */
@@ -110,9 +148,17 @@
     --glass-saturate: 200%;
     --glass-border-opacity: 0.14;
     --glass-highlight: 0.1;
+    /* Status (alerts, validation, badges) */
+    --status-success: 142 69% 42%;
+    --status-warning: 38 92% 50%;
+    --status-error: 0 72% 51%;
+    /* Motion: VS Code–style 150–200ms */
+    --transition-duration: 0.15s;
+    --transition-ease: ease;
   }
 
   .light {
+    color-scheme: light;
     /* Warm neutrals (25°), WCAG AA on background; elevated surfaces pure white */
     --background: 25 20% 97%;
     --foreground: 25 25% 18%;
@@ -140,6 +186,9 @@
 
     --border: 25 12% 88%;
     --input: 25 12% 91%;
+    --input-bg: 0 0% 100%;
+    --segment-bg: 25 15% 92%;
+    --segment-border: 25 12% 85%;
     --ring: 221 83% 53%;
 
     --radius: 0.625rem;
@@ -152,6 +201,7 @@
     --sidebar-accent-foreground: 25 25% 18%;
     --sidebar-border: 25 12% 88%;
     --sidebar-ring: 221 83% 53%;
+    --sidebar-active-border: 221 83% 53%;
 
     --code-bg: 0 0% 99%;
     --code-border: 25 10% 90%;
@@ -164,6 +214,11 @@
     --code-bracket: 25 15% 42%;
     --code-punctuation: 25 15% 42%;
     --code-comment: 25 10% 52%;
+    --code-tag: 0 60% 42%;
+    --code-gutter-foreground: 25 10% 52%;
+    --code-line-height: 1.5;
+    --code-font-size: 0.875rem;
+    --code-gutter-min-width: 36px;
 
     --outline-button-bg: 0 0% 100%;
     --outline-button-border: 25 12% 85%;
@@ -172,11 +227,23 @@
     --header-bg: 0 0% 98%;
     --header-tab-bg: 0 0% 100%;
 
+    /* Settings page: light theme (subtle nav strip) */
+    --settings-nav-bg: 25 15% 95%;
+    --settings-content-bg: var(--background);
+    --settings-table-header-bg: 25 12% 94%;
+    --settings-table-row-hover-bg: 25 15% 92%;
+
     /* Liquid Glass – light: same blur, visible edge */
     --glass-blur: 44px;
     --glass-saturate: 200%;
     --glass-border-opacity: 0.14;
     --glass-highlight: 0.08;
+
+    --status-success: 142 45% 32%;
+    --status-warning: 38 92% 45%;
+    --status-error: 0 72% 45%;
+    --transition-duration: 0.15s;
+    --transition-ease: ease;
 
     --text-nav: 0.75rem;
     --text-ui: 0.8125rem;
@@ -185,6 +252,7 @@
 
   /* Deep dark: near-black (0°), OLED-friendly, WCAG AA muted text */
   .deep-dark {
+    color-scheme: dark;
     --background: 0 0% 7%;
     --foreground: 0 0% 96%;
 
@@ -211,6 +279,9 @@
 
     --border: 0 0% 16%;
     --input: 0 0% 12%;
+    --input-bg: 0 0% 9%;
+    --segment-bg: 0 0% 14%;
+    --segment-border: 0 0% 16%;
     --ring: 221 83% 53%;
 
     --radius: 0.625rem;
@@ -223,9 +294,16 @@
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 0 0% 14%;
     --sidebar-ring: 221 83% 53%;
+    --sidebar-active-border: 221 83% 53%;
 
     --header-bg: 0 0% 8%;
     --header-tab-bg: 0 0% 14%;
+
+    /* Settings page: deep dark (OLED-friendly) */
+    --settings-nav-bg: 0 0% 9%;
+    --settings-content-bg: var(--background);
+    --settings-table-header-bg: 0 0% 11%;
+    --settings-table-row-hover-bg: 0 0% 12%;
 
     --code-bg: 0 0% 8%;
     --code-border: 0 0% 14%;
@@ -238,6 +316,11 @@
     --code-bracket: 0 0% 58%;
     --code-punctuation: 0 0% 58%;
     --code-comment: 0 0% 48%;
+    --code-tag: 0 70% 65%;
+    --code-gutter-foreground: 0 0% 48%;
+    --code-line-height: 1.5;
+    --code-font-size: 0.875rem;
+    --code-gutter-min-width: 36px;
 
     --outline-button-bg: 0 0% 14%;
     --outline-button-border: 0 0% 22%;
@@ -247,10 +330,28 @@
     --glass-saturate: 200%;
     --glass-border-opacity: 0.12;
     --glass-highlight: 0.08;
+
+    --status-success: 142 69% 42%;
+    --status-warning: 38 92% 50%;
+    --status-error: 0 72% 51%;
+    --transition-duration: 0.15s;
+    --transition-ease: ease;
   }
 
   * {
     @apply border-border;
+  }
+
+  /* VS Code–style text selection (primary tint, foreground for contrast) */
+  ::selection {
+    background: hsl(var(--primary) / 0.3);
+    color: hsl(var(--foreground));
+  }
+
+  /* Global focus-visible fallback: ring from token (buttons/inputs often set own ring) */
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px hsl(var(--ring));
   }
 
   body {
@@ -259,18 +360,28 @@
     transition: background-color 0.2s ease, color 0.2s ease;
   }
 
+  /* Web: root fills viewport so flex layout (App) is full height, no body scroll */
+  #root {
+    height: 100vh;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
   /* Desktop app window: fill viewport, no body scroll; only inner content scrolls */
   html.desktop,
-  html.desktop body,
-  html.desktop #root {
+  html.desktop body {
     height: 100%;
     overflow: hidden;
     margin: 0;
   }
   html.desktop #root {
+    height: 100%;
     min-height: 0;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
   }
 
   /* Content area behind sidebar: gradient so glass blur has depth */
@@ -284,13 +395,16 @@
     background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(0 0% 10%), hsl(0 0% 5%));
   }
 
-  /* Title bar: Liquid Glass – translucent, blur, edge + shine */
+  /* Title bar: Liquid Glass – token-based, VS Code–aligned layout */
   .desktop-title-bar {
     background: hsl(var(--header-bg) / 0.48);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     border-bottom: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));
     box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / var(--glass-highlight));
+    padding-left: var(--title-bar-padding-x);
+    padding-right: var(--title-bar-padding-x);
+    gap: var(--title-bar-gap);
   }
   .light .desktop-title-bar {
     border-bottom-color: hsl(0 0% 0% / var(--glass-border-opacity));
@@ -299,6 +413,11 @@
   .deep-dark .desktop-title-bar {
     border-bottom-color: hsl(0 0% 100% / var(--glass-border-opacity));
     box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / var(--glass-highlight));
+  }
+  .desktop-title-bar .title-bar-title {
+    font-size: var(--title-bar-font-size);
+    font-weight: 500;
+    color: hsl(var(--foreground) / 0.9);
   }
   .desktop-title-bar .title-tab {
     background: hsl(var(--header-tab-bg));
@@ -313,6 +432,12 @@
   }
   .desktop-title-bar .desktop-title-plain {
     padding: 0 6px;
+  }
+  .desktop-title-bar .title-bar-traffic-light-spacer {
+    width: var(--title-bar-traffic-light-width);
+  }
+  .desktop-title-bar .title-bar-end-spacer {
+    width: var(--title-bar-end-spacer);
   }
 
   /* Thin scrollbars in desktop window */
@@ -345,11 +470,17 @@
     font-family: var(--font-mono) !important;
   }
 
-  /* Responsive: slightly tighter panel padding below lg for more content area when stacked */
+  /* Responsive: tighter panel padding when stacked (VS Code–style density) */
   @media (max-width: 1023px) {
     :root {
       --spacing-panel-inner-x: 0.75rem;
       --spacing-panel-inner-y: 0.5rem;
+    }
+  }
+  @media (max-width: 639px) {
+    :root {
+      --spacing-panel-inner-x: 0.5rem;
+      --spacing-panel-inner-y: 0.375rem;
     }
   }
 }
@@ -364,10 +495,11 @@
     color: hsl(var(--code-text));
   }
 
+  /* Result/summary block: VS Code–style (no fill), consistent padding with panel/system tokens */
   .tool-card {
     @apply rounded-xl border transition-colors duration-150;
-    padding: var(--spacing-content-y-md);
-    background: hsl(var(--card));
+    padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
+    background: transparent;
     border-color: hsl(var(--border));
   }
 
@@ -382,20 +514,81 @@
     max-height: 85vh;
   }
 
-  /* Tool layout: full width/height wrapper. Padded variant uses same tokens as Pane (panel-inner-x/y). */
+  /* Tool layout: full width/height wrapper. Padded variant uses dense tokens (8px base). */
   .tool-layout-inner {
     width: 100%;
     height: 100%;
     min-height: 0;
   }
   .tool-layout-inner--padded {
-    padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
+    padding: var(--spacing-tool-layout-y) var(--spacing-tool-layout-x);
   }
   .tool-layout-title {
-    margin-bottom: var(--spacing-title-mb);
+    margin-bottom: var(--spacing-tool-layout-y);
+    gap: var(--spacing-block-gap);
+  }
+  .tool-layout-title h1 {
+    font-size: var(--text-content);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: hsl(var(--foreground));
+  }
+  .tool-layout-title .tool-layout-description {
+    font-size: var(--text-ui);
+    color: hsl(var(--muted-foreground));
   }
   .tool-layout-section {
     margin-bottom: var(--spacing-section-mb);
+  }
+
+  /* Validator/tool form: label above input (8px grid) */
+  .tool-field-label {
+    font-size: var(--text-nav);
+    color: hsl(var(--muted-foreground));
+    margin-bottom: var(--spacing-block-gap);
+    display: block;
+  }
+
+  /* Section heading inside tool-card (e.g. "Validate (Luhn)", "Match Details") */
+  .tool-section-heading {
+    font-size: var(--text-content);
+    font-weight: 500;
+    color: hsl(var(--foreground));
+    margin-bottom: var(--spacing-block-gap);
+  }
+
+  /* Inline alert for error/success (design tokens) */
+  .tool-alert {
+    padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
+    font-size: var(--text-ui);
+    border-radius: var(--radius);
+    border: 1px solid;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .tool-alert--error {
+    color: hsl(var(--destructive));
+    border-color: hsl(var(--destructive) / 0.5);
+    background: hsl(var(--destructive) / 0.08);
+  }
+  .tool-alert--success {
+    color: hsl(var(--status-success));
+    border-color: hsl(var(--status-success) / 0.5);
+    background: hsl(var(--status-success) / 0.08);
+  }
+
+  /* Success text (e.g. "✓ Valid") – semantic status */
+  .text-status-success {
+    color: hsl(var(--status-success));
+  }
+
+  /* Code editor: VS Code–style panel (workbench editor surface) */
+  .code-editor-wrapper {
+    background: hsl(var(--workbench-editor-bg));
+    border: 1px solid hsl(var(--code-border));
+    border-radius: var(--radius);
+    font-family: var(--font-mono);
+    font-size: var(--code-font-size);
+    line-height: var(--code-line-height);
   }
   .code-editor-wrapper .code-editor-pad {
     padding: var(--spacing-code-editor);
@@ -404,6 +597,9 @@
   /* Use with grid/flex for consistent gap from --spacing-grid-gap */
   .tool-content-grid {
     gap: var(--spacing-grid-gap);
+  }
+  .tool-content-grid--dense {
+    gap: var(--spacing-panel-resizer-gap);
   }
   .tool-content-stack {
     gap: var(--spacing-grid-gap);
@@ -421,9 +617,30 @@
     grid-auto-rows: minmax(0, 1fr);
   }
 
+  /* Stacked grid (1 column): min-height per panel so each stays usable (VS Code–style responsive). */
+  @media (max-width: 1023px) {
+    .tool-layout-content > .grid.tool-content-grid .tool-panel {
+      min-height: min(12rem, 40vh);
+    }
+  }
+  @media (max-width: 1023px) and (max-height: 480px) {
+    .tool-layout-content > .grid.tool-content-grid .tool-panel {
+      min-height: min(10rem, 35vh);
+    }
+  }
+
   .tool-layout-content > .tool-panel {
     flex: 1;
     min-height: 0;
+  }
+
+  /* Panel header label: VS Code–style small, uppercase, letter-spacing */
+  .panel-header-label {
+    font-size: var(--text-nav);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: hsl(var(--foreground));
   }
 
   /* Pane: header + body; gap = only vertical space between them (no double padding). */
@@ -439,10 +656,12 @@
     padding: 0;
   }
 
-  /* Resize panels separator: no padding/margin; full height; theme border. */
+  /* Resize panels separator: token width, full height; theme border (VS Code). */
   .panel-resizer {
     margin: 0;
     padding: 0;
+    width: var(--panel-resizer-width);
+    min-width: var(--panel-resizer-width);
     background: transparent;
     transition: background 0.15s ease;
   }
@@ -458,10 +677,268 @@
   .panel-resizer:hover .panel-resizer-line {
     background: hsl(var(--muted-foreground) / 0.5);
   }
+  .panel-resizer:focus-visible {
+    outline: none;
+    background: hsl(var(--muted) / 0.4);
+    box-shadow: 0 0 0 2px hsl(var(--ring));
+  }
+  .panel-resizer:focus-visible .panel-resizer-line {
+    background: hsl(var(--primary) / 0.8);
+  }
+  /* Horizontal resizer (stacked/small screen): full width, fixed height */
+  .panel-resizer--horizontal {
+    width: 100%;
+    min-width: 0;
+    height: var(--panel-resizer-width);
+    min-height: var(--panel-resizer-width);
+  }
 
-  /* Stacked two-panel: minimum height per pane so both remain usable. */
+  /* Two-panel top section (alerts, validation, options): panel-style border + bg (VS Code message area) */
+  .tool-layout-top-section {
+    padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    gap: var(--spacing-block-gap);
+    min-height: 0;
+    overflow: auto;
+    max-height: min(40vh, 20rem);
+  }
+  .tool-layout-format-error {
+    padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
+    color: hsl(var(--destructive));
+    font-size: var(--text-ui);
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  /* Settings page: tabs, option cards, section headings (design system tokens) */
+  .settings-tabs {
+    display: flex;
+    gap: var(--spacing-block-gap);
+    margin-bottom: var(--spacing-section-mb);
+    border-bottom: 1px solid hsl(var(--border));
+  }
+  .settings-tab {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-block-gap);
+    padding: 0.625rem 1rem;
+    font-size: var(--text-ui);
+    font-weight: 500;
+    color: hsl(var(--muted-foreground));
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .settings-tab:hover {
+    color: hsl(var(--foreground));
+  }
+  .settings-tab:focus-visible {
+    outline: none;
+    border-radius: var(--radius) var(--radius) 0 0;
+    box-shadow: 0 0 0 2px hsl(var(--ring));
+  }
+  .settings-tab--selected {
+    color: hsl(var(--primary));
+    border-bottom-color: hsl(var(--primary));
+  }
+  .settings-option-card {
+    border-radius: var(--radius);
+    border: 1px solid hsl(var(--border));
+    padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
+    text-align: left;
+    cursor: pointer;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .settings-option-card:hover {
+    background: hsl(var(--muted) / 0.5);
+    border-color: hsl(var(--border));
+  }
+  .settings-option-card:focus-visible {
+    outline: none;
+    border-radius: var(--radius);
+    box-shadow: 0 0 0 2px hsl(var(--ring));
+  }
+  .settings-option-card--selected {
+    border-color: hsl(var(--primary));
+    background: hsl(var(--primary) / 0.12);
+    box-shadow: 0 0 0 1px hsl(var(--primary));
+  }
+  .settings-section-heading {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-block-gap);
+    font-size: var(--text-ui);
+    font-weight: 600;
+    color: hsl(var(--foreground));
+    margin-bottom: var(--spacing-block-gap);
+  }
+  .settings-option-grid {
+    display: grid;
+    gap: var(--spacing-grid-gap);
+  }
+  .settings-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-section-mb);
+    max-width: 42rem;
+  }
+  .settings-section {
+    margin-bottom: var(--spacing-section-mb);
+  }
+  .settings-section:last-child {
+    margin-bottom: 0;
+  }
+  .settings-section-content {
+    padding-left: 0;
+  }
+  .settings-tools-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-grid-gap);
+  }
+  .settings-table-wrap {
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    overflow: auto;
+    max-height: min(24rem, 60vh);
+  }
+  .settings-table {
+    width: 100%;
+    font-size: var(--text-ui);
+  }
+  .settings-table th,
+  .settings-table td {
+    padding: var(--spacing-code-editor);
+    text-align: left;
+    border-bottom: 1px solid hsl(var(--border));
+  }
+  .settings-table--compact th,
+  .settings-table--compact td {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.8125rem;
+    vertical-align: middle;
+  }
+  .settings-table--compact thead th {
+    font-weight: 500;
+  }
+  .settings-table thead tr {
+    background: hsl(var(--settings-table-header-bg));
+  }
+  .settings-table thead th {
+    color: hsl(var(--muted-foreground));
+    font-weight: 500;
+  }
+  .settings-table-wrap .settings-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: hsl(var(--settings-table-header-bg));
+    box-shadow: 0 1px 0 hsl(var(--border));
+  }
+  .settings-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .settings-table tbody tr:hover {
+    background: hsl(var(--settings-table-row-hover-bg));
+  }
+  .settings-body-text {
+    font-size: var(--text-ui);
+    color: hsl(var(--muted-foreground));
+  }
+  .settings-label {
+    font-size: var(--text-content);
+    font-weight: 500;
+    color: hsl(var(--foreground));
+  }
+
+  /* Settings page: VS Code–style two-column layout (sidebar + content) */
+  .settings-layout {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+  }
+  .settings-sidebar {
+    flex-shrink: 0;
+    width: 12rem;
+
+    padding: var(--spacing-tool-layout-y) 0 var(--spacing-panel-inner-y);
+  }
+  .settings-category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 var(--spacing-panel-inner-x);
+  }
+  .settings-category-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-block-gap);
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: var(--text-ui);
+    font-weight: 500;
+    color: hsl(var(--muted-foreground));
+    background: transparent;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    text-align: left;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+  .settings-category-item:hover {
+    color: hsl(var(--foreground));
+    background: hsl(var(--muted) / 0.6);
+  }
+  .settings-category-item:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px hsl(var(--ring));
+  }
+  .settings-category-item--selected {
+    color: hsl(var(--primary));
+    background: hsl(var(--primary) / 0.12);
+  }
+  .settings-category-icon {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+  }
+  .settings-content {
+    flex: 1;
+    min-width: 0;
+    overflow: auto;
+    padding: var(--spacing-tool-layout-y) var(--spacing-panel-inner-x) var(--spacing-panel-inner-y);
+  }
+  @media (max-width: 640px) {
+    .settings-layout {
+      flex-direction: column;
+    }
+    .settings-sidebar {
+      width: 100%;
+      border-right: none;
+      border-bottom: 1px solid hsl(var(--border));
+      padding-bottom: var(--spacing-block-gap);
+    }
+    .settings-category-list {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  }
+
+  /* Stacked two-panel: minimum height per pane so both remain usable (responsive). */
   .two-panel-stacked .tool-panel {
     min-height: min(12rem, 40vh);
+  }
+  @media (max-height: 480px) {
+    .two-panel-stacked .tool-panel {
+      min-height: min(10rem, 35vh);
+    }
   }
 
   .tool-panel .tool-textarea,
@@ -541,10 +1018,11 @@
     min-height: var(--spacing-footer-min-h);
   }
 
-  /* Sidebar nav items: no left border (VS Code/Linear/Notion style – active by background only) */
+  /* Sidebar nav items: VS Code–aligned height, active by background only */
   .sidebar-link {
     @apply flex items-center rounded-md transition-colors duration-150 min-w-0;
     gap: 0.5rem;
+    min-height: var(--sidebar-item-min-height);
     padding: var(--spacing-sidebar-item-y) var(--spacing-sidebar-x);
     font-size: var(--text-nav);
     font-weight: 500;
@@ -564,6 +1042,27 @@
   .sidebar-link.active:hover {
     background: hsl(var(--sidebar-accent));
     color: hsl(var(--sidebar-foreground));
+  }
+
+  /* Activity bar (collapsed): VS Code–style left accent on active item */
+  .sidebar-activity-item {
+    border-left: 3px solid transparent;
+  }
+  .sidebar-activity-item.active {
+    border-left-color: hsl(var(--sidebar-active-border));
+  }
+
+  /* Sidebar section headers (group labels): VS Code–style uppercase, letter-spacing, muted */
+  .sidebar-group-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+  }
+  .sidebar-link:hover .sidebar-group-label,
+  .sidebar-link.active .sidebar-group-label {
+    color: inherit;
   }
 
   /* Sidebar search: compact, theme-aligned (industry practice: single-line, muted field) */
@@ -644,23 +1143,23 @@
     color: hsl(38 92% 40%);
   }
 
-  /* Liquid Glass: sidebar in desktop window – translucent, blur, edge + shine */
+  /* Liquid Glass: sidebar in desktop window – token-based, translucent, blur, edge + shine */
   .sidebar-glass {
-    background: hsl(0 0% 10% / 0.42);
+    background: hsl(var(--sidebar-background) / 0.42);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     border-right: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));
     box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / var(--glass-highlight));
   }
   .light .sidebar-glass {
-    background: hsl(0 0% 100% / 0.5);
+    background: hsl(var(--sidebar-background) / 0.5);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     border-right: 1px solid hsl(0 0% 0% / var(--glass-border-opacity));
     box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / 0.6);
   }
   .deep-dark .sidebar-glass {
-    background: hsl(0 0% 6% / 0.5);
+    background: hsl(var(--sidebar-background) / 0.5);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     border-right: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));

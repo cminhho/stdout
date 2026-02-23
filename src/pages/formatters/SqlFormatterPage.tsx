@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import CodeEditor from "@/components/CodeEditor";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
-import { SelectWithOptions } from "@/components/ui/select";
+import { SelectWithOptions, type SelectOption } from "@/components/ui/select";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { SaveButton } from "@/components/SaveButton";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
@@ -19,7 +19,7 @@ import {
   SQL_OUTPUT_PLACEHOLDER,
 } from "@/utils/sqlFormat";
 
-const DIALECT_OPTIONS: { value: SqlDialect; label: string }[] = [
+const DIALECT_OPTIONS: SelectOption<SqlDialect>[] = [
   { value: "standard", label: "Standard" },
   { value: "mysql", label: "MySQL" },
   { value: "mariadb", label: "MariaDB" },
@@ -27,24 +27,30 @@ const DIALECT_OPTIONS: { value: SqlDialect; label: string }[] = [
   { value: "plsql", label: "PL/SQL" },
 ];
 
-const KEYWORD_CASE_OPTIONS: { value: SqlKeywordCase; label: string }[] = [
+const KEYWORD_CASE_OPTIONS: SelectOption<SqlKeywordCase>[] = [
   { value: "upper", label: "Keywords: Upper" },
   { value: "lower", label: "Keywords: Lower" },
 ];
 
-const IDENTIFIER_CASE_OPTIONS: { value: SqlIdentifierCase; label: string }[] = [
+const IDENTIFIER_CASE_OPTIONS: SelectOption<SqlIdentifierCase>[] = [
   { value: "as-is", label: "Identifiers: As-is" },
   { value: "upper", label: "Identifiers: Upper" },
   { value: "lower", label: "Identifiers: Lower" },
 ];
 
+const TOOLBAR_SELECT_PROPS = { size: "xs" as const, variant: "secondary" as const };
+
+const DEFAULT_DIALECT: SqlDialect = "standard";
+const DEFAULT_KEYWORD_CASE: SqlKeywordCase = "upper";
+const DEFAULT_IDENTIFIER_CASE: SqlIdentifierCase = "as-is";
+
 const SqlFormatterPage = () => {
   const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const [indent, setIndent] = useState<IndentOption>(2);
-  const [keywordCase, setKeywordCase] = useState<SqlKeywordCase>("upper");
-  const [identifierCase, setIdentifierCase] = useState<SqlIdentifierCase>("as-is");
-  const [dialect, setDialect] = useState<SqlDialect>("standard");
+  const [keywordCase, setKeywordCase] = useState<SqlKeywordCase>(DEFAULT_KEYWORD_CASE);
+  const [identifierCase, setIdentifierCase] = useState<SqlIdentifierCase>(DEFAULT_IDENTIFIER_CASE);
+  const [dialect, setDialect] = useState<SqlDialect>(DEFAULT_DIALECT);
 
   const output = useMemo(
     () => processSqlInput(input, indent, dialect, keywordCase, identifierCase),
@@ -63,8 +69,7 @@ const SqlFormatterPage = () => {
         },
         inputToolbarExtra: (
           <SelectWithOptions<SqlDialect>
-            size="xs"
-            variant="secondary"
+            {...TOOLBAR_SELECT_PROPS}
             value={dialect}
             onValueChange={setDialect}
             options={DIALECT_OPTIONS}
@@ -84,8 +89,7 @@ const SqlFormatterPage = () => {
         toolbar: (
           <>
             <SelectWithOptions<SqlKeywordCase>
-              size="xs"
-              variant="secondary"
+              {...TOOLBAR_SELECT_PROPS}
               value={keywordCase}
               onValueChange={setKeywordCase}
               options={KEYWORD_CASE_OPTIONS}
@@ -93,8 +97,7 @@ const SqlFormatterPage = () => {
               aria-label="Keyword case"
             />
             <SelectWithOptions<SqlIdentifierCase>
-              size="xs"
-              variant="secondary"
+              {...TOOLBAR_SELECT_PROPS}
               value={identifierCase}
               onValueChange={setIdentifierCase}
               options={IDENTIFIER_CASE_OPTIONS}
@@ -109,7 +112,7 @@ const SqlFormatterPage = () => {
         ),
         children: (
           <CodeEditor
-            key={`result-${indent}-${dialect}-${keywordCase}-${identifierCase}`}
+            key={[indent, dialect, keywordCase, identifierCase].join("-")}
             value={output}
             readOnly
             language={SQL_LANGUAGE}

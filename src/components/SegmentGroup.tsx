@@ -26,8 +26,8 @@ export interface SegmentGroupProps<T extends string> {
 
 /**
  * Segmented control: one-of-many selection with clear active state.
- * Container uses border-border and bg-muted/30; active = primary, inactive = ghost (muted hover).
- * Spacing: p-0.5 (2px) container, px-2.5 (10px) per segment (4px scale). Accessible (role="group", aria-pressed).
+ * Compact layout aligned with toolbar buttons (e.g. SampleButton): h-7, px-2 per segment.
+ * Container: border aligned with outline buttons (border-outlineButton-border), bg-segment-bg, p-0.5. Accessible (role="group", aria-pressed).
  */
 function SegmentGroupInner<T extends string>(
   {
@@ -47,7 +47,7 @@ function SegmentGroupInner<T extends string>(
       role="group"
       aria-label={ariaLabel}
       className={cn(
-        "flex rounded-md border border-border bg-muted/30 p-0.5",
+        "inline-flex h-7 items-center rounded-md border border-outlineButton-border bg-segment-bg p-0.5",
         className
       )}
     >
@@ -59,7 +59,7 @@ function SegmentGroupInner<T extends string>(
             type="button"
             variant={isActive ? "default" : "ghost"}
             size={size}
-            className="min-w-0 px-2.5"
+            className="min-w-0 !h-6 px-2 text-xs"
             aria-pressed={isActive}
             disabled={disabled}
             onClick={() => onValueChange(option.value)}

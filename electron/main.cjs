@@ -6,6 +6,10 @@ const APP_NAME = "stdout";
 const isDev = process.env.NODE_ENV === "development" || !app.isPackaged;
 const isMac = process.platform === "darwin";
 
+function getFocusedWindow() {
+  return BrowserWindow.getFocusedWindow();
+}
+
 function getAppVersion() {
   try {
     const pkgPath = path.join(__dirname, "../package.json");
@@ -35,15 +39,15 @@ function setMacOSApplicationMenu() {
           label: "Settings…",
           accelerator: "Cmd+,",
           click: () => {
-            const w = BrowserWindow.getFocusedWindow();
-            if (w && w.webContents) w.webContents.send("menu:open-settings");
+            const w = getFocusedWindow();
+            if (w?.webContents) w.webContents.send("menu:open-settings");
           },
         },
         {
           label: "Check for Updates…",
           click: () => {
-            const w = BrowserWindow.getFocusedWindow();
-            if (w && w.webContents) w.webContents.send("menu:check-updates");
+            const w = getFocusedWindow();
+            if (w?.webContents) w.webContents.send("menu:check-updates");
           },
         },
         {
@@ -148,16 +152,10 @@ function createWindow() {
 }
 
 // Custom window controls when frame: false (Windows/Linux)
-ipcMain.handle("window:close", () => {
-  const w = BrowserWindow.getFocusedWindow();
-  if (w) w.close();
-});
-ipcMain.handle("window:minimize", () => {
-  const w = BrowserWindow.getFocusedWindow();
-  if (w) w.minimize();
-});
+ipcMain.handle("window:close", () => getFocusedWindow()?.close());
+ipcMain.handle("window:minimize", () => getFocusedWindow()?.minimize());
 ipcMain.handle("window:maximize", () => {
-  const w = BrowserWindow.getFocusedWindow();
+  const w = getFocusedWindow();
   if (w) (w.isMaximized() ? w.unmaximize() : w.maximize());
 });
 

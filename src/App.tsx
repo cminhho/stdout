@@ -1,32 +1,30 @@
 import { Suspense, useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { BrowserRouter, HashRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { BrowserRouter, HashRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import AppSidebar from "@/components/AppSidebar";
 import WindowTitleBar from "@/components/WindowTitleBar";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import { useToolTracking } from "@/hooks/useToolTracking";
-import SettingsPage from "@/pages/SettingsPage";
+import SettingsPage from "@/pages/settings";
 import NotFound from "@/pages/NotFound";
 import HomePage from "@/pages/HomePage";
 
-const isDesktop = typeof window !== "undefined" && !!window.electronAPI;
+const useHashRouter = typeof window !== "undefined" && window.location?.protocol === "file:";
+const Router = useHashRouter ? HashRouter : BrowserRouter;
 
 const ToolRoutes = () => {
   const { tools } = useToolEngine();
   const navigate = useNavigate();
 
-  // Activate usage tracking
   useToolTracking();
 
-  // macOS app menu: Settings… and Check for Updates… (License… handled in main)
   useEffect(() => {
-    if (!isDesktop || !window.electronAPI?.menu) return;
-    const unsubSettings = window.electronAPI.menu.onOpenSettings(() => navigate("/settings"));
-    const unsubCheck = window.electronAPI.menu.onCheckUpdates(() =>
-      navigate("/settings?checkUpdates=1")
-    );
+    const menu = (window as { electronAPI?: { menu?: { onOpenSettings: (cb: () => void) => () => void; onCheckUpdates: (cb: () => void) => () => void } } }).electronAPI?.menu;
+    if (!menu) return;
+    const unsubSettings = menu.onOpenSettings(() => navigate("/settings"));
+    const unsubCheck = menu.onCheckUpdates(() => navigate("/settings?checkUpdates=1"));
     return () => {
       unsubSettings();
       unsubCheck();
@@ -47,55 +45,20 @@ const ToolRoutes = () => {
           <Route key={tool.id} path={tool.path} element={<tool.component />} />
         ))}
         <Route path="/settings" element={<SettingsPage />} />
-
-        {/* Legacy path redirects (consolidated tools) */}
-        <Route path="/formatters/js-beautifier" element={<Navigate to="/formatters/js" replace />} />
-        <Route path="/formatters/js-minifier" element={<Navigate to="/formatters/js" replace />} />
-        <Route path="/formatters/css-beautifier" element={<Navigate to="/formatters/css" replace />} />
-        <Route path="/formatters/css-minifier" element={<Navigate to="/formatters/css" replace />} />
-        <Route path="/tools/json-validator" element={<Navigate to="/formatters/json" replace />} />
-        <Route path="/tools/xml-validator" element={<Navigate to="/formatters/xml" replace />} />
-        <Route path="/tools/html-validator" element={<Navigate to="/formatters/html" replace />} />
-        <Route path="/text/escape/xml" element={<Navigate to="/text/escape" replace />} />
-        <Route path="/text/escape/java" element={<Navigate to="/text/escape" replace />} />
-        <Route path="/text/escape/javascript" element={<Navigate to="/text/escape" replace />} />
-        <Route path="/text/escape/json" element={<Navigate to="/text/escape" replace />} />
-        <Route path="/text/escape/csv" element={<Navigate to="/text/escape" replace />} />
-        <Route path="/text/escape/sql" element={<Navigate to="/text/escape" replace />} />
-        <Route path="/text" element={<Navigate to="/text/analyzer" replace />} />
-        <Route path="/diff" element={<Navigate to="/text/diff" replace />} />
-        <Route path="/markdown" element={<Navigate to="/text/markdown" replace />} />
-
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
   );
 };
 
-/** HashRouter for file: protocol (desktop app); BrowserRouter for web. */
-const Router = window.location.protocol === "file:" ? HashRouter : BrowserRouter;
-
 const App = () => {
-  useEffect(() => {
-    if (isDesktop) {
-      document.documentElement.classList.add("desktop");
-      return () => document.documentElement.classList.remove("desktop");
-    }
-  }, []);
-
   return (
     <TooltipProvider>
       <Router>
         <SettingsProvider>
           <Toaster />
-          <div
-            className={
-              isDesktop
-                ? "flex flex-col h-full overflow-hidden"
-                : "flex flex-col min-h-screen"
-            }
-          >
-            {isDesktop && <WindowTitleBar />}
+          <div className="flex flex-col h-screen overflow-hidden min-w-0">
+            <WindowTitleBar />
             <div className="desktop-layout flex flex-1 min-h-0 overflow-hidden min-w-0">
               <AppSidebar />
               <main className="flex-1 min-h-0 min-w-0 overflow-auto flex flex-col">

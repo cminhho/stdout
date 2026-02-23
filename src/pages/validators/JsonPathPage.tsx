@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
+import ToolAlert from "@/components/ToolAlert";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
@@ -141,27 +142,33 @@ const JsonPathPage = () => {
   return (
     <TwoPanelToolLayout
       topSection={
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="flex items-center gap-1.5 min-w-0">
-            <Label className="text-xs text-muted-foreground shrink-0">JSONPath</Label>
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <Label htmlFor="jsonpath-input" className="text-xs text-muted-foreground shrink-0">
+              JSONPath
+            </Label>
             <Input
-              className="input-compact font-mono flex-1 min-w-[12rem] max-w-md h-7"
+              id="jsonpath-input"
+              className="h-7 font-mono flex-1 min-w-[16rem] max-w-2xl"
               value={pathInput}
               onChange={(e) => setPathInput(e.target.value)}
               placeholder="$..."
+              aria-label="JSONPath expression"
             />
           </div>
-          <span className="text-xs text-muted-foreground shrink-0">Examples:</span>
-          {EXAMPLES.map((ex) => (
-            <button
-              key={ex}
-              type="button"
-              onClick={() => setPathInput(ex)}
-              className="text-xs px-2 py-0.5 rounded bg-muted hover:bg-accent text-muted-foreground hover:text-accent-foreground transition-colors font-mono shrink-0"
-            >
-              {ex}
-            </button>
-          ))}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs text-muted-foreground shrink-0">Examples:</span>
+            {EXAMPLES.map((ex) => (
+              <button
+                key={ex}
+                type="button"
+                onClick={() => setPathInput(ex)}
+                className="text-xs px-2 py-1 rounded border border-border bg-muted/50 text-muted-foreground hover:text-foreground hover:border-border transition-colors font-mono shrink-0"
+              >
+                {ex}
+              </button>
+            ))}
+          </div>
         </div>
       }
       inputPane={{
@@ -183,9 +190,7 @@ const JsonPathPage = () => {
         copyText: result || undefined,
         toolbar: <IndentSelect value={indent} onChange={setIndent} />,
         children: error ? (
-          <div className="flex-1 min-h-0 overflow-auto rounded border border-border bg-muted/30 p-3 text-destructive text-sm font-mono">
-            {error}
-          </div>
+          <ToolAlert variant="error" message={error} className="flex-1 min-h-0 overflow-auto" />
         ) : (
           undefined
         ),

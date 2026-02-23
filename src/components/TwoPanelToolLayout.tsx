@@ -1,16 +1,20 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import CodeEditor from "@/components/CodeEditor";
 import FileUploadButton from "@/components/FileUploadButton";
 import IndentSelect, { DEFAULT_INDENT, type IndentOption } from "@/components/IndentSelect";
 import ResizableTwoPanel from "@/components/ResizableTwoPanel";
-import type { PaneProps } from "@/components/ResizableTwoPanel";
+import type { PaneProps } from "@/components/ToolPane";
+import TwoPanelTopSection from "@/components/TwoPanelTopSection";
 import { ClearButton } from "@/components/ClearButton";
 import { SampleButton } from "@/components/SampleButton";
 import { SaveButton } from "@/components/SaveButton";
 import ToolLayout from "@/components/ToolLayout";
-import ValidationErrorList from "@/components/ValidationErrorList";
+import { useFormatOutput } from "@/hooks/useFormatOutput";
 import { cn } from "@/utils/cn";
 import type { ParseError } from "@/utils/validationTypes";
+
+const TWO_PANEL_DEFAULT_INPUT_PERCENT = 40;
+const FORMAT_LOADING_PLACEHOLDER = "Formatting…";
 
 /** Config for default input toolbar: Sample + Clear + File upload. */
 export interface DefaultInputToolbarConfig {
@@ -166,14 +170,16 @@ function buildInputPaneProps(
   const children =
     config.children ??
     (config.inputEditor ? (
-      <CodeEditor
-        value={config.inputEditor.value}
-        onChange={config.inputEditor.onChange}
-        language={config.inputEditor.language as never}
-        placeholder={config.inputEditor.placeholder}
-        errorLines={resolvedErrorLines}
-        fillHeight
-      />
+      <div className="flex-1 min-h-0 flex flex-col">
+        <CodeEditor
+          value={config.inputEditor.value}
+          onChange={config.inputEditor.onChange}
+          language={config.inputEditor.language as never}
+          placeholder={config.inputEditor.placeholder}
+          errorLines={resolvedErrorLines}
+          fillHeight
+        />
+      </div>
     ) : undefined);
 
   return {
@@ -186,7 +192,7 @@ function buildInputPaneProps(
 }
 
 function hasOutputToSave(content: string | undefined, filename: string | undefined): boolean {
-  return (content != null && content !== "" && filename != null && filename !== "") === true;
+  return Boolean(content && content !== "" && filename && filename !== "");
 }
 
 export interface OutputPaneIndentControl {
@@ -231,18 +237,19 @@ function buildOutputPaneProps(
     ) : undefined);
 
   const outputKey = derived?.outputKey ?? config.outputEditor?.outputKey ?? indentControl?.resolvedIndent;
-  const outputPlaceholder = derived?.loading ? "Formatting…" : config.outputEditor?.placeholder;
+  const outputPlaceholder = derived?.loading ? FORMAT_LOADING_PLACEHOLDER : config.outputEditor?.placeholder;
   const children =
     config.children ??
     (config.outputEditor ? (
-      <CodeEditor
-        key={outputKey}
-        value={editorValue ?? ""}
-        readOnly
-        language={config.outputEditor.language as never}
-        placeholder={outputPlaceholder}
-        fillHeight
-      />
+      <div className="flex-1 min-h-0 flex flex-col" key={outputKey}>
+        <CodeEditor
+          value={editorValue ?? ""}
+          readOnly
+          language={config.outputEditor.language as never}
+          placeholder={outputPlaceholder}
+          fillHeight
+        />
+      </div>
     ) : undefined);
 
   return {
@@ -275,9 +282,6 @@ const TwoPanelToolLayout = ({
 }: TwoPanelToolLayoutProps) => {
   const title = titleProp ?? tool?.label ?? "";
   const description = descriptionProp ?? tool?.description ?? "";
-  const showValidationList =
-    showValidationErrors && (validationErrors?.length ?? 0) > 0;
-
   const ot = outputPane.outputToolbar;
   const [internalIndent, setInternalIndent] = useState<IndentOption>(
     () => ot?.defaultIndent ?? DEFAULT_INDENT
@@ -296,55 +300,9 @@ const TwoPanelToolLayout = ({
       : undefined;
 
   const inputValue = inputPane.inputEditor?.value ?? "";
-  const syncFormatResult = useMemo(() => {
-    if (!ot?.format) return null;
-    const r = ot.format(inputValue, resolvedIndent);
-    if (r != null && typeof (r as Promise<FormatResult>).then === "function") return null;
-    return r as FormatResult;
-  }, [inputValue, resolvedIndent, ot?.format]);
-
-  const [asyncFormatResult, setAsyncFormatResult] = useState<FormatResult | null>(null);
-  const [formatLoading, setFormatLoading] = useState(false);
-  const [formatError, setFormatError] = useState<Error | null>(null);
-  useEffect(() => {
-    if (!ot?.format) {
-      setAsyncFormatResult(null);
-      setFormatLoading(false);
-      setFormatError(null);
-      return;
-    }
-    const r = ot.format(inputValue, resolvedIndent);
-    if (r == null) return;
-    if (typeof (r as Promise<FormatResult>).then === "function") {
-      setFormatLoading(true);
-      setFormatError(null);
-      let cancelled = false;
-      (r as Promise<FormatResult>)
-        .then(
-          (res) => {
-            if (!cancelled) {
-              setAsyncFormatResult(res);
-              setFormatLoading(false);
-              setFormatError(null);
-            }
-          },
-          (err: Error) => {
-            if (!cancelled) {
-              setFormatLoading(false);
-              setFormatError(err ?? new Error("Format failed"));
-            }
-          }
-        );
-      return () => {
-        cancelled = true;
-      };
-    }
-    setAsyncFormatResult(null);
-    setFormatLoading(false);
-    setFormatError(null);
-  }, [inputValue, resolvedIndent, ot?.format]);
-
-  const formatResult = syncFormatResult ?? asyncFormatResult;
+  const { result: formatResult, loading: formatLoading, error: formatError } = useFormatOutput<
+    FormatResult
+  >(inputValue, resolvedIndent, ot?.format ?? null, { fallbackErrorMsg: "Format failed" });
   const effectiveValidationErrors = validationErrors ?? formatResult?.errors ?? [];
   const showValidationListResolved =
     showValidationErrors && (effectiveValidationErrors?.length ?? 0) > 0;
@@ -358,40 +316,18 @@ const TwoPanelToolLayout = ({
         }
       : undefined;
 
-  const hasChromeAbove = formatError || showValidationListResolved || topSection;
+  const hasChromeAbove = Boolean(formatError || showValidationListResolved || topSection);
 
   return (
-    <ToolLayout title={title} description={description} contentPadding={false}>
-      {hasChromeAbove ? (
-        <div
-          className={cn(
-            "flex flex-col flex-shrink-0 gap-[var(--spacing-block-gap)] mb-[var(--spacing-toolbar-mb)]",
-            "px-[var(--spacing-panel-inner-x)]"
-          )}
-        >
-          {/* Chrome spacing aligns with panes via --spacing-panel-inner-x; responsive via CSS @media (max-width: 1023px). */}
-          {formatError ? (
-            <div
-              className="rounded-md border border-destructive/25 bg-destructive/10 px-2.5 py-1.5 text-xs text-destructive transition-colors duration-150"
-              role="alert"
-            >
-              Format failed: {formatError.message}
-            </div>
-          ) : null}
-          {showValidationListResolved ? (
-            <section aria-label="Validation errors">
-              <ValidationErrorList errors={effectiveValidationErrors} />
-            </section>
-          ) : null}
-          {topSection ? (
-            <div className="flex flex-col gap-[var(--spacing-block-gap)]">
-              {topSection}
-            </div>
-          ) : null}
-        </div>
-      ) : null}
+    <ToolLayout title={title} description={description}>
+      <TwoPanelTopSection
+        formatError={formatError ?? undefined}
+        validationErrors={effectiveValidationErrors}
+        showValidationErrors={showValidationErrors}
+        topSection={topSection}
+      />
       <ResizableTwoPanel
-        defaultInputPercent={defaultInputPercent ?? 40}
+        defaultInputPercent={defaultInputPercent ?? TWO_PANEL_DEFAULT_INPUT_PERCENT}
         minInputPercent={minInputPercent}
         maxInputPercent={maxInputPercent}
         resizerWidth={resizerWidth}

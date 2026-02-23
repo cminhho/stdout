@@ -33,7 +33,7 @@
     "build:analyze": "cross-env ANALYZE=1 vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "deploy": "vite build && node scripts/compress-dist.mjs && firebase deploy",
+    "deploy": "vite build && firebase deploy",
     "electron:dev": "concurrently -k \"vite\" \"wait-on http://localhost:8080 && cross-env NODE_ENV=development electron .\"",
     "electron:build": "cross-env ELECTRON_BUILD=1 vite build && electron-builder",
     "electron:build:mac": "cross-env ELECTRON_BUILD=1 vite build && electron-builder --mac --arm64 --x64",

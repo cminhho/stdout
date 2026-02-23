@@ -1,31 +1,27 @@
 import CopyButton from "@/components/CopyButton";
-import { Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/utils/cn";
+
+const HEADER_BASE =
+  "flex items-center justify-between flex-wrap min-h-[var(--spacing-sidebar-header-h)] pt-[var(--spacing-panel-inner-y)] pb-0";
 
 interface PanelHeaderProps {
   label: string;
   text?: string;
-  onClear?: () => void;
+  /** Clear action: pass a ClearButton (or other control) via extra when needed. */
   extra?: React.ReactNode;
+  /** Override horizontal padding (e.g. pl-[var(--spacing-panel-resizer-gap)] pr-[var(--spacing-panel-inner-x)] for output pane). */
+  className?: string;
 }
 
 /**
- * Standardized panel header with label, copy button, and optional clear/extra actions.
- * Padding matches pane body (--spacing-panel-inner-x/y). No bottom padding; .tool-panel gap separates header from body.
+ * Panel header: label, extra (toolbar + optional clear), copy. Padding matches pane body.
  */
-const PanelHeader = ({ label, text, onClear, extra }: PanelHeaderProps) => (
-  <div className="flex items-center justify-between flex-wrap min-h-[var(--spacing-sidebar-header-h)] px-[var(--spacing-panel-inner-x)] pt-[var(--spacing-panel-inner-y)] pb-0">
-    <span className="text-sm font-medium text-foreground uppercase tracking-wider select-none">
-      {label}
-    </span>
+const PanelHeader = ({ label, text, extra, className }: PanelHeaderProps) => (
+  <div className={cn(HEADER_BASE, className ?? "px-[var(--spacing-panel-inner-x)]")}>
+    <span className="panel-header-label select-none">{label}</span>
     <div className="flex items-center gap-1.5 flex-wrap">
       {extra}
       {text !== undefined ? <CopyButton text={text} /> : null}
-      {onClear ? (
-        <Button variant="ghost" size="icon-xs" onClick={onClear} aria-label="Clear">
-          <Trash2 className="h-3.5 w-3.5" />
-        </Button>
-      ) : null}
     </div>
   </div>
 );

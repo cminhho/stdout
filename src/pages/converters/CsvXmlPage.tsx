@@ -2,6 +2,8 @@ import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import OptionsButton from "@/components/OptionsButton";
 import type { IndentOption } from "@/components/IndentSelect";
 import {
   processCsvToXmlForLayout,
@@ -12,8 +14,6 @@ import {
   CSV_XML_OUTPUT_FILENAME,
   CSV_XML_MIME_TYPE,
 } from "@/utils/csvXml";
-
-const inputClass = "h-7 font-mono rounded border border-input bg-background px-2 text-xs";
 
 const CsvXmlPage = () => {
   const tool = useCurrentTool();
@@ -39,14 +39,35 @@ const CsvXmlPage = () => {
           onFileText: setInput,
         },
         inputToolbarExtra: (
-          <>
-            <span className="text-xs text-muted-foreground">Root</span>
-            <Input value={rootTag} onChange={(e) => setRootTag(e.target.value)} className={`${inputClass} w-24`} />
-            <span className="text-xs text-muted-foreground">Row</span>
-            <Input value={rowTag} onChange={(e) => setRowTag(e.target.value)} className={`${inputClass} w-24`} />
-            <span className="text-xs text-muted-foreground">Delim</span>
-            <Input value={delimiter} onChange={(e) => setDelimiter(e.target.value)} className={`${inputClass} w-12 text-center`} maxLength={1} />
-          </>
+          <OptionsButton ariaLabel="CSV to XML options">
+            <div className="space-y-3">
+              <div className="space-y-1.5">
+                <Label variant="muted" className="text-xs">Root tag</Label>
+                <Input
+                  value={rootTag}
+                  onChange={(e) => setRootTag(e.target.value)}
+                  className="h-7 font-mono text-xs"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label variant="muted" className="text-xs">Row tag</Label>
+                <Input
+                  value={rowTag}
+                  onChange={(e) => setRowTag(e.target.value)}
+                  className="h-7 font-mono text-xs"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label variant="muted" className="text-xs">Delimiter</Label>
+                <Input
+                  value={delimiter}
+                  onChange={(e) => setDelimiter(e.target.value)}
+                  className="h-7 w-12 font-mono text-xs text-center"
+                  maxLength={1}
+                />
+              </div>
+            </div>
+          </OptionsButton>
         ),
         inputEditor: {
           value: input,

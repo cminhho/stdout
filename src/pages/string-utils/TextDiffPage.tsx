@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
-import ToolLayout from "@/components/ToolLayout";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import CopyButton from "@/components/CopyButton";
 import FileUploadButton from "@/components/FileUploadButton";
@@ -42,78 +41,88 @@ const TextDiffPage = () => {
     })
     .join("\n");
 
-  const hasDiffs = diff.some(d => d.type !== "same");
+  const hasDiffs = diff.some((d) => d.type !== "same");
 
   return (
-    <ToolLayout title={tool?.label ?? "Text Diff"} description={tool?.description ?? "Compare two texts and highlight differences"}>
-      <div className="grid grid-cols-1 lg:grid-cols-2 tool-content-grid flex-1 min-h-0">
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader
-            label="Original"
-            extra={
-              <div className="flex items-center gap-2">
-                <SampleButton onClick={() => setTextA(SAMPLE_A)} />
-                <ClearButton onClick={() => setTextA("")} />
-                <FileUploadButton accept=".txt,text/plain" onText={setTextA} />
+    <TwoPanelToolLayout
+      tool={tool}
+      inputPane={{
+        title: "Original",
+        inputToolbar: {
+          onSample: () => setTextA(SAMPLE_A),
+          setInput: setTextA,
+          fileAccept: ".txt,text/plain",
+          onFileText: setTextA,
+        },
+        inputEditor: {
+          value: textA,
+          onChange: setTextA,
+          language: "text",
+          placeholder: "Original text...",
+        },
+      }}
+      outputPane={{
+        title: "Modified",
+        toolbar: (
+          <>
+            <SampleButton onClick={() => setTextB(SAMPLE_B)} />
+            <ClearButton onClick={() => setTextB("")} />
+            <FileUploadButton accept=".txt,text/plain" onText={setTextB} />
+          </>
+        ),
+        children: (
+          <div className="flex flex-col flex-1 min-h-0 gap-4">
+            <div className="flex-1 min-h-0 overflow-hidden">
+              <CodeEditor
+                value={textB}
+                onChange={setTextB}
+                language="text"
+                placeholder="Modified text..."
+                fillHeight
+              />
+            </div>
+            {diff.length > 0 && (
+              <div className="flex flex-col flex-shrink-0 min-h-0 overflow-auto">
+                <div className="flex items-center justify-between mb-2 shrink-0">
+                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    Diff Result{" "}
+                    {hasDiffs ? `(${diff.filter((d) => d.type !== "same").length} changes)` : "(identical)"}
+                  </span>
+                  {diffText && <CopyButton text={diffText} />}
+                </div>
+                <div className="code-block space-y-0 max-h-[40vh] overflow-y-auto">
+                  {diff.map((d) => (
+                    <div
+                      key={d.line}
+                      className={`font-mono text-xs px-2 py-0.5 ${
+                        d.type === "same"
+                          ? ""
+                          : d.type === "removed"
+                            ? "bg-destructive/10 text-destructive"
+                            : d.type === "added"
+                              ? "bg-primary/10 text-primary"
+                              : "bg-accent/10 text-accent-foreground"
+                      }`}
+                    >
+                      <span className="text-muted-foreground w-8 inline-block">{d.line}</span>
+                      {d.type === "same" && <span>  {d.a}</span>}
+                      {d.type === "removed" && <span>- {d.a}</span>}
+                      {d.type === "added" && <span>+ {d.b}</span>}
+                      {d.type === "changed" && (
+                        <>
+                          <span className="block">- {d.a}</span>
+                          <span className="block">+ {d.b}</span>
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
-            }
-          />
-          <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor value={textA} onChange={setTextA} language="text" placeholder="Original text..." fillHeight />
+            )}
           </div>
-        </div>
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader
-            label="Modified"
-            extra={
-              <div className="flex items-center gap-2">
-                <SampleButton onClick={() => setTextB(SAMPLE_B)} />
-                <ClearButton onClick={() => setTextB("")} />
-                <FileUploadButton accept=".txt,text/plain" onText={setTextB} />
-              </div>
-            }
-          />
-          <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor value={textB} onChange={setTextB} language="text" placeholder="Modified text..." fillHeight />
-          </div>
-        </div>
-      </div>
-
-      {diff.length > 0 && (
-        <div className="mt-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Diff Result {hasDiffs ? `(${diff.filter(d => d.type !== "same").length} changes)` : "(identical)"}
-            </span>
-            {diffText && <CopyButton text={diffText} />}
-          </div>
-          <div className="code-block space-y-0 max-h-[60vh] overflow-y-auto">
-            {diff.map((d) => (
-              <div
-                key={d.line}
-                className={`font-mono text-xs px-2 py-0.5 ${
-                  d.type === "same" ? "" :
-                  d.type === "removed" ? "bg-destructive/10 text-destructive" :
-                  d.type === "added" ? "bg-primary/10 text-primary" :
-                  "bg-accent/10 text-accent-foreground"
-                }`}
-              >
-                <span className="text-muted-foreground w-8 inline-block">{d.line}</span>
-                {d.type === "same" && <span>  {d.a}</span>}
-                {d.type === "removed" && <span>- {d.a}</span>}
-                {d.type === "added" && <span>+ {d.b}</span>}
-                {d.type === "changed" && (
-                  <>
-                    <span className="block">- {d.a}</span>
-                    <span className="block">+ {d.b}</span>
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </ToolLayout>
+        ),
+      }}
+    />
   );
 };
 

@@ -1,21 +1,15 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
+import ResizableTwoPanel from "@/components/ResizableTwoPanel";
+import TwoPanelTopSection from "@/components/TwoPanelTopSection";
+import ToolResultCard from "@/components/ToolResultCard";
+import DiffLineList, { type DiffLineEntry } from "@/components/DiffLineList";
+import { useTwoPanelCompare } from "@/hooks/useTwoPanelCompare";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import PanelHeader from "@/components/PanelHeader";
-import CodeEditor from "@/components/CodeEditor";
-import CopyButton from "@/components/CopyButton";
-import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
+import { formatDiffSummary, formatDiffEntriesForCopy, IDENTICAL_MESSAGE_CLASS } from "@/utils/compareResultHelpers";
+
 const SAMPLE_A = '{"id": 1, "name": "test", "roles": ["admin"]}';
 const SAMPLE_B = '{"id": "1", "email": "x@y.z", "roles": ["user"]}';
-
-interface DiffEntry {
-  path: string;
-  type: "added" | "removed" | "changed";
-  oldValue?: string;
-  newValue?: string;
-}
 
 function getType(val: unknown): string {
   if (val === null) return "null";
@@ -23,8 +17,8 @@ function getType(val: unknown): string {
   return typeof val;
 }
 
-function diffObjects(a: unknown, b: unknown, path = ""): DiffEntry[] {
-  const entries: DiffEntry[] = [];
+function diffObjects(a: unknown, b: unknown, path = ""): DiffLineEntry[] {
+  const entries: DiffLineEntry[] = [];
   const typeA = getType(a);
   const typeB = getType(b);
   if (typeA !== typeB) {
@@ -56,25 +50,23 @@ function diffObjects(a: unknown, b: unknown, path = ""): DiffEntry[] {
   return entries;
 }
 
+const LEFT_CONFIG = {
+  title: "Schema A (JSON)",
+  sample: SAMPLE_A,
+  placeholder: '{"id": 1, "name": "test"}',
+  fileAccept: ".json,application/json",
+} as const;
+
+const RIGHT_CONFIG = {
+  title: "Schema B (JSON)",
+  sample: SAMPLE_B,
+  placeholder: '{"id": "1", "email": "x@y.z"}',
+  fileAccept: ".json,application/json",
+} as const;
+
 const SchemaDiffPage = () => {
   const tool = useCurrentTool();
-  const [left, setLeft] = useState("");
-  const [right, setRight] = useState("");
-
-  const leftExtra = (
-    <div className="flex items-center gap-2 flex-wrap">
-      <SampleButton onClick={() => setLeft(SAMPLE_A)} />
-      <ClearButton onClick={() => setLeft("")} />
-      <FileUploadButton accept=".json,application/json" onText={setLeft} />
-    </div>
-  );
-  const rightExtra = (
-    <div className="flex items-center gap-2 flex-wrap">
-      <SampleButton onClick={() => setRight(SAMPLE_B)} />
-      <ClearButton onClick={() => setRight("")} />
-      <FileUploadButton accept=".json,application/json" onText={setRight} />
-    </div>
-  );
+  const { left, right, leftPane, rightPane } = useTwoPanelCompare(LEFT_CONFIG, RIGHT_CONFIG);
 
   const result = useMemo(() => {
     if (!left.trim() || !right.trim()) return null;
@@ -85,51 +77,22 @@ const SchemaDiffPage = () => {
     }
   }, [left, right]);
 
-  const diffText = result?.diff.map((d) =>
-    `${d.type === "added" ? "+" : d.type === "removed" ? "-" : "~"} ${d.path}${d.type === "changed" ? ` (${d.oldValue} → ${d.newValue})` : d.type === "added" ? ` (${d.newValue})` : ` (${d.oldValue})`}`
-  ).join("\n") ?? "";
-
   return (
     <ToolLayout title={tool?.label ?? "Schema Diff"} description={tool?.description ?? "Compare two JSON schemas side by side"}>
-      <div className="grid grid-cols-1 lg:grid-cols-2 tool-content-grid">
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="Schema A (JSON)" extra={leftExtra} />
-          <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor value={left} onChange={setLeft} language="json" placeholder='{"id": 1, "name": "test"}' fillHeight />
-          </div>
-        </div>
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="Schema B (JSON)" extra={rightExtra} />
-          <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor value={right} onChange={setRight} language="json" placeholder='{"id": "1", "email": "x@y.z"}' fillHeight />
-          </div>
-        </div>
-      </div>
-
-      {result?.error && <div className="tool-card border-destructive/50 text-destructive text-sm mt-4">⚠ {result.error}</div>}
+      <TwoPanelTopSection formatError={result?.error ? new Error(result.error) : undefined} />
+      <ResizableTwoPanel input={leftPane} output={rightPane} className="flex-1 min-h-0" />
 
       {result && !result.error && (
-        <div className="tool-card mt-4">
+        <ToolResultCard
+          summary={formatDiffSummary(result.diff.length)}
+          copyText={result.diff.length > 0 ? formatDiffEntriesForCopy(result.diff) : undefined}
+        >
           {result.diff.length === 0 ? (
-            <p className="text-sm text-muted-foreground">✓ Schemas are identical</p>
+            <p className={IDENTICAL_MESSAGE_CLASS}>✓ Schemas are identical</p>
           ) : (
-            <div className="space-y-1">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs text-muted-foreground">{result.diff.length} difference{result.diff.length !== 1 ? "s" : ""}</p>
-                <CopyButton text={diffText} />
-              </div>
-              {result.diff.map((d, i) => (
-                <div key={i} className={`text-xs font-mono ${d.type === "added" ? "text-primary" : d.type === "removed" ? "text-destructive" : "text-accent-foreground"}`}>
-                  <span className="inline-block w-24">{d.type === "added" ? "+ Added" : d.type === "removed" ? "- Removed" : "~ Changed"}</span>
-                  <span className="text-foreground">{d.path}</span>
-                  {d.type === "changed" && <span className="text-muted-foreground ml-2">({d.oldValue} → {d.newValue})</span>}
-                  {d.type === "added" && <span className="text-muted-foreground ml-2">({d.newValue})</span>}
-                  {d.type === "removed" && <span className="text-muted-foreground ml-2">({d.oldValue})</span>}
-                </div>
-              ))}
-            </div>
+            <DiffLineList entries={result.diff} />
           )}
-        </div>
+        </ToolResultCard>
       )}
     </ToolLayout>
   );

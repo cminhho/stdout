@@ -29,7 +29,7 @@ const ValidationErrorList = ({
       {errors.map((err, i) => (
         <li
           key={`${err.line}-${err.column}-${i}`}
-          className="rounded-md border border-destructive/25 bg-destructive/5 px-2.5 py-2 text-xs space-y-1.5"
+          className="rounded-md border border-destructive/25 border-l-2 border-l-destructive bg-destructive/5 px-2.5 py-2 text-[length:var(--text-ui)] space-y-1.5"
         >
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
             <span className="font-mono text-destructive font-medium shrink-0">
@@ -37,8 +37,8 @@ const ValidationErrorList = ({
             </span>
             <span className="text-foreground break-words min-w-0">{err.message}</span>
           </div>
-          {err.snippet != null && err.snippet !== "" ? (
-            <pre className="font-mono text-muted-foreground text-[11px] leading-snug bg-muted/40 rounded-md px-2 py-1.5 overflow-x-auto border border-border/50">
+          {err.snippet?.trim() ? (
+            <pre className="font-mono text-muted-foreground text-[length:var(--code-font-size)] leading-snug rounded-md overflow-x-auto border border-[hsl(var(--code-border))] bg-[hsl(var(--code-bg))] px-2 py-1.5">
               {err.snippet}
             </pre>
           ) : null}
