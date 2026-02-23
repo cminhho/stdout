@@ -124,6 +124,7 @@
     --title-bar-end-spacer: 2rem;     /* 32px right drag region */
     --panel-resizer-width: 16px;      /* two-panel divider hit area (VS Code) */
     --panel-min-width: 120px;        /* min width per pane when side-by-side */
+    --spacing-two-panel-gap: 0;      /* gap between panes and resizer (0 = flush, VS Code) */
     --sidebar-item-min-height: 22px;   /* nav item height (VS Code) */
     --spacing-sidebar-x: 0.5rem;   /* 8px horizontal (tighter) */
     --spacing-sidebar-y: 0.5rem;   /* 8px vertical block */

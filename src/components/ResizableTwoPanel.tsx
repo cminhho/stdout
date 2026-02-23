@@ -238,7 +238,6 @@ const ResizableTwoPanel = ({
   className,
 }: ResizableTwoPanelProps) => {
   const isLg = useIsLg();
-  const resizerSize = resizerWidth ?? 16;
   const containerRef = useRef<HTMLDivElement>(null);
 
   const horizontal = useHorizontalResize(
@@ -259,7 +258,7 @@ const ResizableTwoPanel = ({
       ref={containerRef}
       className={cn(
         "flex flex-col lg:flex-row flex-1 min-h-0 w-full",
-        "gap-0 lg:gap-0",
+        "gap-[var(--spacing-two-panel-gap)] lg:gap-[var(--spacing-two-panel-gap)]",
         "m-0 p-0",
         !isLg && "two-panel-stacked",
         className
@@ -269,7 +268,7 @@ const ResizableTwoPanel = ({
         pane={{ ...input, title: input.title ?? DEFAULT_INPUT_TITLE }}
         resizerSide={isLg ? "right" : undefined}
         className={cn(
-          "min-w-0 p-[var(--spacing-panel-gap)]",
+          "min-w-0",
           isLg ? "flex-none shrink-0" : "flex-shrink-0"
         )}
         style={
@@ -294,7 +293,11 @@ const ResizableTwoPanel = ({
         onMouseDown={vertical.onMouseDown}
         onKeyDown={vertical.onKeyDown}
         className={cn(RESIZER_HORIZONTAL_CLASS, "panel-resizer panel-resizer--horizontal")}
-        style={{ height: resizerSize, minHeight: resizerSize }}
+        style={
+          resizerWidth != null
+            ? { height: resizerWidth, minHeight: resizerWidth }
+            : undefined
+        }
       >
         <div className="panel-resizer-line absolute inset-x-0 top-1/2 h-px -translate-y-px" />
       </div>
@@ -319,7 +322,7 @@ const ResizableTwoPanel = ({
       <Pane
         pane={{ ...output, title: output.title ?? DEFAULT_OUTPUT_TITLE }}
         resizerSide={isLg ? "left" : undefined}
-        className="flex-1 min-w-0 min-h-0 p-[var(--spacing-panel-gap)]"
+        className="flex-1 min-w-0 min-h-0"
       />
     </div>
   );
