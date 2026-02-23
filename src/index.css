@@ -552,6 +552,120 @@
     padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
   }
 
+  /* Settings page: tabs, option cards, section headings (design system tokens) */
+  .settings-tabs {
+    display: flex;
+    gap: var(--spacing-block-gap);
+    margin-bottom: var(--spacing-section-mb);
+    border-bottom: 1px solid hsl(var(--border));
+  }
+  .settings-tab {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-block-gap);
+    padding: 0.625rem 1rem;
+    font-size: var(--text-ui);
+    font-weight: 500;
+    color: hsl(var(--muted-foreground));
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .settings-tab:hover {
+    color: hsl(var(--foreground));
+  }
+  .settings-tab:focus-visible {
+    outline: none;
+    border-radius: var(--radius) var(--radius) 0 0;
+    box-shadow: 0 0 0 2px hsl(var(--ring));
+  }
+  .settings-tab--selected {
+    color: hsl(var(--primary));
+    border-bottom-color: hsl(var(--primary));
+  }
+  .settings-option-card {
+    border-radius: var(--radius);
+    border: 1px solid hsl(var(--border));
+    padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .settings-option-card:hover {
+    background: hsl(var(--muted) / 0.5);
+    border-color: hsl(var(--muted-foreground) / 0.5);
+  }
+  .settings-option-card:focus-visible {
+    outline: none;
+    border-radius: var(--radius);
+    box-shadow: 0 0 0 2px hsl(var(--ring));
+  }
+  .settings-option-card--selected {
+    border-color: hsl(var(--primary));
+    background: hsl(var(--primary) / 0.1);
+    box-shadow: 0 0 0 1px hsl(var(--primary));
+  }
+  .settings-section-heading {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-block-gap);
+    font-size: var(--text-ui);
+    font-weight: 600;
+    color: hsl(var(--foreground));
+    margin-bottom: var(--spacing-block-gap);
+  }
+  .settings-option-grid {
+    display: grid;
+    gap: var(--spacing-grid-gap);
+  }
+  .settings-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-section-mb);
+    max-width: 42rem;
+  }
+  .settings-tools-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-grid-gap);
+  }
+  .settings-table-wrap {
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .settings-table {
+    width: 100%;
+    font-size: var(--text-ui);
+  }
+  .settings-table th,
+  .settings-table td {
+    padding: var(--spacing-code-editor);
+    text-align: left;
+    border-bottom: 1px solid hsl(var(--border));
+  }
+  .settings-table thead tr {
+    background: hsl(var(--muted) / 0.3);
+  }
+  .settings-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .settings-table tbody tr:hover {
+    background: hsl(var(--muted) / 0.2);
+  }
+  .settings-body-text {
+    font-size: var(--text-ui);
+    color: hsl(var(--muted-foreground));
+  }
+  .settings-label {
+    font-size: var(--text-content);
+    font-weight: 500;
+    color: hsl(var(--foreground));
+  }
+
   /* Stacked two-panel: minimum height per pane so both remain usable. */
   .two-panel-stacked .tool-panel {
     min-height: min(12rem, 40vh);

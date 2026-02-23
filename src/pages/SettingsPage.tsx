@@ -4,6 +4,7 @@ import { Settings, Palette, LayoutList, Info, Wrench, Heart, ExternalLink, Loade
 import ToolLayout from "@/components/ToolLayout";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { useSettings } from "@/hooks/useSettings";
 import { Theme, SidebarMode } from "@/contexts/settingsStore";
@@ -23,18 +24,6 @@ const UPDATE_BUTTON_LOADING_LABEL = "Checking…";
 const UPDATE_BUTTON_LABEL = "Check for updates";
 const SEARCH_PLACEHOLDER = "Search tools...";
 const SHOW_ALL_LABEL = "Show All";
-
-const TAB_BASE_CLASS =
-  "flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:rounded-t";
-const TAB_SELECTED_CLASS = "border-primary text-primary";
-const TAB_UNSELECTED_CLASS = "border-transparent text-muted-foreground hover:text-foreground";
-
-const OPTION_CARD_BASE =
-  "rounded-md border p-4 text-left transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
-const OPTION_CARD_SELECTED = "border-primary bg-primary/10 ring-1 ring-primary";
-const OPTION_CARD_UNSELECTED = "border-border hover:bg-muted/50 hover:border-muted-foreground/50";
-
-const SECTION_HEADING_CLASS = "flex items-center gap-2 text-sm font-semibold text-foreground mb-2";
 
 type Tab = "general" | "tools";
 const SETTINGS_TABS: { id: Tab; label: string; icon: typeof Settings; panelId: string }[] = [
@@ -115,7 +104,7 @@ const SettingsPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? DEFAULT_TITLE} description={tool?.description ?? DEFAULT_DESCRIPTION}>
-      <div role="tablist" aria-label="Settings sections" className="flex gap-1 mb-4 border-b border-border">
+      <div role="tablist" aria-label="Settings sections" className="settings-tabs">
         {SETTINGS_TABS.map(({ id, label, icon: Icon, panelId }) => (
           <button
             key={id}
@@ -125,7 +114,7 @@ const SettingsPage = () => {
             aria-controls={panelId}
             id={`tab-${id}`}
             onClick={() => setTab(id)}
-            className={cn(TAB_BASE_CLASS, tab === id ? TAB_SELECTED_CLASS : TAB_UNSELECTED_CLASS)}
+            className={cn("settings-tab", tab === id && "settings-tab--selected")}
           >
             <Icon className="h-4 w-4" />
             {label}
@@ -134,57 +123,57 @@ const SettingsPage = () => {
       </div>
 
       {tab === "general" && (
-        <div id="settings-general" role="tabpanel" aria-labelledby="tab-general" className="space-y-6 max-w-2xl">
+        <div id="settings-general" role="tabpanel" aria-labelledby="tab-general" className="settings-panel">
           <section aria-labelledby="settings-theme-heading">
-            <h2 id="settings-theme-heading" className={SECTION_HEADING_CLASS}>
+            <h2 id="settings-theme-heading" className="settings-section-heading">
               <Palette className="h-4 w-4 text-primary" />
               Theme
             </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3" role="group" aria-label="Theme selection">
+            <div className="settings-option-grid grid grid-cols-2 sm:grid-cols-4" role="group" aria-label="Theme selection">
               {themes.map((t) => (
                 <button
                   key={t.value}
                   type="button"
                   onClick={() => settings.setTheme(t.value)}
                   aria-pressed={settings.theme === t.value}
-                  className={cn(OPTION_CARD_BASE, settings.theme === t.value ? OPTION_CARD_SELECTED : OPTION_CARD_UNSELECTED)}
+                  className={cn("settings-option-card", settings.theme === t.value && "settings-option-card--selected")}
                 >
-                  <div className="text-sm font-medium text-foreground">{t.label}</div>
-                  <div className="text-xs text-muted-foreground mt-1">{t.desc}</div>
+                  <div className="settings-label">{t.label}</div>
+                  <div className="settings-body-text mt-1">{t.desc}</div>
                 </button>
               ))}
             </div>
           </section>
 
           <section aria-labelledby="settings-sidebar-heading">
-            <h2 id="settings-sidebar-heading" className={SECTION_HEADING_CLASS}>
+            <h2 id="settings-sidebar-heading" className="settings-section-heading">
               <LayoutList className="h-4 w-4 text-primary" />
               Sidebar Layout
             </h2>
-            <div className="grid grid-cols-2 gap-3" role="group" aria-label="Sidebar layout">
+            <div className="settings-option-grid grid grid-cols-2" role="group" aria-label="Sidebar layout">
               {sidebarModes.map((m) => (
                 <button
                   key={m.value}
                   type="button"
                   onClick={() => settings.setSidebarMode(m.value)}
                   aria-pressed={settings.sidebarMode === m.value}
-                  className={cn(OPTION_CARD_BASE, settings.sidebarMode === m.value ? OPTION_CARD_SELECTED : OPTION_CARD_UNSELECTED)}
+                  className={cn("settings-option-card", settings.sidebarMode === m.value && "settings-option-card--selected")}
                 >
-                  <div className="text-sm font-medium text-foreground">{m.label}</div>
-                  <div className="text-xs text-muted-foreground mt-1">{m.desc}</div>
+                  <div className="settings-label">{m.label}</div>
+                  <div className="settings-body-text mt-1">{m.desc}</div>
                 </button>
               ))}
             </div>
           </section>
 
           <section aria-labelledby="settings-about-heading">
-            <h2 id="settings-about-heading" className={SECTION_HEADING_CLASS}>
+            <h2 id="settings-about-heading" className="settings-section-heading">
               <Info className="h-4 w-4 text-primary" />
               About
             </h2>
-            <div className="rounded-md border border-border bg-muted/20 p-4 space-y-3">
+            <div className="tool-layout-top-section flex flex-col gap-3">
               <div className="flex items-center justify-between gap-2 flex-wrap">
-                <span className="text-sm font-medium text-foreground">stdout v{currentVersion}</span>
+                <span className="settings-label">stdout v{currentVersion}</span>
                 <Button
                   variant="outline"
                   size="xs"
@@ -201,10 +190,10 @@ const SettingsPage = () => {
                 </Button>
               </div>
               {updateCheck === "current" && latestRelease && (
-                <p className="text-xs text-muted-foreground">You're on the latest version.</p>
+                <p className="settings-body-text">You're on the latest version.</p>
               )}
               {updateCheck === "available" && latestRelease && (
-                <p className="text-xs text-foreground">
+                <p className="settings-body-text">
                   <a
                     href={latestRelease.url}
                     target="_blank"
@@ -216,25 +205,25 @@ const SettingsPage = () => {
                 </p>
               )}
               {updateCheck === "error" && (
-                <p className="text-xs text-muted-foreground">Could not check for updates. Try again later.</p>
+                <p className="settings-body-text">Could not check for updates. Try again later.</p>
               )}
-              <div className="text-xs text-muted-foreground">
+              <div className="settings-body-text">
                 A modular, plugin-based developer tool platform built with React, TypeScript, and Tailwind CSS.
                 All tools run entirely in your browser — no data is sent to any server.
               </div>
-              <div className="text-xs text-muted-foreground">
+              <div className="settings-body-text">
                 {tools.length} tools available · {visibleCount} visible in sidebar
               </div>
             </div>
           </section>
 
           <section aria-labelledby="settings-support-heading">
-            <h2 id="settings-support-heading" className={SECTION_HEADING_CLASS}>
+            <h2 id="settings-support-heading" className="settings-section-heading">
               <Heart className="h-4 w-4 text-primary" />
               Support the project
             </h2>
-            <div className="rounded-md border border-border bg-muted/20 p-4">
-              <p className="text-xs text-muted-foreground mb-2">
+            <div className="tool-layout-top-section">
+              <p className="settings-body-text mb-2">
                 stdout is open source (MIT). If it’s useful to you, consider supporting development:
               </p>
               <Button variant="outline" size="xs" asChild>
@@ -248,30 +237,30 @@ const SettingsPage = () => {
       )}
 
       {tab === "tools" && (
-        <div id="settings-tools" role="tabpanel" aria-labelledby="tab-tools" className="space-y-4">
-          <div role="search" aria-label="Filter tools" className="flex items-center justify-between gap-4">
-            <input
+        <div id="settings-tools" role="tabpanel" aria-labelledby="tab-tools" className="settings-panel">
+          <div role="search" aria-label="Filter tools" className="settings-tools-toolbar">
+            <Input
               type="search"
               aria-label="Search tools"
-              className="flex-1 h-9 rounded-md border border-outlineButton-border bg-outlineButton-bg px-2.5 py-2 text-sm text-outlineButton-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
               placeholder={SEARCH_PLACEHOLDER}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              className="flex-1"
             />
             <Button variant="outline" size="xs" onClick={settings.setAllToolsVisible}>
               {SHOW_ALL_LABEL}
             </Button>
           </div>
 
-          <p className="text-xs text-muted-foreground">
+          <p className="settings-body-text">
             {visibleCount} of {tools.length} tools visible in sidebar
           </p>
 
-          <div className="rounded-md border border-border overflow-hidden">
-            <table className="w-full text-sm" role="table" aria-label="Tools visibility">
+          <div className="settings-table-wrap">
+            <table className="settings-table" role="table" aria-label="Tools visibility">
               <thead>
-                <tr className="border-b border-border bg-muted/30">
-                  <th scope="col" className="w-10 p-3 text-center">
+                <tr>
+                  <th scope="col" className="w-10 text-center">
                     <Checkbox
                       checked={visibleCount === tools.length}
                       onCheckedChange={(checked) => {
@@ -285,32 +274,29 @@ const SettingsPage = () => {
                       }}
                     />
                   </th>
-                  <th scope="col" className="p-3 text-left font-medium text-muted-foreground">Tool</th>
-                  <th scope="col" className="p-3 text-left font-medium text-muted-foreground hidden md:table-cell">Description</th>
-                  <th scope="col" className="p-3 text-left font-medium text-muted-foreground hidden lg:table-cell">Group</th>
+                  <th scope="col" className="font-medium text-muted-foreground">Tool</th>
+                  <th scope="col" className="font-medium text-muted-foreground hidden md:table-cell">Description</th>
+                  <th scope="col" className="font-medium text-muted-foreground hidden lg:table-cell">Group</th>
                 </tr>
               </thead>
               <tbody>
                 {orderedTools.map((tool) => (
-                    <tr
-                      key={tool.path}
-                      className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors duration-150"
-                    >
-                      <td className="p-3 text-center">
-                        <Checkbox
-                          checked={settings.isToolVisible(tool.path)}
-                          onCheckedChange={() => settings.toggleTool(tool.path)}
-                        />
-                      </td>
-                      <td className="p-3 text-foreground font-medium">{tool.label}</td>
-                      <td className="p-3 text-muted-foreground text-xs hidden md:table-cell">{tool.description}</td>
-                      <td className="p-3 hidden lg:table-cell">
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
-                          {tool.group}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
+                  <tr key={tool.path}>
+                    <td className="text-center">
+                      <Checkbox
+                        checked={settings.isToolVisible(tool.path)}
+                        onCheckedChange={() => settings.toggleTool(tool.path)}
+                      />
+                    </td>
+                    <td className="settings-label">{tool.label}</td>
+                    <td className="settings-body-text hidden md:table-cell">{tool.description}</td>
+                    <td className="hidden lg:table-cell">
+                      <span className="settings-body-text px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                        {tool.group}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
