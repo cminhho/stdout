@@ -447,11 +447,17 @@
     font-family: var(--font-mono) !important;
   }
 
-  /* Responsive: slightly tighter panel padding below --bp-lg (1024px) when stacked */
+  /* Responsive: tighter panel padding when stacked (VS Code–style density) */
   @media (max-width: 1023px) {
     :root {
       --spacing-panel-inner-x: 0.75rem;
       --spacing-panel-inner-y: 0.5rem;
+    }
+  }
+  @media (max-width: 639px) {
+    :root {
+      --spacing-panel-inner-x: 0.5rem;
+      --spacing-panel-inner-y: 0.375rem;
     }
   }
 }
@@ -596,6 +602,21 @@
   .panel-resizer:hover .panel-resizer-line {
     background: hsl(var(--muted-foreground) / 0.5);
   }
+  .panel-resizer:focus-visible {
+    outline: none;
+    background: hsl(var(--muted) / 0.4);
+    box-shadow: 0 0 0 2px hsl(var(--ring));
+  }
+  .panel-resizer:focus-visible .panel-resizer-line {
+    background: hsl(var(--primary) / 0.8);
+  }
+  /* Horizontal resizer (stacked/small screen): full width, fixed height */
+  .panel-resizer--horizontal {
+    width: 100%;
+    min-width: 0;
+    height: var(--panel-resizer-width);
+    min-height: var(--panel-resizer-width);
+  }
 
   /* Two-panel top section (alerts, validation, options): panel-style border + bg (VS Code message area) */
   .tool-layout-top-section {
@@ -700,6 +721,15 @@
     text-align: left;
     border-bottom: 1px solid hsl(var(--border));
   }
+  .settings-table--compact th,
+  .settings-table--compact td {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.8125rem;
+    vertical-align: middle;
+  }
+  .settings-table--compact thead th {
+    font-weight: 500;
+  }
   .settings-table thead tr {
     background: hsl(var(--muted) / 0.3);
   }
@@ -719,9 +749,14 @@
     color: hsl(var(--foreground));
   }
 
-  /* Stacked two-panel: minimum height per pane so both remain usable. */
+  /* Stacked two-panel: minimum height per pane so both remain usable (responsive). */
   .two-panel-stacked .tool-panel {
     min-height: min(12rem, 40vh);
+  }
+  @media (max-height: 480px) {
+    .two-panel-stacked .tool-panel {
+      min-height: min(10rem, 35vh);
+    }
   }
 
   .tool-panel .tool-textarea,

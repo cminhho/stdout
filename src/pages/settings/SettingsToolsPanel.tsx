@@ -46,10 +46,10 @@ const SettingsToolsPanel = () => {
       </p>
 
       <div className="settings-table-wrap">
-        <table className="settings-table" role="table" aria-label="Tools visibility">
+        <table className="settings-table settings-table--compact" role="table" aria-label="Tools visibility">
           <thead>
             <tr>
-              <th scope="col" className="w-10 text-center">
+              <th scope="col" className="w-9 text-center">
                 <Checkbox
                   checked={visibleCount === tools.length}
                   onCheckedChange={(checked) => {
@@ -83,10 +83,14 @@ const SettingsToolsPanel = () => {
                     onCheckedChange={() => settings.toggleTool(tool.path)}
                   />
                 </td>
-                <td className="settings-label">{tool.label}</td>
-                <td className="settings-body-text hidden md:table-cell">{tool.description}</td>
-                <td className="hidden lg:table-cell">
-                  <span className="settings-body-text px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                <td className="settings-label min-w-0">
+                  <span className="block truncate" title={tool.label}>{tool.label}</span>
+                </td>
+                <td className="settings-body-text hidden md:table-cell max-w-[12rem] min-w-0">
+                  <span className="block truncate" title={tool.description}>{tool.description}</span>
+                </td>
+                <td className="hidden lg:table-cell whitespace-nowrap">
+                  <span className="settings-body-text inline-block px-1.5 py-0.5 rounded text-xs bg-muted text-muted-foreground">
                     {tool.group}
                   </span>
                 </td>

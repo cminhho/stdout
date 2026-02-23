@@ -366,7 +366,8 @@ const TwoPanelToolLayout = ({
       {hasChromeAbove ? (
         <div
           className={cn(
-            "tool-layout-top-section flex flex-col flex-shrink-0 gap-[var(--spacing-block-gap)] mb-[var(--spacing-toolbar-mb)]"
+            "tool-layout-top-section flex flex-col flex-shrink-0 gap-[var(--spacing-block-gap)] mb-[var(--spacing-toolbar-mb)]",
+            "min-h-0 overflow-auto max-h-[min(40vh,20rem)]"
           )}
         >
           {formatError ? (

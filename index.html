@@ -2,12 +2,13 @@
 <html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>stdout</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
     <meta name="description" content="Your standard output for dev tools. Format, convert, encode, generate — all in one place." />
-    <meta name="theme-color" content="#fafafa" />
+    <!-- theme-color set by script to match resolved theme (VS Code–style; avoids FOUC) -->
+    <meta name="theme-color" content="#252a31" />
     <script>
       (function () {
         var STORAGE_KEY = "stdout-settings";
@@ -23,13 +24,14 @@
           root.classList.add(resolved);
           root.style.colorScheme = resolved === "light" ? "light" : "dark";
           var meta = document.querySelector('meta[name="theme-color"]');
-          if (meta) meta.setAttribute("content", THEME_COLORS[resolved] || THEME_COLORS.light);
+          if (meta) meta.setAttribute("content", THEME_COLORS[resolved] || THEME_COLORS.dark);
         } catch (e) {
-          document.documentElement.classList.remove("dark");
-          document.documentElement.classList.add("light");
-          document.documentElement.style.colorScheme = "light";
+          var root = document.documentElement;
+          root.classList.remove("dark", "light", "deep-dark");
+          root.classList.add("dark");
+          root.style.colorScheme = "dark";
           var meta = document.querySelector('meta[name="theme-color"]');
-          if (meta) meta.setAttribute("content", THEME_COLORS.light);
+          if (meta) meta.setAttribute("content", THEME_COLORS.dark);
         }
       })();
     </script>

@@ -7,8 +7,10 @@ const DEFAULT_MIN_INPUT_PERCENT = 20;
 const DEFAULT_MAX_INPUT_PERCENT = 80;
 const DEFAULT_INPUT_PERCENT = 50;
 
-const RESIZER_BASE_CLASS =
+const RESIZER_VERTICAL_CLASS =
   "hidden lg:flex shrink-0 flex-col items-center justify-center cursor-col-resize select-none self-stretch h-full min-h-0 relative";
+const RESIZER_HORIZONTAL_CLASS =
+  "flex lg:hidden shrink-0 items-center justify-center cursor-row-resize select-none w-full relative touch-none";
 
 const PANEL_BODY_CLASS = "flex-1 min-h-0 flex flex-col overflow-hidden";
 
@@ -38,22 +40,26 @@ function clamp(min: number, max: number, value: number): number {
   return Math.min(max, Math.max(min, value));
 }
 
-function useResize(
-  initialInputPercent: number,
-  minInputPercent: number,
-  maxInputPercent: number
+const KEYBOARD_RESIZE_STEP = 5;
+const STACKED_PANE_MIN_HEIGHT = "min(120px, 30vh)";
+
+/** Horizontal split: left pane width % (side-by-side / lg). */
+function useHorizontalResize(
+  initialPercent: number,
+  minPercent: number,
+  maxPercent: number,
+  containerRef: React.RefObject<HTMLDivElement | null>
 ) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [inputPercent, setInputPercent] = useState(initialInputPercent);
+  const [percent, setPercent] = useState(initialPercent);
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
       if (!containerRef.current) return;
       const { width, left } = containerRef.current.getBoundingClientRect();
       const pct = ((e.clientX - left) / width) * 100;
-      setInputPercent(clamp(minInputPercent, maxInputPercent, pct));
+      setPercent(clamp(minPercent, maxPercent, pct));
     },
-    [minInputPercent, maxInputPercent]
+    [minPercent, maxPercent]
   );
 
   const handleMouseUp = useCallback(() => {
@@ -63,7 +69,7 @@ function useResize(
     document.body.style.userSelect = "";
   }, [handleMouseMove]);
 
-  const onResizerMouseDown = useCallback(
+  const onMouseDown = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
       document.addEventListener("mousemove", handleMouseMove);
@@ -74,6 +80,16 @@ function useResize(
     [handleMouseMove, handleMouseUp]
   );
 
+  const onKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+      e.preventDefault();
+      const delta = e.key === "ArrowRight" ? KEYBOARD_RESIZE_STEP : -KEYBOARD_RESIZE_STEP;
+      setPercent((p) => clamp(minPercent, maxPercent, p + delta));
+    },
+    [minPercent, maxPercent]
+  );
+
   useEffect(() => {
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
@@ -81,7 +97,64 @@ function useResize(
     };
   }, [handleMouseMove, handleMouseUp]);
 
-  return { containerRef, inputPercent, onResizerMouseDown };
+  return { percent, onMouseDown, onKeyDown };
+}
+
+/** Vertical split: top pane height % (stacked / small screen). */
+function useVerticalResize(
+  initialPercent: number,
+  minPercent: number,
+  maxPercent: number,
+  containerRef: React.RefObject<HTMLDivElement | null>
+) {
+  const [percent, setPercent] = useState(initialPercent);
+
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!containerRef.current) return;
+      const { height, top } = containerRef.current.getBoundingClientRect();
+      const pct = ((e.clientY - top) / height) * 100;
+      setPercent(clamp(minPercent, maxPercent, pct));
+    },
+    [minPercent, maxPercent]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
+    document.body.style.cursor = "";
+    document.body.style.userSelect = "";
+  }, [handleMouseMove]);
+
+  const onMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+      document.body.style.cursor = "row-resize";
+      document.body.style.userSelect = "none";
+    },
+    [handleMouseMove, handleMouseUp]
+  );
+
+  const onKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+      e.preventDefault();
+      const delta = e.key === "ArrowDown" ? KEYBOARD_RESIZE_STEP : -KEYBOARD_RESIZE_STEP;
+      setPercent((p) => clamp(minPercent, maxPercent, p + delta));
+    },
+    [minPercent, maxPercent]
+  );
+
+  useEffect(() => {
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [handleMouseMove, handleMouseUp]);
+
+  return { percent, onMouseDown, onKeyDown };
 }
 
 const DEFAULT_INPUT_TITLE = "Input";
@@ -165,10 +238,20 @@ const ResizableTwoPanel = ({
   className,
 }: ResizableTwoPanelProps) => {
   const isLg = useIsLg();
-  const { containerRef, inputPercent, onResizerMouseDown } = useResize(
+  const resizerSize = resizerWidth ?? 16;
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const horizontal = useHorizontalResize(
     defaultInputPercent,
     minInputPercent,
-    maxInputPercent
+    maxInputPercent,
+    containerRef
+  );
+  const vertical = useVerticalResize(
+    defaultInputPercent,
+    minInputPercent,
+    maxInputPercent,
+    containerRef
   );
 
   return (
@@ -176,7 +259,7 @@ const ResizableTwoPanel = ({
       ref={containerRef}
       className={cn(
         "flex flex-col lg:flex-row flex-1 min-h-0 w-full",
-        "gap-[var(--spacing-panel-gap)] lg:gap-0",
+        "gap-0 lg:gap-0",
         "m-0 p-0",
         !isLg && "two-panel-stacked",
         className
@@ -185,18 +268,49 @@ const ResizableTwoPanel = ({
       <Pane
         pane={{ ...input, title: input.title ?? DEFAULT_INPUT_TITLE }}
         resizerSide={isLg ? "right" : undefined}
-        className="min-w-0 flex-1 lg:flex-none lg:shrink-0 p-[var(--spacing-panel-gap)]"
-        style={isLg ? { width: `${inputPercent}%`, minWidth: "var(--panel-min-width)" } : undefined}
+        className={cn(
+          "min-w-0 p-[var(--spacing-panel-gap)]",
+          isLg ? "flex-none shrink-0" : "flex-shrink-0"
+        )}
+        style={
+          isLg
+            ? { width: `${horizontal.percent}%`, minWidth: "var(--panel-min-width)" }
+            : {
+                height: `${vertical.percent}%`,
+                minHeight: STACKED_PANE_MIN_HEIGHT,
+              }
+        }
       />
 
+      {/* Horizontal resizer: stacked (small screen) – drag to resize top/bottom height */}
+      <div
+        role="separator"
+        aria-orientation="horizontal"
+        aria-valuenow={vertical.percent}
+        aria-valuemin={minInputPercent}
+        aria-valuemax={maxInputPercent}
+        aria-label="Resize panels vertically"
+        tabIndex={0}
+        onMouseDown={vertical.onMouseDown}
+        onKeyDown={vertical.onKeyDown}
+        className={cn(RESIZER_HORIZONTAL_CLASS, "panel-resizer panel-resizer--horizontal")}
+        style={{ height: resizerSize, minHeight: resizerSize }}
+      >
+        <div className="panel-resizer-line absolute inset-x-0 top-1/2 h-px -translate-y-px" />
+      </div>
+
+      {/* Vertical resizer: side-by-side (lg+) – drag to resize left/right width */}
       <div
         role="separator"
         aria-orientation="vertical"
-        aria-valuenow={inputPercent}
-        aria-label="Resize panels"
+        aria-valuenow={horizontal.percent}
+        aria-valuemin={minInputPercent}
+        aria-valuemax={maxInputPercent}
+        aria-label="Resize panels horizontally"
         tabIndex={0}
-        onMouseDown={onResizerMouseDown}
-        className={cn(RESIZER_BASE_CLASS, "panel-resizer p-0 touch-none")}
+        onMouseDown={horizontal.onMouseDown}
+        onKeyDown={horizontal.onKeyDown}
+        className={cn(RESIZER_VERTICAL_CLASS, "panel-resizer p-0 touch-none")}
         style={resizerWidth != null ? { width: resizerWidth, minWidth: resizerWidth } : undefined}
       >
         <div className="panel-resizer-line absolute inset-y-0 left-1/2 w-px -translate-x-px" />
@@ -205,7 +319,7 @@ const ResizableTwoPanel = ({
       <Pane
         pane={{ ...output, title: output.title ?? DEFAULT_OUTPUT_TITLE }}
         resizerSide={isLg ? "left" : undefined}
-        className="flex-1 min-w-0 lg:min-h-0 p-[var(--spacing-panel-gap)]"
+        className="flex-1 min-w-0 min-h-0 p-[var(--spacing-panel-gap)]"
       />
     </div>
   );
