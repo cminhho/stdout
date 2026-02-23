@@ -16,6 +16,16 @@ import {
   type LatestRelease,
 } from "@/utils/version";
 
+const TAB_BASE_CLASS =
+  "flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:rounded-t";
+const TAB_SELECTED_CLASS = "border-primary text-primary";
+const TAB_UNSELECTED_CLASS = "border-transparent text-muted-foreground hover:text-foreground";
+
+const OPTION_CARD_BASE =
+  "rounded-md border p-4 text-left transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
+const OPTION_CARD_SELECTED = "border-primary bg-primary/10 ring-1 ring-primary";
+const OPTION_CARD_UNSELECTED = "border-border hover:bg-muted/50 hover:border-muted-foreground/50";
+
 const themes: { value: Theme; label: string; desc: string }[] = [
   { value: "light", label: "Light", desc: "Light background with dark text" },
   { value: "dark", label: "Dark", desc: "Dark background with light text" },
@@ -97,11 +107,7 @@ const SettingsPage = () => {
           aria-controls="settings-general"
           id="tab-general"
           onClick={() => setTab("general")}
-          className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:rounded-t ${
-            tab === "general"
-              ? "border-primary text-primary"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
+          className={`${TAB_BASE_CLASS} ${tab === "general" ? TAB_SELECTED_CLASS : TAB_UNSELECTED_CLASS}`}
         >
           <Settings className="h-4 w-4" />
           General
@@ -113,11 +119,7 @@ const SettingsPage = () => {
           aria-controls="settings-tools"
           id="tab-tools"
           onClick={() => setTab("tools")}
-          className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:rounded-t ${
-            tab === "tools"
-              ? "border-primary text-primary"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
+          className={`${TAB_BASE_CLASS} ${tab === "tools" ? TAB_SELECTED_CLASS : TAB_UNSELECTED_CLASS}`}
         >
           <Wrench className="h-4 w-4" />
           Manage Tools
@@ -139,11 +141,7 @@ const SettingsPage = () => {
                   type="button"
                   onClick={() => settings.setTheme(t.value)}
                   aria-pressed={settings.theme === t.value}
-                  className={`rounded-md border p-4 text-left transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
-                    settings.theme === t.value
-                      ? "border-primary bg-primary/10 ring-1 ring-primary"
-                      : "border-border hover:bg-muted/50 hover:border-muted-foreground/50"
-                  }`}
+                  className={`${OPTION_CARD_BASE} ${settings.theme === t.value ? OPTION_CARD_SELECTED : OPTION_CARD_UNSELECTED}`}
                 >
                   <div className="text-sm font-medium text-foreground">{t.label}</div>
                   <div className="text-xs text-muted-foreground mt-1">{t.desc}</div>
@@ -165,11 +163,7 @@ const SettingsPage = () => {
                   type="button"
                   onClick={() => settings.setSidebarMode(m.value)}
                   aria-pressed={settings.sidebarMode === m.value}
-                  className={`rounded-md border p-4 text-left transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
-                    settings.sidebarMode === m.value
-                      ? "border-primary bg-primary/10 ring-1 ring-primary"
-                      : "border-border hover:bg-muted/50 hover:border-muted-foreground/50"
-                  }`}
+                  className={`${OPTION_CARD_BASE} ${settings.sidebarMode === m.value ? OPTION_CARD_SELECTED : OPTION_CARD_UNSELECTED}`}
                 >
                   <div className="text-sm font-medium text-foreground">{m.label}</div>
                   <div className="text-xs text-muted-foreground mt-1">{m.desc}</div>

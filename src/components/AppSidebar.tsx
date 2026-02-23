@@ -1,15 +1,8 @@
 import { useState, useMemo } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
-  Braces, Type, FileText, Lock, Shuffle, Hash, Terminal, GitCompare,
-  Clock, ChevronRight, KeyRound, Fingerprint, Link2, Code2, QrCode,
-  Archive, ShieldCheck, Table2, FileJson, Binary, ArrowLeftRight, Search,
-  CalendarClock, FileSpreadsheet, Regex, Diff, Boxes, Globe,
-  CheckCircle2, Wand2, Calculator, Palette, AlignLeft, FileCode, Database,
-  TerminalSquare, FileType, List, KeySquare,
-  FileOutput, Image, Scaling, FileArchive, Eye, Paintbrush, Ruler,
-  FileUp, Dices, TableProperties, Settings, LetterText, ScrollText,
-  PanelLeftClose, PanelLeftOpen, Coffee,
+  ArrowLeftRight, Braces, CheckCircle2, ChevronRight, Code2, FileCode, Globe, Image, Lock,
+  Search, Settings, Shuffle, TerminalSquare, Type, PanelLeftClose, PanelLeftOpen, Coffee,
 } from "lucide-react";
 import {
   Tooltip,
@@ -19,18 +12,8 @@ import {
 import { useSettings } from "@/hooks/useSettings";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import type { ToolGroup } from "@/tools/types";
-
-// Icon lookup map
-const iconMap: Record<string, React.ElementType> = {
-  Braces, Type, FileText, Lock, Shuffle, Hash, Terminal, GitCompare,
-  Clock, KeyRound, Fingerprint, Link2, Code2, QrCode,
-  Archive, ShieldCheck, Table2, FileJson, Binary, ArrowLeftRight, Search,
-  CalendarClock, FileSpreadsheet, Regex, Diff, Boxes, Globe,
-  CheckCircle2, Wand2, Calculator, Palette, AlignLeft, FileCode, Database,
-  TerminalSquare, FileType, List, KeySquare,
-  FileOutput, Image, Scaling, FileArchive, Eye, Paintbrush, Ruler,
-  FileUp, Dices, TableProperties, Settings, LetterText, ScrollText,
-};
+import { isDesktop } from "@/utils/env";
+import { getToolIcon } from "@/components/toolIcons";
 
 // Group icon mapping (order in sidebar follows first occurrence in tool packs)
 const groupIconMap: Record<string, React.ElementType> = {
@@ -46,12 +29,13 @@ const groupIconMap: Record<string, React.ElementType> = {
   "Networking & Other": TerminalSquare,
 };
 
-const getIcon = (name: string) => iconMap[name] || Braces;
-
-const isDesktop = typeof window !== "undefined" && !!window.electronAPI;
-
 const SIDEBAR_ASIDE_BASE = "shrink-0 flex flex-col border-r border-sidebar-border";
 const SIDEBAR_ASIDE_LAYOUT = isDesktop ? "h-full min-h-0 sidebar-glass" : "h-screen sticky top-0 bg-sidebar";
+
+function toSafeId(label: string): string {
+  const slug = label.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "");
+  return slug || "group";
+}
 
 type SidebarItem = { path: string; icon: string; label: string };
 
@@ -60,7 +44,7 @@ const SidebarNavItem = ({
   isActive,
   onClick,
 }: { item: SidebarItem; isActive: boolean; onClick?: () => void }) => {
-  const Icon = getIcon(item.icon);
+  const Icon = getToolIcon(item.icon);
   return (
     <NavLink
       to={item.path}
@@ -92,7 +76,7 @@ const SidebarGroupSection = ({
   );
   if (filteredItems.length === 0) return null;
   const isOpen = !!searchQuery || open;
-  const contentId = `sidebar-group-${group.label.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "") || "group"}`;
+  const contentId = `sidebar-group-${toSafeId(group.label)}`;
 
   return (
     <section role="group" aria-label={group.label} className="space-y-0.5">
@@ -163,7 +147,7 @@ const AppSidebar = () => {
         )}
         <nav className="flex-1 overflow-y-auto space-y-0.5 [padding:var(--spacing-sidebar-item-y)_0] sidebar-pad" aria-label="Tools">
           {visibleItems.map((item) => {
-            const Icon = getIcon(item.icon);
+            const Icon = getToolIcon(item.icon);
             return (
               <Tooltip key={item.path}>
                 <TooltipTrigger asChild>

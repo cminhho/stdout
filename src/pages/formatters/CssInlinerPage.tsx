@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { type ReactNode, useMemo, useState } from "react";
 import CodeEditor from "@/components/CodeEditor";
 import FileUploadButton from "@/components/FileUploadButton";
 import PanelHeader from "@/components/PanelHeader";
@@ -19,6 +19,30 @@ import {
   inlineCss,
 } from "@/utils/cssInliner";
 
+const DEFAULT_TITLE = "CSS Inliner (Email)";
+const DEFAULT_DESCRIPTION = "Inline CSS styles into HTML for email templates";
+const PANEL_CLASS = "tool-panel flex flex-col min-h-0";
+const BODY_CLASS = "flex-1 min-h-0 flex flex-col";
+
+function EditorPanel({
+  label,
+  text,
+  extra,
+  children,
+}: {
+  label: string;
+  text?: string;
+  extra?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <div className={PANEL_CLASS}>
+      <PanelHeader label={label} text={text} extra={extra} />
+      <div className={BODY_CLASS}>{children}</div>
+    </div>
+  );
+}
+
 const CssInlinerPage = () => {
   const tool = useCurrentTool();
   const [html, setHtml] = useState("");
@@ -31,70 +55,61 @@ const CssInlinerPage = () => {
 
   return (
     <ToolLayout
-      title={tool?.label ?? "CSS Inliner (Email)"}
-      description={tool?.description ?? "Inline CSS styles into HTML for email templates"}
+      title={tool?.label ?? DEFAULT_TITLE}
+      description={tool?.description ?? DEFAULT_DESCRIPTION}
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 tool-content-grid tool-layout-section">
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader
-            label="HTML"
-            extra={
-              <>
-                <SampleButton onClick={() => setHtml(CSS_INLINER_HTML_SAMPLE)} />
-                <ClearButton onClick={() => setHtml("")} />
-                <FileUploadButton accept={CSS_INLINER_HTML_ACCEPT} onText={setHtml} />
-              </>
-            }
+        <EditorPanel
+          label="HTML"
+          extra={
+            <>
+              <SampleButton onClick={() => setHtml(CSS_INLINER_HTML_SAMPLE)} />
+              <ClearButton onClick={() => setHtml("")} />
+              <FileUploadButton accept={CSS_INLINER_HTML_ACCEPT} onText={setHtml} />
+            </>
+          }
+        >
+          <CodeEditor
+            value={html}
+            onChange={setHtml}
+            language="html"
+            placeholder={CSS_INLINER_HTML_PLACEHOLDER}
+            fillHeight
           />
-          <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor
-              value={html}
-              onChange={setHtml}
-              language="html"
-              placeholder={CSS_INLINER_HTML_PLACEHOLDER}
-              fillHeight
-            />
-          </div>
-        </div>
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader
-            label="CSS"
-            extra={
-              <>
-                <SampleButton onClick={() => setCss(CSS_INLINER_CSS_SAMPLE)} />
-                <ClearButton onClick={() => setCss("")} />
-                <FileUploadButton accept={CSS_INLINER_CSS_ACCEPT} onText={setCss} />
-              </>
-            }
+        </EditorPanel>
+        <EditorPanel
+          label="CSS"
+          extra={
+            <>
+              <SampleButton onClick={() => setCss(CSS_INLINER_CSS_SAMPLE)} />
+              <ClearButton onClick={() => setCss("")} />
+              <FileUploadButton accept={CSS_INLINER_CSS_ACCEPT} onText={setCss} />
+            </>
+          }
+        >
+          <CodeEditor
+            value={css}
+            onChange={setCss}
+            language="css"
+            placeholder={CSS_INLINER_CSS_PLACEHOLDER}
+            fillHeight
           />
-          <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor
-              value={css}
-              onChange={setCss}
-              language="css"
-              placeholder={CSS_INLINER_CSS_PLACEHOLDER}
-              fillHeight
-            />
-          </div>
-        </div>
+        </EditorPanel>
       </div>
       {output ? (
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader
-            label="Inlined HTML"
-            text={output}
-            extra={
-              <SaveButton
-                content={output}
-                filename={CSS_INLINER_OUTPUT_FILENAME}
-                mimeType={CSS_INLINER_OUTPUT_MIME_TYPE}
-              />
-            }
-          />
-          <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor value={output} readOnly language="html" placeholder="" fillHeight />
-          </div>
-        </div>
+        <EditorPanel
+          label="Inlined HTML"
+          text={output}
+          extra={
+            <SaveButton
+              content={output}
+              filename={CSS_INLINER_OUTPUT_FILENAME}
+              mimeType={CSS_INLINER_OUTPUT_MIME_TYPE}
+            />
+          }
+        >
+          <CodeEditor value={output} readOnly language="html" placeholder="" fillHeight />
+        </EditorPanel>
       ) : null}
     </ToolLayout>
   );

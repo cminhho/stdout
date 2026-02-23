@@ -4,6 +4,9 @@ import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import { useSettings } from "@/hooks/useSettings";
 
+const NO_DRAG = { WebkitAppRegion: "no-drag" } as React.CSSProperties;
+const TRAFFIC_LIGHT_BASE = "w-3 h-3 rounded-full hover:opacity-80 active:opacity-70 transition-opacity";
+
 /**
  * Title bar for frameless / custom-window desktop apps.
  * - Leftmost: collapse/expand sidebar.
@@ -21,12 +24,20 @@ const WindowTitleBar = () => {
   const currentTool = tools.find((t) => t.path === location.pathname);
   const title = location.pathname === "/" ? "stdout" : currentTool?.label ?? "stdout";
 
+  const windowButtons =
+    hasWindowAPI &&
+    [
+      { ariaLabel: "Close", className: "bg-[#ff5f57]", onClick: () => window.electronAPI?.window?.close() },
+      { ariaLabel: "Minimize", className: "bg-[#febc2e]", onClick: () => window.electronAPI?.window?.minimize() },
+      { ariaLabel: "Maximize", className: "bg-[#28c840]", onClick: () => window.electronAPI?.window?.maximize() },
+    ];
+
   return (
     <header
       className="desktop-title-bar relative flex items-center shrink-0 h-9 px-2 gap-1"
       style={{ WebkitAppRegion: "drag" } as React.CSSProperties}
     >
-      <div className="shrink-0" style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties}>
+      <div className="shrink-0" style={NO_DRAG}>
         <button
           type="button"
           onClick={toggleSidebar}
@@ -37,29 +48,18 @@ const WindowTitleBar = () => {
           {sidebarCollapsed ? <PanelLeftOpen className="h-3.5 w-3.5" /> : <PanelLeftClose className="h-3.5 w-3.5" />}
         </button>
       </div>
-      {hasSystemTitleBarControls && (
-        <div className="w-[72px] shrink-0" style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties} />
-      )}
-      {!hasSystemTitleBarControls && hasWindowAPI && (
-        <div className="flex items-center gap-1.5 shrink-0" style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties}>
-          <button
-            type="button"
-            className="w-3 h-3 rounded-full bg-[#ff5f57] hover:opacity-80 active:opacity-70 transition-opacity"
-            onClick={() => window.electronAPI?.window?.close()}
-            aria-label="Close"
-          />
-          <button
-            type="button"
-            className="w-3 h-3 rounded-full bg-[#febc2e] hover:opacity-80 active:opacity-70 transition-opacity"
-            onClick={() => window.electronAPI?.window?.minimize()}
-            aria-label="Minimize"
-          />
-          <button
-            type="button"
-            className="w-3 h-3 rounded-full bg-[#28c840] hover:opacity-80 active:opacity-70 transition-opacity"
-            onClick={() => window.electronAPI?.window?.maximize()}
-            aria-label="Maximize"
-          />
+      {hasSystemTitleBarControls && <div className="w-[72px] shrink-0" style={NO_DRAG} />}
+      {!hasSystemTitleBarControls && windowButtons && (
+        <div className="flex items-center gap-1.5 shrink-0" style={NO_DRAG}>
+          {windowButtons.map((b) => (
+            <button
+              key={b.ariaLabel}
+              type="button"
+              className={`${TRAFFIC_LIGHT_BASE} ${b.className}`}
+              onClick={b.onClick}
+              aria-label={b.ariaLabel}
+            />
+          ))}
         </div>
       )}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-2">
@@ -69,7 +69,7 @@ const WindowTitleBar = () => {
           {title}
         </span>
       </div>
-      <div className="w-8 shrink-0" style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties} />
+      <div className="w-8 shrink-0" style={NO_DRAG} />
     </header>
   );
 };

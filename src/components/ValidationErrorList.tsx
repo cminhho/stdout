@@ -37,7 +37,7 @@ const ValidationErrorList = ({
             </span>
             <span className="text-foreground break-words min-w-0">{err.message}</span>
           </div>
-          {err.snippet != null && err.snippet !== "" ? (
+          {err.snippet?.trim() ? (
             <pre className="font-mono text-muted-foreground text-[11px] leading-snug bg-muted/40 rounded-md px-2 py-1.5 overflow-x-auto border border-border/50">
               {err.snippet}
             </pre>

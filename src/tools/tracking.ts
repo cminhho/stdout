@@ -53,11 +53,11 @@ const load = (): TrackingStore => {
 
 const save = (store: TrackingStore) => {
   try {
-    // Trim old events to prevent unbounded growth
-    if (store.events.length > MAX_EVENTS) {
-      store.events = store.events.slice(-MAX_EVENTS);
-    }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+    const toSave =
+      store.events.length > MAX_EVENTS
+        ? { ...store, events: store.events.slice(-MAX_EVENTS) }
+        : store;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
   } catch { /* ignore write error */ }
 };
 
@@ -71,28 +71,20 @@ class ToolTrackingService {
 
   /** Record a tool open event */
   trackOpen(toolId: string, path: string) {
-    // Close any active session first
     this.closeActiveSession();
 
     const now = Date.now();
     this.activeSession = { toolId, path, startedAt: now };
 
-    // Record event
-    this.store.events.push({ toolId, path, timestamp: now });
-
-    // Update aggregate stats
-    if (!this.store.stats[toolId]) {
-      this.store.stats[toolId] = {
-        toolId,
-        path,
-        totalOpens: 0,
-        totalDuration: 0,
-        lastUsed: now,
-      };
-    }
-    this.store.stats[toolId].totalOpens += 1;
-    this.store.stats[toolId].lastUsed = now;
-
+    const events = [...this.store.events, { toolId, path, timestamp: now }];
+    const existing = this.store.stats[toolId];
+    const stats = {
+      ...this.store.stats,
+      [toolId]: existing
+        ? { ...existing, totalOpens: existing.totalOpens + 1, lastUsed: now }
+        : { toolId, path, totalOpens: 1, totalDuration: 0, lastUsed: now },
+    };
+    this.store = { ...this.store, events, stats };
     save(this.store);
   }
 
@@ -103,14 +95,16 @@ class ToolTrackingService {
     const duration = Date.now() - this.activeSession.startedAt;
     const { toolId } = this.activeSession;
 
-    // Update last event with duration
-    const lastEvent = [...this.store.events].reverse().find((e) => e.toolId === toolId && !e.duration);
-    if (lastEvent) lastEvent.duration = duration;
-
-    // Update aggregate stats
-    if (this.store.stats[toolId]) {
-      this.store.stats[toolId].totalDuration += duration;
+    const events = [...this.store.events];
+    const lastIdx = events.map((e, i) => (e.toolId === toolId && !e.duration ? i : -1)).filter((i) => i >= 0).pop();
+    if (lastIdx !== undefined) {
+      events[lastIdx] = { ...events[lastIdx], duration };
     }
+    const nextStats =
+      this.store.stats[toolId]
+        ? { ...this.store.stats, [toolId]: { ...this.store.stats[toolId], totalDuration: this.store.stats[toolId].totalDuration + duration } }
+        : this.store.stats;
+    this.store = { ...this.store, events, stats: nextStats };
 
     this.activeSession = null;
     save(this.store);

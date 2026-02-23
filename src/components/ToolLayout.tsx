@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { cn } from "@/utils/cn";
+import { isDesktop } from "@/utils/env";
 
 interface ToolLayoutProps {
   title: string;
@@ -8,8 +9,6 @@ interface ToolLayoutProps {
   contentPadding?: boolean;
   children: ReactNode;
 }
-
-const isDesktop = typeof window !== "undefined" && !!window.electronAPI;
 
 const ToolLayout = ({ title, description, contentPadding = true, children }: ToolLayoutProps) => {
   return (

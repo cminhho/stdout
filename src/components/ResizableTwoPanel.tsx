@@ -17,6 +17,12 @@ const PANEL_BODY_CLASS = "flex-1 min-h-0 flex flex-col overflow-hidden";
 const PANEL_BODY_INNER_BASE =
   "flex-1 min-h-0 flex flex-col overflow-hidden pt-0 pb-[var(--spacing-panel-inner-y)]";
 
+function getPanelBodyInnerClass(resizerSide?: "left" | "right"): string {
+  if (resizerSide === "left") return cn(PANEL_BODY_INNER_BASE, "pl-[var(--spacing-panel-resizer-gap)] pr-[var(--spacing-panel-inner-x)]");
+  if (resizerSide === "right") return cn(PANEL_BODY_INNER_BASE, "pl-[var(--spacing-panel-inner-x)] pr-[var(--spacing-panel-resizer-gap)]");
+  return cn(PANEL_BODY_INNER_BASE, "px-[var(--spacing-panel-inner-x)]");
+}
+
 function useIsLg(): boolean {
   const [isLg, setIsLg] = useState(false);
   useEffect(() => {
@@ -129,18 +135,9 @@ function Pane({
   /** When 'left'|'right', use smaller padding on that side (next to resizer) when side-by-side. */
   resizerSide?: "left" | "right";
 }) {
-  const bodyInnerClass =
-    resizerSide === "left"
-      ? cn(PANEL_BODY_INNER_BASE, "pl-[var(--spacing-panel-resizer-gap)] pr-[var(--spacing-panel-inner-x)]")
-      : resizerSide === "right"
-        ? cn(PANEL_BODY_INNER_BASE, "pl-[var(--spacing-panel-inner-x)] pr-[var(--spacing-panel-resizer-gap)]")
-        : cn(PANEL_BODY_INNER_BASE, "px-[var(--spacing-panel-inner-x)]");
-
   return (
     <div className={cn("tool-panel flex flex-col min-h-0 overflow-hidden", className)} style={style}>
-      {pane.customHeader !== undefined ? (
-        pane.customHeader
-      ) : (
+      {pane.customHeader ?? (
         <PanelHeader
           label={pane.title}
           text={pane.copyText}
@@ -149,7 +146,7 @@ function Pane({
         />
       )}
       <div className={PANEL_BODY_CLASS}>
-        <div className={bodyInnerClass}>{pane.children}</div>
+        <div className={getPanelBodyInnerClass(resizerSide)}>{pane.children}</div>
       </div>
     </div>
   );
@@ -203,7 +200,6 @@ const ResizableTwoPanel = ({
         className={cn(RESIZER_BASE_CLASS, "panel-resizer p-0 touch-none")}
         style={{ width: resizerWidth, minWidth: resizerWidth }}
       >
-        {/* Full-height line: absolute so it always spans top-to-bottom regardless of flex context */}
         <div className="panel-resizer-line absolute inset-y-0 left-1/2 w-px -translate-x-px" />
       </div>
 

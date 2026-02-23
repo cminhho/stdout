@@ -12,6 +12,10 @@ import ValidationErrorList from "@/components/ValidationErrorList";
 import { cn } from "@/utils/cn";
 import type { ParseError } from "@/utils/validationTypes";
 
+const TWO_PANEL_DEFAULT_INPUT_PERCENT = 40;
+const FORMAT_LOADING_PLACEHOLDER = "Formatting…";
+const FORMAT_ERROR_FALLBACK_MSG = "Format failed";
+
 /** Config for default input toolbar: Sample + Clear + File upload. */
 export interface DefaultInputToolbarConfig {
   onSample: () => void;
@@ -186,7 +190,7 @@ function buildInputPaneProps(
 }
 
 function hasOutputToSave(content: string | undefined, filename: string | undefined): boolean {
-  return (content != null && content !== "" && filename != null && filename !== "") === true;
+  return Boolean(content && content !== "" && filename && filename !== "");
 }
 
 export interface OutputPaneIndentControl {
@@ -231,7 +235,7 @@ function buildOutputPaneProps(
     ) : undefined);
 
   const outputKey = derived?.outputKey ?? config.outputEditor?.outputKey ?? indentControl?.resolvedIndent;
-  const outputPlaceholder = derived?.loading ? "Formatting…" : config.outputEditor?.placeholder;
+  const outputPlaceholder = derived?.loading ? FORMAT_LOADING_PLACEHOLDER : config.outputEditor?.placeholder;
   const children =
     config.children ??
     (config.outputEditor ? (
@@ -275,9 +279,6 @@ const TwoPanelToolLayout = ({
 }: TwoPanelToolLayoutProps) => {
   const title = titleProp ?? tool?.label ?? "";
   const description = descriptionProp ?? tool?.description ?? "";
-  const showValidationList =
-    showValidationErrors && (validationErrors?.length ?? 0) > 0;
-
   const ot = outputPane.outputToolbar;
   const [internalIndent, setInternalIndent] = useState<IndentOption>(
     () => ot?.defaultIndent ?? DEFAULT_INDENT
@@ -331,7 +332,7 @@ const TwoPanelToolLayout = ({
           (err: Error) => {
             if (!cancelled) {
               setFormatLoading(false);
-              setFormatError(err ?? new Error("Format failed"));
+              setFormatError(err ?? new Error(FORMAT_ERROR_FALLBACK_MSG));
             }
           }
         );
@@ -369,13 +370,12 @@ const TwoPanelToolLayout = ({
             "px-[var(--spacing-panel-inner-x)]"
           )}
         >
-          {/* Chrome spacing aligns with panes via --spacing-panel-inner-x; responsive via CSS @media (max-width: 1023px). */}
           {formatError ? (
             <div
               className="rounded-md border border-destructive/25 bg-destructive/10 px-2.5 py-1.5 text-xs text-destructive transition-colors duration-150"
               role="alert"
             >
-              Format failed: {formatError.message}
+              {FORMAT_ERROR_FALLBACK_MSG}: {formatError.message}
             </div>
           ) : null}
           {showValidationListResolved ? (
@@ -391,7 +391,7 @@ const TwoPanelToolLayout = ({
         </div>
       ) : null}
       <ResizableTwoPanel
-        defaultInputPercent={defaultInputPercent ?? 40}
+        defaultInputPercent={defaultInputPercent ?? TWO_PANEL_DEFAULT_INPUT_PERCENT}
         minInputPercent={minInputPercent}
         maxInputPercent={maxInputPercent}
         resizerWidth={resizerWidth}

@@ -14,21 +14,21 @@ import {
 
 const JsonFormatterPage = () => {
   const tool = useCurrentTool();
-  const [rawJson, setRawJson] = useState("");
+  const [input, setInput] = useState("");
 
   return (
     <TwoPanelToolLayout
       tool={tool}
       inputPane={{
         inputToolbar: {
-          onSample: () => setRawJson(JSON_FORMATTER_SAMPLE),
-          setInput: setRawJson,
+          onSample: () => setInput(JSON_FORMATTER_SAMPLE),
+          setInput,
           fileAccept: JSON_FILE_ACCEPT,
-          onFileText: setRawJson,
+          onFileText: setInput,
         },
         inputEditor: {
-          value: rawJson,
-          onChange: setRawJson,
+          value: input,
+          onChange: setInput,
           language: JSON_LANGUAGE,
           placeholder: JSON_INPUT_PLACEHOLDER,
         },

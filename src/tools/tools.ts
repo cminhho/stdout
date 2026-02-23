@@ -1,9 +1,7 @@
-import { tools as publicTools } from "./registry";
+import { tools } from "./registry";
 import type { ToolDefinition, ToolGroup } from "./types";
 
-const tools: ToolDefinition[] = publicTools;
-const pathToTool = new Map<string, ToolDefinition>();
-for (const t of tools) pathToTool.set(t.path, t);
+const pathToTool = new Map<string, ToolDefinition>(tools.map((t) => [t.path, t]));
 
 function byGroup(list: ToolDefinition[]): ToolGroup[] {
   const map = new Map<string, ToolDefinition[]>();
