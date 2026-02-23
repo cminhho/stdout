@@ -10,7 +10,6 @@ import { useToolTracking } from "@/hooks/useToolTracking";
 import SettingsPage from "@/pages/settings";
 import NotFound from "@/pages/NotFound";
 import HomePage from "@/pages/HomePage";
-import { isDesktop } from "@/utils/env";
 
 const useHashRouter = typeof window !== "undefined" && window.location?.protocol === "file:";
 const Router = useHashRouter ? HashRouter : BrowserRouter;
@@ -22,9 +21,10 @@ const ToolRoutes = () => {
   useToolTracking();
 
   useEffect(() => {
-    if (!isDesktop || !window.electronAPI?.menu) return;
-    const unsubSettings = window.electronAPI.menu.onOpenSettings(() => navigate("/settings"));
-    const unsubCheck = window.electronAPI.menu.onCheckUpdates(() => navigate("/settings?checkUpdates=1"));
+    const menu = (window as { electronAPI?: { menu?: { onOpenSettings: (cb: () => void) => () => void; onCheckUpdates: (cb: () => void) => () => void } } }).electronAPI?.menu;
+    if (!menu) return;
+    const unsubSettings = menu.onOpenSettings(() => navigate("/settings"));
+    const unsubCheck = menu.onCheckUpdates(() => navigate("/settings?checkUpdates=1"));
     return () => {
       unsubSettings();
       unsubCheck();
@@ -52,21 +52,12 @@ const ToolRoutes = () => {
 };
 
 const App = () => {
-  useEffect(() => {
-    if (isDesktop) {
-      document.documentElement.classList.add("desktop");
-      return () => document.documentElement.classList.remove("desktop");
-    }
-  }, []);
-
-  const rootClass = isDesktop ? "flex flex-col h-full overflow-hidden" : "flex flex-col min-h-screen";
-
   return (
     <TooltipProvider>
       <Router>
         <SettingsProvider>
           <Toaster />
-          <div className={rootClass}>
+          <div className="flex flex-col min-h-screen overflow-hidden">
             <WindowTitleBar />
             <div className="desktop-layout flex flex-1 min-h-0 overflow-hidden min-w-0">
               <AppSidebar />

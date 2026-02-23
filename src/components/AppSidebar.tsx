@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   ArrowLeftRight, Braces, CheckCircle2, ChevronRight, Code2, FileCode, Globe, Image, Lock,
-  Search, Shuffle, TerminalSquare, Type, PanelLeftClose, PanelLeftOpen, Coffee,
+  Search, Shuffle, TerminalSquare, Type, Coffee,
 } from "lucide-react";
 import {
   Tooltip,
@@ -12,7 +12,6 @@ import {
 import { useSettings } from "@/hooks/useSettings";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import type { ToolGroup } from "@/tools/types";
-import { isDesktop } from "@/utils/env";
 import { getToolIcon } from "@/components/toolIcons";
 
 // Group icon mapping (order in sidebar follows first occurrence in tool packs)
@@ -29,8 +28,8 @@ const groupIconMap: Record<string, React.ElementType> = {
   "Networking & Other": TerminalSquare,
 };
 
-const SIDEBAR_ASIDE_BASE = "shrink-0 flex flex-col border-r border-sidebar-border";
-const SIDEBAR_ASIDE_LAYOUT = isDesktop ? "h-full min-h-0 sidebar-glass" : "h-screen sticky top-0 bg-sidebar";
+const SIDEBAR_ASIDE_BASE = "shrink-0 flex flex-col border-r border-sidebar-border min-h-0";
+const SIDEBAR_ASIDE_LAYOUT = "h-full min-h-0 sticky top-0 bg-sidebar";
 
 function toSafeId(label: string): string {
   const slug = label.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "");
@@ -117,7 +116,7 @@ const AppSidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const { sidebarMode, sidebarCollapsed, toggleSidebar, isToolVisible } = useSettings();
+  const { sidebarMode, isToolVisible } = useSettings();
   const { tools, groups } = useToolEngine();
 
   const visibleItems = useMemo(
@@ -130,84 +129,11 @@ const AppSidebar = () => {
     return visibleItems.filter((item) => item.label.toLowerCase().includes(search.toLowerCase()));
   }, [search, visibleItems]);
 
-  if (sidebarCollapsed) {
-    return (
-      <aside
-        className={`${SIDEBAR_ASIDE_BASE} ${SIDEBAR_ASIDE_LAYOUT}`}
-        style={{ width: "var(--sidebar-width-collapsed)", minWidth: "var(--sidebar-width-collapsed)" }}
-      >
-        {!isDesktop && (
-          <div className="flex items-center justify-center sidebar-pad border-b border-sidebar-border">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button type="button" onClick={toggleSidebar} className="btn-icon-chrome btn-icon-chrome-sm shrink-0">
-                  <PanelLeftOpen className="h-4 w-4" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="right">Expand sidebar</TooltipContent>
-            </Tooltip>
-          </div>
-        )}
-        <nav className="flex-1 overflow-y-auto space-y-0.5 [padding:var(--spacing-sidebar-item-y)_0] sidebar-pad" aria-label="Tools">
-          {visibleItems.map((item) => {
-            const Icon = getToolIcon(item.icon);
-            return (
-              <Tooltip key={item.path}>
-                <TooltipTrigger asChild>
-                  <NavLink
-                    to={item.path}
-                    className={`sidebar-activity-item flex items-center justify-center py-[var(--spacing-sidebar-item-y)] transition-colors rounded-r-md mx-[var(--spacing-sidebar-gap)] ${
-                      location.pathname === item.path
-                        ? "active text-foreground bg-sidebar-accent"
-                        : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent"
-                    }`}
-                  >
-                    <Icon className="h-4 w-4 opacity-90" />
-                  </NavLink>
-                </TooltipTrigger>
-                <TooltipContent side="right">{item.label}</TooltipContent>
-              </Tooltip>
-            );
-          })}
-        </nav>
-        <footer className="sidebar-footer-pad border-t border-sidebar-border flex items-center justify-center min-h-9 flex-shrink-0" aria-label="Sidebar footer">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <a
-                href="https://www.buymeacoffee.com/chungho"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-icon-chrome shrink-0"
-                title="Support the project — Buy me a coffee"
-                aria-label="Buy me a coffee"
-              >
-                <Coffee className="sidebar-donate-link-icon h-4 w-4" aria-hidden />
-              </a>
-            </TooltipTrigger>
-            <TooltipContent side="right">Buy me a coffee</TooltipContent>
-          </Tooltip>
-        </footer>
-      </aside>
-    );
-  }
-
   return (
     <aside
       className={`${SIDEBAR_ASIDE_BASE} ${SIDEBAR_ASIDE_LAYOUT}`}
       style={{ width: "var(--sidebar-width-expanded)", minWidth: "var(--sidebar-width-expanded)" }}
     >
-      {!isDesktop && (
-        <div className="flex items-center justify-end sidebar-pad border-b border-sidebar-border">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button type="button" onClick={toggleSidebar} className="btn-icon-chrome btn-icon-chrome-sm shrink-0" title="Collapse sidebar">
-                  <PanelLeftClose className="h-4 w-4" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="right">Collapse sidebar</TooltipContent>
-            </Tooltip>
-        </div>
-      )}
       <div className="px-[var(--spacing-sidebar-x)] pt-[var(--spacing-sidebar-y)] pb-[var(--spacing-sidebar-gap)]" role="search" aria-label="Search tools">
         <div className="relative">
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" aria-hidden />
@@ -227,7 +153,7 @@ const AppSidebar = () => {
         </div>
       </div>
 
-      <nav className="flex-1 sidebar-pad overflow-y-auto min-w-0 space-y-0.5" aria-label="Tools">
+      <nav className="flex-1 min-h-0 sidebar-pad overflow-y-auto min-w-0 space-y-0.5" aria-label="Tools">
         {search && searchResults !== null ? (
           searchResults.length > 0 ? (
             <div className="space-y-0.5">
@@ -266,7 +192,7 @@ const AppSidebar = () => {
         )}
       </nav>
 
-      <footer className="flex items-center justify-center sidebar-footer-pad border-t border-sidebar-border flex-shrink-0" aria-label="Sidebar footer">
+      <footer className="flex items-center justify-center sidebar-footer-pad border-t border-sidebar-border min-h-[var(--spacing-footer-min-h)] flex-shrink-0" aria-label="Sidebar footer">
         <Tooltip>
           <TooltipTrigger asChild>
             <a

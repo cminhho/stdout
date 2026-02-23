@@ -49,34 +49,38 @@ const SettingsPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? DEFAULT_TITLE} description={tool?.description ?? DEFAULT_DESCRIPTION}>
-      <div role="tablist" aria-label="Settings sections" className="settings-tabs">
-        {SETTINGS_TABS.map(({ id, label, icon: Icon, panelId }) => (
-          <button
-            key={id}
-            type="button"
-            role="tab"
-            aria-selected={tab === id}
-            aria-controls={panelId}
-            id={`tab-${id}`}
-            onClick={() => setTab(id)}
-            className={cn("settings-tab", tab === id && "settings-tab--selected")}
-          >
-            <Icon className="h-4 w-4" />
-            {label}
-          </button>
-        ))}
+      <div
+        className="flex flex-col flex-1 min-h-0 w-full px-[var(--spacing-panel-inner-x)] pt-[var(--spacing-tool-layout-y)] pb-[var(--spacing-panel-inner-y)]"
+      >
+        <div role="tablist" aria-label="Settings sections" className="settings-tabs">
+          {SETTINGS_TABS.map(({ id, label, icon: Icon, panelId }) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              aria-selected={tab === id}
+              aria-controls={panelId}
+              id={`tab-${id}`}
+              onClick={() => setTab(id)}
+              className={cn("settings-tab", tab === id && "settings-tab--selected")}
+            >
+              <Icon className="h-4 w-4" />
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {tab === "general" && (
+          <SettingsGeneralPanel
+            currentVersion={currentVersion}
+            updateCheck={updateCheck}
+            latestRelease={latestRelease}
+            onCheckForUpdates={handleCheckForUpdates}
+          />
+        )}
+
+        {tab === "tools" && <SettingsToolsPanel />}
       </div>
-
-      {tab === "general" && (
-        <SettingsGeneralPanel
-          currentVersion={currentVersion}
-          updateCheck={updateCheck}
-          latestRelease={latestRelease}
-          onCheckForUpdates={handleCheckForUpdates}
-        />
-      )}
-
-      {tab === "tools" && <SettingsToolsPanel />}
     </ToolLayout>
   );
 };
