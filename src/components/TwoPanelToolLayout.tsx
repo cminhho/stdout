@@ -170,14 +170,16 @@ function buildInputPaneProps(
   const children =
     config.children ??
     (config.inputEditor ? (
-      <CodeEditor
-        value={config.inputEditor.value}
-        onChange={config.inputEditor.onChange}
-        language={config.inputEditor.language as never}
-        placeholder={config.inputEditor.placeholder}
-        errorLines={resolvedErrorLines}
-        fillHeight
-      />
+      <div className="flex-1 min-h-0 flex flex-col">
+        <CodeEditor
+          value={config.inputEditor.value}
+          onChange={config.inputEditor.onChange}
+          language={config.inputEditor.language as never}
+          placeholder={config.inputEditor.placeholder}
+          errorLines={resolvedErrorLines}
+          fillHeight
+        />
+      </div>
     ) : undefined);
 
   return {
@@ -239,14 +241,15 @@ function buildOutputPaneProps(
   const children =
     config.children ??
     (config.outputEditor ? (
-      <CodeEditor
-        key={outputKey}
-        value={editorValue ?? ""}
-        readOnly
-        language={config.outputEditor.language as never}
-        placeholder={outputPlaceholder}
-        fillHeight
-      />
+      <div className="flex-1 min-h-0 flex flex-col" key={outputKey}>
+        <CodeEditor
+          value={editorValue ?? ""}
+          readOnly
+          language={config.outputEditor.language as never}
+          placeholder={outputPlaceholder}
+          fillHeight
+        />
+      </div>
     ) : undefined);
 
   return {

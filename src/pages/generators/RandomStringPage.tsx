@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
@@ -168,7 +168,7 @@ function applySeparator(s: string, sep: string, groupSize: number): string {
 }
 
 const inputClass =
-  "h-8 w-full rounded-md border border-border bg-background px-2.5 font-mono text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2";
+  "h-7 w-full rounded border border-border bg-background px-2 font-mono text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring";
 
 const RandomStringPage = () => {
   const tool = useCurrentTool();
@@ -279,10 +279,17 @@ const RandomStringPage = () => {
   const useCountsMode =
     presetConfig?.charset == null || presetId === "custom";
 
+  const field = (label: string, child: ReactNode) => (
+    <div className="flex flex-col gap-1">
+      <Label className="text-xs text-muted-foreground">{label}</Label>
+      {child}
+    </div>
+  );
+
   const inputPaneContent = (
-    <div className="space-y-4 overflow-auto p-3">
-      <div className="space-y-1.5">
-        <Label className="text-xs text-muted-foreground">Presets</Label>
+    <div className="flex flex-col gap-[var(--spacing-block-gap)] overflow-auto">
+      {field(
+        "Preset",
         <SelectWithOptions<PresetId>
           value={presetId}
           onValueChange={handlePresetChange}
@@ -292,16 +299,12 @@ const RandomStringPage = () => {
           triggerClassName="w-full min-w-0"
           aria-label="Preset"
         />
-      </div>
-
-      <div className="flex items-center gap-2">
-        <SampleButton onClick={loadSample} />
-      </div>
+      )}
 
       {useCountsMode && presetId !== "custom" && (
         <>
-          <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Uppercase</Label>
+          {field(
+            "Uppercase",
             <Input
               type="number"
               min={0}
@@ -312,9 +315,9 @@ const RandomStringPage = () => {
               }
               className={inputClass}
             />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Lowercase</Label>
+          )}
+          {field(
+            "Lowercase",
             <Input
               type="number"
               min={0}
@@ -325,9 +328,9 @@ const RandomStringPage = () => {
               }
               className={inputClass}
             />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Digits</Label>
+          )}
+          {field(
+            "Digits",
             <Input
               type="number"
               min={0}
@@ -338,9 +341,9 @@ const RandomStringPage = () => {
               }
               className={inputClass}
             />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Symbols</Label>
+          )}
+          {field(
+            "Symbols",
             <Input
               type="number"
               min={0}
@@ -351,13 +354,13 @@ const RandomStringPage = () => {
               }
               className={inputClass}
             />
-          </div>
+          )}
         </>
       )}
 
-      {(presetConfig?.charset != null || presetId === "custom") && (
-        <div className="space-y-1.5">
-          <Label className="text-xs text-muted-foreground">Length</Label>
+      {(presetConfig?.charset != null || presetId === "custom") &&
+        field(
+          "Length",
           <Input
             type="number"
             min={1}
@@ -368,13 +371,12 @@ const RandomStringPage = () => {
             }
             className={inputClass}
           />
-        </div>
-      )}
+        )}
 
       {(presetId === "license-key" || separator) && (
         <>
-          <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Separator</Label>
+          {field(
+            "Separator",
             <SelectWithOptions
               value={separator || "(None)"}
               onValueChange={(v) => setSeparator(v === "(None)" ? "" : v)}
@@ -388,9 +390,9 @@ const RandomStringPage = () => {
               variant="secondary"
               triggerClassName="w-full min-w-0"
             />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Group size</Label>
+          )}
+          {field(
+            "Group size",
             <Input
               type="number"
               min={0}
@@ -403,42 +405,39 @@ const RandomStringPage = () => {
               }
               className={inputClass}
             />
-          </div>
+          )}
         </>
       )}
 
-      {presetId === "custom" && (
-        <div className="space-y-1.5">
-          <Label className="text-xs text-muted-foreground">
-            Custom character set
-          </Label>
+      {presetId === "custom" &&
+        field(
+          "Custom charset",
           <Input
             value={customChars}
             onChange={(e) => setCustomChars(e.target.value)}
             placeholder="e.g. abc123"
             className={inputClass}
           />
-        </div>
-      )}
+        )}
 
-      <div className="space-y-1.5">
-        <Label className="text-xs text-muted-foreground">Prefix</Label>
+      {field(
+        "Prefix",
         <Input
           value={prefix}
           onChange={(e) => setPrefix(e.target.value)}
           className={inputClass}
           placeholder="Optional"
         />
-      </div>
-      <div className="space-y-1.5">
-        <Label className="text-xs text-muted-foreground">Suffix</Label>
+      )}
+      {field(
+        "Suffix",
         <Input
           value={suffix}
           onChange={(e) => setSuffix(e.target.value)}
           className={inputClass}
           placeholder="Optional"
         />
-      </div>
+      )}
     </div>
   );
 
@@ -463,33 +462,29 @@ const RandomStringPage = () => {
             : "Output",
         copyText: outputText || undefined,
         toolbar: (
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-[var(--spacing-block-gap)] flex-wrap">
             <Button
               type="button"
               size="xs"
               variant="outline"
               onClick={() => setRegenerateKey((k) => k + 1)}
-              title="Generate new random strings with current options"
+              title="Generate with current options"
               aria-label="Generate"
             >
               <RefreshCw className="h-3 w-3" aria-hidden />
               Generate
             </Button>
             <div className="flex items-center gap-1.5">
-              <Label className="text-xs text-muted-foreground shrink-0">
-                Count
-              </Label>
+              <Label className="text-xs text-muted-foreground shrink-0">Count</Label>
               <Input
                 type="number"
                 min={1}
                 max={100}
                 value={count}
                 onChange={(e) =>
-                  setCount(
-                    Math.max(1, Math.min(100, Number(e.target.value) || 1))
-                  )
+                  setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))
                 }
-                className="h-7 w-14 font-mono text-xs rounded-md border border-border"
+                className="h-7 w-12 font-mono text-xs rounded border border-border px-1.5"
               />
             </div>
             <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer whitespace-nowrap">

@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import ToolAlert from "@/components/ToolAlert";
 import { SegmentGroup } from "@/components/SegmentGroup";
 import { SelectWithOptions } from "@/components/ui/select";
+import { ClearButton } from "@/components/ClearButton";
+import FileUploadButton from "@/components/FileUploadButton";
 import {
   FILE_ENCODING_LABELS,
   decodeBytes,
@@ -25,10 +27,6 @@ const bytesToBase64 = (bytes: Uint8Array): string => {
   for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
   return btoa(binary);
 };
-
-const SAMPLE_HEX = "48656c6c6f";
-const SAMPLE_BASE64 = "SGVsbG8=";
-const SAMPLE_TEXT = "Hello, UTF-8!";
 
 const MODE_OPTIONS = [
   { value: "decode" as const, label: "Decode" },
@@ -80,16 +78,6 @@ const FileEncodingPage = () => {
     setMode(next);
     setInput("");
   }, []);
-
-  const handleSample = () => {
-    const sample =
-      mode === "decode"
-        ? bytesFormat === "hex"
-          ? SAMPLE_HEX
-          : SAMPLE_BASE64
-        : SAMPLE_TEXT;
-    setInput(sample);
-  };
 
   const topSection = (
     <div className="flex flex-col gap-3">
@@ -147,12 +135,15 @@ const FileEncodingPage = () => {
       topSection={topSection}
       inputPane={{
         title: mode === "decode" ? "Bytes (hex or base64)" : "Text",
-        inputToolbar: {
-          onSample: handleSample,
-          setInput,
-          fileAccept: ".txt,text/plain",
-          onFileText: setInput,
-        },
+        toolbar: (
+          <>
+            <ClearButton onClick={() => setInput("")} />
+            <FileUploadButton
+              accept=".txt,text/plain"
+              onText={setInput}
+            />
+          </>
+        ),
         inputEditor: {
           value: input,
           onChange: setInput,
