@@ -522,6 +522,47 @@
   .tool-layout-section {
     margin-bottom: var(--spacing-section-mb);
   }
+
+  /* Validator/tool form: label above input (8px grid) */
+  .tool-field-label {
+    font-size: var(--text-nav);
+    color: hsl(var(--muted-foreground));
+    margin-bottom: var(--spacing-block-gap);
+    display: block;
+  }
+
+  /* Section heading inside tool-card (e.g. "Validate (Luhn)", "Match Details") */
+  .tool-section-heading {
+    font-size: var(--text-content);
+    font-weight: 500;
+    color: hsl(var(--foreground));
+    margin-bottom: var(--spacing-block-gap);
+  }
+
+  /* Inline alert for error/success (design tokens) */
+  .tool-alert {
+    padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
+    font-size: var(--text-ui);
+    border-radius: var(--radius);
+    border: 1px solid;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .tool-alert--error {
+    color: hsl(var(--destructive));
+    border-color: hsl(var(--destructive) / 0.5);
+    background: hsl(var(--destructive) / 0.08);
+  }
+  .tool-alert--success {
+    color: hsl(var(--status-success));
+    border-color: hsl(var(--status-success) / 0.5);
+    background: hsl(var(--status-success) / 0.08);
+  }
+
+  /* Success text (e.g. "✓ Valid") – semantic status */
+  .text-status-success {
+    color: hsl(var(--status-success));
+  }
+
   /* Code editor: VS Code–style panel (workbench editor surface) */
   .code-editor-wrapper {
     background: hsl(var(--workbench-editor-bg));

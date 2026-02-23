@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
+import ToolAlert from "@/components/ToolAlert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import CopyButton from "@/components/CopyButton";
@@ -23,7 +24,7 @@ const CreditCardPage = () => {
     <ToolLayout title={tool?.label ?? "Credit Card Generator & Validator"} description={tool?.description ?? "Luhn check and generate test card numbers"}>
       <div className="space-y-6">
         <div className="tool-card">
-          <h2 className="text-sm font-medium mb-2">Validate (Luhn)</h2>
+          <h2 className="tool-section-heading">Validate (Luhn)</h2>
           <div className="flex gap-2">
             <Input
               value={input}
@@ -33,15 +34,16 @@ const CreditCardPage = () => {
             />
             <ClearButton onClick={() => setInput("")} />
           </div>
-          {input.trim() && (
-            <p className={`mt-2 text-sm ${isValid ? "text-green-600" : "text-destructive"}`}>
-              {isValid ? "✓ Valid (Luhn check passed)" : "✗ Invalid (Luhn check failed)"}
-            </p>
-          )}
+          {input.trim() &&
+            (isValid ? (
+              <ToolAlert variant="success" message="Valid (Luhn check passed)" className="mt-2" />
+            ) : (
+              <ToolAlert variant="error" message="Invalid (Luhn check failed)" prefix="✗ " className="mt-2" />
+            ))}
         </div>
 
         <div className="tool-card">
-          <h2 className="text-sm font-medium mb-2">Generate test numbers</h2>
+          <h2 className="tool-section-heading">Generate test numbers</h2>
           <p className="text-xs text-muted-foreground mb-3">For testing only. Do not use for real transactions.</p>
           <div className="flex flex-wrap gap-2">
             {CARD_BRANDS.map((brand) => (

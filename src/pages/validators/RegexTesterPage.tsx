@@ -3,6 +3,7 @@ import ToolLayout from "@/components/ToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
+import ToolAlert from "@/components/ToolAlert";
 import { Input } from "@/components/ui/input";
 import CopyButton from "@/components/CopyButton";
 import FileUploadButton from "@/components/FileUploadButton";
@@ -90,7 +91,7 @@ const RegexTesterPage = () => {
         <div className="tool-card space-y-3">
           <div className="flex gap-2 items-end">
             <div className="flex-1">
-              <label className="text-xs text-muted-foreground mb-1 block">Pattern (use \\ for escapes, e.g. Java/JS)</label>
+              <label className="tool-field-label">Pattern (use \\ for escapes, e.g. Java/JS)</label>
               <div className="flex items-center rounded-md border bg-background border-border focus-within:ring-1 focus-within:ring-ring">
                 <span className="text-muted-foreground text-sm pl-3 select-none">/</span>
                 <Input
@@ -158,9 +159,7 @@ const RegexTesterPage = () => {
               />
             </div>
             <div className="flex flex-col gap-3 shrink-0">
-              {result?.error && (
-                <div className="tool-card border-destructive/50 text-destructive text-sm">⚠ {result.error}</div>
-              )}
+              {result?.error && <ToolAlert variant="error" message={result.error} />}
 
               {/* Highlighted preview */}
               {highlighted && (

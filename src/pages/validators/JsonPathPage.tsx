@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
+import ToolAlert from "@/components/ToolAlert";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
@@ -183,9 +184,7 @@ const JsonPathPage = () => {
         copyText: result || undefined,
         toolbar: <IndentSelect value={indent} onChange={setIndent} />,
         children: error ? (
-          <div className="flex-1 min-h-0 overflow-auto rounded border border-border bg-muted/30 p-3 text-destructive text-sm font-mono">
-            {error}
-          </div>
+          <ToolAlert variant="error" message={error} className="flex-1 min-h-0 overflow-auto" />
         ) : (
           undefined
         ),
