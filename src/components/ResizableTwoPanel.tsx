@@ -1,16 +1,12 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import PanelHeader from "@/components/PanelHeader";
+import PanelResizer from "@/components/PanelResizer";
 import { cn } from "@/utils/cn";
 
 const BREAKPOINT_LG = 1024;
 const DEFAULT_MIN_INPUT_PERCENT = 20;
 const DEFAULT_MAX_INPUT_PERCENT = 80;
 const DEFAULT_INPUT_PERCENT = 50;
-
-const RESIZER_VERTICAL_CLASS =
-  "hidden lg:flex shrink-0 flex-col items-center justify-center cursor-col-resize select-none self-stretch h-full min-h-0 relative";
-const RESIZER_HORIZONTAL_CLASS =
-  "flex lg:hidden shrink-0 items-center justify-center cursor-row-resize select-none w-full relative touch-none";
 
 const PANEL_BODY_CLASS = "flex-1 min-h-0 flex flex-col overflow-hidden";
 
@@ -195,7 +191,11 @@ export interface ResizableTwoPanelProps {
   className?: string;
 }
 
-function Pane({
+/**
+ * Reusable tool pane: header (PanelHeader or custom) + body with token padding.
+ * Used by ResizableTwoPanel and by grid layouts (e.g. CssInlinerPage). Omit resizerSide when not beside a resizer.
+ */
+export function ToolPane({
   pane,
   className,
   style,
@@ -211,7 +211,7 @@ function Pane({
     <div className={cn("tool-panel flex flex-col min-h-0 overflow-hidden", className)} style={style}>
       {pane.customHeader ?? (
         <PanelHeader
-          label={pane.title}
+          label={pane.title ?? "Panel"}
           text={pane.copyText}
           onClear={pane.onClear}
           extra={pane.toolbar}
@@ -264,7 +264,7 @@ const ResizableTwoPanel = ({
         className
       )}
     >
-      <Pane
+      <ToolPane
         pane={{ ...input, title: input.title ?? DEFAULT_INPUT_TITLE }}
         resizerSide={isLg ? "right" : undefined}
         className={cn(
@@ -281,45 +281,28 @@ const ResizableTwoPanel = ({
         }
       />
 
-      {/* Horizontal resizer: stacked (small screen) – drag to resize top/bottom height */}
-      <div
-        role="separator"
-        aria-orientation="horizontal"
-        aria-valuenow={vertical.percent}
-        aria-valuemin={minInputPercent}
-        aria-valuemax={maxInputPercent}
-        aria-label="Resize panels vertically"
-        tabIndex={0}
+      <PanelResizer
+        orientation="horizontal"
+        percent={vertical.percent}
+        minPercent={minInputPercent}
+        maxPercent={maxInputPercent}
+        ariaLabel="Resize panels vertically"
         onMouseDown={vertical.onMouseDown}
         onKeyDown={vertical.onKeyDown}
-        className={cn(RESIZER_HORIZONTAL_CLASS, "panel-resizer panel-resizer--horizontal")}
-        style={
-          resizerWidth != null
-            ? { height: resizerWidth, minHeight: resizerWidth }
-            : undefined
-        }
-      >
-        <div className="panel-resizer-line absolute inset-x-0 top-1/2 h-px -translate-y-px" />
-      </div>
-
-      {/* Vertical resizer: side-by-side (lg+) – drag to resize left/right width */}
-      <div
-        role="separator"
-        aria-orientation="vertical"
-        aria-valuenow={horizontal.percent}
-        aria-valuemin={minInputPercent}
-        aria-valuemax={maxInputPercent}
-        aria-label="Resize panels horizontally"
-        tabIndex={0}
+        width={resizerWidth}
+      />
+      <PanelResizer
+        orientation="vertical"
+        percent={horizontal.percent}
+        minPercent={minInputPercent}
+        maxPercent={maxInputPercent}
+        ariaLabel="Resize panels horizontally"
         onMouseDown={horizontal.onMouseDown}
         onKeyDown={horizontal.onKeyDown}
-        className={cn(RESIZER_VERTICAL_CLASS, "panel-resizer p-0 touch-none")}
-        style={resizerWidth != null ? { width: resizerWidth, minWidth: resizerWidth } : undefined}
-      >
-        <div className="panel-resizer-line absolute inset-y-0 left-1/2 w-px -translate-x-px" />
-      </div>
+        width={resizerWidth}
+      />
 
-      <Pane
+      <ToolPane
         pane={{ ...output, title: output.title ?? DEFAULT_OUTPUT_TITLE }}
         resizerSide={isLg ? "left" : undefined}
         className="flex-1 min-w-0 min-h-0"

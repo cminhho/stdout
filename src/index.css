@@ -538,6 +538,9 @@
   .tool-content-grid {
     gap: var(--spacing-grid-gap);
   }
+  .tool-content-grid--dense {
+    gap: var(--spacing-panel-resizer-gap);
+  }
   .tool-content-stack {
     gap: var(--spacing-grid-gap);
   }
