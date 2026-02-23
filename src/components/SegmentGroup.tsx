@@ -27,7 +27,7 @@ export interface SegmentGroupProps<T extends string> {
 /**
  * Segmented control: one-of-many selection with clear active state.
  * Compact layout aligned with toolbar buttons (e.g. SampleButton): h-7, px-2 per segment.
- * Container: border border-border, bg-segment-bg, p-0.5. Accessible (role="group", aria-pressed).
+ * Container: border aligned with outline buttons (border-outlineButton-border), bg-segment-bg, p-0.5. Accessible (role="group", aria-pressed).
  */
 function SegmentGroupInner<T extends string>(
   {
@@ -47,7 +47,7 @@ function SegmentGroupInner<T extends string>(
       role="group"
       aria-label={ariaLabel}
       className={cn(
-        "inline-flex h-7 items-center rounded-md border border-border bg-segment-bg p-0.5",
+        "inline-flex h-7 items-center rounded-md border border-outlineButton-border bg-segment-bg p-0.5",
         className
       )}
     >
