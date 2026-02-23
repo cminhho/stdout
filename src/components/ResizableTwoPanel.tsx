@@ -1,232 +1,34 @@
-import { useState, useRef, useCallback, useEffect } from "react";
-import PanelHeader from "@/components/PanelHeader";
 import PanelResizer from "@/components/PanelResizer";
+import ToolPane from "@/components/ToolPane";
+import type { PaneProps } from "@/components/ToolPane";
+import { useHorizontalResize, useVerticalResize } from "@/hooks/useResizeSplit";
+import { useIsLg } from "@/hooks/useMediaQuery";
 import { cn } from "@/utils/cn";
 
-const BREAKPOINT_LG = 1024;
+const DEFAULT_INPUT_PERCENT = 50;
 const DEFAULT_MIN_INPUT_PERCENT = 20;
 const DEFAULT_MAX_INPUT_PERCENT = 80;
-const DEFAULT_INPUT_PERCENT = 50;
-
-const PANEL_BODY_CLASS = "flex-1 min-h-0 flex flex-col overflow-hidden";
-
-/** Pane body inner base; use with resizer-side classes when side-by-side to reduce gap next to resizer. */
-const PANEL_BODY_INNER_BASE =
-  "flex-1 min-h-0 flex flex-col overflow-hidden pt-0 pb-[var(--spacing-panel-inner-y)]";
-
-function getPanelBodyInnerClass(resizerSide?: "left" | "right"): string {
-  if (resizerSide === "left") return cn(PANEL_BODY_INNER_BASE, "pl-[var(--spacing-panel-resizer-gap)] pr-[var(--spacing-panel-inner-x)]");
-  if (resizerSide === "right") return cn(PANEL_BODY_INNER_BASE, "pl-[var(--spacing-panel-inner-x)] pr-[var(--spacing-panel-resizer-gap)]");
-  return cn(PANEL_BODY_INNER_BASE, "px-[var(--spacing-panel-inner-x)]");
-}
-
-function useIsLg(): boolean {
-  const [isLg, setIsLg] = useState(false);
-  useEffect(() => {
-    const m = window.matchMedia(`(min-width: ${BREAKPOINT_LG}px)`);
-    const fn = () => setIsLg(m.matches);
-    fn();
-    m.addEventListener("change", fn);
-    return () => m.removeEventListener("change", fn);
-  }, []);
-  return isLg;
-}
-
-function clamp(min: number, max: number, value: number): number {
-  return Math.min(max, Math.max(min, value));
-}
-
-const KEYBOARD_RESIZE_STEP = 5;
-const STACKED_PANE_MIN_HEIGHT = "min(120px, 30vh)";
-
-/** Horizontal split: left pane width % (side-by-side / lg). */
-function useHorizontalResize(
-  initialPercent: number,
-  minPercent: number,
-  maxPercent: number,
-  containerRef: React.RefObject<HTMLDivElement | null>
-) {
-  const [percent, setPercent] = useState(initialPercent);
-
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (!containerRef.current) return;
-      const { width, left } = containerRef.current.getBoundingClientRect();
-      const pct = ((e.clientX - left) / width) * 100;
-      setPercent(clamp(minPercent, maxPercent, pct));
-    },
-    [minPercent, maxPercent]
-  );
-
-  const handleMouseUp = useCallback(() => {
-    document.removeEventListener("mousemove", handleMouseMove);
-    document.removeEventListener("mouseup", handleMouseUp);
-    document.body.style.cursor = "";
-    document.body.style.userSelect = "";
-  }, [handleMouseMove]);
-
-  const onMouseDown = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault();
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-      document.body.style.cursor = "col-resize";
-      document.body.style.userSelect = "none";
-    },
-    [handleMouseMove, handleMouseUp]
-  );
-
-  const onKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
-      e.preventDefault();
-      const delta = e.key === "ArrowRight" ? KEYBOARD_RESIZE_STEP : -KEYBOARD_RESIZE_STEP;
-      setPercent((p) => clamp(minPercent, maxPercent, p + delta));
-    },
-    [minPercent, maxPercent]
-  );
-
-  useEffect(() => {
-    return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [handleMouseMove, handleMouseUp]);
-
-  return { percent, onMouseDown, onKeyDown };
-}
-
-/** Vertical split: top pane height % (stacked / small screen). */
-function useVerticalResize(
-  initialPercent: number,
-  minPercent: number,
-  maxPercent: number,
-  containerRef: React.RefObject<HTMLDivElement | null>
-) {
-  const [percent, setPercent] = useState(initialPercent);
-
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (!containerRef.current) return;
-      const { height, top } = containerRef.current.getBoundingClientRect();
-      const pct = ((e.clientY - top) / height) * 100;
-      setPercent(clamp(minPercent, maxPercent, pct));
-    },
-    [minPercent, maxPercent]
-  );
-
-  const handleMouseUp = useCallback(() => {
-    document.removeEventListener("mousemove", handleMouseMove);
-    document.removeEventListener("mouseup", handleMouseUp);
-    document.body.style.cursor = "";
-    document.body.style.userSelect = "";
-  }, [handleMouseMove]);
-
-  const onMouseDown = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault();
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-      document.body.style.cursor = "row-resize";
-      document.body.style.userSelect = "none";
-    },
-    [handleMouseMove, handleMouseUp]
-  );
-
-  const onKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
-      e.preventDefault();
-      const delta = e.key === "ArrowDown" ? KEYBOARD_RESIZE_STEP : -KEYBOARD_RESIZE_STEP;
-      setPercent((p) => clamp(minPercent, maxPercent, p + delta));
-    },
-    [minPercent, maxPercent]
-  );
-
-  useEffect(() => {
-    return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [handleMouseMove, handleMouseUp]);
-
-  return { percent, onMouseDown, onKeyDown };
-}
-
 const DEFAULT_INPUT_TITLE = "Input";
 const DEFAULT_OUTPUT_TITLE = "Output";
+const STACKED_PANE_MIN_HEIGHT = "min(120px, 30vh)";
 
-/**
- * Props for one tool pane (input or output).
- * Use `customHeader` to replace the whole header; otherwise use `title` + optional `toolbar`, `copyText`, `onClear`.
- */
-export interface PaneProps {
-  /** Custom header; when set, title/toolbar/copyText/onClear are ignored */
-  customHeader?: React.ReactNode;
-  /** Pane title in default header; defaults to "Input" / "Output" per pane when omitted */
-  title?: string;
-  /** Toolbar actions in default header (Sample, Clear, Indent, Save, etc.) */
-  toolbar?: React.ReactNode;
-  /** Text for the copy-to-clipboard button in default header */
-  copyText?: string;
-  /** Clear button in default header (clears pane content) */
-  onClear?: () => void;
-  /** Pane body (editor, preview, etc.) */
-  children: React.ReactNode;
-}
+export type { PaneProps };
 
 export interface ResizableTwoPanelProps {
-  /** Input/source pane (left in LTR) – e.g. raw JSON, source text */
+  /** Input/source pane (left in LTR) */
   input: PaneProps;
-  /** Output/result pane (right in LTR) – e.g. formatted result */
+  /** Output/result pane (right in LTR) */
   output: PaneProps;
-  /** Initial width of input pane in percent (20–80) */
   defaultInputPercent?: number;
-  /** Min width of input pane in percent */
   minInputPercent?: number;
-  /** Max width of input pane in percent */
   maxInputPercent?: number;
-  /** Resizer grip width in px; when omitted uses --panel-resizer-width */
   resizerWidth?: number;
   className?: string;
 }
 
 /**
- * Reusable tool pane: header (PanelHeader or custom) + body with token padding.
- * Used by ResizableTwoPanel and by grid layouts (e.g. CssInlinerPage). Omit resizerSide when not beside a resizer.
- */
-export function ToolPane({
-  pane,
-  className,
-  style,
-  resizerSide,
-}: {
-  pane: PaneProps;
-  className?: string;
-  style?: React.CSSProperties;
-  /** When 'left'|'right', use smaller padding on that side (next to resizer) when side-by-side. */
-  resizerSide?: "left" | "right";
-}) {
-  return (
-    <div className={cn("tool-panel flex flex-col min-h-0 overflow-hidden", className)} style={style}>
-      {pane.customHeader ?? (
-        <PanelHeader
-          label={pane.title ?? "Panel"}
-          text={pane.copyText}
-          onClear={pane.onClear}
-          extra={pane.toolbar}
-        />
-      )}
-      <div className={PANEL_BODY_CLASS}>
-        <div className={getPanelBodyInnerClass(resizerSide)}>{pane.children}</div>
-      </div>
-    </div>
-  );
-}
-
-/**
- * Resizable two-pane layout for tools (input | output). Drag the divider to resize the input pane.
- * Stacks vertically below lg breakpoint; side-by-side with resizer on lg+.
+ * Resizable two-pane layout: input | resizer | output.
+ * Side-by-side on lg+; stacked with horizontal resizer below lg.
  */
 const ResizableTwoPanel = ({
   input,
@@ -238,7 +40,7 @@ const ResizableTwoPanel = ({
   className,
 }: ResizableTwoPanelProps) => {
   const isLg = useIsLg();
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
 
   const horizontal = useHorizontalResize(
     defaultInputPercent,
@@ -267,17 +69,11 @@ const ResizableTwoPanel = ({
       <ToolPane
         pane={{ ...input, title: input.title ?? DEFAULT_INPUT_TITLE }}
         resizerSide={isLg ? "right" : undefined}
-        className={cn(
-          "min-w-0",
-          isLg ? "flex-none shrink-0" : "flex-shrink-0"
-        )}
+        className={cn("min-w-0", isLg ? "flex-none shrink-0" : "flex-shrink-0")}
         style={
           isLg
             ? { width: `${horizontal.percent}%`, minWidth: "var(--panel-min-width)" }
-            : {
-                height: `${vertical.percent}%`,
-                minHeight: STACKED_PANE_MIN_HEIGHT,
-              }
+            : { height: `${vertical.percent}%`, minHeight: STACKED_PANE_MIN_HEIGHT }
         }
       />
 
