@@ -4,150 +4,518 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { ClearButton } from "@/components/ClearButton";
 import { SampleButton } from "@/components/SampleButton";
+import { SelectWithOptions } from "@/components/ui/select";
+import { RefreshCw } from "lucide-react";
 
-const charSets = {
+const CHAR_SETS = {
   lowercase: "abcdefghijklmnopqrstuvwxyz",
   uppercase: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
   digits: "0123456789",
   hex: "0123456789abcdef",
   symbols: "!@#$%^&*()_+-=[]{}|;:,.<>?",
-  alphanumeric: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
 };
 
-type Preset = "alphanumeric" | "hex" | "base64url" | "custom";
+const ALPHANUMERIC =
+  CHAR_SETS.lowercase + CHAR_SETS.uppercase + CHAR_SETS.digits;
+const BASE64URL = ALPHANUMERIC + "-_";
 
-const inputClass = "h-8 w-full rounded border border-input bg-background px-2.5 font-mono text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring";
+type PresetId =
+  | "strong-password"
+  | "long-password"
+  | "pin-code"
+  | "license-key"
+  | "alphanumeric"
+  | "hex"
+  | "base64url"
+  | "custom";
+
+interface PresetConfig {
+  id: PresetId;
+  label: string;
+  length: number;
+  upper: number;
+  lower: number;
+  digits: number;
+  symbols: number;
+  separator: string;
+  groupSize: number;
+  /** When set, ignore upper/lower/digits/symbols and use this charset for `length` chars. */
+  charset?: keyof typeof CHAR_SETS | "alphanumeric" | "base64url";
+}
+
+const PRESETS: PresetConfig[] = [
+  {
+    id: "strong-password",
+    label: "Strong password",
+    length: 16,
+    upper: 4,
+    lower: 4,
+    digits: 4,
+    symbols: 4,
+    separator: "",
+    groupSize: 0,
+  },
+  {
+    id: "long-password",
+    label: "Long password",
+    length: 32,
+    upper: 8,
+    lower: 8,
+    digits: 8,
+    symbols: 8,
+    separator: "",
+    groupSize: 0,
+  },
+  {
+    id: "pin-code",
+    label: "PIN code",
+    length: 6,
+    upper: 0,
+    lower: 0,
+    digits: 6,
+    symbols: 0,
+    separator: "",
+    groupSize: 0,
+  },
+  {
+    id: "license-key",
+    label: "License key",
+    length: 20,
+    upper: 0,
+    lower: 0,
+    digits: 0,
+    symbols: 0,
+    separator: "-",
+    groupSize: 5,
+    charset: "alphanumeric",
+  },
+  {
+    id: "alphanumeric",
+    label: "Alphanumeric",
+    length: 48,
+    upper: 0,
+    lower: 0,
+    digits: 0,
+    symbols: 0,
+    separator: "",
+    groupSize: 0,
+    charset: "alphanumeric",
+  },
+  {
+    id: "hex",
+    label: "Hex",
+    length: 32,
+    upper: 0,
+    lower: 0,
+    digits: 0,
+    symbols: 0,
+    separator: "",
+    groupSize: 0,
+    charset: "hex",
+  },
+  {
+    id: "base64url",
+    label: "Base64url",
+    length: 32,
+    upper: 0,
+    lower: 0,
+    digits: 0,
+    symbols: 0,
+    separator: "",
+    groupSize: 0,
+    charset: "base64url",
+  },
+  {
+    id: "custom",
+    label: "Custom",
+    length: 32,
+    upper: 0,
+    lower: 0,
+    digits: 0,
+    symbols: 0,
+    separator: "",
+    groupSize: 0,
+  },
+];
+
+function pickRandom(chars: string, n: number): string {
+  const arr = new Uint32Array(n);
+  crypto.getRandomValues(arr);
+  return Array.from(arr, (v) => chars[v % chars.length]).join("");
+}
+
+function shuffle(str: string): string {
+  const a = str.split("");
+  for (let i = a.length - 1; i > 0; i--) {
+    const arr = new Uint32Array(1);
+    crypto.getRandomValues(arr);
+    const j = arr[0] % (i + 1);
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a.join("");
+}
+
+function applySeparator(s: string, sep: string, groupSize: number): string {
+  if (!sep || groupSize <= 0) return s;
+  const parts: string[] = [];
+  for (let i = 0; i < s.length; i += groupSize) {
+    parts.push(s.slice(i, i + groupSize));
+  }
+  return parts.join(sep);
+}
+
+const inputClass =
+  "h-8 w-full rounded-md border border-border bg-background px-2.5 font-mono text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2";
 
 const RandomStringPage = () => {
   const tool = useCurrentTool();
-  const [strings, setStrings] = useState<string[]>([]);
-  const [length, setLength] = useState(48);
+  const [presetId, setPresetId] = useState<PresetId>("strong-password");
+  const [length, setLength] = useState(16);
   const [count, setCount] = useState(10);
-  const [preset, setPreset] = useState<Preset>("alphanumeric");
+  const [upper, setUpper] = useState(4);
+  const [lower, setLower] = useState(4);
+  const [digits, setDigits] = useState(4);
+  const [symbols, setSymbols] = useState(4);
+  const [separator, setSeparator] = useState("");
+  const [groupSize, setGroupSize] = useState(0);
   const [customChars, setCustomChars] = useState("");
   const [prefix, setPrefix] = useState("");
   const [suffix, setSuffix] = useState("");
   const [colorize, setColorize] = useState(false);
+  const [strings, setStrings] = useState<string[]>([]);
+  const [regenerateKey, setRegenerateKey] = useState(0);
+
+  const handlePresetChange = (id: PresetId) => {
+    setPresetId(id);
+    const config = PRESETS.find((p) => p.id === id);
+    if (config) {
+      setLength(config.length);
+      setUpper(config.upper);
+      setLower(config.lower);
+      setDigits(config.digits);
+      setSymbols(config.symbols);
+      setSeparator(config.separator);
+      setGroupSize(config.groupSize);
+    }
+  };
 
   useEffect(() => {
-    let chars: string;
-    switch (preset) {
-      case "alphanumeric":
-        chars = charSets.alphanumeric;
-        break;
-      case "hex":
-        chars = charSets.hex;
-        break;
-      case "base64url":
-        chars = charSets.alphanumeric + "-_";
-        break;
-      default:
-        chars = customChars || charSets.alphanumeric;
+    const preset = PRESETS.find((p) => p.id === presetId);
+    const useCharset = preset?.charset != null && preset.id !== "custom";
+    const useCustomChars = presetId === "custom" && customChars.length > 0;
+    const total =
+      presetId === "custom" && !customChars.trim()
+        ? 0
+        : useCharset || useCustomChars
+          ? length
+          : upper + lower + digits + symbols;
+
+    if (total <= 0 || count <= 0) {
+      setStrings([]);
+      return;
     }
-    const results: string[] = [];
+
+    const next: string[] = [];
     for (let i = 0; i < count; i++) {
-      const arr = new Uint32Array(length);
-      crypto.getRandomValues(arr);
-      const str = Array.from(arr, (v) => chars[v % chars.length]).join("");
-      results.push(prefix + str + suffix);
+      let raw: string;
+      if (useCharset) {
+        const charset =
+          preset!.charset === "alphanumeric"
+            ? ALPHANUMERIC
+            : preset!.charset === "base64url"
+              ? BASE64URL
+              : CHAR_SETS[preset!.charset as keyof typeof CHAR_SETS];
+        raw = pickRandom(charset, length);
+      } else if (useCustomChars) {
+        raw = pickRandom(customChars, length);
+      } else {
+        const u = pickRandom(CHAR_SETS.uppercase, upper);
+        const l = pickRandom(CHAR_SETS.lowercase, lower);
+        const d = pickRandom(CHAR_SETS.digits, digits);
+        const s = pickRandom(CHAR_SETS.symbols, symbols);
+        raw = shuffle(u + l + d + s);
+      }
+      const withSep = applySeparator(raw, separator, groupSize);
+      next.push(prefix + withSep + suffix);
     }
-    setStrings(results);
-  }, [count, length, prefix, suffix, preset, customChars]);
+    setStrings(next);
+  }, [
+    presetId,
+    length,
+    count,
+    upper,
+    lower,
+    digits,
+    symbols,
+    separator,
+    groupSize,
+    customChars,
+    prefix,
+    suffix,
+    regenerateKey,
+  ]);
 
   const outputText = strings.join("\n");
 
   const loadSample = () => {
-    setLength(32);
+    setPresetId("strong-password");
     setCount(5);
-    setPreset("alphanumeric");
+    setLength(16);
+    setUpper(4);
+    setLower(4);
+    setDigits(4);
+    setSymbols(4);
+    setSeparator("");
+    setGroupSize(0);
     setCustomChars("");
     setPrefix("");
     setSuffix("");
   };
 
+  const presetConfig = PRESETS.find((p) => p.id === presetId);
+  const useCountsMode =
+    presetConfig?.charset == null || presetId === "custom";
+
   const inputPaneContent = (
     <div className="space-y-4 overflow-auto p-3">
       <div className="space-y-1.5">
-        <Label className="text-xs text-muted-foreground">Length</Label>
+        <Label className="text-xs text-muted-foreground">Presets</Label>
+        <SelectWithOptions<PresetId>
+          value={presetId}
+          onValueChange={handlePresetChange}
+          options={PRESETS.map((p) => ({ value: p.id, label: p.label }))}
+          size="xs"
+          variant="secondary"
+          triggerClassName="w-full min-w-0"
+          aria-label="Preset"
+        />
+      </div>
+
+      <div className="flex items-center gap-2">
+        <SampleButton onClick={loadSample} />
+      </div>
+
+      {useCountsMode && presetId !== "custom" && (
+        <>
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground">Uppercase</Label>
+            <Input
+              type="number"
+              min={0}
+              max={64}
+              value={upper}
+              onChange={(e) =>
+                setUpper(Math.max(0, Math.min(64, Number(e.target.value) || 0)))
+              }
+              className={inputClass}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground">Lowercase</Label>
+            <Input
+              type="number"
+              min={0}
+              max={64}
+              value={lower}
+              onChange={(e) =>
+                setLower(Math.max(0, Math.min(64, Number(e.target.value) || 0)))
+              }
+              className={inputClass}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground">Digits</Label>
+            <Input
+              type="number"
+              min={0}
+              max={64}
+              value={digits}
+              onChange={(e) =>
+                setDigits(Math.max(0, Math.min(64, Number(e.target.value) || 0)))
+              }
+              className={inputClass}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground">Symbols</Label>
+            <Input
+              type="number"
+              min={0}
+              max={64}
+              value={symbols}
+              onChange={(e) =>
+                setSymbols(Math.max(0, Math.min(64, Number(e.target.value) || 0)))
+              }
+              className={inputClass}
+            />
+          </div>
+        </>
+      )}
+
+      {(presetConfig?.charset != null || presetId === "custom") && (
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Length</Label>
+          <Input
+            type="number"
+            min={1}
+            max={512}
+            value={length}
+            onChange={(e) =>
+              setLength(Math.max(1, Math.min(512, Number(e.target.value) || 1)))
+            }
+            className={inputClass}
+          />
+        </div>
+      )}
+
+      {(presetId === "license-key" || separator) && (
+        <>
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground">Separator</Label>
+            <SelectWithOptions
+              value={separator || "(None)"}
+              onValueChange={(v) => setSeparator(v === "(None)" ? "" : v)}
+              options={[
+                { value: "(None)", label: "(None)" },
+                { value: "-", label: "Dash (-)" },
+                { value: " ", label: "Space" },
+                { value: "_", label: "Underscore (_)" },
+              ]}
+              size="xs"
+              variant="secondary"
+              triggerClassName="w-full min-w-0"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground">Group size</Label>
+            <Input
+              type="number"
+              min={0}
+              max={32}
+              value={groupSize}
+              onChange={(e) =>
+                setGroupSize(
+                  Math.max(0, Math.min(32, Number(e.target.value) || 0))
+                )
+              }
+              className={inputClass}
+            />
+          </div>
+        </>
+      )}
+
+      {presetId === "custom" && (
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">
+            Custom character set
+          </Label>
+          <Input
+            value={customChars}
+            onChange={(e) => setCustomChars(e.target.value)}
+            placeholder="e.g. abc123"
+            className={inputClass}
+          />
+        </div>
+      )}
+
+      <div className="space-y-1.5">
+        <Label className="text-xs text-muted-foreground">Prefix</Label>
         <Input
-          type="number"
-          min={1}
-          max={256}
-          value={length}
-          onChange={(e) => setLength(Math.max(1, Math.min(256, Number(e.target.value) || 1)))}
+          value={prefix}
+          onChange={(e) => setPrefix(e.target.value)}
           className={inputClass}
+          placeholder="Optional"
         />
       </div>
       <div className="space-y-1.5">
-        <Label className="text-xs text-muted-foreground">Character set</Label>
-        <div className="flex flex-col gap-1.5">
-          {(["alphanumeric", "hex", "base64url", "custom"] as Preset[]).map((p) => (
-            <button
-              key={p}
-              onClick={() => setPreset(p)}
-              className={`h-8 px-3 text-xs rounded border text-left transition-colors ${preset === p ? "bg-primary text-primary-foreground border-primary" : "border-input bg-background text-muted-foreground hover:text-foreground"}`}
-            >
-              {p}
-            </button>
-          ))}
-        </div>
-      </div>
-      {preset === "custom" && (
-        <div className="space-y-1.5">
-          <Label className="text-xs text-muted-foreground">Custom characters</Label>
-          <Input value={customChars} onChange={(e) => setCustomChars(e.target.value)} placeholder="e.g. abc123" className={inputClass} />
-        </div>
-      )}
-      <div className="space-y-1.5">
-        <Label className="text-xs text-muted-foreground">Prefix</Label>
-        <Input value={prefix} onChange={(e) => setPrefix(e.target.value)} className={inputClass} placeholder="Optional" />
-      </div>
-      <div className="space-y-1.5">
         <Label className="text-xs text-muted-foreground">Suffix</Label>
-        <Input value={suffix} onChange={(e) => setSuffix(e.target.value)} className={inputClass} placeholder="Optional" />
+        <Input
+          value={suffix}
+          onChange={(e) => setSuffix(e.target.value)}
+          className={inputClass}
+          placeholder="Optional"
+        />
       </div>
     </div>
   );
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
-      title={tool?.label ?? "Random String"}
-      description={tool?.description ?? "Generate cryptographically secure random strings"}
-      defaultInputPercent={22}
+      tool={tool ?? undefined}
+      title={tool?.label ?? "Random String Generator"}
+      description={
+        tool?.description ??
+        "Generate cryptographically secure random strings with presets (password, PIN, license key, hex, …)"
+      }
+      defaultInputPercent={28}
       inputPane={{
         title: "Options",
         toolbar: <SampleButton onClick={loadSample} />,
         children: inputPaneContent,
       }}
       outputPane={{
-        title: strings.length ? `${strings.length} string${strings.length > 1 ? "s" : ""}` : "Output",
+        title:
+          strings.length > 0
+            ? `${strings.length} string${strings.length > 1 ? "s" : ""}`
+            : "Output",
         copyText: outputText || undefined,
         toolbar: (
           <div className="flex items-center gap-2 flex-wrap">
+            <Button
+              type="button"
+              size="xs"
+              variant="outline"
+              onClick={() => setRegenerateKey((k) => k + 1)}
+              title="Generate new random strings with current options"
+              aria-label="Generate"
+            >
+              <RefreshCw className="h-3 w-3" aria-hidden />
+              Generate
+            </Button>
             <div className="flex items-center gap-1.5">
-              <Label className="text-xs text-muted-foreground shrink-0">Count</Label>
+              <Label className="text-xs text-muted-foreground shrink-0">
+                Count
+              </Label>
               <Input
                 type="number"
                 min={1}
                 max={100}
                 value={count}
-                onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
-                className="h-7 w-14 font-mono text-xs"
+                onChange={(e) =>
+                  setCount(
+                    Math.max(1, Math.min(100, Number(e.target.value) || 1))
+                  )
+                }
+                className="h-7 w-14 font-mono text-xs rounded-md border border-border"
               />
             </div>
             <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer whitespace-nowrap">
-              <input type="checkbox" checked={colorize} onChange={(e) => setColorize(e.target.checked)} className="rounded border-input accent-primary" />
-              Color
+              <input
+                type="checkbox"
+                checked={colorize}
+                onChange={(e) => setColorize(e.target.checked)}
+                className="rounded border-input accent-primary"
+              />
+              Colors
             </label>
             <ClearButton onClick={() => setStrings([])} />
           </div>
         ),
         children: (
-          <div className={`flex-1 min-h-0 flex flex-col overflow-hidden ${colorize ? "rounded-md ring-1 ring-primary/30" : ""}`}>
-            <CodeEditor value={outputText} readOnly language="text" placeholder="Results update automatically..." fillHeight showLineNumbers={false} />
+          <div
+            className={`flex-1 min-h-0 flex flex-col overflow-hidden ${colorize ? "rounded-md ring-1 ring-primary/30" : ""}`}
+          >
+            <CodeEditor
+              value={outputText}
+              readOnly
+              language="text"
+              placeholder="Results update automatically..."
+              fillHeight
+              showLineNumbers={false}
+            />
           </div>
         ),
       }}

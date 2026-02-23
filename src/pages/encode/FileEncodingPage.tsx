@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
@@ -76,6 +76,11 @@ const FileEncodingPage = () => {
     }
   }, [input, mode, decodeEncoding, bytesFormat]);
 
+  const setModeWithCleanup = useCallback((next: "decode" | "encode") => {
+    setMode(next);
+    setInput("");
+  }, []);
+
   const handleSample = () => {
     const sample =
       mode === "decode"
@@ -93,7 +98,7 @@ const FileEncodingPage = () => {
           <Label className="text-xs text-muted-foreground shrink-0">Mode</Label>
           <SegmentGroup<"decode" | "encode">
             value={mode}
-            onValueChange={setMode}
+            onValueChange={setModeWithCleanup}
             options={MODE_OPTIONS}
             ariaLabel="Decode or encode"
             size="xs"
