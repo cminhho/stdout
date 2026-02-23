@@ -1,4 +1,5 @@
 import PanelHeader from "@/components/PanelHeader";
+import { ClearButton } from "@/components/ClearButton";
 import { cn } from "@/utils/cn";
 
 const PANEL_BODY_CLASS = "flex-1 min-h-0 flex flex-col overflow-hidden";
@@ -54,8 +55,12 @@ export function ToolPane({ pane, className, style, resizerSide }: ToolPaneProps)
         <PanelHeader
           label={pane.title ?? "Panel"}
           text={pane.copyText}
-          onClear={pane.onClear}
-          extra={pane.toolbar}
+          extra={
+            <>
+              {pane.toolbar}
+              {pane.onClear ? <ClearButton onClick={pane.onClear} /> : null}
+            </>
+          }
           className={resizerSide === "left" ? "pl-[var(--spacing-panel-resizer-gap)] pr-[var(--spacing-panel-inner-x)]" : undefined}
         />
       )}
