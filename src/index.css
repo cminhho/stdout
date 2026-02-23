@@ -119,7 +119,7 @@
     --list-focus-background: var(--sidebar-accent);
     /* Sidebar: VS Code–aligned widths and density */
     --sidebar-width-collapsed: 48px;   /* activity bar width */
-    --sidebar-width-expanded: 250px;   /* primary sidebar default */
+    --sidebar-width-expanded: 272px;   /* primary sidebar (slightly wider than VS Code default) */
     --title-bar-height: 35px;           /* VS Code custom title bar */
     --title-bar-padding-x: 0.5rem;      /* 8px horizontal (8px grid) */
     --title-bar-gap: 0.25rem;           /* 4px between chrome buttons */
