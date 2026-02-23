@@ -115,11 +115,18 @@ const MockGeneratorPage = () => {
     </div>
   );
 
+  const topSection = (
+    <p className="text-[10px] text-muted-foreground">
+      Types: <code className="text-primary">string, number, boolean, email, uuid, date, url, null</code> · Arrays <code className="text-primary">["type"]</code> · Nested objects
+    </p>
+  );
+
   return (
     <TwoPanelToolLayout
       tool={tool}
       title={tool?.label ?? "Mock Payload"}
       description={tool?.description ?? "Generate mock JSON data from a schema"}
+      topSection={topSection}
       inputPane={{
         title: "Schema Template",
         inputToolbar: {
@@ -134,7 +141,6 @@ const MockGeneratorPage = () => {
           language: "json",
           placeholder: '{"id": "uuid", "name": "string", ...}',
         },
-        children: undefined,
       }}
       outputPane={{
         title: "Output",
