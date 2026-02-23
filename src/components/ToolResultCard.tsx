@@ -25,11 +25,11 @@ export function ToolResultCard({
   const hasHeader = summary != null || copyText != null;
 
   return (
-    <div className={cn("tool-card mt-4", className)}>
+    <div className={cn("tool-card m-4", className)}>
       {hasHeader && (
-        <div className="flex items-center justify-between gap-2 mb-2">
+        <div className="flex items-center justify-between gap-[var(--spacing-block-gap)] mb-[var(--spacing-block-gap)]">
           {summary != null ? (
-            <span className="text-xs text-muted-foreground">{summary}</span>
+            <span className="text-[var(--text-ui)] text-muted-foreground">{summary}</span>
           ) : (
             <span />
           )}

@@ -477,10 +477,11 @@
     color: hsl(var(--code-text));
   }
 
+  /* Result/summary block: VS Code–style (no fill), consistent padding with panel/system tokens */
   .tool-card {
     @apply rounded-xl border transition-colors duration-150;
-    padding: var(--spacing-content-y-md);
-    background: hsl(var(--card));
+    padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
+    background: transparent;
     border-color: hsl(var(--border));
   }
 
