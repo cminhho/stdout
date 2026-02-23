@@ -1,9 +1,7 @@
 import { useState, useMemo } from "react";
-import ToolLayout from "@/components/ToolLayout";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import PanelHeader from "@/components/PanelHeader";
 import CopyButton from "@/components/CopyButton";
-import { Label } from "@/components/ui/label";
 import { cn } from "@/utils/cn";
 import { NUMBER_BASE_OPTIONS, NUMBER_BASE_PLACEHOLDER, parseFromBase, convertToAllBases } from "@/utils/numberBase";
 
@@ -22,21 +20,23 @@ const NumberBasePage = () => {
   const results = useMemo(() => (parsed === null ? null : convertToAllBases(parsed)), [parsed]);
 
   return (
-    <ToolLayout title={tool?.label ?? DEFAULT_TITLE} description={tool?.description ?? DEFAULT_DESCRIPTION}>
-      <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack">
-        <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0">
-          <div className="flex items-center gap-2 min-w-0 flex-1 max-w-sm">
-            <Label className="text-xs text-muted-foreground shrink-0">Input</Label>
+    <TwoPanelToolLayout
+      tool={tool}
+      title={tool?.label ?? DEFAULT_TITLE}
+      description={tool?.description ?? DEFAULT_DESCRIPTION}
+      defaultInputPercent={30}
+      inputPane={{
+        title: "Input",
+        children: (
+          <div className="flex flex-col gap-2 p-2">
+            <div className="text-xs text-muted-foreground">Enter a number and select source base. All conversions appear in the right panel.</div>
             <input
-              className="input-compact flex-1 min-w-0 font-mono"
+              className="input-compact w-full font-mono"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={NUMBER_BASE_PLACEHOLDER}
             />
-          </div>
-          <div className="flex items-center gap-2">
-            <Label className="text-xs text-muted-foreground shrink-0">From</Label>
-            <div className="flex gap-1">
+            <div className="flex flex-wrap gap-1">
               {NUMBER_BASE_OPTIONS.map((b) => (
                 <button
                   key={b.radix}
@@ -48,11 +48,12 @@ const NumberBasePage = () => {
               ))}
             </div>
           </div>
-        </div>
-
-        <div className="tool-panel flex flex-col flex-1 min-h-0">
-          <PanelHeader label="Conversions" />
-          <div className="flex-1 min-h-0 overflow-auto mt-3 space-y-2">
+        ),
+      }}
+      outputPane={{
+        title: "Conversions",
+        children: (
+          <div className="flex-1 min-h-0 overflow-auto mt-2 space-y-2">
             {results ? (
               results.map((r) => (
                 <div key={r.radix} className="flex items-center justify-between gap-2 py-1 border-b border-border/50 last:border-0">
@@ -67,9 +68,9 @@ const NumberBasePage = () => {
               <p className="text-xs text-muted-foreground py-2">{EMPTY_MESSAGE}</p>
             )}
           </div>
-        </div>
-      </div>
-    </ToolLayout>
+        ),
+      }}
+    />
   );
 };
 

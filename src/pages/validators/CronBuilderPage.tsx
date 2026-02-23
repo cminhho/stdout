@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
-import ToolLayout from "@/components/ToolLayout";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,7 +25,7 @@ const PRESETS = [
   { label: "1st of month", value: "0 0 1 * *" },
 ];
 
-/** Standard 5-field cron examples (minute hour day month weekday). See e.g. FreeFormatter Cron Generator. */
+/** Standard 5-field cron examples (minute hour day month weekday). */
 const CRON_EXAMPLES: { expression: string; schedule: string }[] = [
   { expression: "* * * * *", schedule: "Every minute" },
   { expression: "0 * * * *", schedule: "Every hour" },
@@ -41,6 +40,7 @@ const CRON_EXAMPLES: { expression: string; schedule: string }[] = [
 const WEEKDAY_NAMES: Record<string, string> = {
   SUN: "0", MON: "1", TUE: "2", WED: "3", THU: "4", FRI: "5", SAT: "6",
 };
+
 function parseExampleToFields(expr: string): Record<string, string> {
   const parts = expr.trim().split(/\s+/);
   if (parts.length !== 5) return Object.fromEntries(FIELDS.map((f) => [f, "*"]));
@@ -97,86 +97,95 @@ const CronBuilderPage = () => {
   const sampleExpression = "* * * * *";
   const clearExpression = () => setFields(Object.fromEntries(FIELDS.map((f) => [f, "*"])));
 
+  const topSection = (
+    <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0">
+      {FIELDS.map((field) => (
+        <div key={field} className="flex items-center gap-2">
+          <Label className="text-xs text-muted-foreground shrink-0 w-20">{LABELS[field]}</Label>
+          <Input
+            className="input-compact w-16 font-mono text-center"
+            value={fields[field]}
+            onChange={(e) => setFields((f) => ({ ...f, [field]: e.target.value }))}
+          />
+        </div>
+      ))}
+      <div className="flex items-center gap-1.5 flex-wrap">
+        <Label className="text-xs text-muted-foreground shrink-0">Preset</Label>
+        {PRESETS.map((preset) => (
+          <button
+            key={preset.label}
+            onClick={() => applyPreset(preset.value)}
+            className="px-2 py-1 text-xs rounded bg-muted text-muted-foreground hover:text-foreground transition-colors"
+            title={preset.label}
+          >
+            {preset.value}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
-    <ToolLayout title={tool?.label ?? "Cron Parser"} description={tool?.description ?? "Build and parse cron expressions (Quartz-style)"}>
-      <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack">
-        <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0">
-          {FIELDS.map((field) => (
-            <div key={field} className="flex items-center gap-2">
-              <Label className="text-xs text-muted-foreground shrink-0 w-20">{LABELS[field]}</Label>
-              <Input
-                className="input-compact w-16 font-mono text-center"
-                value={fields[field]}
-                onChange={(e) => setFields((f) => ({ ...f, [field]: e.target.value }))}
+    <TwoPanelToolLayout
+      tool={tool}
+      title={tool?.label ?? "Cron Parser"}
+      description={tool?.description ?? "Build and parse cron expressions (Quartz-style)"}
+      topSection={topSection}
+      defaultInputPercent={45}
+      inputPane={{
+        title: "Expression",
+        toolbar: (
+          <div className="flex items-center gap-2">
+            <SampleButton onClick={() => applyPreset(sampleExpression)} />
+            <ClearButton onClick={clearExpression} />
+          </div>
+        ),
+        children: (
+          <div className="flex flex-col flex-1 min-h-0">
+            <div className="h-[52px] shrink-0">
+              <CodeEditor
+                value={expression}
+                readOnly
+                language="text"
+                showLineNumbers={false}
+                fillHeight
               />
             </div>
-          ))}
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <Label className="text-xs text-muted-foreground shrink-0">Preset</Label>
-            {PRESETS.map((preset) => (
-              <button
-                key={preset.label}
-                onClick={() => applyPreset(preset.value)}
-                className="px-2 py-1 text-xs rounded bg-muted text-muted-foreground hover:text-foreground transition-colors"
-                title={preset.label}
-              >
-                {preset.value}
-              </button>
-            ))}
+            <p className="text-sm text-muted-foreground mt-2 shrink-0">{description}</p>
           </div>
-        </div>
-
-        <div className="tool-panel flex flex-col flex-1 min-h-0">
-          <PanelHeader
-            label="Expression"
-            text={expression}
-            extra={
-              <div className="flex items-center gap-2">
-                <SampleButton onClick={() => applyPreset(sampleExpression)} />
-                <ClearButton onClick={clearExpression} />
-              </div>
-            }
-          />
-          <div className="h-[52px] shrink-0">
-            <CodeEditor
-              value={expression}
-              readOnly
-              language="text"
-              showLineNumbers={false}
-              fillHeight
-            />
-          </div>
-          <p className="text-sm text-muted-foreground mt-2 shrink-0">{description}</p>
-        </div>
-
-        <div className="tool-panel flex flex-col shrink-0">
-          <PanelHeader label="Examples" />
-          <p className="text-xs text-muted-foreground mb-2">Here are some examples for you.</p>
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs border-collapse">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-1.5 pr-3 font-medium text-muted-foreground">Cron expression</th>
-                  <th className="text-left py-1.5 font-medium text-muted-foreground">Schedule</th>
-                </tr>
-              </thead>
-              <tbody>
-                {CRON_EXAMPLES.map(({ expression: expr, schedule }) => (
-                  <tr
-                    key={expr}
-                    className="border-b border-border/50 hover:bg-muted/50 cursor-pointer transition-colors"
-                    onClick={() => applyExample(expr)}
-                  >
-                    <td className="py-1.5 pr-3 font-mono text-foreground">{expr}</td>
-                    <td className="py-1.5 text-muted-foreground">{schedule}</td>
+        ),
+      }}
+      outputPane={{
+        title: "Examples",
+        children: (
+          <div className="flex flex-col gap-2 overflow-auto">
+            <p className="text-xs text-muted-foreground shrink-0">Click a row to apply that expression.</p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-1.5 pr-3 font-medium text-muted-foreground">Cron expression</th>
+                    <th className="text-left py-1.5 font-medium text-muted-foreground">Schedule</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {CRON_EXAMPLES.map(({ expression: expr, schedule }) => (
+                    <tr
+                      key={expr}
+                      className="border-b border-border/50 hover:bg-muted/50 cursor-pointer transition-colors"
+                      onClick={() => applyExample(expr)}
+                    >
+                      <td className="py-1.5 pr-3 font-mono text-foreground">{expr}</td>
+                      <td className="py-1.5 text-muted-foreground">{schedule}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      </div>
-    </ToolLayout>
+        ),
+      }}
+    />
   );
 };
 

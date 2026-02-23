@@ -1,7 +1,8 @@
 import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
+import ResizableTwoPanel from "@/components/ResizableTwoPanel";
+import TwoPanelTopSection from "@/components/TwoPanelTopSection";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import FileUploadButton from "@/components/FileUploadButton";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
@@ -42,48 +43,59 @@ const XsltTransformerPage = () => {
     }
   }, [xml, xslt, indent]);
 
-  return (
-    <ToolLayout title={tool?.label ?? "XSLT Transformer"} description={tool?.description ?? "Transform XML using XSLT stylesheet"}>
-      <div className="grid grid-cols-1 lg:grid-cols-2 tool-content-grid">
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader
-            label="XML Input"
-            extra={
-              <div className="flex items-center gap-2 flex-wrap">
-                <SampleButton onClick={() => setXml(XSLT_DEFAULT_XML)} />
-                <ClearButton onClick={() => setXml("")} />
-                <FileUploadButton accept={XSLT_XML_FILE_ACCEPT} onText={setXml} />
-              </div>
-            }
-          />
+  const leftPane = {
+    title: "XML & XSLT",
+    children: (
+      <div className="flex flex-col gap-3 flex-1 min-h-0 overflow-hidden">
+        <div className="flex flex-col flex-1 min-h-0 min-h-[120px]">
+          <div className="flex items-center justify-between gap-2 shrink-0 mb-1">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">XML Input</span>
+            <div className="flex items-center gap-2 flex-wrap">
+              <SampleButton onClick={() => setXml(XSLT_DEFAULT_XML)} />
+              <ClearButton onClick={() => setXml("")} />
+              <FileUploadButton accept={XSLT_XML_FILE_ACCEPT} onText={setXml} />
+            </div>
+          </div>
           <div className="flex-1 min-h-0 flex flex-col">
             <CodeEditor value={xml} onChange={setXml} language="xml" placeholder={XSLT_PLACEHOLDER_XML} fillHeight />
           </div>
         </div>
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader
-            label="XSLT Stylesheet"
-            extra={
-              <div className="flex items-center gap-2 flex-wrap">
-                <SampleButton onClick={() => setXslt(XSLT_DEFAULT_XSLT)} />
-                <ClearButton onClick={() => setXslt("")} />
-                <FileUploadButton accept={XSLT_XSLT_FILE_ACCEPT} onText={setXslt} />
-              </div>
-            }
-          />
+        <div className="flex flex-col flex-1 min-h-0 min-h-[120px]">
+          <div className="flex items-center justify-between gap-2 shrink-0 mb-1">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">XSLT Stylesheet</span>
+            <div className="flex items-center gap-2 flex-wrap">
+              <SampleButton onClick={() => setXslt(XSLT_DEFAULT_XSLT)} />
+              <ClearButton onClick={() => setXslt("")} />
+              <FileUploadButton accept={XSLT_XSLT_FILE_ACCEPT} onText={setXslt} />
+            </div>
+          </div>
           <div className="flex-1 min-h-0 flex flex-col">
             <CodeEditor value={xslt} onChange={setXslt} language="xml" placeholder={XSLT_PLACEHOLDER_XSLT} fillHeight />
           </div>
         </div>
       </div>
-      <div className="mt-4 flex flex-col min-h-0 flex-1">
+    ),
+  };
+
+  const rightPane = {
+    title: "Transformed Output",
+    copyText: output,
+    toolbar: <IndentSelect value={indent} onChange={setIndent} />,
+    children: (
+      <div className="flex flex-col flex-1 min-h-0">
         {error && <div className="text-sm text-destructive mb-2 shrink-0">Error: {error}</div>}
-        <div className="tool-panel flex flex-col min-h-0 flex-1">
-          <PanelHeader label="Transformed Output" text={output} extra={<IndentSelect value={indent} onChange={setIndent} />} />
-          <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor value={output} readOnly language="xml" placeholder={XSLT_PLACEHOLDER_OUTPUT} fillHeight />
-          </div>
+        <div className="flex-1 min-h-0 flex flex-col">
+          <CodeEditor value={output} readOnly language="xml" placeholder={XSLT_PLACEHOLDER_OUTPUT} fillHeight />
         </div>
+      </div>
+    ),
+  };
+
+  return (
+    <ToolLayout title={tool?.label ?? "XSLT Transformer"} description={tool?.description ?? "Transform XML using XSLT stylesheet"}>
+      <div className="flex flex-col flex-1 min-h-0 w-full">
+        <TwoPanelTopSection formatError={error ? new Error(error) : undefined} />
+        <ResizableTwoPanel input={leftPane} output={rightPane} className="flex-1 min-h-0" defaultInputPercent={50} />
       </div>
     </ToolLayout>
   );

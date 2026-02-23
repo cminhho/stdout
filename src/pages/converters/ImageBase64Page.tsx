@@ -1,9 +1,7 @@
 import { useState, useRef } from "react";
-import ToolLayout from "@/components/ToolLayout";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
-import CopyButton from "@/components/CopyButton";
 import { Button } from "@/components/ui/button";
 import { Upload, Eraser } from "lucide-react";
 import {
@@ -55,67 +53,84 @@ const ImageBase64Page = () => {
     a.click();
   };
 
+  const topSection = (
+    <div className="flex gap-2">
+      <Button size="xs" variant={mode === "toBase64" ? "default" : "outline"} onClick={() => setMode("toBase64")}>
+        Image → Base64
+      </Button>
+      <Button size="xs" variant={mode === "toImage" ? "default" : "outline"} onClick={() => setMode("toImage")}>
+        Base64 → Image
+      </Button>
+    </div>
+  );
+
+  const inputPaneContent =
+    mode === "toBase64" ? (
+      <>
+        <div className="flex items-center min-h-[28px]">
+          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider select-none">Image Input</span>
+        </div>
+        <div
+          className="flex-1 min-h-0 flex flex-col items-center justify-center border-2 border-dashed border-border rounded-md p-8 cursor-pointer hover:border-primary/50 transition-colors"
+          onClick={() => fileRef.current?.click()}
+        >
+          <input ref={fileRef} type="file" accept={IMAGE_BASE64_ACCEPT} onChange={handleFile} className="hidden" />
+          <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+          <p className="text-sm text-muted-foreground">Click to upload an image</p>
+          {fileName && (
+            <div className="mt-3 text-xs text-foreground">
+              <span className="font-mono">{fileName}</span> · <span>{fileSize}</span>
+            </div>
+          )}
+        </div>
+      </>
+    ) : (
+      <>
+        <div className="flex items-center justify-between gap-2 shrink-0 mb-1">
+          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Base64 Input</span>
+          <Button type="button" size="xs" variant="outline" className="h-7 text-xs" onClick={() => handleBase64Input("")}>
+            <Eraser className="h-3.5 w-3.5 mr-1.5" />
+            Clear
+          </Button>
+        </div>
+        <div className="flex-1 min-h-0 flex flex-col">
+          <CodeEditor value={base64} onChange={handleBase64Input} language="text" placeholder={IMAGE_BASE64_PLACEHOLDER_INPUT} fillHeight />
+        </div>
+      </>
+    );
+
+  const outputPaneContent =
+    mode === "toBase64" ? (
+      <div className="flex-1 min-h-0 flex flex-col">
+        <CodeEditor value={base64 || ""} readOnly language="text" placeholder={IMAGE_BASE64_PLACEHOLDER_OUTPUT} fillHeight />
+      </div>
+    ) : (
+      <div className="code-block flex items-center justify-center min-h-[280px]">
+        {imageUrl ? (
+          <img src={imageUrl} alt="Preview" className="max-w-full max-h-[60vh] object-contain rounded" />
+        ) : (
+          <span className="text-muted-foreground text-sm">{IMAGE_BASE64_PREVIEW_PLACEHOLDER}</span>
+        )}
+      </div>
+    );
+
   return (
-    <ToolLayout title={tool?.label ?? DEFAULT_TITLE} description={tool?.description ?? DEFAULT_DESCRIPTION}>
-      <div className="flex gap-2 mb-3">
-        <Button size="xs" variant={mode === "toBase64" ? "default" : "outline"} onClick={() => setMode("toBase64")}>Image → Base64</Button>
-        <Button size="xs" variant={mode === "toImage" ? "default" : "outline"} onClick={() => setMode("toImage")}>Base64 → Image</Button>
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 tool-content-grid flex-1 min-h-0">
-        <div className="tool-panel flex flex-col min-h-0">
-          {mode === "toBase64" ? (
-            <>
-              <div className="flex items-center min-h-[28px]">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider select-none">Image Input</span>
-              </div>
-              <div className="flex-1 min-h-0 flex flex-col items-center justify-center border-2 border-dashed border-border rounded-md p-8 cursor-pointer hover:border-primary/50 transition-colors" onClick={() => fileRef.current?.click()}>
-                <input ref={fileRef} type="file" accept={IMAGE_BASE64_ACCEPT} onChange={handleFile} className="hidden" />
-                <Upload className="h-8 w-8 text-muted-foreground mb-2" />
-                <p className="text-sm text-muted-foreground">Click to upload an image</p>
-                {fileName && (
-                  <div className="mt-3 text-xs text-foreground">
-                    <span className="font-mono">{fileName}</span> · <span>{fileSize}</span>
-                  </div>
-                )}
-              </div>
-            </>
-          ) : (
-            <>
-              <PanelHeader
-                label="Base64 Input"
-                extra={
-                  <div className="flex items-center gap-2">
-                    <Button type="button" size="xs" variant="outline" className="h-7 text-xs" onClick={() => handleBase64Input("")}>
-                      <Eraser className="h-3.5 w-3.5 mr-1.5" />
-                      Clear
-                    </Button>
-                  </div>
-                }
-              />
-              <div className="flex-1 min-h-0 flex flex-col">
-                <CodeEditor value={base64} onChange={handleBase64Input} language="text" placeholder={IMAGE_BASE64_PLACEHOLDER_INPUT} fillHeight />
-              </div>
-            </>
-          )}
-        </div>
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader
-            label={mode === "toBase64" ? "Base64 Output" : "Image Preview"}
-            text={mode === "toBase64" ? base64 : ""}
-            extra={mode === "toImage" && imageUrl ? <Button size="xs" variant="outline" onClick={downloadImage}>Download</Button> : undefined}
-          />
-          {mode === "toBase64" ? (
-            <div className="flex-1 min-h-0 flex flex-col">
-              <CodeEditor value={base64 || ""} readOnly language="text" placeholder={IMAGE_BASE64_PLACEHOLDER_OUTPUT} fillHeight />
-            </div>
-          ) : (
-            <div className="code-block flex items-center justify-center min-h-[280px]">
-              {imageUrl ? <img src={imageUrl} alt="Preview" className="max-w-full max-h-[60vh] object-contain rounded" /> : <span className="text-muted-foreground text-sm">{IMAGE_BASE64_PREVIEW_PLACEHOLDER}</span>}
-            </div>
-          )}
-        </div>
-      </div>
-    </ToolLayout>
+    <TwoPanelToolLayout
+      tool={tool}
+      title={tool?.label ?? DEFAULT_TITLE}
+      description={tool?.description ?? DEFAULT_DESCRIPTION}
+      topSection={topSection}
+      inputPane={{
+        title: mode === "toBase64" ? "Image Input" : "Base64 Input",
+        children: inputPaneContent,
+      }}
+      outputPane={{
+        title: mode === "toBase64" ? "Base64 Output" : "Image Preview",
+        copyText: mode === "toBase64" ? base64 : undefined,
+        toolbar: mode === "toImage" && imageUrl ? <Button size="xs" variant="outline" onClick={downloadImage}>Download</Button> : undefined,
+        children: outputPaneContent,
+      }}
+    />
   );
 };
 

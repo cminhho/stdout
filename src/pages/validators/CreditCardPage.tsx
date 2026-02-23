@@ -22,7 +22,7 @@ const CreditCardPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? "Credit Card Generator & Validator"} description={tool?.description ?? "Luhn check and generate test card numbers"}>
-      <div className="space-y-6">
+      <div className="space-y-6 p-4">
         <div className="tool-card">
           <h2 className="tool-section-heading">Validate (Luhn)</h2>
           <div className="flex gap-2">
