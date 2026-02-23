@@ -41,7 +41,7 @@ const SettingsToolsPanel = () => {
         </Button>
       </div>
 
-      <p className="settings-body-text">
+      <p className="settings-body-text mb-2" aria-live="polite" aria-atomic="true">
         {visibleCount} of {tools.length} tools visible in sidebar
       </p>
 

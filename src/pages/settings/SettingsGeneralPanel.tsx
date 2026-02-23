@@ -31,9 +31,9 @@ const SettingsGeneralPanel = ({
 
   return (
     <div id="settings-general" role="tabpanel" aria-labelledby="tab-general" className="settings-panel">
-      <section aria-labelledby="settings-theme-heading">
+      <section aria-labelledby="settings-theme-heading" className="settings-section">
         <h2 id="settings-theme-heading" className="settings-section-heading">
-          <Palette className="h-4 w-4 text-primary" />
+          <Palette className="h-4 w-4 text-primary" aria-hidden />
           Theme
         </h2>
         <div className="settings-option-grid grid grid-cols-2 sm:grid-cols-4" role="group" aria-label="Theme selection">
@@ -52,9 +52,9 @@ const SettingsGeneralPanel = ({
         </div>
       </section>
 
-      <section aria-labelledby="settings-sidebar-heading">
+      <section aria-labelledby="settings-sidebar-heading" className="settings-section">
         <h2 id="settings-sidebar-heading" className="settings-section-heading">
-          <LayoutList className="h-4 w-4 text-primary" />
+          <LayoutList className="h-4 w-4 text-primary" aria-hidden />
           Sidebar Layout
         </h2>
         <div className="settings-option-grid grid grid-cols-2" role="group" aria-label="Sidebar layout">
@@ -73,12 +73,12 @@ const SettingsGeneralPanel = ({
         </div>
       </section>
 
-      <section aria-labelledby="settings-about-heading">
+      <section aria-labelledby="settings-about-heading" className="settings-section">
         <h2 id="settings-about-heading" className="settings-section-heading">
-          <Info className="h-4 w-4 text-primary" />
+          <Info className="h-4 w-4 text-primary" aria-hidden />
           About
         </h2>
-        <div className="tool-layout-top-section flex flex-col gap-3">
+        <div className="settings-section-content flex flex-col gap-3">
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <span className="settings-label">stdout v{currentVersion}</span>
             <Button
@@ -122,12 +122,12 @@ const SettingsGeneralPanel = ({
         </div>
       </section>
 
-      <section aria-labelledby="settings-support-heading">
+      <section aria-labelledby="settings-support-heading" className="settings-section">
         <h2 id="settings-support-heading" className="settings-section-heading">
-          <Heart className="h-4 w-4 text-primary" />
+          <Heart className="h-4 w-4 text-primary" aria-hidden />
           Support the project
         </h2>
-        <div className="tool-layout-top-section">
+        <div className="settings-section-content">
           <p className="settings-body-text mb-2">
             stdout is open source (MIT). If it's useful to you, consider supporting development:
           </p>

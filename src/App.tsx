@@ -57,7 +57,7 @@ const App = () => {
       <Router>
         <SettingsProvider>
           <Toaster />
-          <div className="flex flex-col min-h-screen overflow-hidden">
+          <div className="flex flex-col h-screen overflow-hidden min-w-0">
             <WindowTitleBar />
             <div className="desktop-layout flex flex-1 min-h-0 overflow-hidden min-w-0">
               <AppSidebar />

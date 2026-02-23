@@ -117,6 +117,12 @@
     --workbench-panel-bg: var(--background);
     --activity-bar-background: var(--sidebar-background);
     --list-focus-background: var(--sidebar-accent);
+
+    /* Settings page: VS Code–style surfaces (dark default) */
+    --settings-nav-bg: 224 13% 14%;
+    --settings-content-bg: var(--background);
+    --settings-table-header-bg: 215 14% 22%;
+    --settings-table-row-hover-bg: 215 14% 24%;
     /* Sidebar: VS Code–aligned widths and density */
     --sidebar-width-collapsed: 48px;   /* activity bar width */
     --sidebar-width-expanded: 272px;   /* primary sidebar (slightly wider than VS Code default) */
@@ -221,6 +227,12 @@
     --header-bg: 0 0% 98%;
     --header-tab-bg: 0 0% 100%;
 
+    /* Settings page: light theme (subtle nav strip) */
+    --settings-nav-bg: 25 15% 95%;
+    --settings-content-bg: var(--background);
+    --settings-table-header-bg: 25 12% 94%;
+    --settings-table-row-hover-bg: 25 15% 92%;
+
     /* Liquid Glass – light: same blur, visible edge */
     --glass-blur: 44px;
     --glass-saturate: 200%;
@@ -287,6 +299,12 @@
     --header-bg: 0 0% 8%;
     --header-tab-bg: 0 0% 14%;
 
+    /* Settings page: deep dark (OLED-friendly) */
+    --settings-nav-bg: 0 0% 9%;
+    --settings-content-bg: var(--background);
+    --settings-table-header-bg: 0 0% 11%;
+    --settings-table-row-hover-bg: 0 0% 12%;
+
     --code-bg: 0 0% 8%;
     --code-border: 0 0% 14%;
     --code-text: 0 0% 94%;
@@ -342,18 +360,16 @@
     transition: background-color 0.2s ease, color 0.2s ease;
   }
 
-  /* Web: root fills viewport so flex layout (App) can stretch to full height */
+  /* Web: root fills viewport so flex layout (App) is full height, no body scroll */
   #root {
-    min-height: 100vh;
+    height: 100vh;
+    min-height: 0;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
   }
 
   /* Desktop app window: fill viewport, no body scroll; only inner content scrolls */
-  html.desktop #root {
-    min-height: 0;
-    height: 100%;
-  }
   html.desktop,
   html.desktop body {
     height: 100%;
@@ -361,9 +377,11 @@
     margin: 0;
   }
   html.desktop #root {
+    height: 100%;
     min-height: 0;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
   }
 
   /* Content area behind sidebar: gradient so glass blur has depth */
@@ -732,11 +750,13 @@
     padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
     text-align: left;
     cursor: pointer;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
     transition: border-color 0.15s ease, background 0.15s ease;
   }
   .settings-option-card:hover {
     background: hsl(var(--muted) / 0.5);
-    border-color: hsl(var(--muted-foreground) / 0.5);
+    border-color: hsl(var(--border));
   }
   .settings-option-card:focus-visible {
     outline: none;
@@ -745,7 +765,7 @@
   }
   .settings-option-card--selected {
     border-color: hsl(var(--primary));
-    background: hsl(var(--primary) / 0.1);
+    background: hsl(var(--primary) / 0.12);
     box-shadow: 0 0 0 1px hsl(var(--primary));
   }
   .settings-section-heading {
@@ -767,6 +787,15 @@
     gap: var(--spacing-section-mb);
     max-width: 42rem;
   }
+  .settings-section {
+    margin-bottom: var(--spacing-section-mb);
+  }
+  .settings-section:last-child {
+    margin-bottom: 0;
+  }
+  .settings-section-content {
+    padding-left: 0;
+  }
   .settings-tools-toolbar {
     display: flex;
     align-items: center;
@@ -776,7 +805,8 @@
   .settings-table-wrap {
     border: 1px solid hsl(var(--border));
     border-radius: var(--radius);
-    overflow: hidden;
+    overflow: auto;
+    max-height: min(24rem, 60vh);
   }
   .settings-table {
     width: 100%;
@@ -798,13 +828,24 @@
     font-weight: 500;
   }
   .settings-table thead tr {
-    background: hsl(var(--muted) / 0.3);
+    background: hsl(var(--settings-table-header-bg));
+  }
+  .settings-table thead th {
+    color: hsl(var(--muted-foreground));
+    font-weight: 500;
+  }
+  .settings-table-wrap .settings-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: hsl(var(--settings-table-header-bg));
+    box-shadow: 0 1px 0 hsl(var(--border));
   }
   .settings-table tbody tr:last-child td {
     border-bottom: none;
   }
   .settings-table tbody tr:hover {
-    background: hsl(var(--muted) / 0.2);
+    background: hsl(var(--settings-table-row-hover-bg));
   }
   .settings-body-text {
     font-size: var(--text-ui);
@@ -814,6 +855,80 @@
     font-size: var(--text-content);
     font-weight: 500;
     color: hsl(var(--foreground));
+  }
+
+  /* Settings page: VS Code–style two-column layout (sidebar + content) */
+  .settings-layout {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+  }
+  .settings-sidebar {
+    flex-shrink: 0;
+    width: 12rem;
+
+    padding: var(--spacing-tool-layout-y) 0 var(--spacing-panel-inner-y);
+  }
+  .settings-category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 var(--spacing-panel-inner-x);
+  }
+  .settings-category-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-block-gap);
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: var(--text-ui);
+    font-weight: 500;
+    color: hsl(var(--muted-foreground));
+    background: transparent;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    text-align: left;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+  .settings-category-item:hover {
+    color: hsl(var(--foreground));
+    background: hsl(var(--muted) / 0.6);
+  }
+  .settings-category-item:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px hsl(var(--ring));
+  }
+  .settings-category-item--selected {
+    color: hsl(var(--primary));
+    background: hsl(var(--primary) / 0.12);
+  }
+  .settings-category-icon {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+  }
+  .settings-content {
+    flex: 1;
+    min-width: 0;
+    overflow: auto;
+    padding: var(--spacing-tool-layout-y) var(--spacing-panel-inner-x) var(--spacing-panel-inner-y);
+  }
+  @media (max-width: 640px) {
+    .settings-layout {
+      flex-direction: column;
+    }
+    .settings-sidebar {
+      width: 100%;
+      border-right: none;
+      border-bottom: 1px solid hsl(var(--border));
+      padding-bottom: var(--spacing-block-gap);
+    }
+    .settings-category-list {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
   }
 
   /* Stacked two-panel: minimum height per pane so both remain usable (responsive). */

@@ -28,7 +28,7 @@ const groupIconMap: Record<string, React.ElementType> = {
   "Networking & Other": TerminalSquare,
 };
 
-const SIDEBAR_ASIDE_BASE = "shrink-0 flex flex-col border-r border-sidebar-border min-h-0";
+const SIDEBAR_ASIDE_BASE = "shrink-0 flex flex-col border-r border-sidebar-border min-h-0 overflow-hidden";
 const SIDEBAR_ASIDE_LAYOUT = "h-full min-h-0 sticky top-0 bg-sidebar";
 
 function toSafeId(label: string): string {

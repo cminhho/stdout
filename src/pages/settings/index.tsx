@@ -49,37 +49,41 @@ const SettingsPage = () => {
 
   return (
     <ToolLayout title={tool?.label ?? DEFAULT_TITLE} description={tool?.description ?? DEFAULT_DESCRIPTION}>
-      <div
-        className="flex flex-col flex-1 min-h-0 w-full px-[var(--spacing-panel-inner-x)] pt-[var(--spacing-tool-layout-y)] pb-[var(--spacing-panel-inner-y)]"
-      >
-        <div role="tablist" aria-label="Settings sections" className="settings-tabs">
-          {SETTINGS_TABS.map(({ id, label, icon: Icon, panelId }) => (
-            <button
-              key={id}
-              type="button"
-              role="tab"
-              aria-selected={tab === id}
-              aria-controls={panelId}
-              id={`tab-${id}`}
-              onClick={() => setTab(id)}
-              className={cn("settings-tab", tab === id && "settings-tab--selected")}
-            >
-              <Icon className="h-4 w-4" />
-              {label}
-            </button>
-          ))}
-        </div>
+      <div className="settings-layout">
+        <nav
+          className="settings-sidebar"
+          aria-label="Settings categories"
+        >
+          <div role="tablist" aria-label="Settings sections" className="settings-category-list">
+            {SETTINGS_TABS.map(({ id, label, icon: Icon, panelId }) => (
+              <button
+                key={id}
+                type="button"
+                role="tab"
+                aria-selected={tab === id}
+                aria-controls={panelId}
+                id={`tab-${id}`}
+                onClick={() => setTab(id)}
+                className={cn("settings-category-item", tab === id && "settings-category-item--selected")}
+              >
+                <Icon className="settings-category-icon" aria-hidden />
+                <span>{label}</span>
+              </button>
+            ))}
+          </div>
+        </nav>
 
-        {tab === "general" && (
-          <SettingsGeneralPanel
-            currentVersion={currentVersion}
-            updateCheck={updateCheck}
-            latestRelease={latestRelease}
-            onCheckForUpdates={handleCheckForUpdates}
-          />
-        )}
-
-        {tab === "tools" && <SettingsToolsPanel />}
+        <main className="settings-content" aria-live="polite">
+          {tab === "general" && (
+            <SettingsGeneralPanel
+              currentVersion={currentVersion}
+              updateCheck={updateCheck}
+              latestRelease={latestRelease}
+              onCheckForUpdates={handleCheckForUpdates}
+            />
+          )}
+          {tab === "tools" && <SettingsToolsPanel />}
+        </main>
       </div>
     </ToolLayout>
   );
