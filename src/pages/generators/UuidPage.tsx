@@ -2,7 +2,6 @@ import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { SelectWithOptions } from "@/components/ui/select";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import CodeEditor from "@/components/CodeEditor";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

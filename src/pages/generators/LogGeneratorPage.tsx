@@ -2,7 +2,6 @@ import { useState } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { SelectWithOptions } from "@/components/ui/select";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import CodeEditor from "@/components/CodeEditor";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

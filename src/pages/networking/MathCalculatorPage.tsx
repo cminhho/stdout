@@ -1,14 +1,11 @@
 import { useState, useCallback } from "react";
-import ToolLayout from "@/components/ToolLayout";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import PanelHeader from "@/components/PanelHeader";
 import CopyButton from "@/components/CopyButton";
 import CodeEditor from "@/components/CodeEditor";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ClearButton } from "@/components/ClearButton";
 import { SampleButton } from "@/components/SampleButton";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { HelpCircle } from "lucide-react";
 
 const SAMPLE_EXPR = "sqrt(2) * pi + log10(100)";
@@ -155,41 +152,21 @@ const MathCalculatorPage = () => {
   }, [expr]);
 
   return (
-    <ToolLayout title={tool?.label ?? "Math Calculator"} description={tool?.description ?? "Evaluate math expressions"}>
-      <div className="space-y-4 max-w-2xl flex flex-col flex-1 min-h-0">
-        <div className="tool-panel flex flex-col flex-1 min-h-0 space-y-3">
-          <PanelHeader
-            label="Expression"
-            extra={
-              <div className="flex items-center gap-2">
-                <SampleButton onClick={() => setExpr(SAMPLE_EXPR)} />
-                <ClearButton onClick={() => setExpr("")} />
-              </div>
-            }
-          />
-          <div className="flex gap-2 items-stretch">
-            <div className="flex-1 min-w-0 h-[52px] min-h-0">
-              <CodeEditor
-                value={expr}
-                onChange={setExpr}
-                language="plaintext"
-                placeholder="e.g. sqrt(2) * pi + log(100)"
-                fillHeight
-                showLineNumbers={false}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    calc();
-                  }
-                }}
-              />
-            </div>
-            <button onClick={calc} className="h-8 px-3 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 shrink-0">=</button>
-          </div>
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[10px] text-muted-foreground">
-              Functions: <code className="text-primary">sin cos tan abs sqrt log log2 log10 ceil floor round min max</code> · Constants: <code className="text-primary">pi e tau</code> · Operators: <code className="text-primary">+ - * / % ^</code>
-            </span>
+    <TwoPanelToolLayout
+      tool={tool}
+      inputPane={{
+        title: "Expression",
+        toolbar: (
+          <>
+            <SampleButton onClick={() => setExpr(SAMPLE_EXPR)} />
+            <ClearButton onClick={() => setExpr("")} />
+            <button
+              type="button"
+              onClick={calc}
+              className="h-8 px-3 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 shrink-0"
+            >
+              =
+            </button>
             <Popover>
               <PopoverTrigger asChild>
                 <button
@@ -234,30 +211,58 @@ const MathCalculatorPage = () => {
                 </div>
               </PopoverContent>
             </Popover>
-          </div>
-        </div>
-
-        {history.length > 0 && (
-          <div className="tool-card">
-            <div className="flex justify-between items-center mb-2">
-              <Label className="text-xs text-muted-foreground">History</Label>
-              <ClearButton onClick={() => setHistory([])} className="h-6 text-[10px] px-2" />
+          </>
+        ),
+        children: (
+          <div className="flex flex-col gap-3 flex-1 min-h-0">
+            <div className="flex gap-2 items-stretch flex-1 min-h-0">
+              <div className="flex-1 min-w-0 min-h-[52px]">
+                <CodeEditor
+                  value={expr}
+                  onChange={setExpr}
+                  language="plaintext"
+                  placeholder="e.g. sqrt(2) * pi + log(100)"
+                  fillHeight
+                  showLineNumbers={false}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      calc();
+                    }
+                  }}
+                />
+              </div>
             </div>
-            <div className="space-y-1 max-h-56 overflow-y-auto">
-              {history.map((h, i) => (
-                <div key={i} className="flex justify-between items-center text-xs font-mono py-1 border-b border-border last:border-0">
-                  <span className="text-muted-foreground truncate mr-4">{h.expr}</span>
-                  <div className="flex items-center gap-2">
-                    <span className={h.result.startsWith("Error") ? "text-destructive" : "text-primary"}>{h.result}</span>
-                    {!h.result.startsWith("Error") && <CopyButton text={h.result} />}
+            <p className="text-[10px] text-muted-foreground shrink-0">
+              Functions: <code className="text-primary">sin cos tan abs sqrt log log2 log10 ceil floor round min max</code> · Constants: <code className="text-primary">pi e tau</code> · Operators: <code className="text-primary">+ - * / % ^</code>
+            </p>
+          </div>
+        ),
+      }}
+      outputPane={{
+        title: "History",
+        toolbar: history.length > 0 ? <ClearButton onClick={() => setHistory([])} className="h-6 text-[10px] px-2" /> : undefined,
+        children: (
+          <div className="flex flex-col flex-1 min-h-0 overflow-auto">
+            {history.length === 0 ? (
+              <p className="text-xs text-muted-foreground">Enter an expression and press = or Enter.</p>
+            ) : (
+              <div className="space-y-1">
+                {history.map((h, i) => (
+                  <div key={i} className="flex justify-between items-center text-xs font-mono py-1 border-b border-border last:border-0">
+                    <span className="text-muted-foreground truncate mr-4">{h.expr}</span>
+                    <div className="flex items-center gap-2">
+                      <span className={h.result.startsWith("Error") ? "text-destructive" : "text-primary"}>{h.result}</span>
+                      {!h.result.startsWith("Error") && <CopyButton text={h.result} />}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
-        )}
-      </div>
-    </ToolLayout>
+        ),
+      }}
+    />
   );
 };
 
