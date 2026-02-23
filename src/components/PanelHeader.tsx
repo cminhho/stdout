@@ -15,7 +15,7 @@ interface PanelHeaderProps {
  */
 const PanelHeader = ({ label, text, onClear, extra }: PanelHeaderProps) => (
   <div className="flex items-center justify-between flex-wrap min-h-[var(--spacing-sidebar-header-h)] px-[var(--spacing-panel-inner-x)] pt-[var(--spacing-panel-inner-y)] pb-0">
-    <span className="text-sm font-medium text-foreground uppercase tracking-wider select-none">
+    <span className="panel-header-label select-none">
       {label}
     </span>
     <div className="flex items-center gap-1.5 flex-wrap">
@@ -23,7 +23,7 @@ const PanelHeader = ({ label, text, onClear, extra }: PanelHeaderProps) => (
       {text !== undefined ? <CopyButton text={text} /> : null}
       {onClear ? (
         <Button variant="ghost" size="icon-xs" onClick={onClear} aria-label="Clear">
-          <Trash2 className="h-3.5 w-3.5" />
+          <Trash2 className="h-4 w-4" />
         </Button>
       ) : null}
     </div>

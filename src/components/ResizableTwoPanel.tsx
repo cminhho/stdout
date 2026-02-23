@@ -3,7 +3,6 @@ import PanelHeader from "@/components/PanelHeader";
 import { cn } from "@/utils/cn";
 
 const BREAKPOINT_LG = 1024;
-const DEFAULT_RESIZER_WIDTH = 16;
 const DEFAULT_MIN_INPUT_PERCENT = 20;
 const DEFAULT_MAX_INPUT_PERCENT = 80;
 const DEFAULT_INPUT_PERCENT = 50;
@@ -118,7 +117,7 @@ export interface ResizableTwoPanelProps {
   minInputPercent?: number;
   /** Max width of input pane in percent */
   maxInputPercent?: number;
-  /** Resizer grip width in px */
+  /** Resizer grip width in px; when omitted uses --panel-resizer-width */
   resizerWidth?: number;
   className?: string;
 }
@@ -162,7 +161,7 @@ const ResizableTwoPanel = ({
   defaultInputPercent = DEFAULT_INPUT_PERCENT,
   minInputPercent = DEFAULT_MIN_INPUT_PERCENT,
   maxInputPercent = DEFAULT_MAX_INPUT_PERCENT,
-  resizerWidth = DEFAULT_RESIZER_WIDTH,
+  resizerWidth,
   className,
 }: ResizableTwoPanelProps) => {
   const isLg = useIsLg();
@@ -186,8 +185,8 @@ const ResizableTwoPanel = ({
       <Pane
         pane={{ ...input, title: input.title ?? DEFAULT_INPUT_TITLE }}
         resizerSide={isLg ? "right" : undefined}
-        className="min-w-0 flex-1 lg:flex-none lg:shrink-0 p-2"
-        style={isLg ? { width: `${inputPercent}%`, minWidth: 120 } : undefined}
+        className="min-w-0 flex-1 lg:flex-none lg:shrink-0 p-[var(--spacing-panel-gap)]"
+        style={isLg ? { width: `${inputPercent}%`, minWidth: "var(--panel-min-width)" } : undefined}
       />
 
       <div
@@ -198,7 +197,7 @@ const ResizableTwoPanel = ({
         tabIndex={0}
         onMouseDown={onResizerMouseDown}
         className={cn(RESIZER_BASE_CLASS, "panel-resizer p-0 touch-none")}
-        style={{ width: resizerWidth, minWidth: resizerWidth }}
+        style={resizerWidth != null ? { width: resizerWidth, minWidth: resizerWidth } : undefined}
       >
         <div className="panel-resizer-line absolute inset-y-0 left-1/2 w-px -translate-x-px" />
       </div>
@@ -206,7 +205,7 @@ const ResizableTwoPanel = ({
       <Pane
         pane={{ ...output, title: output.title ?? DEFAULT_OUTPUT_TITLE }}
         resizerSide={isLg ? "left" : undefined}
-        className="flex-1 min-w-0 lg:min-h-0 p-2"
+        className="flex-1 min-w-0 lg:min-h-0 p-[var(--spacing-panel-gap)]"
       />
     </div>
   );

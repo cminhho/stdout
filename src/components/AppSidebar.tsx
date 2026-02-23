@@ -51,7 +51,7 @@ const SidebarNavItem = ({
       onClick={onClick}
       className={`sidebar-link ${isActive ? "active" : ""}`}
     >
-      <Icon className="h-[14px] w-[14px] shrink-0 opacity-90" />
+      <Icon className="h-4 w-4 shrink-0 opacity-90" />
       <span className="min-w-0 truncate">{item.label}</span>
     </NavLink>
   );
@@ -88,11 +88,11 @@ const SidebarGroupSection = ({
         aria-controls={contentId}
       >
         <span className="flex items-center min-w-0 gap-1.5">
-          <GroupIcon className="h-[14px] w-[14px] shrink-0 opacity-90" />
-          <span className="truncate text-left">{group.label}</span>
+          <GroupIcon className="h-4 w-4 shrink-0 opacity-90" />
+          <span className="sidebar-group-label truncate text-left">{group.label}</span>
         </span>
         <ChevronRight
-          className={`h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform duration-150 ${isOpen ? "rotate-90" : ""}`}
+          className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-150 ${isOpen ? "rotate-90" : ""}`}
           aria-hidden
         />
       </button>
@@ -132,13 +132,16 @@ const AppSidebar = () => {
 
   if (sidebarCollapsed) {
     return (
-      <aside className={`w-12 ${SIDEBAR_ASIDE_BASE} ${SIDEBAR_ASIDE_LAYOUT}`}>
+      <aside
+        className={`${SIDEBAR_ASIDE_BASE} ${SIDEBAR_ASIDE_LAYOUT}`}
+        style={{ width: "var(--sidebar-width-collapsed)", minWidth: "var(--sidebar-width-collapsed)" }}
+      >
         {!isDesktop && (
           <div className="flex items-center justify-center sidebar-pad border-b border-sidebar-border">
             <Tooltip>
               <TooltipTrigger asChild>
                 <button type="button" onClick={toggleSidebar} className="btn-icon-chrome btn-icon-chrome-sm shrink-0">
-                  <PanelLeftOpen className="h-3.5 w-3.5" />
+                  <PanelLeftOpen className="h-4 w-4" />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right">Expand sidebar</TooltipContent>
@@ -153,13 +156,13 @@ const AppSidebar = () => {
                 <TooltipTrigger asChild>
                   <NavLink
                     to={item.path}
-                    className={`flex items-center justify-center py-[var(--spacing-sidebar-item-y)] transition-colors rounded-md mx-[var(--spacing-sidebar-gap)] ${
+                    className={`sidebar-activity-item flex items-center justify-center py-[var(--spacing-sidebar-item-y)] transition-colors rounded-r-md mx-[var(--spacing-sidebar-gap)] ${
                       location.pathname === item.path
-                        ? "text-foreground bg-sidebar-accent"
+                        ? "active text-foreground bg-sidebar-accent"
                         : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent"
                     }`}
                   >
-                    <Icon className="h-[14px] w-[14px] opacity-90" />
+                    <Icon className="h-4 w-4 opacity-90" />
                   </NavLink>
                 </TooltipTrigger>
                 <TooltipContent side="right">{item.label}</TooltipContent>
@@ -171,7 +174,7 @@ const AppSidebar = () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <NavLink to="/settings" className="btn-icon-chrome shrink-0" aria-label="Settings">
-                <Settings className="h-3.5 w-3.5" />
+                <Settings className="h-4 w-4" />
               </NavLink>
             </TooltipTrigger>
             <TooltipContent side="right">Settings</TooltipContent>
@@ -182,13 +185,16 @@ const AppSidebar = () => {
   }
 
   return (
-    <aside className={`w-72 ${SIDEBAR_ASIDE_BASE} ${SIDEBAR_ASIDE_LAYOUT}`}>
+    <aside
+      className={`${SIDEBAR_ASIDE_BASE} ${SIDEBAR_ASIDE_LAYOUT}`}
+      style={{ width: "var(--sidebar-width-expanded)", minWidth: "var(--sidebar-width-expanded)" }}
+    >
       {!isDesktop && (
         <div className="flex items-center justify-end sidebar-pad border-b border-sidebar-border">
             <Tooltip>
               <TooltipTrigger asChild>
                 <button type="button" onClick={toggleSidebar} className="btn-icon-chrome btn-icon-chrome-sm shrink-0" title="Collapse sidebar">
-                  <PanelLeftClose className="h-3.5 w-3.5" />
+                  <PanelLeftClose className="h-4 w-4" />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right">Collapse sidebar</TooltipContent>
@@ -197,7 +203,7 @@ const AppSidebar = () => {
       )}
       <div className="px-[var(--spacing-sidebar-x)] pt-[var(--spacing-sidebar-y)] pb-[var(--spacing-sidebar-gap)]" role="search" aria-label="Search tools">
         <div className="relative">
-          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" aria-hidden />
+          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" aria-hidden />
           <input
             type="search"
             role="searchbox"
@@ -272,9 +278,9 @@ const AppSidebar = () => {
         </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
-            <NavLink to="/settings" className="btn-icon-chrome shrink-0" aria-label="Settings">
-              <Settings className="h-3.5 w-3.5" />
-            </NavLink>
+              <NavLink to="/settings" className="btn-icon-chrome shrink-0" aria-label="Settings">
+                <Settings className="h-4 w-4" />
+              </NavLink>
           </TooltipTrigger>
           <TooltipContent side="right">Settings</TooltipContent>
         </Tooltip>

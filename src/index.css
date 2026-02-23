@@ -51,6 +51,7 @@
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 216 12% 22%;
     --sidebar-ring: 221 83% 53%;
+    --sidebar-active-border: 221 83% 53%; /* VS Code activity bar: left accent on active */
 
     --header-bg: 224 13% 15%;
     --header-tab-bg: 215 14% 24%;
@@ -67,6 +68,11 @@
     --code-bracket: 215 9% 62%;
     --code-punctuation: 215 9% 62%;
     --code-comment: 215 9% 48%;
+    --code-tag: 0 70% 65%;           /* HTML/XML tag name (VS Code–style) */
+    --code-gutter-foreground: 215 9% 48%; /* line number gutter (muted) */
+    --code-line-height: 1.5;         /* unitless, editor line height */
+    --code-font-size: 0.875rem;      /* 14px, matches --text-content */
+    --code-gutter-min-width: 36px;   /* min width of line number column */
 
     --outline-button-bg: 215 14% 24%;
     --outline-button-border: 216 12% 32%;
@@ -79,9 +85,8 @@
     --text-ui: 0.8125rem;
     --text-content: 0.875rem;
     /*
-     * Layout spacing: 4px base (VS Code / Linear / Notion).
-     * Scale: 4px(0.25) 8(0.5) 12(0.75) 16(1) 20(1.25) 24(1.5) 32(2).
-     * Content = main padding; panel-gap = between panels; toolbar-mb = below toolbars.
+     * Layout spacing: 8px base grid (VS Code / industry).
+     * Scale: 4(0.25) 8(0.5) 12(0.75) 16(1) 20(1.25) 24(1.5) 32(2).
      */
     --spacing-content-x: 1.25rem;   /* 20px */
     --spacing-content-y: 1rem;      /* 16px */
@@ -91,18 +96,32 @@
     --spacing-panel-inner-x: 1rem;     /* 16px horizontal padding inside each pane */
     --spacing-panel-inner-y: 0.75rem;  /* 12px vertical padding inside pane body */
     --spacing-panel-resizer-gap: 0.25rem; /* 4px between pane content and resizer */
-    --spacing-toolbar-mb: 0.75rem;  /* 12px below toolbar */
-    --spacing-title-mb: 0.75rem;   /* 12px below page title */
-    --spacing-section-mb: 0.75rem; /* 12px between sections */
-    --spacing-block-gap: 0.5rem;   /* 8px between inline blocks (e.g. alerts) */
+    --spacing-toolbar-mb: 0.5rem;   /* 8px below toolbar (VS Code density) */
+    --spacing-title-mb: 0.5rem;     /* 8px below page title */
+    --spacing-section-mb: 0.5rem;   /* 8px between sections */
+    --spacing-block-gap: 0.5rem;    /* 8px between inline blocks */
     --spacing-code-editor: 0.75rem;
-    --spacing-grid-gap: 0.75rem;   /* 12px grid/flex gap */
-    /* Sidebar */
-    --spacing-sidebar-x: 0.75rem;  /* 12px horizontal */
-    --spacing-sidebar-y: 0.625rem; /* 10px vertical block */
+    --spacing-grid-gap: 0.5rem;    /* 8px grid/flex gap */
+    /* Workbench (VS Code): sidebar/activity bar share same surface; list focus for nav */
+    --activity-bar-background: var(--sidebar-background);
+    --list-focus-background: var(--sidebar-accent);
+    /* Sidebar: VS Code–aligned widths and density */
+    --sidebar-width-collapsed: 48px;   /* activity bar width */
+    --sidebar-width-expanded: 250px;   /* primary sidebar default */
+    --title-bar-height: 35px;           /* VS Code custom title bar */
+    --title-bar-padding-x: 0.5rem;      /* 8px horizontal (8px grid) */
+    --title-bar-gap: 0.25rem;           /* 4px between chrome buttons */
+    --title-bar-font-size: 0.8125rem;   /* 13px – VS Code title */
+    --title-bar-traffic-light-width: 72px; /* macOS: reserve for system controls */
+    --title-bar-end-spacer: 2rem;     /* 32px right drag region */
+    --panel-resizer-width: 16px;      /* two-panel divider hit area (VS Code) */
+    --panel-min-width: 120px;        /* min width per pane when side-by-side */
+    --sidebar-item-min-height: 22px;   /* nav item height (VS Code) */
+    --spacing-sidebar-x: 0.5rem;   /* 8px horizontal (tighter) */
+    --spacing-sidebar-y: 0.5rem;   /* 8px vertical block */
     --spacing-sidebar-gap: 0.25rem;
     --spacing-sidebar-indent: 0.5rem;
-    --spacing-sidebar-item-y: 0.375rem; /* 6px item vertical padding */
+    --spacing-sidebar-item-y: 0.25rem; /* 4px item vertical → ~22px with line */
     --spacing-sidebar-header-h: 1.75rem; /* 28px min height for panel header */
     --spacing-footer-min-h: 2.25rem;    /* 36px min height for sidebar footer */
     /* Liquid Glass (desktop): blur + visible edge */
@@ -152,6 +171,7 @@
     --sidebar-accent-foreground: 25 25% 18%;
     --sidebar-border: 25 12% 88%;
     --sidebar-ring: 221 83% 53%;
+    --sidebar-active-border: 221 83% 53%;
 
     --code-bg: 0 0% 99%;
     --code-border: 25 10% 90%;
@@ -164,6 +184,11 @@
     --code-bracket: 25 15% 42%;
     --code-punctuation: 25 15% 42%;
     --code-comment: 25 10% 52%;
+    --code-tag: 0 60% 42%;
+    --code-gutter-foreground: 25 10% 52%;
+    --code-line-height: 1.5;
+    --code-font-size: 0.875rem;
+    --code-gutter-min-width: 36px;
 
     --outline-button-bg: 0 0% 100%;
     --outline-button-border: 25 12% 85%;
@@ -223,6 +248,7 @@
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 0 0% 14%;
     --sidebar-ring: 221 83% 53%;
+    --sidebar-active-border: 221 83% 53%;
 
     --header-bg: 0 0% 8%;
     --header-tab-bg: 0 0% 14%;
@@ -238,6 +264,11 @@
     --code-bracket: 0 0% 58%;
     --code-punctuation: 0 0% 58%;
     --code-comment: 0 0% 48%;
+    --code-tag: 0 70% 65%;
+    --code-gutter-foreground: 0 0% 48%;
+    --code-line-height: 1.5;
+    --code-font-size: 0.875rem;
+    --code-gutter-min-width: 36px;
 
     --outline-button-bg: 0 0% 14%;
     --outline-button-border: 0 0% 22%;
@@ -284,13 +315,16 @@
     background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(0 0% 10%), hsl(0 0% 5%));
   }
 
-  /* Title bar: Liquid Glass – translucent, blur, edge + shine */
+  /* Title bar: Liquid Glass – token-based, VS Code–aligned layout */
   .desktop-title-bar {
     background: hsl(var(--header-bg) / 0.48);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     border-bottom: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));
     box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / var(--glass-highlight));
+    padding-left: var(--title-bar-padding-x);
+    padding-right: var(--title-bar-padding-x);
+    gap: var(--title-bar-gap);
   }
   .light .desktop-title-bar {
     border-bottom-color: hsl(0 0% 0% / var(--glass-border-opacity));
@@ -299,6 +333,11 @@
   .deep-dark .desktop-title-bar {
     border-bottom-color: hsl(0 0% 100% / var(--glass-border-opacity));
     box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / var(--glass-highlight));
+  }
+  .desktop-title-bar .title-bar-title {
+    font-size: var(--title-bar-font-size);
+    font-weight: 500;
+    color: hsl(var(--foreground) / 0.9);
   }
   .desktop-title-bar .title-tab {
     background: hsl(var(--header-tab-bg));
@@ -313,6 +352,12 @@
   }
   .desktop-title-bar .desktop-title-plain {
     padding: 0 6px;
+  }
+  .desktop-title-bar .title-bar-traffic-light-spacer {
+    width: var(--title-bar-traffic-light-width);
+  }
+  .desktop-title-bar .title-bar-end-spacer {
+    width: var(--title-bar-end-spacer);
   }
 
   /* Thin scrollbars in desktop window */
@@ -397,6 +442,15 @@
   .tool-layout-section {
     margin-bottom: var(--spacing-section-mb);
   }
+  /* Code editor: VS Code–style panel (bg, border, radius from tokens) */
+  .code-editor-wrapper {
+    background: hsl(var(--code-bg));
+    border: 1px solid hsl(var(--code-border));
+    border-radius: var(--radius);
+    font-family: var(--font-mono);
+    font-size: var(--code-font-size);
+    line-height: var(--code-line-height);
+  }
   .code-editor-wrapper .code-editor-pad {
     padding: var(--spacing-code-editor);
   }
@@ -426,6 +480,15 @@
     min-height: 0;
   }
 
+  /* Panel header label: VS Code–style small, uppercase, letter-spacing */
+  .panel-header-label {
+    font-size: var(--text-nav);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: hsl(var(--foreground));
+  }
+
   /* Pane: header + body; gap = only vertical space between them (no double padding). */
   .tool-panel {
     display: flex;
@@ -439,10 +502,12 @@
     padding: 0;
   }
 
-  /* Resize panels separator: no padding/margin; full height; theme border. */
+  /* Resize panels separator: token width, full height; theme border (VS Code). */
   .panel-resizer {
     margin: 0;
     padding: 0;
+    width: var(--panel-resizer-width);
+    min-width: var(--panel-resizer-width);
     background: transparent;
     transition: background 0.15s ease;
   }
@@ -457,6 +522,14 @@
   }
   .panel-resizer:hover .panel-resizer-line {
     background: hsl(var(--muted-foreground) / 0.5);
+  }
+
+  /* Two-panel top section (alerts, validation, options): panel-style border + bg (VS Code message area) */
+  .tool-layout-top-section {
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    background: hsl(var(--muted) / 0.3);
+    padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
   }
 
   /* Stacked two-panel: minimum height per pane so both remain usable. */
@@ -541,10 +614,11 @@
     min-height: var(--spacing-footer-min-h);
   }
 
-  /* Sidebar nav items: no left border (VS Code/Linear/Notion style – active by background only) */
+  /* Sidebar nav items: VS Code–aligned height, active by background only */
   .sidebar-link {
     @apply flex items-center rounded-md transition-colors duration-150 min-w-0;
     gap: 0.5rem;
+    min-height: var(--sidebar-item-min-height);
     padding: var(--spacing-sidebar-item-y) var(--spacing-sidebar-x);
     font-size: var(--text-nav);
     font-weight: 500;
@@ -564,6 +638,27 @@
   .sidebar-link.active:hover {
     background: hsl(var(--sidebar-accent));
     color: hsl(var(--sidebar-foreground));
+  }
+
+  /* Activity bar (collapsed): VS Code–style left accent on active item */
+  .sidebar-activity-item {
+    border-left: 3px solid transparent;
+  }
+  .sidebar-activity-item.active {
+    border-left-color: hsl(var(--sidebar-active-border));
+  }
+
+  /* Sidebar section headers (group labels): VS Code–style uppercase, letter-spacing, muted */
+  .sidebar-group-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+  }
+  .sidebar-link:hover .sidebar-group-label,
+  .sidebar-link.active .sidebar-group-label {
+    color: inherit;
   }
 
   /* Sidebar search: compact, theme-aligned (industry practice: single-line, muted field) */
@@ -644,23 +739,23 @@
     color: hsl(38 92% 40%);
   }
 
-  /* Liquid Glass: sidebar in desktop window – translucent, blur, edge + shine */
+  /* Liquid Glass: sidebar in desktop window – token-based, translucent, blur, edge + shine */
   .sidebar-glass {
-    background: hsl(0 0% 10% / 0.42);
+    background: hsl(var(--sidebar-background) / 0.42);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     border-right: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));
     box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / var(--glass-highlight));
   }
   .light .sidebar-glass {
-    background: hsl(0 0% 100% / 0.5);
+    background: hsl(var(--sidebar-background) / 0.5);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     border-right: 1px solid hsl(0 0% 0% / var(--glass-border-opacity));
     box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / 0.6);
   }
   .deep-dark .sidebar-glass {
-    background: hsl(0 0% 6% / 0.5);
+    background: hsl(var(--sidebar-background) / 0.5);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     border-right: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));

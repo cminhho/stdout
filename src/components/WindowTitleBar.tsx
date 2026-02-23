@@ -34,8 +34,8 @@ const WindowTitleBar = () => {
 
   return (
     <header
-      className="desktop-title-bar relative flex items-center shrink-0 h-9 px-2 gap-1"
-      style={{ WebkitAppRegion: "drag" } as React.CSSProperties}
+      className="desktop-title-bar relative flex items-center shrink-0"
+      style={{ WebkitAppRegion: "drag", height: "var(--title-bar-height)", minHeight: "var(--title-bar-height)" } as React.CSSProperties}
     >
       <div className="shrink-0" style={NO_DRAG}>
         <button
@@ -45,10 +45,10 @@ const WindowTitleBar = () => {
           aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {sidebarCollapsed ? <PanelLeftOpen className="h-3.5 w-3.5" /> : <PanelLeftClose className="h-3.5 w-3.5" />}
+          {sidebarCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
         </button>
       </div>
-      {hasSystemTitleBarControls && <div className="w-[72px] shrink-0" style={NO_DRAG} />}
+      {hasSystemTitleBarControls && <div className="title-bar-traffic-light-spacer shrink-0" style={NO_DRAG} />}
       {!hasSystemTitleBarControls && windowButtons && (
         <div className="flex items-center gap-1.5 shrink-0" style={NO_DRAG}>
           {windowButtons.map((b) => (
@@ -62,14 +62,14 @@ const WindowTitleBar = () => {
           ))}
         </div>
       )}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-2">
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-[var(--title-bar-padding-x)]">
         <span
-          className={`text-[13px] font-medium text-foreground/90 truncate max-w-full ${hasSystemTitleBarControls ? "desktop-title-plain" : "title-tab"}`}
+          className={`title-bar-title truncate max-w-full ${hasSystemTitleBarControls ? "desktop-title-plain" : "title-tab"}`}
         >
           {title}
         </span>
       </div>
-      <div className="w-8 shrink-0" style={NO_DRAG} />
+      <div className="title-bar-end-spacer shrink-0" style={NO_DRAG} />
     </header>
   );
 };

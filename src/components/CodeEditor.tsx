@@ -305,8 +305,8 @@ const getTokenizer = (lang: Language) => {
   }
 };
 
-/** Line height multiplier; must match gutter/highlight row height so cursor aligns. */
-const CODE_LINE_HEIGHT = 1.5;
+/* Min width of line number column; must match --code-gutter-min-width in CSS. */
+const CODE_GUTTER_MIN_WIDTH = 36;
 
 /* Token colors from CSS variables (key, string green, number orange, boolean/keyword purple, comment gray) */
 const tokenColors: Record<Token["type"], string> = {
@@ -317,7 +317,7 @@ const tokenColors: Record<Token["type"], string> = {
   null: "hsl(var(--code-null))",
   bracket: "hsl(var(--code-bracket))",
   punctuation: "hsl(var(--code-punctuation))",
-  tag: "hsl(0 70% 65%)",
+  tag: "hsl(var(--code-tag))",
   attr: "hsl(var(--code-number))",
   keyword: "hsl(var(--code-boolean))",
   comment: "hsl(var(--code-comment))",
@@ -410,23 +410,18 @@ const CodeEditor = ({
     [readOnly, value, handleChange, onKeyDownProp]
   );
 
-  const gutterWidth = showLineNumbers ? Math.max(String(lines.length).length * 10 + 16, 36) : 0;
-  const editorPad = 12;
-  const contentPaddingLeft = gutterWidth + editorPad;
+  const gutterWidth = showLineNumbers ? Math.max(String(lines.length).length * 10 + 16, CODE_GUTTER_MIN_WIDTH) : 0;
+  const contentPaddingLeft = gutterWidth + 12; /* 12px matches --spacing-code-editor (0.75rem) */
 
   if (customContent != null) {
     return (
       <div
-        className={`code-editor-wrapper relative z-0 rounded-md border overflow-hidden ${fillHeight ? "h-full min-h-0" : ""} ${className}`}
+        className={`code-editor-wrapper relative z-0 overflow-hidden ${fillHeight ? "h-full min-h-0" : ""} ${className}`}
         data-language={language}
-        style={{
-          background: "hsl(var(--code-bg))",
-          borderColor: "hsl(var(--code-border))",
-          ...(fillHeight ? { height: "100%", minHeight: 0 } : {}),
-        }}
+        style={fillHeight ? { height: "100%", minHeight: 0 } : undefined}
       >
         <div
-          className="code-editor-pad overflow-auto font-mono text-sm leading-relaxed"
+          className="code-editor-pad overflow-auto"
           style={
             fillHeight
               ? { height: "100%", minHeight: 0 }
@@ -441,13 +436,9 @@ const CodeEditor = ({
 
   return (
     <div
-      className={`code-editor-wrapper relative z-0 rounded-md border overflow-hidden ${fillHeight ? "h-full min-h-0" : ""} ${className}`}
+      className={`code-editor-wrapper relative z-0 overflow-hidden ${fillHeight ? "h-full min-h-0" : ""} ${className}`}
       data-language={language}
-      style={{
-        background: "hsl(var(--code-bg))",
-        borderColor: "hsl(var(--code-border))",
-        ...(fillHeight ? { height: "100%", minHeight: 0 } : {}),
-      }}
+      style={fillHeight ? { height: "100%", minHeight: 0 } : undefined}
     >
       {showLineNumbers && (
         <div
@@ -455,6 +446,7 @@ const CodeEditor = ({
           className="absolute left-0 top-0 bottom-0 select-none overflow-hidden z-[2] pointer-events-none"
           style={{
             width: gutterWidth,
+            minWidth: gutterWidth > 0 ? "var(--code-gutter-min-width)" : undefined,
             borderRight: "1px solid hsl(var(--code-border))",
             background: "hsl(var(--code-bg))",
           }}
@@ -463,11 +455,11 @@ const CodeEditor = ({
             {lines.map((_, i) => (
               <div
                 key={`L${i}`}
-                className="text-right pr-2 text-sm font-mono flex items-center justify-end"
+                className="text-right pr-2 flex items-center justify-end"
                 style={{
-                  height: `${CODE_LINE_HEIGHT}em`,
-                  lineHeight: CODE_LINE_HEIGHT,
-                  color: errorLines?.has(i + 1) ? "hsl(var(--destructive))" : "hsl(var(--muted-foreground) / 0.5)",
+                  height: "calc(var(--code-line-height) * 1em)",
+                  lineHeight: "var(--code-line-height)",
+                  color: errorLines?.has(i + 1) ? "hsl(var(--destructive))" : "hsl(var(--code-gutter-foreground))",
                   fontWeight: errorLines?.has(i + 1) ? 600 : 400,
                 }}
               >
@@ -481,16 +473,16 @@ const CodeEditor = ({
       <div
         ref={highlightRef}
         aria-hidden
-        className="code-editor-pad absolute top-0 bottom-0 right-0 overflow-hidden pointer-events-none z-[1] font-mono text-sm whitespace-pre"
-        style={{ left: gutterWidth, lineHeight: CODE_LINE_HEIGHT }}
+        className="code-editor-pad absolute top-0 bottom-0 right-0 overflow-hidden pointer-events-none z-[1] whitespace-pre"
+        style={{ left: gutterWidth, lineHeight: "var(--code-line-height)" }}
       >
         {tokenizedLines.map((tokens, i) => (
           <div
             key={`L${i}`}
             className="whitespace-pre"
             style={{
-              height: `${CODE_LINE_HEIGHT}em`,
-              lineHeight: CODE_LINE_HEIGHT,
+              height: "calc(var(--code-line-height) * 1em)",
+              lineHeight: "var(--code-line-height)",
               background: errorLines?.has(i + 1) ? "hsl(var(--destructive) / 0.08)" : "transparent",
             }}
           >
@@ -514,11 +506,11 @@ const CodeEditor = ({
         placeholder={placeholder}
         spellCheck={false}
         aria-label={textareaAriaLabel}
-        className="relative z-[3] w-full h-full font-mono text-sm bg-transparent border-none outline-none resize-y overflow-auto"
+        className="relative z-[3] w-full h-full bg-transparent border-none outline-none resize-y overflow-auto"
         style={{
           padding: "var(--spacing-code-editor)",
           paddingLeft: contentPaddingLeft,
-          lineHeight: CODE_LINE_HEIGHT,
+          lineHeight: "var(--code-line-height)",
           color: "transparent",
           caretColor: "hsl(var(--foreground))",
           whiteSpace: "pre",
