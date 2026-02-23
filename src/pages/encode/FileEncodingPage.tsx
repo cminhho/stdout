@@ -1,13 +1,13 @@
 import { useState } from "react";
-import ToolLayout from "@/components/ToolLayout";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import PanelHeader from "@/components/PanelHeader";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import FileUploadButton from "@/components/FileUploadButton";
 import { ClearButton } from "@/components/ClearButton";
 import { SampleButton } from "@/components/SampleButton";
+import ToolAlert from "@/components/ToolAlert";
 import {
   Select,
   SelectContent,
@@ -84,12 +84,25 @@ const FileEncodingPage = () => {
 
   const run = () => (mode === "decode" ? runDecode() : runEncode());
 
-  return (
-    <ToolLayout
-      title={tool?.label ?? "Convert File Encoding"}
-      description={tool?.description ?? "Decode bytes from charset or encode text to UTF-8"}
-    >
-      <div className="flex flex-wrap items-center gap-3 mb-4">
+  const setInputAndClear = (v: string) => {
+    setInput(v);
+    setOutput("");
+    setError("");
+  };
+
+  const handleSample = () => {
+    const sample =
+      mode === "decode"
+        ? bytesFormat === "hex"
+          ? SAMPLE_HEX
+          : SAMPLE_BASE64
+        : SAMPLE_TEXT;
+    setInputAndClear(sample);
+  };
+
+  const topSection = (
+    <div className="space-y-2">
+      <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-2">
           <Label className="text-xs text-muted-foreground">Mode</Label>
           <Select value={mode} onValueChange={(v) => setMode(v as "decode" | "encode")}>
@@ -135,54 +148,59 @@ const FileEncodingPage = () => {
           {mode === "decode" ? "Decode" : "Encode"}
         </Button>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 tool-content-grid flex-1 min-h-0">
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader
-            label={mode === "decode" ? "Bytes (hex or base64)" : "Text"}
-            extra={
-              <div className="flex items-center gap-2 flex-wrap">
-                <SampleButton onClick={() => { setInput(mode === "decode" ? (bytesFormat === "hex" ? SAMPLE_HEX : SAMPLE_BASE64) : SAMPLE_TEXT); setOutput(""); setError(""); }} />
-                <ClearButton onClick={() => { setInput(""); setOutput(""); setError(""); }} />
-                <FileUploadButton accept=".txt,text/plain" onText={(t) => { setInput(t); setOutput(""); setError(""); }} />
-              </div>
-            }
-          />
-          <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor
-              value={input}
-              onChange={setInput}
-              language="text"
-              placeholder={
-                mode === "decode"
-                  ? "Paste hex (e.g. 48656c6c6f) or base64..."
-                  : "Enter text to encode as UTF-8 bytes..."
-              }
-              fillHeight
-            />
-          </div>
-        </div>
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label={mode === "decode" ? "Decoded text" : "UTF-8 bytes"} text={output} />
-          {error && (
-            <div className="code-block text-destructive text-xs shrink-0">⚠ {error}</div>
-          )}
-          <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor
-              value={output || ""}
-              readOnly
-              language="text"
-              placeholder="Result will appear here..."
-              fillHeight
-            />
-          </div>
-        </div>
-      </div>
       {mode === "encode" && (
-        <p className="text-xs text-muted-foreground mt-2">
+        <p className="text-xs text-muted-foreground">
           Encode output is UTF-8 only (browser limitation). Use Decode mode for other encodings.
         </p>
       )}
-    </ToolLayout>
+    </div>
+  );
+
+  return (
+    <TwoPanelToolLayout
+      tool={tool}
+      title={tool?.label ?? "Convert File Encoding"}
+      description={tool?.description ?? "Decode bytes from charset or encode text to UTF-8"}
+      topSection={topSection}
+      inputPane={{
+        title: mode === "decode" ? "Bytes (hex or base64)" : "Text",
+        inputToolbar: {
+          onSample: handleSample,
+          setInput: setInputAndClear,
+          fileAccept: ".txt,text/plain",
+          onFileText: setInputAndClear,
+        },
+        inputEditor: {
+          value: input,
+          onChange: setInput,
+          language: "text",
+          placeholder:
+            mode === "decode"
+              ? "Paste hex (e.g. 48656c6c6f) or base64..."
+              : "Enter text to encode as UTF-8 bytes...",
+        },
+      }}
+      outputPane={{
+        title: mode === "decode" ? "Decoded text" : "UTF-8 bytes",
+        copyText: output || undefined,
+        children: (
+          <div className="flex flex-col flex-1 min-h-0 gap-2">
+            {error && (
+              <ToolAlert variant="error" message={error} prefix="⚠ " className="shrink-0" />
+            )}
+            <div className="flex-1 min-h-0 flex flex-col">
+              <CodeEditor
+                value={output || ""}
+                readOnly
+                language="text"
+                placeholder="Result will appear here..."
+                fillHeight
+              />
+            </div>
+          </div>
+        ),
+      }}
+    />
   );
 };
 
