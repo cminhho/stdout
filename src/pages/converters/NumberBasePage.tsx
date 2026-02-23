@@ -4,7 +4,14 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import PanelHeader from "@/components/PanelHeader";
 import CopyButton from "@/components/CopyButton";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/utils/cn";
 import { NUMBER_BASE_OPTIONS, NUMBER_BASE_PLACEHOLDER, parseFromBase, convertToAllBases } from "@/utils/numberBase";
+
+const DEFAULT_TITLE = "Number Base";
+const DEFAULT_DESCRIPTION = "Convert numbers between bases (bin, oct, dec, hex)";
+const EMPTY_MESSAGE = "Enter a number.";
+const BASE_BUTTON_SELECTED = "bg-primary text-primary-foreground";
+const BASE_BUTTON_UNSELECTED = "bg-muted text-muted-foreground hover:text-foreground";
 
 const NumberBasePage = () => {
   const tool = useCurrentTool();
@@ -15,7 +22,7 @@ const NumberBasePage = () => {
   const results = useMemo(() => (parsed === null ? null : convertToAllBases(parsed)), [parsed]);
 
   return (
-    <ToolLayout title={tool?.label ?? "Number Base"} description={tool?.description ?? "Convert numbers between bases (bin, oct, dec, hex)"}>
+    <ToolLayout title={tool?.label ?? DEFAULT_TITLE} description={tool?.description ?? DEFAULT_DESCRIPTION}>
       <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack">
         <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0">
           <div className="flex items-center gap-2 min-w-0 flex-1 max-w-sm">
@@ -34,9 +41,7 @@ const NumberBasePage = () => {
                 <button
                   key={b.radix}
                   onClick={() => setFromBase(b.radix)}
-                  className={`px-2 py-1 text-xs rounded transition-colors ${
-                    fromBase === b.radix ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground"
-                  }`}
+                  className={cn("px-2 py-1 text-xs rounded transition-colors", fromBase === b.radix ? BASE_BUTTON_SELECTED : BASE_BUTTON_UNSELECTED)}
                 >
                   {b.radix}
                 </button>
@@ -59,7 +64,7 @@ const NumberBasePage = () => {
                 </div>
               ))
             ) : (
-              <p className="text-xs text-muted-foreground py-2">Enter a number.</p>
+              <p className="text-xs text-muted-foreground py-2">{EMPTY_MESSAGE}</p>
             )}
           </div>
         </div>

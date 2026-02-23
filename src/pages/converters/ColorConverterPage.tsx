@@ -14,6 +14,12 @@ import {
   formatHslString,
 } from "@/utils/colorConverter";
 
+const DEFAULT_TITLE = "Color Converter";
+const DEFAULT_DESCRIPTION = "Convert colors between HEX, RGB, HSL formats";
+const SUMMARY_CARD_CLASS = "bg-muted rounded-lg p-3";
+const SUMMARY_LABEL_CLASS = "text-xs text-muted-foreground mb-1";
+const SUMMARY_VALUE_CLASS = "font-mono text-sm font-medium";
+
 const ColorConverterPage = () => {
   const tool = useCurrentTool();
   const [hex, setHex] = useState(COLOR_CONVERTER_DEFAULT_HEX);
@@ -31,8 +37,14 @@ const ColorConverterPage = () => {
   const rgbStr = rgb ? formatRgbString(rgb) : "";
   const hslStr = hsl ? formatHslString(hsl) : "";
 
+  const summaryItems = [
+    { label: "HEX", value: hexStr },
+    { label: "RGB", value: rgbStr },
+    { label: "HSL", value: hslStr },
+  ];
+
   return (
-    <ToolLayout title={tool?.label ?? "Color Converter"} description={tool?.description ?? "Convert colors between HEX, RGB, HSL formats"}>
+    <ToolLayout title={tool?.label ?? DEFAULT_TITLE} description={tool?.description ?? DEFAULT_DESCRIPTION}>
       <div className="max-w-2xl space-y-6">
         <div className="flex gap-6 items-start">
           <div
@@ -76,18 +88,12 @@ const ColorConverterPage = () => {
         </div>
 
         <div className="grid grid-cols-3 gap-3 text-center">
-          <div className="bg-muted rounded-lg p-3">
-            <div className="text-xs text-muted-foreground mb-1">HEX</div>
-            <div className="font-mono text-sm font-medium">{hexStr}</div>
-          </div>
-          <div className="bg-muted rounded-lg p-3">
-            <div className="text-xs text-muted-foreground mb-1">RGB</div>
-            <div className="font-mono text-sm font-medium">{rgbStr}</div>
-          </div>
-          <div className="bg-muted rounded-lg p-3">
-            <div className="text-xs text-muted-foreground mb-1">HSL</div>
-            <div className="font-mono text-sm font-medium">{hslStr}</div>
-          </div>
+          {summaryItems.map(({ label, value }) => (
+            <div key={label} className={SUMMARY_CARD_CLASS}>
+              <div className={SUMMARY_LABEL_CLASS}>{label}</div>
+              <div className={SUMMARY_VALUE_CLASS}>{value}</div>
+            </div>
+          ))}
         </div>
       </div>
     </ToolLayout>

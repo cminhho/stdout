@@ -16,6 +16,9 @@ import {
   IMAGE_BASE64_PREVIEW_PLACEHOLDER,
 } from "@/utils/imageBase64";
 
+const DEFAULT_TITLE = "Image ↔ Base64";
+const DEFAULT_DESCRIPTION = "Convert images to/from Base64 strings";
+
 const ImageBase64Page = () => {
   const tool = useCurrentTool();
   const [mode, setMode] = useState<"toBase64" | "toImage">("toBase64");
@@ -53,7 +56,7 @@ const ImageBase64Page = () => {
   };
 
   return (
-    <ToolLayout title={tool?.label ?? "Image ↔ Base64"} description={tool?.description ?? "Convert images to/from Base64 strings"}>
+    <ToolLayout title={tool?.label ?? DEFAULT_TITLE} description={tool?.description ?? DEFAULT_DESCRIPTION}>
       <div className="flex gap-2 mb-3">
         <Button size="xs" variant={mode === "toBase64" ? "default" : "outline"} onClick={() => setMode("toBase64")}>Image → Base64</Button>
         <Button size="xs" variant={mode === "toImage" ? "default" : "outline"} onClick={() => setMode("toImage")}>Base64 → Image</Button>

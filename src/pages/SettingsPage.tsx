@@ -3,18 +3,26 @@ import { useSearchParams } from "react-router-dom";
 import { Settings, Palette, LayoutList, Info, Wrench, Heart, ExternalLink, Loader2, RefreshCw } from "lucide-react";
 import ToolLayout from "@/components/ToolLayout";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { useSettings } from "@/hooks/useSettings";
 import { Theme, SidebarMode } from "@/contexts/settingsStore";
 import { useToolEngine } from "@/hooks/useToolEngine";
-import { Checkbox } from "@/components/ui/checkbox";
 import { SITE } from "@/site";
+import { cn } from "@/utils/cn";
 import {
   getCurrentVersion,
   fetchLatestRelease,
   isNewerVersion,
   type LatestRelease,
 } from "@/utils/version";
+
+const DEFAULT_TITLE = "Settings";
+const DEFAULT_DESCRIPTION = "Customize your stdout experience";
+const UPDATE_BUTTON_LOADING_LABEL = "Checking…";
+const UPDATE_BUTTON_LABEL = "Check for updates";
+const SEARCH_PLACEHOLDER = "Search tools...";
+const SHOW_ALL_LABEL = "Show All";
 
 const TAB_BASE_CLASS =
   "flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:rounded-t";
@@ -25,6 +33,14 @@ const OPTION_CARD_BASE =
   "rounded-md border p-4 text-left transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
 const OPTION_CARD_SELECTED = "border-primary bg-primary/10 ring-1 ring-primary";
 const OPTION_CARD_UNSELECTED = "border-border hover:bg-muted/50 hover:border-muted-foreground/50";
+
+const SECTION_HEADING_CLASS = "flex items-center gap-2 text-sm font-semibold text-foreground mb-2";
+
+type Tab = "general" | "tools";
+const SETTINGS_TABS: { id: Tab; label: string; icon: typeof Settings; panelId: string }[] = [
+  { id: "general", label: "General", icon: Settings, panelId: "settings-general" },
+  { id: "tools", label: "Manage Tools", icon: Wrench, panelId: "settings-tools" },
+];
 
 const themes: { value: Theme; label: string; desc: string }[] = [
   { value: "light", label: "Light", desc: "Light background with dark text" },
@@ -37,8 +53,6 @@ const sidebarModes: { value: SidebarMode; label: string; desc: string }[] = [
   { value: "grouped", label: "Grouped", desc: "Tools organized in collapsible groups" },
   { value: "flat", label: "Flat", desc: "All tools listed without group headers" },
 ];
-
-type Tab = "general" | "tools";
 
 type UpdateCheckState = "idle" | "loading" | "current" | "available" | "error";
 
@@ -95,42 +109,34 @@ const SettingsPage = () => {
 
   const groups = [...new Set(tools.map((t) => t.group))];
   const visibleCount = tools.filter((t) => settings.isToolVisible(t.path)).length;
+  const orderedTools = search
+    ? filteredTools
+    : groups.flatMap((g) => filteredTools.filter((t) => t.group === g));
 
   return (
-    <ToolLayout title={tool?.label ?? "Settings"} description={tool?.description ?? "Customize your stdout experience"}>
-      {/* Tabs: VS Code/Linear style – role="tablist", aria-selected, consistent radius */}
+    <ToolLayout title={tool?.label ?? DEFAULT_TITLE} description={tool?.description ?? DEFAULT_DESCRIPTION}>
       <div role="tablist" aria-label="Settings sections" className="flex gap-1 mb-4 border-b border-border">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={tab === "general"}
-          aria-controls="settings-general"
-          id="tab-general"
-          onClick={() => setTab("general")}
-          className={`${TAB_BASE_CLASS} ${tab === "general" ? TAB_SELECTED_CLASS : TAB_UNSELECTED_CLASS}`}
-        >
-          <Settings className="h-4 w-4" />
-          General
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={tab === "tools"}
-          aria-controls="settings-tools"
-          id="tab-tools"
-          onClick={() => setTab("tools")}
-          className={`${TAB_BASE_CLASS} ${tab === "tools" ? TAB_SELECTED_CLASS : TAB_UNSELECTED_CLASS}`}
-        >
-          <Wrench className="h-4 w-4" />
-          Manage Tools
-        </button>
+        {SETTINGS_TABS.map(({ id, label, icon: Icon, panelId }) => (
+          <button
+            key={id}
+            type="button"
+            role="tab"
+            aria-selected={tab === id}
+            aria-controls={panelId}
+            id={`tab-${id}`}
+            onClick={() => setTab(id)}
+            className={cn(TAB_BASE_CLASS, tab === id ? TAB_SELECTED_CLASS : TAB_UNSELECTED_CLASS)}
+          >
+            <Icon className="h-4 w-4" />
+            {label}
+          </button>
+        ))}
       </div>
 
       {tab === "general" && (
         <div id="settings-general" role="tabpanel" aria-labelledby="tab-general" className="space-y-6 max-w-2xl">
-          {/* Theme */}
           <section aria-labelledby="settings-theme-heading">
-            <h2 id="settings-theme-heading" className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
+            <h2 id="settings-theme-heading" className={SECTION_HEADING_CLASS}>
               <Palette className="h-4 w-4 text-primary" />
               Theme
             </h2>
@@ -141,7 +147,7 @@ const SettingsPage = () => {
                   type="button"
                   onClick={() => settings.setTheme(t.value)}
                   aria-pressed={settings.theme === t.value}
-                  className={`${OPTION_CARD_BASE} ${settings.theme === t.value ? OPTION_CARD_SELECTED : OPTION_CARD_UNSELECTED}`}
+                  className={cn(OPTION_CARD_BASE, settings.theme === t.value ? OPTION_CARD_SELECTED : OPTION_CARD_UNSELECTED)}
                 >
                   <div className="text-sm font-medium text-foreground">{t.label}</div>
                   <div className="text-xs text-muted-foreground mt-1">{t.desc}</div>
@@ -150,9 +156,8 @@ const SettingsPage = () => {
             </div>
           </section>
 
-          {/* Sidebar Mode */}
           <section aria-labelledby="settings-sidebar-heading">
-            <h2 id="settings-sidebar-heading" className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
+            <h2 id="settings-sidebar-heading" className={SECTION_HEADING_CLASS}>
               <LayoutList className="h-4 w-4 text-primary" />
               Sidebar Layout
             </h2>
@@ -163,7 +168,7 @@ const SettingsPage = () => {
                   type="button"
                   onClick={() => settings.setSidebarMode(m.value)}
                   aria-pressed={settings.sidebarMode === m.value}
-                  className={`${OPTION_CARD_BASE} ${settings.sidebarMode === m.value ? OPTION_CARD_SELECTED : OPTION_CARD_UNSELECTED}`}
+                  className={cn(OPTION_CARD_BASE, settings.sidebarMode === m.value ? OPTION_CARD_SELECTED : OPTION_CARD_UNSELECTED)}
                 >
                   <div className="text-sm font-medium text-foreground">{m.label}</div>
                   <div className="text-xs text-muted-foreground mt-1">{m.desc}</div>
@@ -172,9 +177,8 @@ const SettingsPage = () => {
             </div>
           </section>
 
-          {/* About */}
           <section aria-labelledby="settings-about-heading">
-            <h2 id="settings-about-heading" className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
+            <h2 id="settings-about-heading" className={SECTION_HEADING_CLASS}>
               <Info className="h-4 w-4 text-primary" />
               About
             </h2>
@@ -193,7 +197,7 @@ const SettingsPage = () => {
                   ) : (
                     <RefreshCw className="h-3.5 w-3.5" aria-hidden />
                   )}
-                  <span>{updateCheck === "loading" ? "Checking…" : "Check for updates"}</span>
+                  <span>{updateCheck === "loading" ? UPDATE_BUTTON_LOADING_LABEL : UPDATE_BUTTON_LABEL}</span>
                 </Button>
               </div>
               {updateCheck === "current" && latestRelease && (
@@ -224,9 +228,8 @@ const SettingsPage = () => {
             </div>
           </section>
 
-          {/* Support the project */}
           <section aria-labelledby="settings-support-heading">
-            <h2 id="settings-support-heading" className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
+            <h2 id="settings-support-heading" className={SECTION_HEADING_CLASS}>
               <Heart className="h-4 w-4 text-primary" />
               Support the project
             </h2>
@@ -251,12 +254,12 @@ const SettingsPage = () => {
               type="search"
               aria-label="Search tools"
               className="flex-1 h-9 rounded-md border border-outlineButton-border bg-outlineButton-bg px-2.5 py-2 text-sm text-outlineButton-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              placeholder="Search tools..."
+              placeholder={SEARCH_PLACEHOLDER}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
             <Button variant="outline" size="xs" onClick={settings.setAllToolsVisible}>
-              Show All
+              {SHOW_ALL_LABEL}
             </Button>
           </div>
 
@@ -288,8 +291,7 @@ const SettingsPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {(search ? filteredTools : groups.flatMap((g) => filteredTools.filter((t) => t.group === g))).map(
-                  (tool) => (
+                {orderedTools.map((tool) => (
                     <tr
                       key={tool.path}
                       className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors duration-150"
@@ -308,8 +310,7 @@ const SettingsPage = () => {
                         </span>
                       </td>
                     </tr>
-                  )
-                )}
+                  ))}
               </tbody>
             </table>
           </div>

@@ -5,6 +5,9 @@ import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CopyButton from "@/components/CopyButton";
 import { CSS_UNITS_LIST, CSS_UNITS_DEFAULT_BASE, convertToAllUnits } from "@/utils/cssUnits";
 
+const DEFAULT_TITLE = "CSS Units";
+const DEFAULT_DESCRIPTION = "Convert between CSS units (px, rem, em, vw)";
+
 const CssUnitsPage = () => {
   const tool = useCurrentTool();
   const [value, setValue] = useState("16");
@@ -19,7 +22,7 @@ const CssUnitsPage = () => {
   );
 
   return (
-    <ToolLayout title={tool?.label ?? "CSS Units"} description={tool?.description ?? "Convert between CSS units (px, rem, em, vw)"}>
+    <ToolLayout title={tool?.label ?? DEFAULT_TITLE} description={tool?.description ?? DEFAULT_DESCRIPTION}>
       <div className="space-y-4 max-w-2xl">
         <div className="tool-card space-y-3">
           <div className="flex gap-3 items-end flex-wrap">
