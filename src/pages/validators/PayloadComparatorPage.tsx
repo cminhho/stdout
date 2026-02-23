@@ -1,11 +1,12 @@
 import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
-import PanelHeader from "@/components/PanelHeader";
+import ResizableTwoPanel from "@/components/ResizableTwoPanel";
+import TwoPanelTopSection from "@/components/TwoPanelTopSection";
+import ToolResultCard from "@/components/ToolResultCard";
 import CodeEditor from "@/components/CodeEditor";
-import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
+import { buildEditorPaneProps } from "@/components/toolPaneBuilders";
+import { useCurrentTool } from "@/hooks/useCurrentTool";
+
 const SAMPLE_A = '{"status": "ok", "data": [1, 2, 3], "count": 3}';
 const SAMPLE_B = '{"status": "error", "data": [1, 2], "count": 2}';
 
@@ -48,25 +49,14 @@ function deepDiff(a: unknown, b: unknown, path = ""): Diff[] {
   return diffs;
 }
 
+function diffLine(d: Diff): string {
+  return `${d.type} ${d.path}: ${d.type === "changed" ? `${JSON.stringify(d.oldVal)} → ${JSON.stringify(d.newVal)}` : JSON.stringify(d.newVal ?? d.oldVal)}`;
+}
+
 const PayloadComparatorPage = () => {
   const tool = useCurrentTool();
   const [left, setLeft] = useState("");
   const [right, setRight] = useState("");
-
-  const leftExtra = (
-    <div className="flex items-center gap-2 flex-wrap">
-      <SampleButton onClick={() => setLeft(SAMPLE_A)} />
-      <ClearButton onClick={() => setLeft("")} />
-      <FileUploadButton accept=".json,application/json" onText={setLeft} />
-    </div>
-  );
-  const rightExtra = (
-    <div className="flex items-center gap-2 flex-wrap">
-      <SampleButton onClick={() => setRight(SAMPLE_B)} />
-      <ClearButton onClick={() => setRight("")} />
-      <FileUploadButton accept=".json,application/json" onText={setRight} />
-    </div>
-  );
 
   const result = useMemo(() => {
     if (!left.trim() || !right.trim()) return null;
@@ -77,40 +67,56 @@ const PayloadComparatorPage = () => {
     }
   }, [left, right]);
 
-  const diffText = result?.diffs.map(d => `${d.type} ${d.path}: ${d.type === "changed" ? `${JSON.stringify(d.oldVal)} → ${JSON.stringify(d.newVal)}` : JSON.stringify(d.newVal ?? d.oldVal)}`).join("\n") ?? "";
+  const diffText = result?.diffs.map(diffLine).join("\n") ?? "";
+
+  const leftPane = useMemo(
+    () =>
+      buildEditorPaneProps({
+        title: "Payload A",
+        value: left,
+        onChange: setLeft,
+        onSample: () => setLeft(SAMPLE_A),
+        placeholder: '{"status": "ok", "data": [1,2,3]}',
+        fileAccept: ".json,application/json",
+      }),
+    [left]
+  );
+
+  const rightPane = useMemo(
+    () =>
+      buildEditorPaneProps({
+        title: "Payload B",
+        value: right,
+        onChange: setRight,
+        onSample: () => setRight(SAMPLE_B),
+        placeholder: '{"status": "error", "data": [1,2]}',
+        fileAccept: ".json,application/json",
+      }),
+    [right]
+  );
 
   return (
     <ToolLayout title={tool?.label ?? "Payload Comparator"} description={tool?.description ?? "Compare two JSON payloads and highlight differences"}>
-      <div className="grid grid-cols-1 lg:grid-cols-2 tool-content-grid">
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="Payload A" extra={leftExtra} />
-          <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor value={left} onChange={setLeft} language="json" placeholder='{"status": "ok", "data": [1,2,3]}' fillHeight />
-          </div>
-        </div>
-        <div className="tool-panel flex flex-col min-h-0">
-          <PanelHeader label="Payload B" extra={rightExtra} />
-          <div className="flex-1 min-h-0 flex flex-col">
-            <CodeEditor value={right} onChange={setRight} language="json" placeholder='{"status": "error", "data": [1,2]}' fillHeight />
-          </div>
-        </div>
-      </div>
-
-      {result?.error && <div className="tool-card border-destructive/50 text-destructive text-sm mt-4">⚠ {result.error}</div>}
+      <TwoPanelTopSection formatError={result?.error ? new Error(result.error) : undefined} />
+      <ResizableTwoPanel input={leftPane} output={rightPane} className="flex-1 min-h-0" />
 
       {result && !result.error && (
-        <div className="tool-panel flex flex-col min-h-0 mt-4">
+        <ToolResultCard
+          summary={
+            result.diffs.length === 0
+              ? undefined
+              : `${result.diffs.length} difference${result.diffs.length !== 1 ? "s" : ""}`
+          }
+          copyText={result.diffs.length > 0 ? diffText : undefined}
+        >
           {result.diffs.length === 0 ? (
             <p className="text-sm text-muted-foreground">✓ Payloads are identical</p>
           ) : (
-            <>
-              <PanelHeader label={`${result.diffs.length} difference${result.diffs.length !== 1 ? "s" : ""}`} text={diffText} />
-              <div className="flex-1 min-h-0 max-h-[50vh] flex flex-col">
-                <CodeEditor value={diffText} readOnly language="text" fillHeight />
-              </div>
-            </>
+            <div className="min-h-0 flex flex-col max-h-[50vh] rounded border overflow-hidden border-[hsl(var(--code-border))] bg-[hsl(var(--code-bg))]">
+              <CodeEditor value={diffText} readOnly language="text" fillHeight />
+            </div>
           )}
-        </div>
+        </ToolResultCard>
       )}
     </ToolLayout>
   );
