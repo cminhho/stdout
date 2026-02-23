@@ -37,7 +37,7 @@ const CssUnitsPage = () => {
                 variant="secondary"
                 value={fromUnit}
                 onValueChange={setFromUnit}
-                options={CSS_UNITS_LIST.map((u) => ({ value: u, label: u }))}
+                options={CSS_UNITS_LIST}
                 title="From unit"
                 aria-label="From unit"
               />

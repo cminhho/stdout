@@ -153,19 +153,38 @@ const SelectSeparator = React.forwardRef<
 ));
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 
-/** Option shape for SelectWithOptions */
+/**
+ * Option shape for select dropdowns (value + label).
+ * Aligns with common patterns (Radix, MUI, Ant Design).
+ */
 export interface SelectOption<T extends string = string> {
   value: T;
   label: string;
 }
 
+/** Build a single option; label defaults to value. */
+export function option<T extends string>(value: T, label?: string): SelectOption<T> {
+  return { value, label: label ?? value };
+}
+
+function normalizeOptions<T extends string>(raw: Array<SelectOption<T> | T>): SelectOption<T>[] {
+  return raw.map((item) =>
+    typeof item === "string" ? { value: item, label: item } : item
+  );
+}
+
 export interface SelectWithOptionsProps<T extends string = string> {
+  /** Current value (must match an option value). */
   value: T;
+  /** Called when user picks an option. */
   onValueChange: (value: T) => void;
-  options: SelectOption<T>[];
+  /** Option list: full objects or plain strings (label = value). */
+  options: ReadonlyArray<SelectOption<T> | T>;
   placeholder?: string;
   size?: "default" | "sm" | "xs" | "lg";
   variant?: "default" | "secondary";
+  disabled?: boolean;
+  /** Tooltip and fallback for aria-label. */
   title?: string;
   "aria-label"?: string;
   className?: string;
@@ -173,9 +192,14 @@ export interface SelectWithOptionsProps<T extends string = string> {
 }
 
 /**
- * Composite select: value + onValueChange + options[] + optional size/variant.
- * Trigger and dropdown use same tokens as SelectTrigger/SelectContent (outlineButton, popover, muted focus).
- * Use for a simple option list; for custom content use Select + SelectTrigger + SelectContent.
+ * Select dropdown from a list of options. Use for simple value picking;
+ * for custom content use Select + SelectTrigger + SelectContent.
+ *
+ * @example
+ * // Full options
+ * <SelectWithOptions value={dialect} onValueChange={setDialect} options={DIALECT_OPTIONS} />
+ * // String shorthand (label = value)
+ * <SelectWithOptions value={unit} onValueChange={setUnit} options={["px", "rem", "em"]} />
  */
 function SelectWithOptions<T extends string = string>({
   value,
@@ -184,24 +208,29 @@ function SelectWithOptions<T extends string = string>({
   placeholder = "Select…",
   size = "default",
   variant = "default",
+  disabled = false,
   title,
   "aria-label": ariaLabel,
   className,
   triggerClassName,
 }: SelectWithOptionsProps<T>) {
+  const items = normalizeOptions(Array.from(options));
+  const a11yLabel = ariaLabel ?? title ?? placeholder;
+
   return (
     <Select value={value} onValueChange={(v) => onValueChange(v as T)}>
       <SelectTrigger
         size={size}
         variant={variant}
+        disabled={disabled}
         className={triggerClassName}
         title={title}
-        aria-label={ariaLabel ?? title}
+        aria-label={a11yLabel}
       >
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent className={className}>
-        {options.map((opt) => (
+        {items.map((opt) => (
           <SelectItem key={opt.value} value={opt.value}>
             {opt.label}
           </SelectItem>

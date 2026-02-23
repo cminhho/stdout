@@ -1,37 +1,37 @@
 <!doctype html>
 <html lang="en" class="dark">
   <head>
+    <!-- Theme class + theme-color set by script (system = OS; avoids FOUC). -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>stdout</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
     <meta name="description" content="Your standard output for dev tools. Format, convert, encode, generate — all in one place." />
-    <!-- theme-color set by script to match resolved theme (VS Code–style; avoids FOUC) -->
     <meta name="theme-color" content="#252a31" />
     <script>
       (function () {
         var STORAGE_KEY = "stdout-settings";
         var THEME_COLORS = { light: "#fafafa", dark: "#252a31", "deep-dark": "#121212" };
-        try {
-          var raw = localStorage.getItem(STORAGE_KEY);
-          var theme = raw ? (JSON.parse(raw).theme) : null;
-          var resolved = theme === "dark" || theme === "light" || theme === "deep-dark"
-            ? theme
-            : (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        function apply(resolved) {
           var root = document.documentElement;
           root.classList.remove("dark", "light", "deep-dark");
           root.classList.add(resolved);
           root.style.colorScheme = resolved === "light" ? "light" : "dark";
           var meta = document.querySelector('meta[name="theme-color"]');
           if (meta) meta.setAttribute("content", THEME_COLORS[resolved] || THEME_COLORS.dark);
+        }
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          var theme = raw ? (JSON.parse(raw).theme) : null;
+          if (theme === "dark" || theme === "light" || theme === "deep-dark") {
+            apply(theme);
+          } else {
+            var dark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+            apply(dark ? "dark" : "light");
+          }
         } catch (e) {
-          var root = document.documentElement;
-          root.classList.remove("dark", "light", "deep-dark");
-          root.classList.add("dark");
-          root.style.colorScheme = "dark";
-          var meta = document.querySelector('meta[name="theme-color"]');
-          if (meta) meta.setAttribute("content", THEME_COLORS.dark);
+          apply("dark");
         }
       })();
     </script>

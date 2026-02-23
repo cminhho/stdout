@@ -21,9 +21,11 @@ import {
 
 const DEFAULT_TITLE = "CSS Inliner (Email)";
 const DEFAULT_DESCRIPTION = "Inline CSS styles into HTML for email templates";
-const PANEL_CLASS = "tool-panel flex flex-col min-h-0";
-const BODY_CLASS = "flex-1 min-h-0 flex flex-col";
 
+/**
+ * Single editor pane: header (--spacing-panel-inner-x/y) + body; vertical gap
+ * --spacing-panel-gap. Body uses flex-1 min-h-0 so CodeEditor fills (VS Code panel).
+ */
 function EditorPanel({
   label,
   text,
@@ -36,9 +38,9 @@ function EditorPanel({
   children: ReactNode;
 }) {
   return (
-    <div className={PANEL_CLASS}>
+    <div className="tool-panel">
       <PanelHeader label={label} text={text} extra={extra} />
-      <div className={BODY_CLASS}>{children}</div>
+      <div className="flex-1 min-h-0 flex flex-col">{children}</div>
     </div>
   );
 }
@@ -58,7 +60,8 @@ const CssInlinerPage = () => {
       title={tool?.label ?? DEFAULT_TITLE}
       description={tool?.description ?? DEFAULT_DESCRIPTION}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-2 tool-content-grid tool-layout-section">
+      {/* Grid: --spacing-grid-gap between columns/rows; --spacing-section-mb below (VS Code 8px base). */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 tool-content-grid tool-layout-section flex-1 min-h-0">
         <EditorPanel
           label="HTML"
           extra={
@@ -96,20 +99,23 @@ const CssInlinerPage = () => {
           />
         </EditorPanel>
       </div>
+      {/* Output section: same --spacing-section-mb; flex-1 so it shares height with grid (VS Code split). */}
       {output ? (
-        <EditorPanel
-          label="Inlined HTML"
-          text={output}
-          extra={
-            <SaveButton
-              content={output}
-              filename={CSS_INLINER_OUTPUT_FILENAME}
-              mimeType={CSS_INLINER_OUTPUT_MIME_TYPE}
-            />
-          }
-        >
-          <CodeEditor value={output} readOnly language="html" placeholder="" fillHeight />
-        </EditorPanel>
+        <div className="tool-layout-section flex-1 min-h-0 flex flex-col">
+          <EditorPanel
+            label="Inlined HTML"
+            text={output}
+            extra={
+              <SaveButton
+                content={output}
+                filename={CSS_INLINER_OUTPUT_FILENAME}
+                mimeType={CSS_INLINER_OUTPUT_MIME_TYPE}
+              />
+            }
+          >
+            <CodeEditor value={output} readOnly language="html" placeholder="" fillHeight />
+          </EditorPanel>
+        </div>
       ) : null}
     </ToolLayout>
   );

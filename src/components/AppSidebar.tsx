@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   ArrowLeftRight, Braces, CheckCircle2, ChevronRight, Code2, FileCode, Globe, Image, Lock,
-  Search, Settings, Shuffle, TerminalSquare, Type, PanelLeftClose, PanelLeftOpen, Coffee,
+  Search, Shuffle, TerminalSquare, Type, PanelLeftClose, PanelLeftOpen, Coffee,
 } from "lucide-react";
 import {
   Tooltip,
@@ -173,11 +173,18 @@ const AppSidebar = () => {
         <footer className="sidebar-footer-pad border-t border-sidebar-border flex items-center justify-center min-h-9 flex-shrink-0" aria-label="Sidebar footer">
           <Tooltip>
             <TooltipTrigger asChild>
-              <NavLink to="/settings" className="btn-icon-chrome shrink-0" aria-label="Settings">
-                <Settings className="h-4 w-4" />
-              </NavLink>
+              <a
+                href="https://www.buymeacoffee.com/chungho"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-icon-chrome shrink-0"
+                title="Support the project — Buy me a coffee"
+                aria-label="Buy me a coffee"
+              >
+                <Coffee className="sidebar-donate-link-icon h-4 w-4" aria-hidden />
+              </a>
             </TooltipTrigger>
-            <TooltipContent side="right">Settings</TooltipContent>
+            <TooltipContent side="right">Buy me a coffee</TooltipContent>
           </Tooltip>
         </footer>
       </aside>
@@ -259,7 +266,7 @@ const AppSidebar = () => {
         )}
       </nav>
 
-      <footer className="flex items-center justify-between gap-1.5 sidebar-footer-pad border-t border-sidebar-border flex-shrink-0" aria-label="Sidebar footer">
+      <footer className="flex items-center justify-center sidebar-footer-pad border-t border-sidebar-border flex-shrink-0" aria-label="Sidebar footer">
         <Tooltip>
           <TooltipTrigger asChild>
             <a
@@ -275,14 +282,6 @@ const AppSidebar = () => {
             </a>
           </TooltipTrigger>
           <TooltipContent side="right">Support the project — Buy me a coffee</TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-              <NavLink to="/settings" className="btn-icon-chrome shrink-0" aria-label="Settings">
-                <Settings className="h-4 w-4" />
-              </NavLink>
-          </TooltipTrigger>
-          <TooltipContent side="right">Settings</TooltipContent>
         </Tooltip>
       </footer>
     </aside>

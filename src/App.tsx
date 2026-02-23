@@ -67,7 +67,7 @@ const App = () => {
         <SettingsProvider>
           <Toaster />
           <div className={rootClass}>
-            {isDesktop && <WindowTitleBar />}
+            <WindowTitleBar />
             <div className="desktop-layout flex flex-1 min-h-0 overflow-hidden min-w-0">
               <AppSidebar />
               <main className="flex-1 min-h-0 min-w-0 overflow-auto flex flex-col">

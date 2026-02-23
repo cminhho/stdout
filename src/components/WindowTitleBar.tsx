@@ -1,43 +1,28 @@
-import React from "react";
-import { useLocation } from "react-router-dom";
-import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import type React from "react";
+import { NavLink, useLocation } from "react-router-dom";
+import { PanelLeftClose, PanelLeftOpen, Settings } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import { useSettings } from "@/hooks/useSettings";
 
-const NO_DRAG = { WebkitAppRegion: "no-drag" } as React.CSSProperties;
-const TRAFFIC_LIGHT_BASE = "w-3 h-3 rounded-full hover:opacity-80 active:opacity-70 transition-opacity";
+const noDrag = { WebkitAppRegion: "no-drag" } as React.CSSProperties;
 
-/**
- * Title bar for frameless / custom-window desktop apps.
- * - Leftmost: collapse/expand sidebar.
- * - Drag region so the window can be moved.
- * - When the OS draws window controls in the title bar (e.g. traffic lights), we reserve space.
- * - Otherwise we render in-window close/minimize/maximize controls.
- */
+/** Title bar: sidebar toggle, title, Settings. On Electron: drag region + optional window controls. */
 const WindowTitleBar = () => {
   const location = useLocation();
   const { tools } = useToolEngine();
   const { sidebarCollapsed, toggleSidebar } = useSettings();
-  const hasSystemTitleBarControls = window.electronAPI?.platform === "darwin";
-  const hasWindowAPI = !!window.electronAPI?.window;
-
-  const currentTool = tools.find((t) => t.path === location.pathname);
-  const title = location.pathname === "/" ? "stdout" : currentTool?.label ?? "stdout";
-
-  const windowButtons =
-    hasWindowAPI &&
-    [
-      { ariaLabel: "Close", className: "bg-[#ff5f57]", onClick: () => window.electronAPI?.window?.close() },
-      { ariaLabel: "Minimize", className: "bg-[#febc2e]", onClick: () => window.electronAPI?.window?.minimize() },
-      { ariaLabel: "Maximize", className: "bg-[#28c840]", onClick: () => window.electronAPI?.window?.maximize() },
-    ];
+  const electron = typeof window !== "undefined" ? window.electronAPI : undefined;
+  const isMac = electron?.platform === "darwin";
+  const win = electron?.window;
+  const title = location.pathname === "/" ? "stdout" : (tools.find((t) => t.path === location.pathname)?.label ?? "stdout");
 
   return (
     <header
       className="desktop-title-bar relative flex items-center shrink-0"
       style={{ WebkitAppRegion: "drag", height: "var(--title-bar-height)", minHeight: "var(--title-bar-height)" } as React.CSSProperties}
     >
-      <div className="shrink-0" style={NO_DRAG}>
+      <div className="shrink-0" style={noDrag}>
         <button
           type="button"
           onClick={toggleSidebar}
@@ -48,28 +33,32 @@ const WindowTitleBar = () => {
           {sidebarCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
         </button>
       </div>
-      {hasSystemTitleBarControls && <div className="title-bar-traffic-light-spacer shrink-0" style={NO_DRAG} />}
-      {!hasSystemTitleBarControls && windowButtons && (
-        <div className="flex items-center gap-1.5 shrink-0" style={NO_DRAG}>
-          {windowButtons.map((b) => (
-            <button
-              key={b.ariaLabel}
-              type="button"
-              className={`${TRAFFIC_LIGHT_BASE} ${b.className}`}
-              onClick={b.onClick}
-              aria-label={b.ariaLabel}
-            />
+      {isMac && <div className="title-bar-traffic-light-spacer shrink-0" style={noDrag} />}
+      {!isMac && win && (
+        <div className="flex items-center gap-1.5 shrink-0" style={noDrag}>
+          {[
+            { ariaLabel: "Close", className: "bg-[#ff5f57]", onClick: () => win.close() },
+            { ariaLabel: "Minimize", className: "bg-[#febc2e]", onClick: () => win.minimize() },
+            { ariaLabel: "Maximize", className: "bg-[#28c840]", onClick: () => win.maximize() },
+          ].map((b) => (
+            <button key={b.ariaLabel} type="button" className={`w-3 h-3 rounded-full hover:opacity-80 active:opacity-70 transition-opacity ${b.className}`} onClick={b.onClick} aria-label={b.ariaLabel} />
           ))}
         </div>
       )}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-[var(--title-bar-padding-x)]">
-        <span
-          className={`title-bar-title truncate max-w-full ${hasSystemTitleBarControls ? "desktop-title-plain" : "title-tab"}`}
-        >
-          {title}
-        </span>
+        <span className={`title-bar-title truncate max-w-full ${isMac ? "desktop-title-plain" : "title-tab"}`}>{title}</span>
       </div>
-      <div className="title-bar-end-spacer shrink-0" style={NO_DRAG} />
+      <div className="absolute top-0 bottom-0 right-0 flex items-center justify-end pr-[var(--title-bar-padding-x)] pointer-events-none [&>*]:pointer-events-auto" style={noDrag}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <NavLink to="/settings" className="btn-icon-chrome btn-icon-chrome-sm shrink-0" aria-label="Settings">
+              <Settings className="h-4 w-4" />
+            </NavLink>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">Settings</TooltipContent>
+        </Tooltip>
+      </div>
+      <div className="title-bar-end-spacer shrink-0" style={noDrag} />
     </header>
   );
 };

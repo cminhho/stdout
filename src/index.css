@@ -110,7 +110,9 @@
     --spacing-block-gap: 0.5rem;    /* 8px between inline blocks */
     --spacing-code-editor: 0.75rem;
     --spacing-grid-gap: 0.5rem;    /* 8px grid/flex gap */
-    /* Workbench (VS Code): sidebar/activity bar share same surface; list focus for nav */
+    /* Workbench (VS Code): editor vs panel surfaces; sidebar/activity bar; list focus for nav */
+    --workbench-editor-bg: var(--code-bg);
+    --workbench-panel-bg: var(--background);
     --activity-bar-background: var(--sidebar-background);
     --list-focus-background: var(--sidebar-accent);
     /* Sidebar: VS Code–aligned widths and density */
@@ -522,9 +524,9 @@
   .tool-layout-section {
     margin-bottom: var(--spacing-section-mb);
   }
-  /* Code editor: VS Code–style panel (bg, border, radius from tokens) */
+  /* Code editor: VS Code–style panel (workbench editor surface) */
   .code-editor-wrapper {
-    background: hsl(var(--code-bg));
+    background: hsl(var(--workbench-editor-bg));
     border: 1px solid hsl(var(--code-border));
     border-radius: var(--radius);
     font-family: var(--font-mono);
@@ -553,6 +555,18 @@
     min-height: 0;
     min-width: 0;
     grid-auto-rows: minmax(0, 1fr);
+  }
+
+  /* Stacked grid (1 column): min-height per panel so each stays usable (VS Code–style responsive). */
+  @media (max-width: 1023px) {
+    .tool-layout-content > .grid.tool-content-grid .tool-panel {
+      min-height: min(12rem, 40vh);
+    }
+  }
+  @media (max-width: 1023px) and (max-height: 480px) {
+    .tool-layout-content > .grid.tool-content-grid .tool-panel {
+      min-height: min(10rem, 35vh);
+    }
   }
 
   .tool-layout-content > .tool-panel {
