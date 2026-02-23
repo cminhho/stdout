@@ -110,6 +110,8 @@
     --spacing-block-gap: 0.5rem;    /* 8px between inline blocks */
     --spacing-code-editor: 0.75rem;
     --spacing-grid-gap: 0.5rem;    /* 8px grid/flex gap */
+    --spacing-tool-layout-x: 0.5rem;  /* 8px horizontal padding for tool layout (dense) */
+    --spacing-tool-layout-y: 0.5rem;  /* 8px vertical padding for tool layout (dense) */
     /* Workbench (VS Code): editor vs panel surfaces; sidebar/activity bar; list focus for nav */
     --workbench-editor-bg: var(--code-bg);
     --workbench-panel-bg: var(--background);
@@ -493,22 +495,17 @@
     max-height: 85vh;
   }
 
-  /* Tool layout: full width/height wrapper. Padded variant uses same tokens as Pane (panel-inner-x/y). */
+  /* Tool layout: full width/height wrapper. Padded variant uses dense tokens (8px base). */
   .tool-layout-inner {
     width: 100%;
     height: 100%;
     min-height: 0;
   }
   .tool-layout-inner--padded {
-    padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
-  }
-  @media (min-width: 768px) {
-    .tool-layout-inner--padded {
-      padding: var(--spacing-content-y-md) var(--spacing-content-x-md);
-    }
+    padding: var(--spacing-tool-layout-y) var(--spacing-tool-layout-x);
   }
   .tool-layout-title {
-    margin-bottom: var(--spacing-title-mb);
+    margin-bottom: var(--spacing-tool-layout-y);
     gap: var(--spacing-block-gap);
   }
   .tool-layout-title h1 {

@@ -362,7 +362,7 @@ const TwoPanelToolLayout = ({
   const hasChromeAbove = formatError || showValidationListResolved || topSection;
 
   return (
-    <ToolLayout title={title} description={description} contentPadding={false}>
+    <ToolLayout title={title} description={description}>
       {hasChromeAbove ? (
         <div
           className={cn(

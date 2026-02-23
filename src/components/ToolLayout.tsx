@@ -1,36 +1,16 @@
 import { ReactNode } from "react";
-import { cn } from "@/utils/cn";
-import { isDesktop } from "@/utils/env";
 
 interface ToolLayoutProps {
-  title: string;
-  description: string;
-  /** When false, no inner padding (e.g. TwoPanelToolLayout uses own Pane spacing). Default true = same padding as Pane (panel-inner-x/y). */
-  contentPadding?: boolean;
+  title?: string;
+  description?: string;
   children: ReactNode;
 }
 
-const ToolLayout = ({ title, description, contentPadding = true, children }: ToolLayoutProps) => {
-  return (
-    <div className="flex-1 flex flex-col min-h-0 overflow-auto">
-      <div
-        className={cn(
-          "tool-layout-inner flex-1 flex flex-col min-h-0 w-full",
-          contentPadding && "tool-layout-inner--padded"
-        )}
-      >
-        {!isDesktop && (
-          <header className="tool-layout-title flex-shrink-0 flex items-baseline flex-wrap">
-            <h1 id="tool-layout-heading">{title}</h1>
-            <span className="tool-layout-description" aria-hidden="true">· {description}</span>
-          </header>
-        )}
-        <div className="tool-layout-content flex-1 flex flex-col min-h-0">
-          {children}
-        </div>
-      </div>
-    </div>
-  );
-};
+/** Single wrapper for all tools: no padding, content fills. */
+const ToolLayout = ({ children }: ToolLayoutProps) => (
+  <div className="tool-layout-content flex-1 flex flex-col min-h-0 overflow-auto w-full">
+    {children}
+  </div>
+);
 
 export default ToolLayout;

@@ -22,10 +22,11 @@ import {
 const DEFAULT_TITLE = "CSS Inliner (Email)";
 const DEFAULT_DESCRIPTION = "Inline CSS styles into HTML for email templates";
 
-/**
- * Single editor pane: header (--spacing-panel-inner-x/y) + body; vertical gap
- * --spacing-panel-gap. Body uses flex-1 min-h-0 so CodeEditor fills (VS Code panel).
- */
+/** Same body structure as ResizableTwoPanel Pane: token-only spacing (panel-inner-x/y), no extra margin/padding. */
+const PANEL_BODY_CLASS = "flex-1 min-h-0 flex flex-col overflow-hidden";
+const PANEL_BODY_INNER_CLASS =
+  "flex-1 min-h-0 flex flex-col overflow-hidden pt-0 pb-[var(--spacing-panel-inner-y)] px-[var(--spacing-panel-inner-x)]";
+
 function EditorPanel({
   label,
   text,
@@ -38,9 +39,11 @@ function EditorPanel({
   children: ReactNode;
 }) {
   return (
-    <div className="tool-panel">
+    <div className="tool-panel flex flex-col min-h-0 overflow-hidden">
       <PanelHeader label={label} text={text} extra={extra} />
-      <div className="flex-1 min-h-0 flex flex-col">{children}</div>
+      <div className={PANEL_BODY_CLASS}>
+        <div className={PANEL_BODY_INNER_CLASS}>{children}</div>
+      </div>
     </div>
   );
 }
@@ -60,7 +63,7 @@ const CssInlinerPage = () => {
       title={tool?.label ?? DEFAULT_TITLE}
       description={tool?.description ?? DEFAULT_DESCRIPTION}
     >
-      {/* Grid: --spacing-grid-gap between columns/rows; --spacing-section-mb below (VS Code 8px base). */}
+      {/* Token-only spacing like TwoPanelToolLayout: tool-content-grid (--spacing-grid-gap), tool-layout-section (--spacing-section-mb). */}
       <div className="grid grid-cols-1 lg:grid-cols-2 tool-content-grid tool-layout-section flex-1 min-h-0">
         <EditorPanel
           label="HTML"
