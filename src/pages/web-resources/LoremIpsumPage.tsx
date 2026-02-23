@@ -1,8 +1,8 @@
 import { useState, useCallback } from "react";
 import ToolLayout from "@/components/ToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
+import ToolPane from "@/components/ToolPane";
 import CodeEditor from "@/components/CodeEditor";
-import PanelHeader from "@/components/PanelHeader";
+import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -51,55 +51,63 @@ const LoremIpsumPage = () => {
     }
   }, [count, unit]);
 
-  const wordCount = output ? output.split(/\s+/).filter(Boolean).length : 0;
+  const pane = {
+    title: output ? `${output.split(/\s+/).filter(Boolean).length} words` : "Output",
+    copyText: output || undefined,
+    onClear: output ? () => setOutput("") : undefined,
+    toolbar: (
+      <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-1.5">
+          <Label className="text-xs text-muted-foreground shrink-0">Count</Label>
+          <Input
+            type="number"
+            min={1}
+            max={100}
+            value={count}
+            onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
+            className="h-7 w-14 font-mono text-xs"
+          />
+        </div>
+        <div className="flex items-center gap-1.5">
+          <Label className="text-xs text-muted-foreground shrink-0">Unit</Label>
+          <Select value={unit} onValueChange={(v) => setUnit(v as typeof unit)}>
+            <SelectTrigger variant="secondary" size="xs" className="w-32">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="paragraphs">Paragraphs</SelectItem>
+              <SelectItem value="sentences">Sentences</SelectItem>
+              <SelectItem value="words">Words</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <Button size="xs" className="h-7 text-xs" onClick={generate}>
+          Generate
+        </Button>
+        {output ? <ClearButton onClick={() => setOutput("")} /> : null}
+      </div>
+    ),
+    children: (
+      <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+        <CodeEditor
+          value={output}
+          readOnly
+          language="text"
+          placeholder="Click Generate to create placeholder text..."
+          fillHeight
+          showLineNumbers={false}
+        />
+      </div>
+    ),
+  };
 
   return (
-    <ToolLayout title={tool?.label ?? "Lorem Ipsum"} description={tool?.description ?? "Generate placeholder text"}>
+    <ToolLayout
+      title={tool?.label ?? "Lorem Ipsum"}
+      description={tool?.description ?? "Generate placeholder text"}
+    >
       <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack">
-        <div className="tool-panel flex flex-col flex-1 min-h-0">
-          <PanelHeader
-            label={output ? `${wordCount} words` : "Output"}
-            text={output}
-            extra={
-              <div className="flex items-center gap-2 flex-wrap">
-                <div className="flex items-center gap-1.5">
-                  <Label className="text-xs text-muted-foreground shrink-0">Count</Label>
-                  <Input
-                    type="number"
-                    min={1}
-                    max={100}
-                    value={count}
-                    onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
-                    className="h-7 w-14 font-mono text-xs"
-                  />
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Label className="text-xs text-muted-foreground shrink-0">Unit</Label>
-                  <Select value={unit} onValueChange={(v) => setUnit(v as typeof unit)}>
-                    <SelectTrigger variant="secondary" size="xs" className="w-32"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="paragraphs">Paragraphs</SelectItem>
-                      <SelectItem value="sentences">Sentences</SelectItem>
-                      <SelectItem value="words">Words</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button size="xs" className="h-7 text-xs" onClick={generate}>Generate</Button>
-                {output ? <ClearButton onClick={() => setOutput("")} /> : null}
-              </div>
-            }
-          />
-          <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
-            <CodeEditor
-              value={output}
-              readOnly
-              language="text"
-              placeholder="Click Generate to create placeholder text..."
-              fillHeight
-              showLineNumbers={false}
-            />
-          </div>
-        </div>
+        <ToolPane pane={pane} />
       </div>
     </ToolLayout>
   );
