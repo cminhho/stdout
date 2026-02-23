@@ -142,27 +142,33 @@ const JsonPathPage = () => {
   return (
     <TwoPanelToolLayout
       topSection={
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="flex items-center gap-1.5 min-w-0">
-            <Label className="text-xs text-muted-foreground shrink-0">JSONPath</Label>
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <Label htmlFor="jsonpath-input" className="text-xs text-muted-foreground shrink-0">
+              JSONPath
+            </Label>
             <Input
-              className="input-compact font-mono flex-1 min-w-[12rem] max-w-md h-7"
+              id="jsonpath-input"
+              className="h-7 font-mono flex-1 min-w-[16rem] max-w-2xl"
               value={pathInput}
               onChange={(e) => setPathInput(e.target.value)}
               placeholder="$..."
+              aria-label="JSONPath expression"
             />
           </div>
-          <span className="text-xs text-muted-foreground shrink-0">Examples:</span>
-          {EXAMPLES.map((ex) => (
-            <button
-              key={ex}
-              type="button"
-              onClick={() => setPathInput(ex)}
-              className="text-xs px-2 py-0.5 rounded bg-muted hover:bg-accent text-muted-foreground hover:text-accent-foreground transition-colors font-mono shrink-0"
-            >
-              {ex}
-            </button>
-          ))}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs text-muted-foreground shrink-0">Examples:</span>
+            {EXAMPLES.map((ex) => (
+              <button
+                key={ex}
+                type="button"
+                onClick={() => setPathInput(ex)}
+                className="text-xs px-2 py-1 rounded border border-border bg-muted/50 text-muted-foreground hover:text-foreground hover:border-border transition-colors font-mono shrink-0"
+              >
+                {ex}
+              </button>
+            ))}
+          </div>
         </div>
       }
       inputPane={{

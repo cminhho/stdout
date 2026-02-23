@@ -1,11 +1,13 @@
 import { useState } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import ToolLayout from "@/components/ToolLayout";
+import ToolPane from "@/components/ToolPane";
+import CodeEditor from "@/components/CodeEditor";
 import { SelectWithOptions } from "@/components/ui/select";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ClearButton } from "@/components/ClearButton";
+import { Label } from "@/components/ui/label";
 import { SaveButton } from "@/components/SaveButton";
 
 const LOG_FORMATS = [
@@ -116,69 +118,72 @@ const LogGeneratorPage = () => {
 
   const lineCount = output ? output.split("\n").length : 0;
 
-  const inputPaneContent = (
-    <div className="flex flex-col gap-4 p-3">
-      <div className="space-y-1.5">
-        <label className="text-xs text-muted-foreground">Format</label>
-        <SelectWithOptions
-          size="xs"
-          variant="secondary"
-          value={format}
-          onValueChange={setFormat}
-          options={LOG_FORMATS.map((f) => ({ value: f.id, label: f.name }))}
-          title="Log format"
-          aria-label="Log format"
-        />
-      </div>
-      {format === "json" && (
-        <div className="space-y-1.5">
-          <label className="text-xs text-muted-foreground">JSON indent</label>
-          <IndentSelect value={indent} onChange={setIndent} />
+  const pane = {
+    title: lineCount ? `Output (${lineCount} lines)` : "Output",
+    copyText: output || undefined,
+    onClear: () => setOutput(""),
+    toolbar: (
+      <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-1.5">
+          <Label className="text-xs text-muted-foreground shrink-0">Format</Label>
+          <SelectWithOptions
+            size="xs"
+            variant="secondary"
+            value={format}
+            onValueChange={setFormat}
+            options={LOG_FORMATS.map((f) => ({ value: f.id, label: f.name }))}
+            title="Log format"
+            aria-label="Log format"
+          />
         </div>
-      )}
-      <div className="space-y-1.5">
-        <label className="text-xs text-muted-foreground">Lines</label>
-        <Input
-          type="number"
-          min={1}
-          max={10000}
-          value={count}
-          onChange={(e) => setCount(Math.max(1, Math.min(10000, Number(e.target.value) || 1)))}
-          className="h-8 w-full font-mono text-xs"
+        {format === "json" && (
+          <div className="flex items-center gap-1.5">
+            <Label className="text-xs text-muted-foreground shrink-0">Indent</Label>
+            <IndentSelect value={indent} onChange={setIndent} />
+          </div>
+        )}
+        <div className="flex items-center gap-1.5">
+          <Label className="text-xs text-muted-foreground shrink-0">Lines</Label>
+          <Input
+            type="number"
+            min={1}
+            max={10000}
+            value={count}
+            onChange={(e) => setCount(Math.max(1, Math.min(10000, Number(e.target.value) || 1)))}
+            className="h-7 w-20 font-mono text-xs"
+          />
+        </div>
+        <Button size="xs" className="h-7 text-xs" onClick={generate}>
+          Generate
+        </Button>
+        {output ? (
+          <SaveButton label="Save .log" onClick={download} className="h-7 text-xs" />
+        ) : null}
+      </div>
+    ),
+    children: (
+      <div className="flex-1 min-h-0 overflow-hidden">
+        <CodeEditor
+          value={output}
+          readOnly
+          language="text"
+          placeholder="Click Generate to create log data..."
+          fillHeight
+          showLineNumbers={false}
         />
       </div>
-      <Button size="xs" onClick={generate}>
-        Generate
-      </Button>
-    </div>
-  );
+    ),
+  };
 
   return (
-    <TwoPanelToolLayout
-      tool={tool}
+    <ToolLayout
       title={tool?.label ?? "Log Generator"}
       description={tool?.description ?? "Generate synthetic log data for testing"}
-      defaultInputPercent={25}
-      inputPane={{
-        title: "Options",
-        children: inputPaneContent,
-      }}
-      outputPane={{
-        title: lineCount ? `Output (${lineCount} lines)` : "Output",
-        copyText: output || undefined,
-        toolbar: (
-          <div className="flex items-center gap-2 flex-wrap">
-            {output && <SaveButton label="Save .log" onClick={download} className="h-7 text-xs" />}
-            {output && <ClearButton onClick={() => setOutput("")} />}
-          </div>
-        ),
-        outputEditor: {
-          value: output,
-          language: "text",
-          placeholder: "Click Generate to create log data...",
-        },
-      }}
-    />
+    >
+      <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack">
+        <ToolPane pane={pane} />
+      </div>
+    </ToolLayout>
   );
 };
 

@@ -36,20 +36,11 @@ const QrCodePage = () => {
     setGenerated(false);
   }, []);
 
-  const topSection = (
-    <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0">
-      <Button size="xs" onClick={generate} disabled={!input.trim()}>
-        Generate QR Code
-      </Button>
-    </div>
-  );
-
   return (
     <TwoPanelToolLayout
       tool={tool}
       title={tool?.label ?? "QR Code"}
       description={tool?.description ?? "Generate QR codes from text or URLs"}
-      topSection={topSection}
       inputPane={{
         title: "Content",
         inputToolbar: {
@@ -58,6 +49,11 @@ const QrCodePage = () => {
           fileAccept: ".txt,text/plain",
           onFileText: setInputAndReset,
         },
+        inputToolbarExtra: (
+          <Button size="xs" onClick={generate} disabled={!input.trim()}>
+            Generate QR Code
+          </Button>
+        ),
         inputEditor: {
           value: input,
           onChange: setInputAndReset,

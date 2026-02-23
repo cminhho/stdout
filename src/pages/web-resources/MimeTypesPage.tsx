@@ -4,6 +4,7 @@ import ToolPane from "@/components/ToolPane";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ClearButton } from "@/components/ClearButton";
 
 // Common MIME types reference (subset of IANA list)
 const MIME_LIST: { type: string; description?: string }[] = [
@@ -68,6 +69,7 @@ const MimeTypesPage = () => {
 
   const pane = {
     title: "MIME Types",
+    toolbar: query ? <ClearButton onClick={() => setQuery("")} /> : undefined,
     children: (
       <div className="flex flex-col gap-4 flex-1 min-h-0 overflow-auto">
         <div className="max-w-md shrink-0">

@@ -1,91 +1,128 @@
 import { useState, useMemo } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { SelectWithOptions } from "@/components/ui/select";
+import ToolLayout from "@/components/ToolLayout";
+import ToolPane from "@/components/ToolPane";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { SelectWithOptions } from "@/components/ui/select";
 import CopyButton from "@/components/CopyButton";
+import { ClearButton } from "@/components/ClearButton";
 import { CSS_UNITS_LIST, CSS_UNITS_DEFAULT_BASE, convertToAllUnits } from "@/utils/cssUnits";
 
 const DEFAULT_TITLE = "CSS Units";
-const DEFAULT_DESCRIPTION = "Convert between CSS units (px, rem, em, vw)";
+const DEFAULT_DESCRIPTION = "Convert between CSS units (px, rem, em, vw, vh, etc.)";
 
 const CssUnitsPage = () => {
   const tool = useCurrentTool();
   const [value, setValue] = useState("16");
   const [fromUnit, setFromUnit] = useState("px");
-  const [baseFontSize, setBaseFontSize] = useState(CSS_UNITS_DEFAULT_BASE);
+  const [baseFontSize, setBaseFontSize] = useState(String(CSS_UNITS_DEFAULT_BASE));
 
   const numVal = parseFloat(value) || 0;
+  const baseNum = parseFloat(baseFontSize) || CSS_UNITS_DEFAULT_BASE;
   const viewport = useMemo(() => ({ width: window.innerWidth, height: window.innerHeight }), []);
   const results = useMemo(
-    () => convertToAllUnits(numVal, fromUnit, baseFontSize, viewport),
-    [numVal, fromUnit, baseFontSize, viewport]
+    () => convertToAllUnits(numVal, fromUnit, baseNum, viewport),
+    [numVal, fromUnit, baseNum, viewport]
   );
 
-  const topSection = (
-    <div className="tool-card space-y-3 max-w-2xl">
-      <div className="flex gap-3 items-end flex-wrap">
-        <div>
-          <label className="text-xs text-muted-foreground block mb-1">Value</label>
-          <input type="number" value={value} onChange={(e) => setValue(e.target.value)} className="input-compact w-28" />
-        </div>
-        <div>
-          <label className="text-xs text-muted-foreground block mb-1">From</label>
-          <SelectWithOptions
-            size="xs"
-            variant="secondary"
-            value={fromUnit}
-            onValueChange={setFromUnit}
-            options={CSS_UNITS_LIST}
-            title="From unit"
-            aria-label="From unit"
-          />
-        </div>
-        <div>
-          <label className="text-xs text-muted-foreground block mb-1">Base font-size</label>
-          <input
-            type="number"
-            value={baseFontSize}
-            onChange={(e) => setBaseFontSize(Number(e.target.value) || CSS_UNITS_DEFAULT_BASE)}
-            className="input-compact w-16"
-          />
-          <span className="text-xs text-muted-foreground ml-1">px</span>
-        </div>
-      </div>
-    </div>
-  );
+  const isDefault =
+    value === "16" && fromUnit === "px" && baseFontSize === String(CSS_UNITS_DEFAULT_BASE);
 
-  return (
-    <TwoPanelToolLayout
-      tool={tool}
-      title={tool?.label ?? DEFAULT_TITLE}
-      description={tool?.description ?? DEFAULT_DESCRIPTION}
-      topSection={topSection}
-      defaultInputPercent={35}
-      inputPane={{
-        title: "Input",
-        children: (
-          <div className="p-2 text-xs text-muted-foreground">
-            Set value, source unit, and base font-size above. All conversions appear in the right panel.
+  const resetToDefault = () => {
+    setValue("16");
+    setFromUnit("px");
+    setBaseFontSize(String(CSS_UNITS_DEFAULT_BASE));
+  };
+
+  const unitOptions = CSS_UNITS_LIST.map((u) => ({ value: u, label: u }));
+
+  const pane = {
+    title: DEFAULT_TITLE,
+    toolbar: !isDefault ? <ClearButton onClick={resetToDefault} /> : undefined,
+    children: (
+      <div className="flex flex-col gap-6 flex-1 min-h-0 overflow-hidden">
+        <section className="space-y-3 shrink-0" aria-label="Input">
+          <p className="text-xs text-muted-foreground">
+            Enter a value and source unit. Base font-size is used for rem/em. Results update live.
+          </p>
+          <div className="flex flex-wrap items-end gap-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="css-units-value" className="text-xs text-muted-foreground">
+                Value
+              </Label>
+              <Input
+                id="css-units-value"
+                type="number"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                className="w-28 h-7 font-mono text-xs"
+                aria-label="Numeric value"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="css-units-from" className="text-xs text-muted-foreground">
+                From unit
+              </Label>
+              <SelectWithOptions
+                size="xs"
+                variant="secondary"
+                value={fromUnit}
+                onValueChange={setFromUnit}
+                options={unitOptions}
+                title="From unit"
+                aria-label="From unit"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="css-units-base" className="text-xs text-muted-foreground">
+                Base font-size (px)
+              </Label>
+              <div className="flex items-center gap-1.5">
+                <Input
+                  id="css-units-base"
+                  type="number"
+                  min={1}
+                  value={baseFontSize}
+                  onChange={(e) => setBaseFontSize(e.target.value || String(CSS_UNITS_DEFAULT_BASE))}
+                  className="w-16 h-7 font-mono text-xs"
+                  aria-label="Base font size in pixels"
+                />
+                <span className="text-xs text-muted-foreground">px</span>
+              </div>
+            </div>
           </div>
-        ),
-      }}
-      outputPane={{
-        title: "Conversions",
-        children: (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 p-2 overflow-auto">
+        </section>
+
+        <section className="flex-1 min-h-0 flex flex-col" aria-label="Conversions">
+          <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider shrink-0 mb-2">
+            Conversions
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 overflow-auto min-h-0">
             {results.map((r) => (
-              <div key={r.unit} className="tool-card flex items-center justify-between">
-                <div>
-                  <div className="font-mono text-sm font-medium text-primary">{r.value}</div>
+              <div
+                key={r.unit}
+                className="flex items-center justify-between gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2"
+              >
+                <div className="min-w-0">
+                  <div className="font-mono text-sm font-medium truncate">{r.value}</div>
                   <div className="text-xs text-muted-foreground">{r.unit}</div>
                 </div>
                 <CopyButton text={`${r.value}${r.unit}`} />
               </div>
             ))}
           </div>
-        ),
-      }}
-    />
+        </section>
+      </div>
+    ),
+  };
+
+  return (
+    <ToolLayout title={tool?.label ?? DEFAULT_TITLE} description={tool?.description ?? DEFAULT_DESCRIPTION}>
+      <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack">
+        <ToolPane pane={pane} />
+      </div>
+    </ToolLayout>
   );
 };
 

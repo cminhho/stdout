@@ -7,8 +7,10 @@ const PANEL_BODY_INNER_BASE =
   "flex-1 min-h-0 flex flex-col overflow-hidden pt-0 pb-[var(--spacing-panel-inner-y)]";
 
 function getPanelBodyInnerClass(resizerSide?: "left" | "right"): string {
+  /* Output pane (resizer on left): small gap next to resizer, full inner-x on right for system alignment */
   if (resizerSide === "left")
     return cn(PANEL_BODY_INNER_BASE, "pl-[var(--spacing-panel-resizer-gap)] pr-[var(--spacing-panel-inner-x)]");
+  /* Input pane (resizer on right): full inner-x on left, small gap next to resizer */
   if (resizerSide === "right")
     return cn(PANEL_BODY_INNER_BASE, "pl-[var(--spacing-panel-inner-x)] pr-[var(--spacing-panel-resizer-gap)]");
   return cn(PANEL_BODY_INNER_BASE, "px-[var(--spacing-panel-inner-x)]");
@@ -54,6 +56,7 @@ export function ToolPane({ pane, className, style, resizerSide }: ToolPaneProps)
           text={pane.copyText}
           onClear={pane.onClear}
           extra={pane.toolbar}
+          className={resizerSide === "left" ? "pl-[var(--spacing-panel-resizer-gap)] pr-[var(--spacing-panel-inner-x)]" : undefined}
         />
       )}
       <div className={PANEL_BODY_CLASS}>
