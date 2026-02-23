@@ -1,21 +1,15 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import ResizableTwoPanel from "@/components/ResizableTwoPanel";
 import TwoPanelTopSection from "@/components/TwoPanelTopSection";
 import ToolResultCard from "@/components/ToolResultCard";
-import CopyButton from "@/components/CopyButton";
-import { buildEditorPaneProps } from "@/components/toolPaneBuilders";
+import DiffLineList, { type DiffLineEntry } from "@/components/DiffLineList";
+import { useTwoPanelCompare } from "@/hooks/useTwoPanelCompare";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
+import { formatDiffSummary, formatDiffEntriesForCopy, IDENTICAL_MESSAGE_CLASS } from "@/utils/compareResultHelpers";
 
 const SAMPLE_A = '{"id": 1, "name": "test", "roles": ["admin"]}';
 const SAMPLE_B = '{"id": "1", "email": "x@y.z", "roles": ["user"]}';
-
-interface DiffEntry {
-  path: string;
-  type: "added" | "removed" | "changed";
-  oldValue?: string;
-  newValue?: string;
-}
 
 function getType(val: unknown): string {
   if (val === null) return "null";
@@ -23,8 +17,8 @@ function getType(val: unknown): string {
   return typeof val;
 }
 
-function diffObjects(a: unknown, b: unknown, path = ""): DiffEntry[] {
-  const entries: DiffEntry[] = [];
+function diffObjects(a: unknown, b: unknown, path = ""): DiffLineEntry[] {
+  const entries: DiffLineEntry[] = [];
   const typeA = getType(a);
   const typeB = getType(b);
   if (typeA !== typeB) {
@@ -56,16 +50,23 @@ function diffObjects(a: unknown, b: unknown, path = ""): DiffEntry[] {
   return entries;
 }
 
-function diffLine(d: DiffEntry): string {
-  const prefix = d.type === "added" ? "+" : d.type === "removed" ? "-" : "~";
-  const suffix = d.type === "changed" ? ` (${d.oldValue} → ${d.newValue})` : d.type === "added" ? ` (${d.newValue})` : ` (${d.oldValue})`;
-  return `${prefix} ${d.path}${suffix}`;
-}
+const LEFT_CONFIG = {
+  title: "Schema A (JSON)",
+  sample: SAMPLE_A,
+  placeholder: '{"id": 1, "name": "test"}',
+  fileAccept: ".json,application/json",
+} as const;
+
+const RIGHT_CONFIG = {
+  title: "Schema B (JSON)",
+  sample: SAMPLE_B,
+  placeholder: '{"id": "1", "email": "x@y.z"}',
+  fileAccept: ".json,application/json",
+} as const;
 
 const SchemaDiffPage = () => {
   const tool = useCurrentTool();
-  const [left, setLeft] = useState("");
-  const [right, setRight] = useState("");
+  const { left, right, leftPane, rightPane } = useTwoPanelCompare(LEFT_CONFIG, RIGHT_CONFIG);
 
   const result = useMemo(() => {
     if (!left.trim() || !right.trim()) return null;
@@ -76,34 +77,6 @@ const SchemaDiffPage = () => {
     }
   }, [left, right]);
 
-  const diffText = result?.diff.map(diffLine).join("\n") ?? "";
-
-  const leftPane = useMemo(
-    () =>
-      buildEditorPaneProps({
-        title: "Schema A (JSON)",
-        value: left,
-        onChange: setLeft,
-        onSample: () => setLeft(SAMPLE_A),
-        placeholder: '{"id": 1, "name": "test"}',
-        fileAccept: ".json,application/json",
-      }),
-    [left]
-  );
-
-  const rightPane = useMemo(
-    () =>
-      buildEditorPaneProps({
-        title: "Schema B (JSON)",
-        value: right,
-        onChange: setRight,
-        onSample: () => setRight(SAMPLE_B),
-        placeholder: '{"id": "1", "email": "x@y.z"}',
-        fileAccept: ".json,application/json",
-      }),
-    [right]
-  );
-
   return (
     <ToolLayout title={tool?.label ?? "Schema Diff"} description={tool?.description ?? "Compare two JSON schemas side by side"}>
       <TwoPanelTopSection formatError={result?.error ? new Error(result.error) : undefined} />
@@ -111,34 +84,13 @@ const SchemaDiffPage = () => {
 
       {result && !result.error && (
         <ToolResultCard
-          summary={
-            result.diff.length === 0
-              ? undefined
-              : `${result.diff.length} difference${result.diff.length !== 1 ? "s" : ""}`
-          }
-          copyText={result.diff.length > 0 ? diffText : undefined}
+          summary={formatDiffSummary(result.diff.length)}
+          copyText={result.diff.length > 0 ? formatDiffEntriesForCopy(result.diff) : undefined}
         >
           {result.diff.length === 0 ? (
-            <p className="text-sm text-muted-foreground">✓ Schemas are identical</p>
+            <p className={IDENTICAL_MESSAGE_CLASS}>✓ Schemas are identical</p>
           ) : (
-            <div className="space-y-1">
-              {result.diff.map((d, i) => (
-                <div
-                  key={i}
-                  className={`text-xs font-mono ${d.type === "added" ? "text-primary" : d.type === "removed" ? "text-destructive" : "text-accent-foreground"}`}
-                >
-                  <span className="inline-block w-24">
-                    {d.type === "added" ? "+ Added" : d.type === "removed" ? "- Removed" : "~ Changed"}
-                  </span>
-                  <span className="text-foreground">{d.path}</span>
-                  {d.type === "changed" && (
-                    <span className="text-muted-foreground ml-2">({d.oldValue} → {d.newValue})</span>
-                  )}
-                  {d.type === "added" && <span className="text-muted-foreground ml-2">({d.newValue})</span>}
-                  {d.type === "removed" && <span className="text-muted-foreground ml-2">({d.oldValue})</span>}
-                </div>
-              ))}
-            </div>
+            <DiffLineList entries={result.diff} />
           )}
         </ToolResultCard>
       )}

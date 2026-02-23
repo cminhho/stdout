@@ -84,18 +84,18 @@ const RegexTesterPage = () => {
   }, [pattern, flags, testString, result]);
 
   return (
-    <ToolLayout title={tool?.label ?? "Regex Tester"} description={tool?.description ?? "Test regular expressions with live matching"}>
+    <ToolLayout title={tool?.label ?? "Regex Tester"} description={tool?.description ?? "Test regular expressions with live matching (JS engine; use \\ for escapes as in Java)"}>
       <div className="space-y-3">
         {/* Pattern & Flags */}
         <div className="tool-card space-y-3">
           <div className="flex gap-2 items-end">
             <div className="flex-1">
-              <label className="text-xs text-muted-foreground mb-1 block">Pattern</label>
+              <label className="text-xs text-muted-foreground mb-1 block">Pattern (use \\ for escapes, e.g. Java/JS)</label>
               <div className="flex items-center rounded-md border bg-background border-border focus-within:ring-1 focus-within:ring-ring">
                 <span className="text-muted-foreground text-sm pl-3 select-none">/</span>
                 <Input
                   className="flex-1 min-w-0 border-0 bg-transparent px-1 py-2 text-sm font-mono focus-visible:ring-0 focus-visible:ring-offset-0"
-                  placeholder="e.g. (\\d+)-(\\w+)"
+                  placeholder="e.g. (\\d{4})-(\\d{2}) or \\d{4}-\\d{2}-\\d{2}"
                   value={pattern}
                   onChange={(e) => setPattern(e.target.value)}
                 />

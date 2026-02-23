@@ -1,11 +1,12 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import ResizableTwoPanel from "@/components/ResizableTwoPanel";
 import TwoPanelTopSection from "@/components/TwoPanelTopSection";
 import ToolResultCard from "@/components/ToolResultCard";
 import CodeEditor from "@/components/CodeEditor";
-import { buildEditorPaneProps } from "@/components/toolPaneBuilders";
+import { useTwoPanelCompare } from "@/hooks/useTwoPanelCompare";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
+import { formatDiffSummary, IDENTICAL_MESSAGE_CLASS } from "@/utils/compareResultHelpers";
 
 const SAMPLE_A = '{"status": "ok", "data": [1, 2, 3], "count": 3}';
 const SAMPLE_B = '{"status": "error", "data": [1, 2], "count": 2}';
@@ -53,10 +54,23 @@ function diffLine(d: Diff): string {
   return `${d.type} ${d.path}: ${d.type === "changed" ? `${JSON.stringify(d.oldVal)} → ${JSON.stringify(d.newVal)}` : JSON.stringify(d.newVal ?? d.oldVal)}`;
 }
 
+const LEFT_CONFIG = {
+  title: "Payload A",
+  sample: SAMPLE_A,
+  placeholder: '{"status": "ok", "data": [1,2,3]}',
+  fileAccept: ".json,application/json",
+} as const;
+
+const RIGHT_CONFIG = {
+  title: "Payload B",
+  sample: SAMPLE_B,
+  placeholder: '{"status": "error", "data": [1,2]}',
+  fileAccept: ".json,application/json",
+} as const;
+
 const PayloadComparatorPage = () => {
   const tool = useCurrentTool();
-  const [left, setLeft] = useState("");
-  const [right, setRight] = useState("");
+  const { left, right, leftPane, rightPane } = useTwoPanelCompare(LEFT_CONFIG, RIGHT_CONFIG);
 
   const result = useMemo(() => {
     if (!left.trim() || !right.trim()) return null;
@@ -69,32 +83,6 @@ const PayloadComparatorPage = () => {
 
   const diffText = result?.diffs.map(diffLine).join("\n") ?? "";
 
-  const leftPane = useMemo(
-    () =>
-      buildEditorPaneProps({
-        title: "Payload A",
-        value: left,
-        onChange: setLeft,
-        onSample: () => setLeft(SAMPLE_A),
-        placeholder: '{"status": "ok", "data": [1,2,3]}',
-        fileAccept: ".json,application/json",
-      }),
-    [left]
-  );
-
-  const rightPane = useMemo(
-    () =>
-      buildEditorPaneProps({
-        title: "Payload B",
-        value: right,
-        onChange: setRight,
-        onSample: () => setRight(SAMPLE_B),
-        placeholder: '{"status": "error", "data": [1,2]}',
-        fileAccept: ".json,application/json",
-      }),
-    [right]
-  );
-
   return (
     <ToolLayout title={tool?.label ?? "Payload Comparator"} description={tool?.description ?? "Compare two JSON payloads and highlight differences"}>
       <TwoPanelTopSection formatError={result?.error ? new Error(result.error) : undefined} />
@@ -102,15 +90,11 @@ const PayloadComparatorPage = () => {
 
       {result && !result.error && (
         <ToolResultCard
-          summary={
-            result.diffs.length === 0
-              ? undefined
-              : `${result.diffs.length} difference${result.diffs.length !== 1 ? "s" : ""}`
-          }
+          summary={formatDiffSummary(result.diffs.length)}
           copyText={result.diffs.length > 0 ? diffText : undefined}
         >
           {result.diffs.length === 0 ? (
-            <p className="text-sm text-muted-foreground">✓ Payloads are identical</p>
+            <p className={IDENTICAL_MESSAGE_CLASS}>✓ Payloads are identical</p>
           ) : (
             <div className="min-h-0 flex flex-col max-h-[50vh] rounded border overflow-hidden border-[hsl(var(--code-border))] bg-[hsl(var(--code-bg))]">
               <CodeEditor value={diffText} readOnly language="text" fillHeight />
