@@ -21,4 +21,14 @@ contextBridge.exposeInMainWorld("electronAPI", {
       return () => ipcRenderer.removeListener("menu:check-updates", handler);
     },
   },
+  // Auto-updater (packaged app only): check, install, and status events.
+  updater: {
+    check: () => ipcRenderer.invoke("updater:check"),
+    quitAndInstall: () => ipcRenderer.invoke("updater:quitAndInstall"),
+    onStatus: (cb) => {
+      const handler = (_ev, payload) => cb(payload);
+      ipcRenderer.on("updater:status", handler);
+      return () => ipcRenderer.removeListener("updater:status", handler);
+    },
+  },
 });

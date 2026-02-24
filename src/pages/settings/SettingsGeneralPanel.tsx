@@ -1,18 +1,15 @@
-import { Palette, LayoutList, Info, Heart, ExternalLink, Loader2, RefreshCw } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Info, Heart, ExternalLink, Loader2, RefreshCw, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSettings } from "@/hooks/useSettings";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import { SITE } from "@/site";
-import { cn } from "@/utils/cn";
 import type { LatestRelease } from "@/utils/version";
-import {
-  THEMES,
-  SIDEBAR_MODES,
-  UPDATE_BUTTON_LOADING_LABEL,
-  UPDATE_BUTTON_LABEL,
-} from "./constants";
+import { UPDATE_BUTTON_LOADING_LABEL, UPDATE_BUTTON_LABEL } from "./constants";
 
 export type UpdateCheckState = "idle" | "loading" | "current" | "available" | "error";
+
+type ElectronUpdaterStatus = "idle" | "checking" | "available" | "downloading" | "downloaded" | "not-available" | "error";
 
 type SettingsGeneralPanelProps = {
   currentVersion: string;
@@ -21,6 +18,9 @@ type SettingsGeneralPanelProps = {
   onCheckForUpdates: () => void;
 };
 
+const electronAPI = typeof window !== "undefined" ? window.electronAPI : undefined;
+const hasElectronUpdater = !!electronAPI?.updater;
+
 const SettingsGeneralPanel = ({
   currentVersion,
   updateCheck,
@@ -28,78 +28,92 @@ const SettingsGeneralPanel = ({
   onCheckForUpdates,
 }: SettingsGeneralPanelProps) => {
   const settings = useSettings();
+  const [electronStatus, setElectronStatus] = useState<ElectronUpdaterStatus>("idle");
+  const [electronVersion, setElectronVersion] = useState<string | null>(null);
+  const [electronError, setElectronError] = useState<string | null>(null);
+  const [downloadPercent, setDownloadPercent] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!hasElectronUpdater) return;
+    const unsub = electronAPI!.updater!.onStatus((payload) => {
+      setElectronStatus(payload.event);
+      if (payload.version) setElectronVersion(payload.version);
+      if (payload.message) setElectronError(payload.message);
+      if (payload.percent != null) setDownloadPercent(payload.percent);
+    });
+    return unsub;
+  }, []);
+
+  const handleCheckForUpdates = () => {
+    if (hasElectronUpdater) {
+      setElectronError(null);
+      setElectronVersion(null);
+      setDownloadPercent(null);
+      setElectronStatus("checking");
+      electronAPI!.updater!.check().then((result) => {
+        if (result?.error && result.error !== "not-packaged") setElectronError(result.error);
+        if (result?.updateInfo?.version) setElectronVersion(result.updateInfo.version);
+      });
+    } else {
+      onCheckForUpdates();
+    }
+  };
+
+  const handleQuitAndInstall = () => {
+    electronAPI?.updater?.quitAndInstall();
+  };
+
+  const isElectronChecking = hasElectronUpdater && (electronStatus === "checking" || electronStatus === "downloading");
+  const isElectronDownloaded = hasElectronUpdater && electronStatus === "downloaded";
+  const showWebUpdate = !hasElectronUpdater;
+  const checkButtonDisabled = updateCheck === "loading" || isElectronChecking;
+  const checkButtonLabel = isElectronDownloaded
+    ? "Restart to install"
+    : isElectronChecking
+      ? (electronStatus === "downloading" && downloadPercent != null ? `Downloading… ${Math.round(downloadPercent)}%` : "Checking…")
+      : updateCheck === "loading"
+        ? UPDATE_BUTTON_LOADING_LABEL
+        : UPDATE_BUTTON_LABEL;
 
   return (
     <div id="settings-general" role="tabpanel" aria-labelledby="tab-general" className="settings-panel">
-      <section aria-labelledby="settings-theme-heading" className="settings-section">
-        <h2 id="settings-theme-heading" className="settings-section-heading">
-          <Palette className="h-4 w-4 text-primary" aria-hidden />
-          Theme
-        </h2>
-        <div className="settings-option-grid grid grid-cols-2 sm:grid-cols-4" role="group" aria-label="Theme selection">
-          {THEMES.map((t) => (
-            <button
-              key={t.value}
-              type="button"
-              onClick={() => settings.setTheme(t.value)}
-              aria-pressed={settings.theme === t.value}
-              className={cn("settings-option-card", settings.theme === t.value && "settings-option-card--selected")}
-            >
-              <div className="settings-label">{t.label}</div>
-              <div className="settings-body-text mt-1">{t.desc}</div>
-            </button>
-          ))}
-        </div>
-      </section>
-
-      <section aria-labelledby="settings-sidebar-heading" className="settings-section">
-        <h2 id="settings-sidebar-heading" className="settings-section-heading">
-          <LayoutList className="h-4 w-4 text-primary" aria-hidden />
-          Sidebar Layout
-        </h2>
-        <div className="settings-option-grid grid grid-cols-2" role="group" aria-label="Sidebar layout">
-          {SIDEBAR_MODES.map((m) => (
-            <button
-              key={m.value}
-              type="button"
-              onClick={() => settings.setSidebarMode(m.value)}
-              aria-pressed={settings.sidebarMode === m.value}
-              className={cn("settings-option-card", settings.sidebarMode === m.value && "settings-option-card--selected")}
-            >
-              <div className="settings-label">{m.label}</div>
-              <div className="settings-body-text mt-1">{m.desc}</div>
-            </button>
-          ))}
-        </div>
-      </section>
-
-      <section aria-labelledby="settings-about-heading" className="settings-section">
-        <h2 id="settings-about-heading" className="settings-section-heading">
+      <section aria-labelledby="settings-update-heading" className="settings-section">
+        <h2 id="settings-update-heading" className="settings-section-heading">
           <Info className="h-4 w-4 text-primary" aria-hidden />
-          About
+          App Update
         </h2>
-        <div className="settings-section-content flex flex-col gap-3">
+        <div className="settings-section-content flex flex-col gap-2">
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <span className="settings-label">stdout v{currentVersion}</span>
-            <Button
-              variant="outline"
-              size="xs"
-              onClick={onCheckForUpdates}
-              disabled={updateCheck === "loading"}
-              aria-label="Check for updates"
-            >
-              {updateCheck === "loading" ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
-              ) : (
-                <RefreshCw className="h-3.5 w-3.5" aria-hidden />
-              )}
-              <span>{updateCheck === "loading" ? UPDATE_BUTTON_LOADING_LABEL : UPDATE_BUTTON_LABEL}</span>
-            </Button>
+            {isElectronDownloaded ? (
+              <Button size="xs" onClick={handleQuitAndInstall} aria-label="Restart to install update">
+                <Download className="h-3.5 w-3.5" aria-hidden />
+                <span>Restart to install</span>
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                size="xs"
+                onClick={handleCheckForUpdates}
+                disabled={checkButtonDisabled}
+                aria-label="Check for updates"
+              >
+                {checkButtonDisabled ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
+                ) : (
+                  <RefreshCw className="h-3.5 w-3.5" aria-hidden />
+                )}
+                <span>{checkButtonLabel}</span>
+              </Button>
+            )}
           </div>
-          {updateCheck === "current" && latestRelease && (
+          {showWebUpdate && updateCheck === "current" && latestRelease && (
             <p className="settings-body-text">You're on the latest version.</p>
           )}
-          {updateCheck === "available" && latestRelease && (
+          {hasElectronUpdater && electronStatus === "not-available" && (
+            <p className="settings-body-text">You're on the latest version.</p>
+          )}
+          {showWebUpdate && updateCheck === "available" && latestRelease && (
             <p className="settings-body-text">
               <a
                 href={latestRelease.url}
@@ -111,8 +125,19 @@ const SettingsGeneralPanel = ({
               </a>
             </p>
           )}
-          {updateCheck === "error" && (
+          {hasElectronUpdater && (electronStatus === "available" || electronStatus === "downloading") && electronVersion && (
+            <p className="settings-body-text">
+              Version {electronVersion} available — downloading…
+            </p>
+          )}
+          {hasElectronUpdater && electronStatus === "downloaded" && electronVersion && (
+            <p className="settings-body-text">Version {electronVersion} downloaded. Restart the app to install.</p>
+          )}
+          {showWebUpdate && updateCheck === "error" && (
             <p className="settings-body-text">Could not check for updates. Try again later.</p>
+          )}
+          {hasElectronUpdater && electronStatus === "error" && (
+            <p className="settings-body-text">{electronError || "Could not check for updates. Try again later."}</p>
           )}
           <div className="settings-body-text">
             A modular, plugin-based developer tool platform built with React, TypeScript, and Tailwind CSS.
@@ -128,7 +153,7 @@ const SettingsGeneralPanel = ({
           Support the project
         </h2>
         <div className="settings-section-content">
-          <p className="settings-body-text mb-2">
+          <p className="settings-body-text mb-1.5">
             stdout is open source (MIT). If it's useful to you, consider supporting development:
           </p>
           <Button variant="outline" size="xs" asChild>

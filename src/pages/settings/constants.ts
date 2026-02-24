@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { Settings, Wrench } from "lucide-react";
+import { Settings, Palette, Wrench } from "lucide-react";
 import type { Theme, SidebarMode } from "@/contexts/settingsStore";
 
 export const DEFAULT_TITLE = "Settings";
@@ -9,7 +9,7 @@ export const UPDATE_BUTTON_LABEL = "Check for updates";
 export const SEARCH_PLACEHOLDER = "Search tools...";
 export const SHOW_ALL_LABEL = "Show All";
 
-export type SettingsTabId = "general" | "tools";
+export type SettingsTabId = "general" | "appearance" | "tools";
 
 export const SETTINGS_TABS: {
   id: SettingsTabId;
@@ -18,6 +18,7 @@ export const SETTINGS_TABS: {
   panelId: string;
 }[] = [
   { id: "general", label: "General", icon: Settings, panelId: "settings-general" },
+  { id: "appearance", label: "Appearance", icon: Palette, panelId: "settings-appearance" },
   { id: "tools", label: "Manage Tools", icon: Wrench, panelId: "settings-tools" },
 ];
 

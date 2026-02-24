@@ -47,6 +47,7 @@
     "release:major": "node scripts/release.mjs major"
   },
   "dependencies": {
+    "electron-updater": "^6.3.9",
     "@radix-ui/react-checkbox": "^1.3.2",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-popover": "^1.1.15",
@@ -129,7 +130,11 @@
       "dist/**/*",
       "electron/**/*"
     ],
-    "publish": null,
+    "publish": {
+      "provider": "github",
+      "owner": "cminhho",
+      "repo": "stdout"
+    },
     "asar": true
   }
 }
