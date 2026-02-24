@@ -46,6 +46,8 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   const setSidebarMode = (sidebarMode: SidebarMode) => setState((s) => ({ ...s, sidebarMode }));
   const setSidebarCollapsed = (sidebarCollapsed: boolean) => setState((s) => ({ ...s, sidebarCollapsed }));
   const toggleSidebar = () => setState((s) => ({ ...s, sidebarCollapsed: !s.sidebarCollapsed }));
+  const setEditorFont = (editorFont: string) => setState((s) => ({ ...s, editorFont }));
+  const setWordWrap = (wordWrap: boolean) => setState((s) => ({ ...s, wordWrap }));
 
   const toggleTool = (path: string) =>
     setState((s) => ({
@@ -60,7 +62,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <SettingsContext.Provider
-      value={{ ...state, setTheme, setSidebarMode, setSidebarCollapsed, toggleSidebar, toggleTool, setAllToolsVisible, isToolVisible }}
+      value={{ ...state, setTheme, setSidebarMode, setSidebarCollapsed, toggleSidebar, toggleTool, setAllToolsVisible, isToolVisible, setEditorFont, setWordWrap }}
     >
       {children}
     </SettingsContext.Provider>

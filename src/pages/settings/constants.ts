@@ -23,13 +23,23 @@ export const SETTINGS_TABS: {
 ];
 
 export const THEMES: { value: Theme; label: string; desc: string }[] = [
+  { value: "system", label: "Auto", desc: "Follow OS preference" },
   { value: "light", label: "Light", desc: "Light background with dark text" },
   { value: "dark", label: "Dark", desc: "Dark background with light text" },
   { value: "deep-dark", label: "Deep dark", desc: "Near-black, easy on the eyes" },
-  { value: "system", label: "System", desc: "Follow OS preference" },
 ];
 
 export const SIDEBAR_MODES: { value: SidebarMode; label: string; desc: string }[] = [
   { value: "grouped", label: "Grouped", desc: "Tools organized in collapsible groups" },
   { value: "flat", label: "Flat", desc: "All tools listed without group headers" },
+];
+
+/** Font options for text editor (font-family). Value is CSS font-family. */
+export const EDITOR_FONTS: { value: string; label: string }[] = [
+  { value: "ui-monospace, ui-serif, monospace", label: "System monospace" },
+  { value: "Menlo, Monaco, 'Courier New', monospace", label: "Menlo" },
+  { value: "'SF Mono', 'Fira Code', 'Cascadia Code', monospace", label: "SF Mono" },
+  { value: "'JetBrains Mono', monospace", label: "JetBrains Mono" },
+  { value: "'Fira Code', monospace", label: "Fira Code" },
+  { value: "'Cascadia Code', monospace", label: "Cascadia Code" },
 ];
