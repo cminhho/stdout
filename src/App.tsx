@@ -1,10 +1,14 @@
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, HashRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { SettingsProvider } from "@/contexts/SettingsContext";
+import { SIDEBAR_WIDTH_MIN, SIDEBAR_WIDTH_MAX } from "@/contexts/settingsStore";
 import AppSidebar from "@/components/AppSidebar";
+import PanelResizer from "@/components/PanelResizer";
 import WindowTitleBar from "@/components/WindowTitleBar";
+import { useSettings } from "@/hooks/useSettings";
+import { useSidebarResize } from "@/hooks/useSidebarResize";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import { useToolTracking } from "@/hooks/useToolTracking";
 import SettingsPage from "@/pages/settings";
@@ -59,6 +63,40 @@ const ToolRoutes = () => {
   );
 };
 
+const DesktopLayout = () => {
+  const layoutRef = useRef<HTMLDivElement>(null);
+  const { sidebarCollapsed, sidebarWidth, setSidebarWidth } = useSettings();
+  const { widthPx, onMouseDown, onKeyDown } = useSidebarResize(layoutRef, {
+    minPx: SIDEBAR_WIDTH_MIN,
+    maxPx: SIDEBAR_WIDTH_MAX,
+    value: sidebarWidth,
+    onChange: setSidebarWidth,
+  });
+
+  const resizerPercent =
+    ((widthPx - SIDEBAR_WIDTH_MIN) / (SIDEBAR_WIDTH_MAX - SIDEBAR_WIDTH_MIN)) * 100;
+
+  return (
+    <div className="desktop-layout flex flex-1 min-h-0 overflow-hidden min-w-0" ref={layoutRef}>
+      <AppSidebar sidebarWidthPx={sidebarCollapsed ? undefined : widthPx} />
+      {!sidebarCollapsed && (
+        <PanelResizer
+          orientation="vertical"
+          percent={resizerPercent}
+          minPercent={0}
+          maxPercent={100}
+          ariaLabel="Resize sidebar"
+          onMouseDown={onMouseDown}
+          onKeyDown={onKeyDown}
+        />
+      )}
+      <main className="flex-1 min-h-0 min-w-0 overflow-auto flex flex-col">
+        <ToolRoutes />
+      </main>
+    </div>
+  );
+};
+
 const App = () => {
   return (
     <TooltipProvider>
@@ -67,12 +105,7 @@ const App = () => {
           <Toaster />
           <div className="flex flex-col h-screen overflow-hidden min-w-0">
             <WindowTitleBar />
-            <div className="desktop-layout flex flex-1 min-h-0 overflow-hidden min-w-0">
-              <AppSidebar />
-              <main className="flex-1 min-h-0 min-w-0 overflow-auto flex flex-col">
-                <ToolRoutes />
-              </main>
-            </div>
+            <DesktopLayout />
           </div>
         </SettingsProvider>
       </Router>

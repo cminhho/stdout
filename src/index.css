@@ -104,7 +104,7 @@
     --spacing-panel-gap: var(--home-space-sm);    /* 8px between panel header and body */
     --spacing-panel-inner-x: var(--home-space-md);     /* 16px horizontal padding inside each pane */
     --spacing-panel-inner-y: 0.75rem;  /* 12px vertical padding inside pane body */
-    --spacing-panel-resizer-gap: var(--home-space-xs); /* 4px between pane content and resizer */
+    --spacing-panel-resizer-gap: var(--home-space-sm); /* 8px between pane content and resizer */
     --spacing-toolbar-mb: var(--home-space-sm);   /* 8px below toolbar */
     --spacing-title-mb: var(--home-space-sm);     /* 8px below page title */
     --spacing-section-mb: var(--home-space-sm);   /* 8px between sections */
@@ -152,9 +152,9 @@
     --title-bar-font-size: 0.8125rem;   /* 13px – macOS/VS Code title */
     --title-bar-traffic-light-width: 72px; /* macOS: reserve for system controls */
     --title-bar-end-spacer: var(--home-space-xl); /* 32px right drag region */
-    --panel-resizer-width: 16px;      /* two-panel divider hit area (VS Code) */
+    --panel-resizer-width: 0;        /* visual width/height: 0, only border line; hit area via padding */
     --panel-min-width: 120px;        /* min width per pane when side-by-side */
-    --spacing-two-panel-gap: 0;      /* gap between panes and resizer (0 = flush, VS Code) */
+    --spacing-two-panel-gap: var(--home-space-sm); /* 8px gap between panes and resizer */
     --sidebar-item-min-height: 22px;   /* nav item height (VS Code) */
     --sidebar-search-height: 1.5rem;   /* 24px – compact, aligns with sidebar density */
     /* Sidebar spacing: 8px grid, aligned with --home-space-* (macOS-style) */
@@ -372,10 +372,18 @@
     color: hsl(var(--foreground));
   }
 
-  /* Global focus-visible fallback: ring from token (buttons/inputs often set own ring) */
+  /* Global focus-visible fallback: ring from token (buttons/links etc.; inputs excluded below) */
   :focus-visible {
     outline: none;
     box-shadow: 0 0 0 2px hsl(var(--ring));
+  }
+
+  /* No focus ring on form controls (input, select, textarea) */
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: none;
+    box-shadow: none;
   }
 
   body {
@@ -528,7 +536,7 @@
   }
 
   .tool-textarea {
-    @apply w-full rounded-xl border font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background resize-y transition-colors duration-150;
+    @apply w-full rounded-xl border font-mono leading-relaxed resize-y transition-colors duration-150;
     padding: var(--spacing-code-editor);
     font-size: var(--text-content);
     background: hsl(var(--code-bg));
@@ -680,10 +688,10 @@
     padding: 0;
   }
 
-  /* Resize panels separator: token width, full height; theme border (VS Code). */
+  /* Resize panels separator: width/height 0, only border line visible; hit area via padding. */
   .panel-resizer {
     margin: 0;
-    padding: 0;
+    padding: 0 8px;
     width: var(--panel-resizer-width);
     min-width: var(--panel-resizer-width);
     background: transparent;
@@ -709,10 +717,11 @@
   .panel-resizer:focus-visible .panel-resizer-line {
     background: hsl(var(--primary) / 0.8);
   }
-  /* Horizontal resizer (stacked/small screen): full width, fixed height */
+  /* Horizontal resizer (stacked/small screen): full width, height 0, hit area via padding */
   .panel-resizer--horizontal {
     width: 100%;
     min-width: 0;
+    padding: 8px 0;
     height: var(--panel-resizer-width);
     min-height: var(--panel-resizer-width);
   }
@@ -1320,7 +1329,7 @@
   }
 
   .tool-select {
-    @apply h-9 rounded-lg px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background transition-colors duration-150 cursor-pointer;
+    @apply h-9 rounded-lg px-3 py-2 font-medium transition-colors duration-150 cursor-pointer;
     background: hsl(var(--background));
     color: hsl(var(--foreground));
     border: 1px solid hsl(var(--input));
@@ -1334,7 +1343,7 @@
 
   /* Standard input for tool pages – same as control-base */
   .input-compact {
-    @apply h-9 rounded-lg px-3 py-2 font-mono ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-150;
+    @apply h-9 rounded-lg px-3 py-2 font-mono placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-150;
     background: hsl(var(--background));
     color: hsl(var(--foreground));
     border: 1px solid hsl(var(--input));

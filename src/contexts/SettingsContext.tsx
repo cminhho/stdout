@@ -1,5 +1,5 @@
 import { useState, useEffect, ReactNode } from "react";
-import { SettingsContext, loadSettings, saveSettings, type Theme, type SidebarMode } from "./settingsStore";
+import { SettingsContext, loadSettings, saveSettings, clampSidebarWidth, type Theme, type SidebarMode } from "./settingsStore";
 
 export type { Theme, SidebarMode } from "./settingsStore";
 
@@ -52,6 +52,8 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   const setSidebarMode = (sidebarMode: SidebarMode) => setState((s) => ({ ...s, sidebarMode }));
   const setSidebarCollapsed = (sidebarCollapsed: boolean) => setState((s) => ({ ...s, sidebarCollapsed }));
   const toggleSidebar = () => setState((s) => ({ ...s, sidebarCollapsed: !s.sidebarCollapsed }));
+  const setSidebarWidth = (sidebarWidth: number) =>
+    setState((s) => ({ ...s, sidebarWidth: clampSidebarWidth(sidebarWidth) }));
   const setEditorFont = (editorFont: string) => setState((s) => ({ ...s, editorFont }));
   const setWordWrap = (wordWrap: boolean) => setState((s) => ({ ...s, wordWrap }));
 
@@ -68,7 +70,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <SettingsContext.Provider
-      value={{ ...state, setTheme, setSidebarMode, setSidebarCollapsed, toggleSidebar, toggleTool, setAllToolsVisible, isToolVisible, setEditorFont, setWordWrap }}
+      value={{ ...state, setTheme, setSidebarMode, setSidebarCollapsed, toggleSidebar, setSidebarWidth, toggleTool, setAllToolsVisible, isToolVisible, setEditorFont, setWordWrap }}
     >
       {children}
     </SettingsContext.Provider>

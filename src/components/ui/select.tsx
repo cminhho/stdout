@@ -12,12 +12,12 @@ const SelectGroup = SelectPrimitive.Group;
 const SelectValue = SelectPrimitive.Value;
 
 const selectTriggerVariants = cva(
-  "flex w-full items-center justify-between gap-2 rounded-md border border-border ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 transition-colors duration-150 [&_svg]:shrink-0",
+  "flex w-full items-center justify-between gap-2 rounded-[var(--radius-button)] border placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 transition-colors duration-150 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "border-outlineButton-border bg-outlineButton-bg text-outlineButton-foreground hover:bg-muted hover:text-foreground focus:bg-outlineButton-bg",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:bg-secondary",
+        default: "border-outlineButton-border bg-outlineButton-bg text-outlineButton-foreground hover:bg-muted hover:text-foreground",
+        secondary: "border-input bg-background text-foreground hover:bg-muted/50 hover:border-border",
       },
       size: {
         default: "h-9 w-full min-w-0 px-2.5 py-2 text-sm [&_svg]:h-3.5 [&_svg]:w-3.5",
@@ -129,7 +129,7 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-md py-1.5 pl-7 pr-2 text-sm text-popover-foreground outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 focus:bg-listFocus focus:text-foreground transition-colors duration-150",
+      "relative flex w-full cursor-default select-none items-center rounded-md py-1.5 pl-7 pr-2 text-sm text-popover-foreground outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 transition-colors duration-150",
       className,
     )}
     {...props}

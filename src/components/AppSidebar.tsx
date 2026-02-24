@@ -119,7 +119,12 @@ const SidebarGroupSection = ({
   );
 };
 
-const AppSidebar = () => {
+interface AppSidebarProps {
+  /** When expanded, use this width (px) so resizer can control it. */
+  sidebarWidthPx?: number;
+}
+
+const AppSidebar = ({ sidebarWidthPx }: AppSidebarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
@@ -136,7 +141,12 @@ const AppSidebar = () => {
     return visibleItems.filter((item) => item.label.toLowerCase().includes(search.toLowerCase()));
   }, [search, visibleItems]);
 
-  const width = sidebarCollapsed ? "var(--sidebar-width-collapsed)" : "var(--sidebar-width-expanded)";
+  const width =
+    sidebarCollapsed
+      ? "var(--sidebar-width-collapsed)"
+      : sidebarWidthPx != null
+        ? `${sidebarWidthPx}px`
+        : "var(--sidebar-width-expanded)";
   const isCollapsed = sidebarCollapsed;
 
   return (
