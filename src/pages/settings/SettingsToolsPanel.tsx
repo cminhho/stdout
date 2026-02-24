@@ -30,18 +30,19 @@ const SettingsToolsPanel = () => {
       <div role="search" aria-label="Filter tools" className="settings-tools-toolbar">
         <Input
           type="search"
+          size="sm"
           aria-label="Search tools"
           placeholder={SEARCH_PLACEHOLDER}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="flex-1"
         />
-        <Button variant="outline" size="xs" onClick={settings.setAllToolsVisible}>
+        <Button variant="outline" size="sm" onClick={settings.setAllToolsVisible}>
           {SHOW_ALL_LABEL}
         </Button>
       </div>
 
-      <p className="settings-body-text mb-2" aria-live="polite" aria-atomic="true">
+      <p className="settings-body-text mb-1.5" aria-live="polite" aria-atomic="true">
         {visibleCount} of {tools.length} tools visible in sidebar
       </p>
 

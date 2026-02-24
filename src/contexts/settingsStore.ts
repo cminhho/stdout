@@ -8,6 +8,8 @@ export interface SettingsState {
   sidebarMode: SidebarMode;
   sidebarCollapsed: boolean;
   hiddenTools: string[];
+  editorFont: string;
+  wordWrap: boolean;
 }
 
 export interface SettingsContextType extends SettingsState {
@@ -18,6 +20,8 @@ export interface SettingsContextType extends SettingsState {
   toggleTool: (path: string) => void;
   setAllToolsVisible: () => void;
   isToolVisible: (path: string) => boolean;
+  setEditorFont: (font: string) => void;
+  setWordWrap: (wrap: boolean) => void;
 }
 
 const STORAGE_KEY = "stdout-settings";
@@ -27,6 +31,8 @@ const defaults: SettingsState = {
   sidebarMode: "grouped",
   sidebarCollapsed: false,
   hiddenTools: [],
+  editorFont: "ui-monospace, ui-serif, monospace",
+  wordWrap: false,
 };
 
 export function loadSettings(): SettingsState {
@@ -39,6 +45,8 @@ export function loadSettings(): SettingsState {
         sidebarMode: parsed.sidebarMode ?? defaults.sidebarMode,
         sidebarCollapsed: parsed.sidebarCollapsed ?? defaults.sidebarCollapsed,
         hiddenTools: Array.isArray(parsed.hiddenTools) ? parsed.hiddenTools : defaults.hiddenTools,
+        editorFont: typeof parsed.editorFont === "string" ? parsed.editorFont : defaults.editorFont,
+        wordWrap: typeof parsed.wordWrap === "boolean" ? parsed.wordWrap : defaults.wordWrap,
       };
     }
   } catch { /* invalid stored settings */ }

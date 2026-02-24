@@ -42,10 +42,18 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     return () => mq.removeEventListener("change", handler);
   }, [state.theme]);
 
+  useEffect(() => {
+    const root = document.documentElement;
+    const value = state.editorFont?.trim() || "ui-monospace, ui-serif, monospace";
+    root.style.setProperty("--font-mono", value);
+  }, [state.editorFont]);
+
   const setTheme = (theme: Theme) => setState((s) => ({ ...s, theme }));
   const setSidebarMode = (sidebarMode: SidebarMode) => setState((s) => ({ ...s, sidebarMode }));
   const setSidebarCollapsed = (sidebarCollapsed: boolean) => setState((s) => ({ ...s, sidebarCollapsed }));
   const toggleSidebar = () => setState((s) => ({ ...s, sidebarCollapsed: !s.sidebarCollapsed }));
+  const setEditorFont = (editorFont: string) => setState((s) => ({ ...s, editorFont }));
+  const setWordWrap = (wordWrap: boolean) => setState((s) => ({ ...s, wordWrap }));
 
   const toggleTool = (path: string) =>
     setState((s) => ({
@@ -60,7 +68,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <SettingsContext.Provider
-      value={{ ...state, setTheme, setSidebarMode, setSidebarCollapsed, toggleSidebar, toggleTool, setAllToolsVisible, isToolVisible }}
+      value={{ ...state, setTheme, setSidebarMode, setSidebarCollapsed, toggleSidebar, toggleTool, setAllToolsVisible, isToolVisible, setEditorFont, setWordWrap }}
     >
       {children}
     </SettingsContext.Provider>

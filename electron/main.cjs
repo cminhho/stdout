@@ -6,8 +6,45 @@ const APP_NAME = "stdout";
 const isDev = process.env.NODE_ENV === "development" || !app.isPackaged;
 const isMac = process.platform === "darwin";
 
+/** @type {import("electron-updater").AutoUpdater | null} */
+let autoUpdater = null;
+function getAutoUpdater() {
+  if (autoUpdater != null) return autoUpdater;
+  if (!app.isPackaged) return null;
+  try {
+    autoUpdater = require("electron-updater").autoUpdater;
+    autoUpdater.autoDownload = true;
+    autoUpdater.autoInstallOnAppQuit = true;
+    return autoUpdater;
+  } catch {
+    return null;
+  }
+}
+
+function sendUpdaterStatus(win, event, payload) {
+  if (win?.webContents && !win.webContents.isDestroyed()) {
+    win.webContents.send("updater:status", { event, ...payload });
+  }
+}
+
+/** @type {import("electron").BrowserWindow | null} */
+let mainWindow = null;
+
 function getFocusedWindow() {
   return BrowserWindow.getFocusedWindow();
+}
+
+function setupAutoUpdater() {
+  const updater = getAutoUpdater();
+  if (!updater) return;
+  const win = () => mainWindow || getFocusedWindow() || BrowserWindow.getAllWindows()[0];
+
+  updater.on("checking-for-update", () => sendUpdaterStatus(win(), "checking", {}));
+  updater.on("update-available", (info) => sendUpdaterStatus(win(), "available", { version: info?.version }));
+  updater.on("update-not-available", (info) => sendUpdaterStatus(win(), "not-available", { version: info?.version }));
+  updater.on("download-progress", (p) => sendUpdaterStatus(win(), "downloading", { percent: p.percent }));
+  updater.on("update-downloaded", (info) => sendUpdaterStatus(win(), "downloaded", { version: info?.version }));
+  updater.on("error", (err) => sendUpdaterStatus(win(), "error", { message: err?.message || String(err) }));
 }
 
 function getAppVersion() {
@@ -114,7 +151,7 @@ function setMacOSApplicationMenu() {
 function createWindow() {
   const iconPath = path.join(__dirname, isDev ? "../public/favicon.svg" : "../dist/favicon.svg");
 
-  const win = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1280,
     height: 800,
     title: APP_NAME,
@@ -132,24 +169,50 @@ function createWindow() {
     },
   });
 
-  win.setTitle(APP_NAME);
-  win.on("page-title-updated", (ev) => {
+  mainWindow.setTitle(APP_NAME);
+  mainWindow.on("page-title-updated", (ev) => {
     ev.preventDefault();
-    win.setTitle(APP_NAME);
+    mainWindow.setTitle(APP_NAME);
   });
 
   if (isMac) setMacOSApplicationMenu();
   else Menu.setApplicationMenu(null);
 
+  mainWindow.on("closed", () => { mainWindow = null; });
+
+  // Check for updates shortly after load (packaged app only)
+  if (!isDev && getAutoUpdater()) {
+    mainWindow.webContents.once("did-finish-load", () => {
+      setTimeout(() => getAutoUpdater()?.checkForUpdates(), 4000);
+    });
+  }
+
   if (isDev) {
-    win.loadURL("http://localhost:8080");
-    win.webContents.openDevTools();
+    mainWindow.loadURL("http://localhost:8080");
+    mainWindow.webContents.openDevTools();
   } else {
     const indexPath = path.join(__dirname, "../dist/index.html").replace(/\\/g, "/");
     const fileUrl = indexPath.startsWith("/") ? `file://${indexPath}#/` : `file:///${indexPath}#/`;
-    win.loadURL(fileUrl);
+    mainWindow.loadURL(fileUrl);
   }
 }
+
+// Auto-updater: only in packaged app
+setupAutoUpdater();
+ipcMain.handle("updater:check", async () => {
+  const updater = getAutoUpdater();
+  if (!updater) return { done: true, error: "not-packaged" };
+  try {
+    const result = await updater.checkForUpdates();
+    return { done: true, updateInfo: result?.updateInfo ?? null };
+  } catch (e) {
+    return { done: true, error: e?.message ?? String(e) };
+  }
+});
+ipcMain.handle("updater:quitAndInstall", () => {
+  const updater = getAutoUpdater();
+  if (updater) updater.quitAndInstall(false, true);
+});
 
 // Custom window controls when frame: false (Windows/Linux)
 ipcMain.handle("window:close", () => getFocusedWindow()?.close());
