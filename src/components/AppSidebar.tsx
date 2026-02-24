@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
-  ArrowLeftRight, Braces, CheckCircle2, ChevronRight, Code2, FileCode, Globe, Image, Lock,
+  ArrowLeftRight, Braces, CheckCircle2, ChevronRight, Code2, FileCode, Globe, Home, Image, Lock,
   Search, Shuffle, TerminalSquare, Type, Coffee,
 } from "lucide-react";
 import {
@@ -154,6 +154,21 @@ const AppSidebar = () => {
       </div>
 
       <nav className="flex-1 min-h-0 sidebar-pad overflow-y-auto min-w-0 space-y-0.5" aria-label="Tools">
+        <div className="mb-1.5 pb-1.5 border-b border-sidebar-border">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <NavLink
+                to="/"
+                className={`sidebar-link ${location.pathname === "/" ? "active" : ""}`}
+                end
+              >
+                <Home className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
+                <span className="min-w-0 truncate">Home</span>
+              </NavLink>
+            </TooltipTrigger>
+            <TooltipContent side="right">Tool overview and search</TooltipContent>
+          </Tooltip>
+        </div>
         {search && searchResults !== null ? (
           searchResults.length > 0 ? (
             <div className="space-y-0.5">

@@ -1,7 +1,7 @@
 import { Suspense, useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { BrowserRouter, HashRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter, HashRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import AppSidebar from "@/components/AppSidebar";
 import WindowTitleBar from "@/components/WindowTitleBar";
@@ -14,11 +14,19 @@ import HomePage from "@/pages/HomePage";
 const useHashRouter = typeof window !== "undefined" && window.location?.protocol === "file:";
 const Router = useHashRouter ? HashRouter : BrowserRouter;
 
+const APP_TITLE = "stdout";
+
 const ToolRoutes = () => {
+  const location = useLocation();
   const { tools } = useToolEngine();
   const navigate = useNavigate();
 
   useToolTracking();
+
+  useEffect(() => {
+    const segment = location.pathname === "/" ? "Home" : location.pathname === "/settings" ? "Settings" : tools.find((t) => t.path === location.pathname)?.label;
+    document.title = segment ? `${segment} — ${APP_TITLE}` : APP_TITLE;
+  }, [location.pathname, tools]);
 
   useEffect(() => {
     const menu = (window as { electronAPI?: { menu?: { onOpenSettings: (cb: () => void) => () => void; onCheckUpdates: (cb: () => void) => () => void } } }).electronAPI?.menu;

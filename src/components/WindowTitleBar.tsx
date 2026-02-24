@@ -15,7 +15,12 @@ const WindowTitleBar = () => {
   const electron = typeof window !== "undefined" ? window.electronAPI : undefined;
   const isMac = electron?.platform === "darwin";
   const win = electron?.window;
-  const title = location.pathname === "/" ? "stdout" : (tools.find((t) => t.path === location.pathname)?.label ?? "stdout");
+  const title =
+    location.pathname === "/"
+      ? "Home"
+      : location.pathname === "/settings"
+        ? "Settings"
+        : tools.find((t) => t.path === location.pathname)?.label ?? "stdout";
 
   return (
     <header
