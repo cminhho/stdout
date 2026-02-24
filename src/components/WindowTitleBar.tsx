@@ -40,7 +40,7 @@ const WindowTitleBar = () => {
       </div>
       {isMac && <div className="title-bar-traffic-light-spacer shrink-0" style={noDrag} />}
       {!isMac && win && (
-        <div className="flex items-center gap-1.5 shrink-0" style={noDrag}>
+        <div className="flex items-center gap-2 shrink-0" style={noDrag}>
           {[
             { ariaLabel: "Close", className: "bg-[#ff5f57]", onClick: () => win.close() },
             { ariaLabel: "Minimize", className: "bg-[#febc2e]", onClick: () => win.minimize() },

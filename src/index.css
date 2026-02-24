@@ -84,10 +84,11 @@
 
     --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
     --font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
-    /* Typography scale (across pages) */
+    /* Typography scale (across pages, macOS-style) */
     --text-nav: 0.75rem;
     --text-ui: 0.8125rem;
     --text-content: 0.875rem;
+    --text-caption: 0.6875rem;   /* 11px – labels, badges, compact UI */
     /* Responsive: breakpoints align with Tailwind (sm 640px, md 768px, lg 1024px) */
     --bp-sm: 640px;
     --bp-md: 768px;
@@ -100,17 +101,17 @@
     --spacing-content-y: 1rem;      /* 16px */
     --spacing-content-x-md: 1.5rem; /* 24px @ md */
     --spacing-content-y-md: 1.25rem;
-    --spacing-panel-gap: 0.5rem;    /* 8px between panel header and body */
-    --spacing-panel-inner-x: 1rem;     /* 16px horizontal padding inside each pane */
+    --spacing-panel-gap: var(--home-space-sm);    /* 8px between panel header and body */
+    --spacing-panel-inner-x: var(--home-space-md);     /* 16px horizontal padding inside each pane */
     --spacing-panel-inner-y: 0.75rem;  /* 12px vertical padding inside pane body */
-    --spacing-panel-resizer-gap: 0.25rem; /* 4px between pane content and resizer */
-    --spacing-toolbar-mb: 0.5rem;   /* 8px below toolbar (VS Code density) */
-    --spacing-title-mb: 0.5rem;     /* 8px below page title */
-    --spacing-section-mb: 0.5rem;   /* 8px between sections */
-    --spacing-block-gap: 0.5rem;    /* 8px between inline blocks */
+    --spacing-panel-resizer-gap: var(--home-space-xs); /* 4px between pane content and resizer */
+    --spacing-toolbar-mb: var(--home-space-sm);   /* 8px below toolbar */
+    --spacing-title-mb: var(--home-space-sm);     /* 8px below page title */
+    --spacing-section-mb: var(--home-space-sm);   /* 8px between sections */
+    --spacing-block-gap: var(--home-space-sm);    /* 8px between inline blocks */
     --spacing-code-editor: 0.75rem;
-    --spacing-grid-gap: 0.5rem;    /* 8px grid/flex gap */
-    --spacing-tool-layout-x: 0.5rem;  /* 8px horizontal padding for tool layout (dense) */
+    --spacing-grid-gap: var(--home-space-sm);    /* 8px grid/flex gap */
+    --spacing-tool-layout-x: var(--home-space-sm);  /* 8px horizontal padding for tool layout */
     /* Home hub: system design scale (8px grid, industry + macOS) */
     --home-space-xs: 0.25rem;   /* 4px */
     --home-space-sm: 0.5rem;   /* 8px */
@@ -125,10 +126,12 @@
     --home-tools-header-gap: var(--home-space-sm);
     --home-footer-padding-y: var(--home-space-xl);
     --home-footer-padding-y-md: var(--home-space-2xl);
+    /* Radius scale (macOS-style: card 8px, small 4px) */
+    --radius-sm: 0.25rem;   /* 4px – scrollbar thumb, small chips */
     /* Settings: reuse home scale (8px grid, macOS-style) for consistency */
     --settings-radius: var(--home-radius-card);
     --settings-panel-gap: var(--home-space-md);
-    --spacing-tool-layout-y: 0.5rem;  /* 8px vertical padding for tool layout (dense) */
+    --spacing-tool-layout-y: var(--home-space-sm);  /* 8px vertical padding for tool layout */
     /* Workbench (VS Code): editor vs panel surfaces; sidebar/activity bar; list focus for nav */
     --workbench-editor-bg: var(--code-bg);
     --workbench-panel-bg: var(--background);
@@ -143,22 +146,25 @@
     /* Sidebar: VS Code–aligned widths and density */
     --sidebar-width-collapsed: 48px;   /* activity bar width */
     --sidebar-width-expanded: 272px;   /* primary sidebar (slightly wider than VS Code default) */
-    --title-bar-height: 35px;           /* VS Code custom title bar */
-    --title-bar-padding-x: 0.5rem;      /* 8px horizontal (8px grid) */
-    --title-bar-gap: 0.25rem;           /* 4px between chrome buttons */
-    --title-bar-font-size: 0.8125rem;   /* 13px – VS Code title */
+    --title-bar-height: 35px;           /* macOS-style title bar height */
+    --title-bar-padding-x: var(--home-space-sm);   /* 8px horizontal (8px grid) */
+    --title-bar-gap: var(--home-space-xs);         /* 4px between chrome buttons */
+    --title-bar-font-size: 0.8125rem;   /* 13px – macOS/VS Code title */
     --title-bar-traffic-light-width: 72px; /* macOS: reserve for system controls */
-    --title-bar-end-spacer: 2rem;     /* 32px right drag region */
+    --title-bar-end-spacer: var(--home-space-xl); /* 32px right drag region */
     --panel-resizer-width: 16px;      /* two-panel divider hit area (VS Code) */
     --panel-min-width: 120px;        /* min width per pane when side-by-side */
     --spacing-two-panel-gap: 0;      /* gap between panes and resizer (0 = flush, VS Code) */
     --sidebar-item-min-height: 22px;   /* nav item height (VS Code) */
     --sidebar-search-height: 1.5rem;   /* 24px – compact, aligns with sidebar density */
-    --spacing-sidebar-x: 0.5rem;   /* 8px horizontal (tighter) */
-    --spacing-sidebar-y: 0.5rem;   /* 8px vertical block */
-    --spacing-sidebar-gap: 0.25rem;
-    --spacing-sidebar-indent: 0.5rem;
-    --spacing-sidebar-item-y: 0.25rem; /* 4px item vertical → ~22px with line */
+    /* Sidebar spacing: 8px grid, aligned with --home-space-* (macOS-style) */
+    --spacing-sidebar-x: var(--home-space-sm);
+    --spacing-sidebar-y: var(--home-space-sm);
+    --spacing-sidebar-gap: var(--home-space-xs);
+    --spacing-sidebar-indent: var(--home-space-sm);
+    --spacing-sidebar-item-y: var(--home-space-xs);
+    --sidebar-radius: var(--home-radius-card);   /* macOS-style radius for search, links, donate */
+    --radius-button: var(--home-radius-card);   /* macOS-style radius for buttons (toolbar, actions) */
     --spacing-sidebar-header-h: 1.75rem; /* 28px min height for panel header */
     --spacing-footer-min-h: 2.25rem;    /* 36px min height for sidebar footer */
     /* Liquid Glass (desktop): blur + visible edge */
@@ -441,15 +447,15 @@
     background: hsl(var(--header-tab-bg));
     border: 1px solid hsl(var(--border));
     border-bottom: none;
-    border-radius: 6px 6px 0 0;
-    padding: 0 10px;
+    border-radius: var(--home-radius-card) var(--home-radius-card) 0 0;
+    padding: 0 var(--home-space-md);
     min-height: 24px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
   }
   .desktop-title-bar .desktop-title-plain {
-    padding: 0 6px;
+    padding: 0 var(--home-space-sm);
   }
   .desktop-title-bar .title-bar-traffic-light-spacer {
     width: var(--title-bar-traffic-light-width);
@@ -472,7 +478,7 @@
   }
   html.desktop ::-webkit-scrollbar-thumb {
     background: hsl(0 0% 50% / 0.4);
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
   }
   html.desktop ::-webkit-scrollbar-thumb:hover {
     background: hsl(0 0% 50% / 0.55);
@@ -492,12 +498,12 @@
   @media (max-width: 1023px) {
     :root {
       --spacing-panel-inner-x: 0.75rem;
-      --spacing-panel-inner-y: 0.5rem;
+      --spacing-panel-inner-y: var(--home-space-sm);
     }
   }
   @media (max-width: 639px) {
     :root {
-      --spacing-panel-inner-x: 0.5rem;
+      --spacing-panel-inner-x: var(--home-space-sm);
       --spacing-panel-inner-y: 0.375rem;
     }
   }
@@ -740,7 +746,7 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-block-gap);
-    padding: 0.625rem 1rem;
+    padding: var(--home-space-sm) var(--home-space-md);
     font-size: var(--text-ui);
     font-weight: 500;
     color: hsl(var(--muted-foreground));
@@ -763,9 +769,9 @@
     border-bottom-color: hsl(var(--primary));
   }
   .settings-option-card {
-    border-radius: 0.25rem;
+    border-radius: var(--radius-sm);
     border: 1px solid hsl(var(--border));
-    padding: 0.25rem 0.375rem;
+    padding: var(--home-space-xs) var(--home-space-sm);
     text-align: left;
     cursor: pointer;
     background: hsl(var(--background));
@@ -773,11 +779,11 @@
     transition: border-color 0.15s ease, background 0.15s ease;
   }
   .settings-option-card .settings-label {
-    font-size: 0.6875rem;
+    font-size: var(--text-caption);
   }
   .settings-option-card .settings-body-text {
     font-size: 0.625rem;
-    margin-top: 0.0625rem;
+    margin-top: var(--home-space-xs);
   }
   .settings-option-card:hover {
     background: hsl(var(--muted) / 0.5);
@@ -785,7 +791,7 @@
   }
   .settings-option-card:focus-visible {
     outline: none;
-    border-radius: 0.25rem;
+    border-radius: var(--radius-sm);
     box-shadow: 0 0 0 2px hsl(var(--ring));
   }
   .settings-option-card--selected {
@@ -796,22 +802,22 @@
   .settings-section-heading {
     display: flex;
     align-items: center;
-    gap: 0.375rem;
-    font-size: 0.6875rem;
+    gap: var(--home-space-sm);
+    font-size: var(--text-caption);
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
     color: hsl(var(--muted-foreground));
-    margin-bottom: 0.1875rem;
+    margin-bottom: var(--home-space-xs);
   }
   .settings-section-heading svg {
-    width: 0.75rem;
-    height: 0.75rem;
+    width: var(--text-nav);
+    height: var(--text-nav);
     opacity: 0.9;
   }
   .settings-option-grid {
     display: grid;
-    gap: 0.25rem;
+    gap: var(--home-space-xs);
   }
   .settings-panel {
     display: flex;
@@ -1094,7 +1100,7 @@
   }
   .pref-section__heading {
     margin: 0 0 var(--home-space-sm);
-    font-size: 0.6875rem;
+    font-size: var(--text-caption);
     font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -1141,7 +1147,7 @@
   }
   .pref-description {
     margin: var(--home-space-xs) 0 0;
-    font-size: 0.6875rem;
+    font-size: var(--text-caption);
     line-height: 1.4;
     color: hsl(var(--muted-foreground));
   }
@@ -1185,12 +1191,12 @@
     color: hsl(var(--primary-foreground));
   }
   .settings-section-heading {
-    font-size: 0.75rem;
-    margin-bottom: 0.375rem;
+    font-size: var(--text-nav);
+    margin-bottom: var(--home-space-sm);
   }
   .settings-section-heading svg {
-    width: 0.875rem;
-    height: 0.875rem;
+    width: var(--text-content);
+    height: var(--text-content);
   }
   /* Tablet: slightly tighter so dialog doesn’t feel cramped */
   @media (max-width: 768px) {
@@ -1360,12 +1366,13 @@
     min-height: var(--spacing-footer-min-h);
   }
 
-  /* Sidebar nav items: VS Code–aligned height, active by background only */
+  /* Sidebar nav items: macOS-style radius, 8px grid, typography from design tokens */
   .sidebar-link {
-    @apply flex items-center rounded-md transition-colors duration-150 min-w-0;
-    gap: 0.5rem;
+    @apply flex items-center transition-colors duration-150 min-w-0;
+    gap: var(--home-space-sm);
     min-height: var(--sidebar-item-min-height);
     padding: var(--spacing-sidebar-item-y) var(--spacing-sidebar-x);
+    border-radius: var(--sidebar-radius);
     font-size: var(--text-nav);
     font-weight: 500;
     color: hsl(var(--sidebar-foreground));
@@ -1387,19 +1394,19 @@
   }
   .sidebar-link--icon-only {
     justify-content: center;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-left: var(--home-space-sm);
+    padding-right: var(--home-space-sm);
   }
   .sidebar-collapsed .sidebar-link--icon-only {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-left: var(--home-space-sm);
+    padding-right: var(--home-space-sm);
   }
   .sidebar-group-trigger {
     cursor: pointer;
   }
   .sidebar-donate-link--icon-only {
     justify-content: center;
-    padding: 0.5rem;
+    padding: var(--home-space-sm);
   }
 
   /* Activity bar (collapsed): VS Code–style left accent on active item */
@@ -1410,9 +1417,9 @@
     border-left-color: hsl(var(--sidebar-active-border));
   }
 
-  /* Sidebar section headers (group labels): VS Code–style uppercase, letter-spacing, muted */
+  /* Sidebar section headers (group labels): macOS-style caption, uppercase, muted */
   .sidebar-group-label {
-    font-size: 0.6875rem;
+    font-size: var(--text-nav);
     font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -1423,12 +1430,12 @@
     color: inherit;
   }
 
-  /* Sidebar search: compact, theme-aligned with nav density (--sidebar-search-height) */
+  /* Sidebar search: macOS-style radius, 8px grid, glass-like input */
   .sidebar-search {
     height: var(--sidebar-search-height);
-    padding: 0 0.5rem 0 1.5rem;
+    padding: 0 var(--home-space-sm) 0 1.75rem;
     font-size: var(--text-nav);
-    border-radius: 6px;
+    border-radius: var(--sidebar-radius);
     border: 1px solid hsl(var(--sidebar-border));
     background: hsl(var(--sidebar-accent) / 0.5);
     color: hsl(var(--sidebar-foreground));
@@ -1443,14 +1450,29 @@
     box-shadow: 0 0 0 1px hsl(var(--sidebar-ring));
   }
 
-  /* Chrome icon buttons (sidebar + title bar): VS Code/Linear/Notion – token-based, consistent */
+  /* Sidebar search results label and empty state: macOS-style typography */
+  .sidebar-results-label {
+    font-size: var(--text-nav);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: hsl(var(--muted-foreground));
+    padding: 0 var(--spacing-sidebar-x) var(--home-space-xs);
+  }
+  .sidebar-empty {
+    font-size: var(--text-nav);
+    color: hsl(var(--muted-foreground));
+    text-align: center;
+    padding: var(--home-space-lg) var(--spacing-sidebar-x);
+  }
+
+  /* Chrome icon buttons (sidebar + title bar): macOS-style radius, 8px grid */
   .btn-icon-chrome {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 2rem;
     height: 2rem;
-    border-radius: 6px;
+    border-radius: var(--radius-button);
     color: hsl(var(--muted-foreground));
     transition: color 0.15s, background-color 0.15s, opacity 0.15s;
   }
@@ -1466,16 +1488,16 @@
     height: 1.75rem;
   }
 
-  /* Sidebar donate CTA: xs size, compact, VS Code/Linear/Notion style */
+  /* Sidebar donate CTA: macOS-style radius, 8px grid, compact */
   .sidebar-donate-link {
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: var(--home-space-xs);
     min-width: 0;
-    padding: 0.25rem 0.5rem;
-    font-size: 0.6875rem;
+    padding: var(--home-space-xs) var(--home-space-sm);
+    font-size: var(--text-nav);
     font-weight: 500;
-    border-radius: 4px;
+    border-radius: var(--sidebar-radius);
     border: 1px solid hsl(var(--sidebar-border));
     background: hsl(var(--sidebar-accent) / 0.6);
     color: hsl(var(--sidebar-foreground));
@@ -1492,8 +1514,8 @@
     box-shadow: 0 0 0 2px hsl(var(--sidebar-ring));
   }
   .sidebar-donate-link-icon {
-    width: 0.75rem;
-    height: 0.75rem;
+    width: var(--text-nav);
+    height: var(--text-nav);
     flex-shrink: 0;
     color: hsl(38 92% 50%);
   }
@@ -1522,6 +1544,23 @@
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     border-right: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));
     box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / var(--glass-highlight));
+  }
+
+  /* macOS-style glass sidebar on desktop: apply glass to main app sidebar */
+  html.desktop .app-sidebar {
+    background: hsl(var(--sidebar-background) / 0.42);
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    border-right: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));
+    box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / var(--glass-highlight));
+  }
+  html.desktop.light .app-sidebar {
+    background: hsl(var(--sidebar-background) / 0.5);
+    border-right: 1px solid hsl(0 0% 0% / var(--glass-border-opacity));
+    box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / 0.6);
+  }
+  html.desktop.deep-dark .app-sidebar {
+    background: hsl(var(--sidebar-background) / 0.5);
   }
 
   /* Reusable Liquid Glass surface (e.g. cards, panels in desktop app) */
@@ -1654,7 +1693,7 @@
 
   /* Section labels: uppercase, muted (macOS-style group headers) */
   .home-section-label {
-    font-size: 0.6875rem;
+    font-size: var(--text-caption);
     font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -1756,7 +1795,7 @@
   }
   .home-footer-text {
     margin: 0;
-    font-size: 0.6875rem;
+    font-size: var(--text-caption);
     font-weight: 500;
     letter-spacing: 0.02em;
     color: hsl(var(--muted-foreground) / 0.9);

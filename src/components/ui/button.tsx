@@ -5,8 +5,9 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/utils/cn";
 
+/* macOS-style: 8px grid spacing, --radius-button (--home-radius-card), typography tokens */
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-3.5 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-3.5 [&_svg]:shrink-0 rounded-[var(--radius-button)]",
   {
     variants: {
       variant: {
@@ -18,9 +19,9 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline active:opacity-90",
       },
       size: {
-        default: "h-9 px-3 py-2",
-        sm: "h-8 px-2 py-1.5 text-sm",
-        xs: "h-7 px-2 py-1 text-xs [&_svg]:size-3",
+        default: "h-9 px-4 py-2",
+        sm: "h-8 px-3 py-2 text-sm",
+        xs: "h-7 px-2 py-1.5 text-xs [&_svg]:size-3",
         lg: "h-10 px-5 py-2",
         icon: "h-9 w-9 [&_svg]:size-3.5",
         "icon-sm": "h-7 w-7 [&_svg]:size-3",

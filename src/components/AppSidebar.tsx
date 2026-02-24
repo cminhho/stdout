@@ -28,7 +28,7 @@ const groupIconMap: Record<string, React.ElementType> = {
   "Networking & Other": TerminalSquare,
 };
 
-const SIDEBAR_ASIDE_BASE = "shrink-0 flex flex-col border-r border-sidebar-border min-h-0 overflow-hidden";
+const SIDEBAR_ASIDE_BASE = "shrink-0 flex flex-col border-r border-sidebar-border min-h-0 overflow-hidden app-sidebar";
 const SIDEBAR_ASIDE_LAYOUT = "h-full min-h-0 sticky top-0 bg-sidebar";
 
 function toSafeId(label: string): string {
@@ -200,7 +200,7 @@ const AppSidebar = () => {
         ) : search && searchResults !== null ? (
           searchResults.length > 0 ? (
             <div className="space-y-0.5">
-              <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium px-[var(--spacing-sidebar-x)] pb-1" aria-live="polite">
+              <p className="sidebar-results-label" aria-live="polite">
                 {searchResults.length} result{searchResults.length !== 1 ? "s" : ""}
               </p>
               <ul role="list" className="space-y-0.5 list-none">
@@ -212,7 +212,7 @@ const AppSidebar = () => {
               </ul>
             </div>
           ) : (
-            <p className="text-xs text-muted-foreground text-center py-4 px-[var(--spacing-sidebar-x)]">No tools found</p>
+            <p className="sidebar-empty">No tools found</p>
           )
         ) : sidebarMode === "flat" ? (
           <ul role="list" className="space-y-0.5 list-none">
