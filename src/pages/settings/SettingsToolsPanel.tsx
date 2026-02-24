@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { useSettings } from "@/hooks/useSettings";
 import { useToolEngine } from "@/hooks/useToolEngine";
+import { PrefSection } from "@/components/preferences";
 import { SEARCH_PLACEHOLDER, SHOW_ALL_LABEL } from "./constants";
 
 const SettingsToolsPanel = () => {
@@ -27,26 +28,27 @@ const SettingsToolsPanel = () => {
 
   return (
     <div id="settings-tools" role="tabpanel" aria-labelledby="tab-tools" className="settings-panel">
-      <div role="search" aria-label="Filter tools" className="settings-tools-toolbar">
-        <Input
-          type="search"
-          size="sm"
-          aria-label="Search tools"
-          placeholder={SEARCH_PLACEHOLDER}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="flex-1"
-        />
-        <Button variant="outline" size="sm" onClick={settings.setAllToolsVisible}>
-          {SHOW_ALL_LABEL}
-        </Button>
-      </div>
+      <PrefSection heading="Tools visibility" headingId="settings-tools-heading">
+        <div role="search" aria-label="Filter tools" className="settings-tools-toolbar">
+          <Input
+            type="search"
+            size="sm"
+            aria-label="Search tools"
+            placeholder={SEARCH_PLACEHOLDER}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="flex-1"
+          />
+          <Button variant="outline" size="sm" onClick={settings.setAllToolsVisible}>
+            {SHOW_ALL_LABEL}
+          </Button>
+        </div>
 
-      <p className="settings-body-text mb-1.5" aria-live="polite" aria-atomic="true">
-        {visibleCount} of {tools.length} tools visible in sidebar
-      </p>
+        <p className="settings-body-text settings-tools-count" aria-live="polite" aria-atomic="true">
+          {visibleCount} of {tools.length} tools visible in sidebar
+        </p>
 
-      <div className="settings-table-wrap">
+        <div className="settings-table-wrap">
         <table className="settings-table settings-table--compact" role="table" aria-label="Tools visibility">
           <thead>
             <tr>
@@ -99,7 +101,8 @@ const SettingsToolsPanel = () => {
             ))}
           </tbody>
         </table>
-      </div>
+        </div>
+      </PrefSection>
     </div>
   );
 };

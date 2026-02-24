@@ -118,10 +118,10 @@ const CurlBuilderPage = () => {
       inputPane={{
         title: "Request",
         children: (
-          <div className="flex flex-col gap-4 overflow-auto">
-            <div className="flex gap-3">
-              <div className="w-32">
-                <Label className="text-xs text-muted-foreground mb-1 block">Method</Label>
+          <div className="flex flex-col gap-[var(--spacing-section-mb)] overflow-auto">
+            <section className="flex gap-[var(--spacing-block-gap)] min-w-0" aria-label="Method and URL">
+              <div className="w-32 shrink-0">
+                <Label className="tool-field-label block">Method</Label>
                 <Select value={method} onValueChange={setMethod}>
                   <SelectTrigger variant="secondary"><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -132,46 +132,46 @@ const CurlBuilderPage = () => {
                 </Select>
               </div>
               <div className="flex-1 min-w-0">
-                <Label className="text-xs text-muted-foreground mb-1 block">URL</Label>
+                <Label className="tool-field-label block">URL</Label>
                 <Input className="input-compact" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." />
               </div>
-            </div>
+            </section>
 
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <Label className="text-xs text-muted-foreground">Headers</Label>
-                <Button size="xs" variant="outline" onClick={addHeader}><Plus className="mr-1" />Add</Button>
+            <section aria-label="Headers">
+              <div className="flex items-center justify-between mb-[var(--spacing-block-gap)]">
+                <Label className="text-[length:var(--text-caption)] font-medium text-muted-foreground">Headers</Label>
+                <Button size="xs" variant="outline" onClick={addHeader} className="gap-1.5"><Plus className="size-3.5" />Add</Button>
               </div>
-              <div className="space-y-1">
+              <div className="space-y-[var(--home-space-xs)]">
                 {headers.map((h, i) => (
-                  <div key={i} className="flex gap-1.5 items-center">
+                  <div key={i} className="flex gap-[var(--spacing-block-gap)] items-center">
                     <Input className="input-compact flex-1 min-w-0" placeholder="Key" value={h.key} onChange={(e) => updateHeader(i, "key", e.target.value)} />
                     <Input className="input-compact flex-1 min-w-0" placeholder="Value" value={h.value} onChange={(e) => updateHeader(i, "value", e.target.value)} />
-                    <Button size="icon-sm" variant="ghost" onClick={() => removeHeader(i)}><Trash2 /></Button>
+                    <Button size="icon-sm" variant="ghost" onClick={() => removeHeader(i)} aria-label="Remove header"><Trash2 className="size-3.5" /></Button>
                   </div>
                 ))}
               </div>
-            </div>
+            </section>
 
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <Label className="text-xs text-muted-foreground">Query Params</Label>
-                <Button size="xs" variant="outline" onClick={addParam}><Plus className="mr-1" />Add</Button>
+            <section aria-label="Query parameters">
+              <div className="flex items-center justify-between mb-[var(--spacing-block-gap)]">
+                <Label className="text-[length:var(--text-caption)] font-medium text-muted-foreground">Query Params</Label>
+                <Button size="xs" variant="outline" onClick={addParam} className="gap-1.5"><Plus className="size-3.5" />Add</Button>
               </div>
-              <div className="space-y-1">
+              <div className="space-y-[var(--home-space-xs)]">
                 {queryParams.map((p, i) => (
-                  <div key={i} className="flex gap-1.5 items-center">
+                  <div key={i} className="flex gap-[var(--spacing-block-gap)] items-center">
                     <Input className="input-compact flex-1 min-w-0" placeholder="Key" value={p.key} onChange={(e) => updateParam(i, "key", e.target.value)} />
                     <Input className="input-compact flex-1 min-w-0" placeholder="Value" value={p.value} onChange={(e) => updateParam(i, "value", e.target.value)} />
-                    <Button size="icon-sm" variant="ghost" onClick={() => removeParam(i)}><Trash2 /></Button>
+                    <Button size="icon-sm" variant="ghost" onClick={() => removeParam(i)} aria-label="Remove query param"><Trash2 className="size-3.5" /></Button>
                   </div>
                 ))}
               </div>
-            </div>
+            </section>
 
             {["POST", "PUT", "PATCH"].includes(method) && (
-              <div className="flex flex-col h-[200px] min-h-0">
-                <Label className="text-xs text-muted-foreground mb-1 block shrink-0">Body</Label>
+              <section className="flex flex-col h-[200px] min-h-0" aria-label="Request body">
+                <Label className="tool-field-label block shrink-0">Body</Label>
                 <CodeEditor
                   value={body}
                   onChange={setBody}
@@ -179,34 +179,34 @@ const CurlBuilderPage = () => {
                   placeholder='{"key": "value"}'
                   fillHeight
                 />
-              </div>
+              </section>
             )}
 
-            <div className="flex flex-wrap items-center gap-3 text-xs">
-              <label className="flex items-center gap-1.5 cursor-pointer">
-                <input type="checkbox" checked={followRedirects} onChange={(e) => setFollowRedirects(e.target.checked)} className="rounded" /> -L
+            <section className="flex flex-wrap items-center gap-[var(--spacing-block-gap)]" aria-label="cURL options">
+              <label className="tool-checkbox-label flex items-center gap-[var(--home-space-xs)] text-[length:var(--text-caption)]">
+                <input type="checkbox" checked={followRedirects} onChange={(e) => setFollowRedirects(e.target.checked)} className="rounded" aria-label="Follow redirects (-L)" /> -L
               </label>
-              <label className="flex items-center gap-1.5 cursor-pointer">
-                <input type="checkbox" checked={verbose} onChange={(e) => setVerbose(e.target.checked)} className="rounded" /> -v
+              <label className="tool-checkbox-label flex items-center gap-[var(--home-space-xs)] text-[length:var(--text-caption)]">
+                <input type="checkbox" checked={verbose} onChange={(e) => setVerbose(e.target.checked)} className="rounded" aria-label="Verbose (-v)" /> -v
               </label>
-              <label className="flex items-center gap-1.5 cursor-pointer">
-                <input type="checkbox" checked={insecure} onChange={(e) => setInsecure(e.target.checked)} className="rounded" /> -k
+              <label className="tool-checkbox-label flex items-center gap-[var(--home-space-xs)] text-[length:var(--text-caption)]">
+                <input type="checkbox" checked={insecure} onChange={(e) => setInsecure(e.target.checked)} className="rounded" aria-label="Insecure (-k)" /> -k
               </label>
-              <div className="flex items-center gap-1.5">
-                <Label className="text-muted-foreground shrink-0">Timeout</Label>
-                <Input className="input-compact w-16" placeholder="sec" value={timeout} onChange={(e) => setTimeout_(e.target.value)} />
+              <div className="flex items-center gap-[var(--home-space-sm)]">
+                <Label variant="muted" className="text-[length:var(--text-caption)] shrink-0">Timeout</Label>
+                <Input className="input-compact w-16" placeholder="sec" value={timeout} onChange={(e) => setTimeout_(e.target.value)} aria-label="Connect timeout (seconds)" />
               </div>
-            </div>
+            </section>
           </div>
         ),
       }}
       outputPane={{
         title: "cURL",
         children: (
-          <div className="flex flex-col flex-1 min-h-0 gap-4">
-            <div className="flex flex-col flex-1 min-h-0 min-h-[140px]">
-              <div className="flex justify-between items-center mb-1.5 shrink-0">
-                <span className="text-xs font-medium text-muted-foreground">Generated cURL</span>
+          <div className="flex flex-col flex-1 min-h-0 gap-[var(--spacing-section-mb)]">
+            <section className="flex flex-col flex-1 min-h-0 min-h-[140px]" aria-label="Generated cURL">
+              <div className="flex justify-between items-center mb-[var(--spacing-block-gap)] shrink-0">
+                <span className="text-[length:var(--text-caption)] font-medium text-muted-foreground">Generated cURL</span>
                 <CopyButton text={curlCommand} />
               </div>
               <div className="flex-1 min-h-0 overflow-hidden">
@@ -218,10 +218,10 @@ const CurlBuilderPage = () => {
                   fillHeight
                 />
               </div>
-            </div>
-            <div className="flex flex-col flex-1 min-h-0 min-h-[120px]">
-              <div className="flex justify-between items-center mb-1.5 shrink-0">
-                <span className="text-xs font-medium text-muted-foreground">Import cURL</span>
+            </section>
+            <section className="flex flex-col flex-1 min-h-0 min-h-[120px]" aria-label="Import cURL">
+              <div className="flex justify-between items-center mb-[var(--spacing-block-gap)] shrink-0">
+                <span className="text-[length:var(--text-caption)] font-medium text-muted-foreground">Import cURL</span>
                 <ClearButton onClick={() => setImportInput("")} />
               </div>
               <div className="flex-1 min-h-0 overflow-hidden">
@@ -236,7 +236,7 @@ const CurlBuilderPage = () => {
                   fillHeight
                 />
               </div>
-            </div>
+            </section>
           </div>
         ),
       }}

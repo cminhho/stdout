@@ -118,6 +118,8 @@ export interface TwoPanelToolLayoutProps {
    * panes to have unequal header height.
    */
   topSection?: ReactNode;
+  /** When provided, called with the last format result (e.g. JsonProcessResult) so the tool can render result-derived UI (e.g. stats) above the panels. */
+  topSectionFromResult?: (result: FormatResult | null) => ReactNode;
   /** When present and non-empty, show ValidationErrorList above the two panels and derive input editor error lines (unless inputEditor.errorLines is set). */
   validationErrors?: ParseError[];
   /** When false, hide ValidationErrorList even if validationErrors is set. Default true. */
@@ -272,6 +274,7 @@ const TwoPanelToolLayout = ({
   validationErrors,
   showValidationErrors = true,
   topSection,
+  topSectionFromResult,
   defaultInputPercent,
   minInputPercent,
   maxInputPercent,
@@ -316,7 +319,17 @@ const TwoPanelToolLayout = ({
         }
       : undefined;
 
-  const hasChromeAbove = Boolean(formatError || showValidationListResolved || topSection);
+  const resultSection = topSectionFromResult?.(formatResult ?? null);
+  const hasChromeAbove = Boolean(formatError || showValidationListResolved || topSection || resultSection);
+  const mergedTopSection =
+    resultSection && topSection ? (
+      <>
+        {resultSection}
+        {topSection}
+      </>
+    ) : (
+      resultSection ?? topSection
+    );
 
   return (
     <ToolLayout title={title} description={description}>
@@ -324,7 +337,7 @@ const TwoPanelToolLayout = ({
         formatError={formatError ?? undefined}
         validationErrors={effectiveValidationErrors}
         showValidationErrors={showValidationErrors}
-        topSection={topSection}
+        topSection={mergedTopSection}
       />
       <ResizableTwoPanel
         defaultInputPercent={defaultInputPercent ?? TWO_PANEL_DEFAULT_INPUT_PERCENT}

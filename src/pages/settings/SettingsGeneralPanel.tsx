@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/select";
 import { useSettings } from "@/hooks/useSettings";
 import { useToolEngine } from "@/hooks/useToolEngine";
+import { PrefSection, PrefGroup, PrefRow } from "@/components/preferences";
 import { SITE } from "@/site";
 import type { LatestRelease } from "@/utils/version";
 import { UPDATE_BUTTON_LOADING_LABEL, UPDATE_BUTTON_LABEL } from "./constants";
@@ -86,20 +87,13 @@ const SettingsGeneralPanel = ({
 
   return (
     <div id="settings-general" role="tabpanel" aria-labelledby="tab-general" className="settings-panel">
-      {/* Section: App Update */}
-      <section aria-labelledby="settings-update-heading" className="settings-section">
-        <h2 id="settings-update-heading" className="settings-section-heading">
-          App Update
-        </h2>
-        <div className="settings-section-content">
-          <div className="settings-setting-row">
-            <span className="settings-setting-label">Installed</span>
-            <span className="settings-setting-control settings-body-text">stdout v{currentVersion}</span>
-          </div>
-          <div className="settings-setting-row">
-            <span className="settings-setting-label">Updates</span>
-            <div className="settings-setting-control">
-              {isElectronDownloaded ? (
+      <PrefSection heading="App Update" headingId="settings-update-heading">
+        <PrefGroup>
+          <PrefRow label="Installed" control={<span className="pref-body">stdout v{currentVersion}</span>} />
+          <PrefRow
+            label="Updates"
+            control={
+              isElectronDownloaded ? (
                 <Button size="sm" onClick={handleQuitAndInstall} aria-label="Restart to install update">
                   <Download className="h-3.5 w-3.5" aria-hidden />
                   <span>Restart to install</span>
@@ -119,51 +113,47 @@ const SettingsGeneralPanel = ({
                   )}
                   <span>{checkButtonLabel}</span>
                 </Button>
-              )}
-            </div>
-          </div>
-          {showWebUpdate && updateCheck === "current" && latestRelease && (
-            <p className="settings-body-text mt-1">You're on the latest version.</p>
-          )}
-          {hasElectronUpdater && electronStatus === "not-available" && (
-            <p className="settings-body-text mt-1">You're on the latest version.</p>
-          )}
-          {showWebUpdate && updateCheck === "available" && latestRelease && (
-            <p className="settings-body-text mt-1">
-              <a
-                href={latestRelease.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-primary hover:underline"
-              >
-                Version {latestRelease.version} available <ExternalLink className="h-3 w-3" />
-              </a>
-            </p>
-          )}
-          {hasElectronUpdater && (electronStatus === "available" || electronStatus === "downloading") && electronVersion && (
-            <p className="settings-body-text mt-1">Version {electronVersion} available — downloading…</p>
-          )}
-          {hasElectronUpdater && electronStatus === "downloaded" && electronVersion && (
-            <p className="settings-body-text mt-1">Version {electronVersion} downloaded. Restart the app to install.</p>
-          )}
-          {showWebUpdate && updateCheck === "error" && (
-            <p className="settings-body-text mt-1">Could not check for updates. Try again later.</p>
-          )}
-          {hasElectronUpdater && electronStatus === "error" && (
-            <p className="settings-body-text mt-1">{electronError || "Could not check for updates. Try again later."}</p>
-          )}
-        </div>
-      </section>
+              )
+            }
+          />
+        </PrefGroup>
+        {showWebUpdate && updateCheck === "current" && latestRelease && (
+          <p className="pref-body">You're on the latest version.</p>
+        )}
+        {hasElectronUpdater && electronStatus === "not-available" && (
+          <p className="pref-body">You're on the latest version.</p>
+        )}
+        {showWebUpdate && updateCheck === "available" && latestRelease && (
+          <p className="pref-body">
+            <a
+              href={latestRelease.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-primary hover:underline"
+            >
+              Version {latestRelease.version} available <ExternalLink className="h-3 w-3" />
+            </a>
+          </p>
+        )}
+        {hasElectronUpdater && (electronStatus === "available" || electronStatus === "downloading") && electronVersion && (
+          <p className="pref-body">Version {electronVersion} available — downloading…</p>
+        )}
+        {hasElectronUpdater && electronStatus === "downloaded" && electronVersion && (
+          <p className="pref-body">Version {electronVersion} downloaded. Restart the app to install.</p>
+        )}
+        {showWebUpdate && updateCheck === "error" && (
+          <p className="pref-body">Could not check for updates. Try again later.</p>
+        )}
+        {hasElectronUpdater && electronStatus === "error" && (
+          <p className="pref-body">{electronError || "Could not check for updates. Try again later."}</p>
+        )}
+      </PrefSection>
 
-      {/* Section: User Interface */}
-      <section aria-labelledby="settings-ui-heading" className="settings-section">
-        <h2 id="settings-ui-heading" className="settings-section-heading">
-          User Interface
-        </h2>
-        <div className="settings-section-content">
-          <div className="settings-setting-row">
-            <span className="settings-setting-label">App language</span>
-            <div className="settings-setting-control">
+      <PrefSection heading="User Interface" headingId="settings-ui-heading">
+        <PrefGroup>
+          <PrefRow
+            label="App language"
+            control={
               <Select value="en" disabled>
                 <SelectTrigger size="sm" className="w-auto min-w-[8rem]">
                   <SelectValue placeholder="English" />
@@ -176,27 +166,25 @@ const SettingsGeneralPanel = ({
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-          </div>
-          <p className="settings-body-text mt-1">English only (more languages in development).</p>
-        </div>
-      </section>
+            }
+          />
+        </PrefGroup>
+        <p className="pref-body">English only (more languages in development).</p>
+      </PrefSection>
 
-      {/* Section: App Info */}
-      <section aria-labelledby="settings-appinfo-heading" className="settings-section">
-        <h2 id="settings-appinfo-heading" className="settings-section-heading">
-          App Info
-        </h2>
-        <div className="settings-section-content">
-          <div className="settings-setting-row">
-            <span className="settings-setting-label">About</span>
-            <span className="settings-setting-control settings-body-text">
-              <AboutStats />
-            </span>
-          </div>
-          <div className="settings-setting-row">
-            <span className="settings-setting-label">Report bug or send feedback</span>
-            <div className="settings-setting-control">
+      <PrefSection heading="App Info" headingId="settings-appinfo-heading">
+        <PrefGroup>
+          <PrefRow
+            label="About"
+            control={
+              <span className="pref-body">
+                <AboutStats />
+              </span>
+            }
+          />
+          <PrefRow
+            label="Report bug or send feedback"
+            control={
               <Button variant="outline" size="sm" asChild>
                 <a
                   href={SITE.repoIssues}
@@ -207,27 +195,21 @@ const SettingsGeneralPanel = ({
                   Open in browser <ExternalLink className="h-3 w-3" />
                 </a>
               </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+            }
+          />
+        </PrefGroup>
+      </PrefSection>
 
-      {/* Section: Support the project */}
-      <section aria-labelledby="settings-support-heading" className="settings-section">
-        <h2 id="settings-support-heading" className="settings-section-heading">
-          Support the project
-        </h2>
-        <div className="settings-section-content">
-          <p className="settings-body-text flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
-            <span className="min-w-0 flex-1">stdout is open source (MIT). If it's useful to you, consider supporting development:</span>
-            <Button variant="outline" size="sm" className="w-fit shrink-0" asChild>
-              <a href={SITE.buyMeACoffee} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5">
-                Buy me a coffee <ExternalLink className="h-3.5 w-3.5" />
-              </a>
-            </Button>
-          </p>
-        </div>
-      </section>
+      <PrefSection heading="Support the project" headingId="settings-support-heading">
+        <p className="pref-body flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+          <span className="min-w-0 flex-1">stdout is open source (MIT). If it's useful to you, consider supporting development:</span>
+          <Button variant="outline" size="sm" className="w-fit shrink-0" asChild>
+            <a href={SITE.buyMeACoffee} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5">
+              Buy me a coffee <ExternalLink className="h-3.5 w-3.5" />
+            </a>
+          </Button>
+        </p>
+      </PrefSection>
     </div>
   );
 };

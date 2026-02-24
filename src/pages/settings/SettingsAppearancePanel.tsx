@@ -7,8 +7,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Theme } from "@/contexts/settingsStore";
+import { PrefSection, PrefGroup, PrefRow, PrefDescription } from "@/components/preferences";
+import type { Theme, SidebarMode } from "@/contexts/settingsStore";
 import { THEMES, EDITOR_FONTS } from "./constants";
+
+const SIDEBAR_NAV_OPTIONS: { value: SidebarMode; label: string }[] = [
+  { value: "grouped", label: "Grouped" },
+  { value: "flat", label: "Flat" },
+];
 
 const DEFAULT_EDITOR_FONT = EDITOR_FONTS[0].value;
 
@@ -26,15 +32,11 @@ const SettingsAppearancePanel = () => {
 
   return (
     <div id="settings-appearance" role="tabpanel" aria-labelledby="tab-appearance" className="settings-panel">
-      {/* Section: Appearance */}
-      <section aria-labelledby="settings-appearance-heading" className="settings-section">
-        <h2 id="settings-appearance-heading" className="settings-section-heading">
-          Appearance
-        </h2>
-        <div className="settings-section-content">
-          <div className="settings-setting-row">
-            <span className="settings-setting-label">Color theme</span>
-            <div className="settings-setting-control">
+      <PrefSection heading="Appearance" headingId="settings-appearance-heading">
+        <PrefGroup>
+          <PrefRow
+            label="Color theme"
+            control={
               <Select value={settings.theme} onValueChange={(v) => settings.setTheme(v as Theme)}>
                 <SelectTrigger size="sm" className="w-auto min-w-[10rem] focus:ring-0 focus:ring-offset-0">
                   <SelectValue />
@@ -47,20 +49,34 @@ const SettingsAppearancePanel = () => {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-          </div>
-        </div>
-      </section>
+            }
+          />
+          <PrefRow
+            label="Sidebar nav"
+            control={
+              <Select value={settings.sidebarMode} onValueChange={(v) => settings.setSidebarMode(v as SidebarMode)}>
+                <SelectTrigger size="sm" className="w-auto min-w-[10rem] focus:ring-0 focus:ring-offset-0">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {SIDEBAR_NAV_OPTIONS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>
+                      {o.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            }
+          />
+        </PrefGroup>
+        <PrefDescription>Grouped: tools by category with expand/collapse. Flat: single list of tools.</PrefDescription>
+      </PrefSection>
 
-      {/* Section: Text editor */}
-      <section aria-labelledby="settings-editor-heading" className="settings-section">
-        <h2 id="settings-editor-heading" className="settings-section-heading">
-          Text editor
-        </h2>
-        <div className="settings-section-content">
-          <div className="settings-setting-row">
-            <span className="settings-setting-label">Font</span>
-            <div className="settings-setting-control">
+      <PrefSection heading="Text editor" headingId="settings-editor-heading">
+        <PrefGroup>
+          <PrefRow
+            label="Font"
+            control={
               <Select value={effectiveFont} onValueChange={settings.setEditorFont}>
                 <SelectTrigger size="sm" className="w-auto min-w-[12rem] focus:ring-0 focus:ring-offset-0">
                   <SelectValue placeholder="Font" />
@@ -73,10 +89,10 @@ const SettingsAppearancePanel = () => {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-          </div>
-        </div>
-      </section>
+            }
+          />
+        </PrefGroup>
+      </PrefSection>
     </div>
   );
 };

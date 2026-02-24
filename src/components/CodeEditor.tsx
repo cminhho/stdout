@@ -18,7 +18,8 @@ export type Language =
   | "go"
   | "java"
   | "kotlin"
-  | "plaintext";
+  | "plaintext"
+  | "randomstring";
 
 /** Metadata passed when content changes; useful for line-by-line handling without re-splitting. */
 export interface CodeEditorChangeMeta {
@@ -261,6 +262,30 @@ const tokenizeCode = (line: string): Token[] => {
 
 const tokenizePlain = (line: string): Token[] => [{ type: "text", value: line }];
 
+/** Random string / password view: colorize digits, uppercase, lowercase, symbols (industry practice for readability). */
+const REGEX_RANDOMSTRING = /(\d+)|([A-Z]+)|([a-z]+)|([^0-9A-Za-z]+)/g;
+
+const tokenizeRandomString = (line: string): Token[] => {
+  const tokens: Token[] = [];
+  REGEX_RANDOMSTRING.lastIndex = 0;
+  let match: RegExpExecArray | null;
+  let lastIndex = 0;
+  while ((match = REGEX_RANDOMSTRING.exec(line)) !== null) {
+    if (match.index > lastIndex) {
+      tokens.push({ type: "text", value: line.slice(lastIndex, match.index) });
+    }
+    if (match[1]) tokens.push({ type: "number", value: match[1] });
+    else if (match[2]) tokens.push({ type: "keyword", value: match[2] });
+    else if (match[3]) tokens.push({ type: "string", value: match[3] });
+    else if (match[4]) tokens.push({ type: "punctuation", value: match[4] });
+    lastIndex = REGEX_RANDOMSTRING.lastIndex;
+  }
+  if (lastIndex < line.length) {
+    tokens.push({ type: "text", value: line.slice(lastIndex) });
+  }
+  return tokens;
+};
+
 /** cURL / terminal command: curl, options (-X, -H, -d, -v, -L, -k, --*), quoted strings, HTTP methods, URLs */
 const tokenizeCurl = (line: string): Token[] => {
   const tokens: Token[] = [];
@@ -300,6 +325,7 @@ const getTokenizer = (lang: Language) => {
     case "csv": return tokenizeCsv;
     case "curl": return tokenizeCurl;
     case "javascript": case "typescript": case "go": case "java": case "kotlin": return tokenizeCode;
+    case "randomstring": return tokenizeRandomString;
     case "text": case "plaintext": return tokenizePlain;
     default: return tokenizePlain;
   }
@@ -321,6 +347,16 @@ const tokenColors: Record<Token["type"], string> = {
   attr: "hsl(var(--code-number))",
   keyword: "hsl(var(--code-boolean))",
   comment: "hsl(var(--code-comment))",
+  text: "hsl(var(--foreground))",
+};
+
+/* Random string view: distinct colors per character type (digit / upper / lower / symbol) for quick scan */
+const randomStringTokenColors: Record<Token["type"], string> = {
+  ...tokenColors,
+  number: "hsl(var(--code-rs-digit))",
+  keyword: "hsl(var(--code-rs-upper))",
+  string: "hsl(var(--code-rs-lower))",
+  punctuation: "hsl(var(--code-rs-symbol))",
   text: "hsl(var(--foreground))",
 };
 
@@ -413,6 +449,8 @@ const CodeEditor = ({
   const gutterWidth = showLineNumbers ? Math.max(String(lines.length).length * 10 + 16, CODE_GUTTER_MIN_WIDTH) : 0;
   const contentPaddingLeft = gutterWidth + 12; /* 12px matches --spacing-code-editor (0.75rem) */
 
+  /* Styling: .code-editor-wrapper in index.css (--code-*, --spacing-code-editor, --radius). */
+
   if (customContent != null) {
     return (
       <div
@@ -489,7 +527,12 @@ const CodeEditor = ({
             {tokens.length === 0
               ? "\n"
               : tokens.map((token, j) => (
-                  <span key={j} style={{ color: tokenColors[token.type] }}>
+                  <span
+                    key={j}
+                    style={{
+                      color: (language === "randomstring" ? randomStringTokenColors : tokenColors)[token.type],
+                    }}
+                  >
                     {token.value}
                   </span>
                 ))}
