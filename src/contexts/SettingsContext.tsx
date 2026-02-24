@@ -42,6 +42,12 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     return () => mq.removeEventListener("change", handler);
   }, [state.theme]);
 
+  useEffect(() => {
+    const root = document.documentElement;
+    const value = state.editorFont?.trim() || "ui-monospace, ui-serif, monospace";
+    root.style.setProperty("--font-mono", value);
+  }, [state.editorFont]);
+
   const setTheme = (theme: Theme) => setState((s) => ({ ...s, theme }));
   const setSidebarMode = (sidebarMode: SidebarMode) => setState((s) => ({ ...s, sidebarMode }));
   const setSidebarCollapsed = (sidebarCollapsed: boolean) => setState((s) => ({ ...s, sidebarCollapsed }));

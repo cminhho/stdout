@@ -34,12 +34,8 @@ export const SIDEBAR_MODES: { value: SidebarMode; label: string; desc: string }[
   { value: "flat", label: "Flat", desc: "All tools listed without group headers" },
 ];
 
-/** Font options for text editor (font-family). Value is CSS font-family. */
+/** Font options for code/editor (1–2 only). Value is CSS font-family; applied via --font-mono. */
 export const EDITOR_FONTS: { value: string; label: string }[] = [
   { value: "ui-monospace, ui-serif, monospace", label: "System monospace" },
-  { value: "Menlo, Monaco, 'Courier New', monospace", label: "Menlo" },
-  { value: "'SF Mono', 'Fira Code', 'Cascadia Code', monospace", label: "SF Mono" },
-  { value: "'JetBrains Mono', monospace", label: "JetBrains Mono" },
   { value: "'Fira Code', monospace", label: "Fira Code" },
-  { value: "'Cascadia Code', monospace", label: "Cascadia Code" },
 ];

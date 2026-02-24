@@ -100,14 +100,14 @@ const SettingsGeneralPanel = ({
             <span className="settings-setting-label">Updates</span>
             <div className="settings-setting-control">
               {isElectronDownloaded ? (
-                <Button size="xs" onClick={handleQuitAndInstall} aria-label="Restart to install update">
+                <Button size="sm" onClick={handleQuitAndInstall} aria-label="Restart to install update">
                   <Download className="h-3.5 w-3.5" aria-hidden />
                   <span>Restart to install</span>
                 </Button>
               ) : (
                 <Button
                   variant="outline"
-                  size="xs"
+                  size="sm"
                   onClick={handleCheckForUpdates}
                   disabled={checkButtonDisabled}
                   aria-label="Check for updates"
@@ -165,7 +165,7 @@ const SettingsGeneralPanel = ({
             <span className="settings-setting-label">App language</span>
             <div className="settings-setting-control">
               <Select value="en" disabled>
-                <SelectTrigger size="xs" className="w-auto min-w-[8rem]">
+                <SelectTrigger size="sm" className="w-auto min-w-[8rem]">
                   <SelectValue placeholder="English" />
                 </SelectTrigger>
                 <SelectContent>
@@ -197,7 +197,7 @@ const SettingsGeneralPanel = ({
           <div className="settings-setting-row">
             <span className="settings-setting-label">Report bug or send feedback</span>
             <div className="settings-setting-control">
-              <Button variant="outline" size="xs" asChild>
+              <Button variant="outline" size="sm" asChild>
                 <a
                   href={SITE.repoIssues}
                   target="_blank"
@@ -218,9 +218,9 @@ const SettingsGeneralPanel = ({
           Support the project
         </h2>
         <div className="settings-section-content">
-          <p className="settings-body-text flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span>stdout is open source (MIT). If it's useful to you, consider supporting development:</span>
-            <Button variant="outline" size="xs" className="w-fit shrink-0" asChild>
+          <p className="settings-body-text flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+            <span className="min-w-0 flex-1">stdout is open source (MIT). If it's useful to you, consider supporting development:</span>
+            <Button variant="outline" size="sm" className="w-fit shrink-0" asChild>
               <a href={SITE.buyMeACoffee} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5">
                 Buy me a coffee <ExternalLink className="h-3.5 w-3.5" />
               </a>

@@ -1,5 +1,5 @@
+import { useEffect } from "react";
 import { useSettings } from "@/hooks/useSettings";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -10,8 +10,19 @@ import {
 import type { Theme } from "@/contexts/settingsStore";
 import { THEMES, EDITOR_FONTS } from "./constants";
 
+const DEFAULT_EDITOR_FONT = EDITOR_FONTS[0].value;
+
 const SettingsAppearancePanel = () => {
   const settings = useSettings();
+  const fontValue = settings.editorFont;
+  const isValidFont = EDITOR_FONTS.some((f) => f.value === fontValue);
+  const effectiveFont = isValidFont ? fontValue : DEFAULT_EDITOR_FONT;
+
+  useEffect(() => {
+    if (!isValidFont && fontValue !== effectiveFont) {
+      settings.setEditorFont(DEFAULT_EDITOR_FONT);
+    }
+  }, [fontValue, isValidFont, effectiveFont, settings]);
 
   return (
     <div id="settings-appearance" role="tabpanel" aria-labelledby="tab-appearance" className="settings-panel">
@@ -50,7 +61,7 @@ const SettingsAppearancePanel = () => {
           <div className="settings-setting-row">
             <span className="settings-setting-label">Font</span>
             <div className="settings-setting-control">
-              <Select value={settings.editorFont} onValueChange={settings.setEditorFont}>
+              <Select value={effectiveFont} onValueChange={settings.setEditorFont}>
                 <SelectTrigger size="sm" className="w-auto min-w-[12rem] focus:ring-0 focus:ring-offset-0">
                   <SelectValue placeholder="Font" />
                 </SelectTrigger>
@@ -62,19 +73,6 @@ const SettingsAppearancePanel = () => {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-          </div>
-          <div className="settings-setting-row">
-            <label htmlFor="settings-word-wrap" className="settings-setting-label cursor-pointer">
-              Wrap word
-            </label>
-            <div className="settings-setting-control">
-              <Checkbox
-                id="settings-word-wrap"
-                checked={settings.wordWrap}
-                onCheckedChange={(checked) => settings.setWordWrap(checked === true)}
-                aria-label="Wrap word"
-              />
             </div>
           </div>
         </div>
