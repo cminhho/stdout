@@ -42,16 +42,17 @@ const SidebarNavItem = ({
   item,
   isActive,
   onClick,
-}: { item: SidebarItem; isActive: boolean; onClick?: () => void }) => {
+  iconOnly = false,
+}: { item: SidebarItem; isActive: boolean; onClick?: () => void; iconOnly?: boolean }) => {
   const Icon = getToolIcon(item.icon);
   return (
     <NavLink
       to={item.path}
       onClick={onClick}
-      className={`sidebar-link ${isActive ? "active" : ""}`}
+      className={`sidebar-link ${isActive ? "active" : ""} ${iconOnly ? "sidebar-link--icon-only justify-center" : ""}`}
     >
       <Icon className="h-4 w-4 shrink-0 opacity-90" />
-      <span className="min-w-0 truncate">{item.label}</span>
+      {!iconOnly && <span className="min-w-0 truncate">{item.label}</span>}
     </NavLink>
   );
 };
@@ -77,12 +78,18 @@ const SidebarGroupSection = ({
   const isOpen = !!searchQuery || open;
   const contentId = `sidebar-group-${toSafeId(group.label)}`;
 
+  const handleToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setOpen((prev) => !prev);
+  };
+
   return (
     <section role="group" aria-label={group.label} className="space-y-0.5">
       <button
         type="button"
-        onClick={() => setOpen(!open)}
-        className="sidebar-link w-full justify-between"
+        onClick={handleToggle}
+        className="sidebar-link sidebar-group-trigger w-full justify-between"
         aria-expanded={isOpen}
         aria-controls={contentId}
       >
@@ -116,7 +123,7 @@ const AppSidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const { sidebarMode, isToolVisible } = useSettings();
+  const { sidebarMode, sidebarCollapsed, isToolVisible } = useSettings();
   const { tools, groups } = useToolEngine();
 
   const visibleItems = useMemo(
@@ -129,47 +136,68 @@ const AppSidebar = () => {
     return visibleItems.filter((item) => item.label.toLowerCase().includes(search.toLowerCase()));
   }, [search, visibleItems]);
 
+  const width = sidebarCollapsed ? "var(--sidebar-width-collapsed)" : "var(--sidebar-width-expanded)";
+  const isCollapsed = sidebarCollapsed;
+
   return (
     <aside
-      className={`${SIDEBAR_ASIDE_BASE} ${SIDEBAR_ASIDE_LAYOUT}`}
-      style={{ width: "var(--sidebar-width-expanded)", minWidth: "var(--sidebar-width-expanded)" }}
+      className={`${SIDEBAR_ASIDE_BASE} ${SIDEBAR_ASIDE_LAYOUT} ${isCollapsed ? "sidebar-collapsed" : ""}`}
+      style={{ width, minWidth: width }}
+      aria-expanded={!isCollapsed}
     >
-      <div className="px-[var(--spacing-sidebar-x)] pt-[var(--spacing-sidebar-y)] pb-[var(--spacing-sidebar-gap)]" role="search" aria-label="Search tools">
-        <div className="relative">
-          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" aria-hidden />
-          <input
-            type="search"
-            role="searchbox"
-            aria-label="Search tools"
-            className="sidebar-search w-full"
-            placeholder="Search..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Escape") { setSearch(""); (e.target as HTMLInputElement).blur(); return; }
-              if (e.key === "Enter" && searchResults?.length) { navigate(searchResults[0].path); setSearch(""); }
-            }}
-          />
+      {!isCollapsed && (
+        <div className="px-[var(--spacing-sidebar-x)] pt-[var(--spacing-sidebar-y)] pb-[var(--spacing-sidebar-gap)]" role="search" aria-label="Search tools">
+          <div className="relative">
+            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" aria-hidden />
+            <input
+              type="search"
+              role="searchbox"
+              aria-label="Search tools"
+              className="sidebar-search w-full"
+              placeholder="Search..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") { setSearch(""); (e.target as HTMLInputElement).blur(); return; }
+                if (e.key === "Enter" && searchResults?.length) { navigate(searchResults[0].path); setSearch(""); }
+              }}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       <nav className="flex-1 min-h-0 sidebar-pad overflow-y-auto min-w-0 space-y-0.5" aria-label="Tools">
-        <div className="mb-1.5 pb-1.5 border-b border-sidebar-border">
+        <div className={isCollapsed ? "border-b border-sidebar-border pb-1 mb-1" : "mb-1.5 pb-1.5 border-b border-sidebar-border"}>
           <Tooltip>
             <TooltipTrigger asChild>
               <NavLink
                 to="/"
-                className={`sidebar-link ${location.pathname === "/" ? "active" : ""}`}
+                className={`sidebar-link ${location.pathname === "/" ? "active" : ""} ${isCollapsed ? "sidebar-link--icon-only justify-center" : ""}`}
                 end
               >
                 <Home className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
-                <span className="min-w-0 truncate">Home</span>
+                {!isCollapsed && <span className="min-w-0 truncate">Home</span>}
               </NavLink>
             </TooltipTrigger>
             <TooltipContent side="right">Tool overview and search</TooltipContent>
           </Tooltip>
         </div>
-        {search && searchResults !== null ? (
+        {isCollapsed ? (
+          <ul role="list" className="space-y-0.5 list-none">
+            {visibleItems.map((item) => (
+              <li key={item.path}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div>
+                      <SidebarNavItem item={item} isActive={location.pathname === item.path} iconOnly />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">{item.label}</TooltipContent>
+                </Tooltip>
+              </li>
+            ))}
+          </ul>
+        ) : search && searchResults !== null ? (
           searchResults.length > 0 ? (
             <div className="space-y-0.5">
               <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium px-[var(--spacing-sidebar-x)] pb-1" aria-live="polite">
@@ -214,12 +242,12 @@ const AppSidebar = () => {
               href="https://www.buymeacoffee.com/chungho"
               target="_blank"
               rel="noopener noreferrer"
-              className="sidebar-donate-link"
+              className={`sidebar-donate-link ${isCollapsed ? "sidebar-donate-link--icon-only justify-center" : ""}`}
               title="Support the project — Buy me a coffee"
               aria-label="Buy me a coffee"
             >
               <Coffee className="sidebar-donate-link-icon shrink-0" aria-hidden />
-              <span className="truncate">Buy me a coffee</span>
+              {!isCollapsed && <span className="truncate">Buy me a coffee</span>}
             </a>
           </TooltipTrigger>
           <TooltipContent side="right">Support the project — Buy me a coffee</TooltipContent>

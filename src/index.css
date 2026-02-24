@@ -834,6 +834,9 @@
     justify-content: space-between;
     gap: var(--home-space-sm);
   }
+  .settings-tools-count {
+    margin: var(--home-space-sm) 0 var(--home-space-sm);
+  }
   .settings-table-wrap {
     border: 1px solid hsl(var(--border));
     border-radius: var(--settings-radius);
@@ -1197,7 +1200,7 @@
       min-height: min(70dvh, 24rem);
     }
     .settings-content-body {
-      padding: 0.625rem 1rem 0.875rem;
+      padding: var(--home-space-md) var(--home-space-lg) var(--home-space-md);
     }
   }
 
@@ -1228,32 +1231,32 @@
     .settings-sidebar {
       width: 100%;
       flex-shrink: 0;
-      padding: 0.5rem 0.75rem;
+      padding: var(--home-space-md);
       border-right: none;
       border-bottom: 1px solid hsl(var(--border));
     }
     .settings-sidebar-title {
-      margin-bottom: 0.5rem;
+      margin-bottom: var(--home-space-sm);
       font-size: 0.875rem;
     }
     .settings-category-list {
       flex-direction: row;
       flex-wrap: wrap;
-      gap: 0.25rem;
+      gap: var(--home-space-xs);
     }
     .settings-category-item {
       min-height: 2.75rem;
-      padding: 0.5rem 0.75rem;
-      font-size: 0.8125rem;
+      padding: var(--home-space-md);
+      font-size: var(--text-content);
     }
     .settings-content-header {
-      padding: 0.625rem 0.75rem 0.625rem 1rem;
+      padding: var(--home-space-md) var(--home-space-md) var(--home-space-md) var(--home-space-lg);
     }
     .settings-panel-title {
       font-size: 1rem;
     }
     .settings-content-body {
-      padding: 0.625rem 0.75rem 0.75rem;
+      padding: var(--home-space-md);
       -webkit-overflow-scrolling: touch;
     }
   }
@@ -1381,6 +1384,22 @@
   .sidebar-link.active:hover {
     background: hsl(var(--sidebar-accent));
     color: hsl(var(--sidebar-foreground));
+  }
+  .sidebar-link--icon-only {
+    justify-content: center;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .sidebar-collapsed .sidebar-link--icon-only {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .sidebar-group-trigger {
+    cursor: pointer;
+  }
+  .sidebar-donate-link--icon-only {
+    justify-content: center;
+    padding: 0.5rem;
   }
 
   /* Activity bar (collapsed): VS Code–style left accent on active item */
