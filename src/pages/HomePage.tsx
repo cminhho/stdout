@@ -8,11 +8,6 @@ import type { ToolDefinition } from "@/tools/types";
 import { getToolIcon } from "@/components/toolIcons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 const SEARCH_PLACEHOLDER = "Search tools by name, description, or category…";
 
@@ -39,26 +34,12 @@ const ToolCard = ({ tool, index }: { tool: ToolDefinition; index: number }) => {
           <ChevronRight className="h-4 w-4" />
         </span>
         <Icon className="home-tool-card-icon h-7 w-7 shrink-0 text-foreground opacity-90" aria-hidden />
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <h3 className="home-tool-card-title font-semibold text-[var(--text-content)] text-foreground line-clamp-2 min-w-0">
-              {tool.label}
-            </h3>
-          </TooltipTrigger>
-          <TooltipContent side="top" className="max-w-[min(20rem,90vw)] whitespace-normal break-words">
-            {tool.label}
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <p className="home-tool-card-desc text-[var(--text-nav)] text-muted-foreground leading-snug min-w-0">
-              {tool.description}
-            </p>
-          </TooltipTrigger>
-          <TooltipContent side="top" className="max-w-[min(20rem,90vw)] whitespace-normal break-words">
-            {tool.description}
-          </TooltipContent>
-        </Tooltip>
+        <h3 className="home-tool-card-title font-semibold text-[var(--text-content)] text-foreground line-clamp-2 min-w-0">
+          {tool.label}
+        </h3>
+        <p className="home-tool-card-desc text-[var(--text-nav)] text-muted-foreground leading-snug min-w-0">
+          {tool.description}
+        </p>
       </Link>
     </li>
   );
@@ -140,16 +121,9 @@ const HomePage = () => {
                         className="home-recent-item inline-flex items-center gap-2 rounded-[var(--radius)] border border-border bg-card px-3 py-2 text-left text-[var(--text-content)] transition-[background-color,border-color] duration-[var(--transition-duration)] hover:border-border hover:bg-[hsl(var(--muted)/0.4)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                       >
                         <Icon className="h-4 w-4 shrink-0 text-foreground opacity-90" aria-hidden />
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span className="min-w-0 truncate max-w-[8rem] font-medium text-foreground">
-                              {t.label}
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipContent side="top" className="max-w-[min(20rem,90vw)] whitespace-normal break-words">
-                            {t.label}
-                          </TooltipContent>
-                        </Tooltip>
+                        <span className="min-w-0 truncate max-w-[8rem] font-medium text-foreground">
+                          {t.label}
+                        </span>
                       </Link>
                     </li>
                   );
