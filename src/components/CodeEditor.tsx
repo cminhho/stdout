@@ -350,6 +350,16 @@ const tokenColors: Record<Token["type"], string> = {
   text: "hsl(var(--foreground))",
 };
 
+/* Random string view: distinct colors per character type (digit / upper / lower / symbol) for quick scan */
+const randomStringTokenColors: Record<Token["type"], string> = {
+  ...tokenColors,
+  number: "hsl(var(--code-rs-digit))",
+  keyword: "hsl(var(--code-rs-upper))",
+  string: "hsl(var(--code-rs-lower))",
+  punctuation: "hsl(var(--code-rs-symbol))",
+  text: "hsl(var(--foreground))",
+};
+
 // ── Hooks ───────────────────────────────────────────────────────────
 
 /** Syncs textarea scroll to highlight overlay and line gutter for aligned scrolling. */
@@ -517,7 +527,12 @@ const CodeEditor = ({
             {tokens.length === 0
               ? "\n"
               : tokens.map((token, j) => (
-                  <span key={j} style={{ color: tokenColors[token.type] }}>
+                  <span
+                    key={j}
+                    style={{
+                      color: (language === "randomstring" ? randomStringTokenColors : tokenColors)[token.type],
+                    }}
+                  >
                     {token.value}
                   </span>
                 ))}
