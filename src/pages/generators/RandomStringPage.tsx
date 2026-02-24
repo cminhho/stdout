@@ -449,7 +449,7 @@ const RandomStringPage = () => {
             <Button
               type="button"
               size="xs"
-              variant="outline"
+              variant="default"
               onClick={() => setRegenerateKey((k) => k + 1)}
               title="Generate with current options"
               aria-label="Generate"

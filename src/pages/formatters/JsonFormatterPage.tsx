@@ -11,6 +11,11 @@ import {
   JSON_OUTPUT_PLACEHOLDER,
   processJsonInput,
 } from "@/utils/jsonFormat";
+import type { JsonProcessResult } from "@/utils/jsonFormat";
+
+function hasStats(r: unknown): r is JsonProcessResult & { stats: NonNullable<JsonProcessResult["stats"]> } {
+  return Boolean(r && typeof r === "object" && "stats" in r && (r as JsonProcessResult).stats != null);
+}
 
 const JsonFormatterPage = () => {
   const tool = useCurrentTool();
@@ -19,6 +24,15 @@ const JsonFormatterPage = () => {
   return (
     <TwoPanelToolLayout
       tool={tool}
+      topSectionFromResult={(result) => {
+        if (!hasStats(result)) return null;
+        const { keys, depth, arrays, objects, size } = result.stats;
+        return (
+          <p className="text-[length:var(--text-caption)] text-muted-foreground" aria-live="polite">
+            Keys: {keys} · Depth: {depth} · Arrays: {arrays} · Objects: {objects} · Size: {size}
+          </p>
+        );
+      }}
       inputPane={{
         inputToolbar: {
           onSample: () => setInput(JSON_FORMATTER_SAMPLE),

@@ -652,6 +652,37 @@
     gap: var(--spacing-grid-gap);
   }
 
+  /* Reference tables (e.g. MIME types): macOS-style spacing, radius, typography */
+  .tool-reference-table-wrap {
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--home-radius-card);
+    overflow: hidden;
+  }
+  .tool-reference-table {
+    width: 100%;
+    font-size: var(--text-nav);
+  }
+  .tool-reference-table th,
+  .tool-reference-table td {
+    padding: var(--home-space-sm) var(--home-space-md);
+    text-align: left;
+    border-bottom: 1px solid hsl(var(--border));
+    font-size: var(--text-caption);
+  }
+  .tool-reference-table thead tr {
+    background: hsl(var(--muted) / 0.5);
+  }
+  .tool-reference-table thead th {
+    color: hsl(var(--muted-foreground));
+    font-weight: 500;
+  }
+  .tool-reference-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .tool-reference-table tbody tr:hover {
+    background: hsl(var(--muted) / 0.3);
+  }
+
   .tool-layout-content > .tool-toolbar {
     flex-shrink: 0;
     margin-bottom: var(--spacing-toolbar-mb);

@@ -71,35 +71,40 @@ const MimeTypesPage = () => {
     title: "MIME Types",
     toolbar: query ? <ClearButton onClick={() => setQuery("")} /> : undefined,
     children: (
-      <div className="flex flex-col gap-4 flex-1 min-h-0 overflow-auto">
-        <div className="max-w-md shrink-0">
-          <Label className="text-xs text-muted-foreground mb-1 block">Search</Label>
+      <div className="flex flex-col gap-[var(--spacing-section-mb)] flex-1 min-h-0 overflow-auto">
+        <section className="flex flex-col gap-[var(--spacing-block-gap)] max-w-md shrink-0" aria-label="Search">
+          <Label className="tool-field-label block">Search</Label>
           <Input
             placeholder="Search by type or description..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="h-9"
+            className="input-compact"
+            aria-label="Search MIME types"
           />
-        </div>
-        <p className="text-xs text-muted-foreground shrink-0">
+        </section>
+        <p className="text-[length:var(--text-caption)] text-muted-foreground shrink-0" aria-live="polite">
           {filtered.length} of {MIME_LIST.length} types
         </p>
         {filtered.length === 0 ? (
-          <p className="text-sm text-muted-foreground shrink-0">No MIME types match your search.</p>
+          <p className="text-[length:var(--text-ui)] text-muted-foreground shrink-0">No MIME types match your search.</p>
         ) : (
-          <div className="border border-border rounded-md overflow-hidden min-h-0">
-            <table className="w-full text-sm">
+          <div
+            className="tool-reference-table-wrap min-h-0"
+            role="region"
+            aria-label="MIME types table"
+          >
+            <table className="tool-reference-table">
               <thead>
-                <tr className="border-b border-border bg-muted/50">
-                  <th className="text-left font-medium px-3 py-2">MIME Type</th>
-                  <th className="text-left font-medium px-3 py-2">Description</th>
+                <tr>
+                  <th>MIME Type</th>
+                  <th>Description</th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((m) => (
-                  <tr key={m.type} className="border-b border-border last:border-0">
-                    <td className="px-3 py-2 font-mono text-xs">{m.type}</td>
-                    <td className="px-3 py-2 text-muted-foreground">{m.description ?? "—"}</td>
+                  <tr key={m.type}>
+                    <td className="font-mono text-foreground">{m.type}</td>
+                    <td className="text-muted-foreground">{m.description ?? "—"}</td>
                   </tr>
                 ))}
               </tbody>
