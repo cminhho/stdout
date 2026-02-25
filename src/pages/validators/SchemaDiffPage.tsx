@@ -78,7 +78,7 @@ const SchemaDiffPage = () => {
   }, [left, right]);
 
   return (
-    <ToolLayout title={tool?.label ?? "Schema Diff"} description={tool?.description ?? "Compare two JSON schemas side by side"}>
+    <ToolLayout>
       <TwoPanelTopSection formatError={result?.error ? new Error(result.error) : undefined} />
       <ResizableTwoPanel input={leftPane} output={rightPane} className="flex-1 min-h-0" />
 

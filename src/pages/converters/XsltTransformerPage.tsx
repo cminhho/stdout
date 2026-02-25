@@ -92,7 +92,7 @@ const XsltTransformerPage = () => {
   };
 
   return (
-    <ToolLayout title={tool?.label ?? "XSLT Transformer"} description={tool?.description ?? "Transform XML using XSLT stylesheet"}>
+    <ToolLayout>
       <div className="flex flex-col flex-1 min-h-0 w-full">
         <TwoPanelTopSection formatError={error ? new Error(error) : undefined} />
         <ResizableTwoPanel input={leftPane} output={rightPane} className="flex-1 min-h-0" defaultInputPercent={50} />

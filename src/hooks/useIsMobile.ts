@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from "react";
+
 import { SIDEBAR_MOBILE_BREAKPOINT_PX } from "@/contexts/settingsStore";
 
 const MOBILE_MEDIA = `(max-width: ${SIDEBAR_MOBILE_BREAKPOINT_PX - 1}px)`;

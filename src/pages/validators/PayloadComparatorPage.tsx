@@ -84,7 +84,7 @@ const PayloadComparatorPage = () => {
   const diffText = result?.diffs.map(diffLine).join("\n") ?? "";
 
   return (
-    <ToolLayout title={tool?.label ?? "Payload Comparator"} description={tool?.description ?? "Compare two JSON payloads and highlight differences"}>
+    <ToolLayout>
       <TwoPanelTopSection formatError={result?.error ? new Error(result.error) : undefined} />
       <ResizableTwoPanel input={leftPane} output={rightPane} className="flex-1 min-h-0" />
 

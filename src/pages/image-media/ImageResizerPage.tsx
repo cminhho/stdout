@@ -1,13 +1,14 @@
 import { useState, useRef, useCallback } from "react";
+import { Upload } from "lucide-react";
+
+import { ClearButton } from "@/components/ClearButton";
+import FileUploadButton from "@/components/FileUploadButton";
+import { SaveButton } from "@/components/SaveButton";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { SelectWithOptions } from "@/components/ui/select";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton } from "@/components/ClearButton";
-import { SaveButton } from "@/components/SaveButton";
-import { Upload } from "lucide-react";
+import { SelectWithOptions } from "@/components/ui/select";
+import { useCurrentTool } from "@/hooks/useCurrentTool";
 
 const ImageResizerPage = () => {
   const tool = useCurrentTool();

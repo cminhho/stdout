@@ -1,5 +1,6 @@
 import { useLocation } from "react-router-dom";
-import { useToolEngine } from "./useToolEngine";
+
+import { useToolEngine } from "@/hooks/useToolEngine";
 
 /**
  * Returns the current tool's label and description from the tool list.

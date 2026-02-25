@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { RefreshCw } from "lucide-react";
+
 import ToolLayout from "@/components/ToolLayout";
 import ToolPane from "@/components/ToolPane";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
@@ -117,10 +118,7 @@ const CreditCardPage = () => {
   };
 
   return (
-    <ToolLayout
-      title={tool?.label ?? "Credit Card Validator"}
-      description={tool?.description ?? "Luhn check and generate test card numbers"}
-    >
+    <ToolLayout>
       <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack max-w-3xl mx-auto">
         <ToolPane pane={pane} />
       </div>

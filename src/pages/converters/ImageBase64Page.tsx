@@ -1,11 +1,12 @@
 import { useState, useRef } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
-import CodeEditor from "@/components/CodeEditor";
-import { Button } from "@/components/ui/button";
-import { SegmentGroup } from "@/components/SegmentGroup";
-import { ClearButton } from "@/components/ClearButton";
 import { Upload } from "lucide-react";
+
+import { ClearButton } from "@/components/ClearButton";
+import CodeEditor from "@/components/CodeEditor";
+import { SegmentGroup } from "@/components/SegmentGroup";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import { Button } from "@/components/ui/button";
+import { useCurrentTool } from "@/hooks/useCurrentTool";
 import {
   base64ToDataUrl,
   formatFileSizeKb,

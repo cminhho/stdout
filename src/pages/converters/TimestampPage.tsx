@@ -1,12 +1,13 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
-import ToolLayout from "@/components/ToolLayout";
-import ResizableTwoPanel from "@/components/ResizableTwoPanel";
-import TwoPanelTopSection from "@/components/TwoPanelTopSection";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
-import CopyButton from "@/components/CopyButton";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
+
+import CopyButton from "@/components/CopyButton";
+import ResizableTwoPanel from "@/components/ResizableTwoPanel";
+import ToolLayout from "@/components/ToolLayout";
+import TwoPanelTopSection from "@/components/TwoPanelTopSection";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { formatDateRows, unixToDate, isoToDate, getCommonRefs, setCurrentTimeValues } from "@/utils/timestamp";
 
 const DEFAULT_TITLE = "Epoch Timestamp";
@@ -139,7 +140,7 @@ const TimestampPage = () => {
   };
 
   return (
-    <ToolLayout title={tool?.label ?? DEFAULT_TITLE} description={tool?.description ?? DEFAULT_DESCRIPTION}>
+    <ToolLayout>
       <div className="flex flex-col flex-1 min-h-0 w-full">
         <TwoPanelTopSection topSection={topSection} />
         <ResizableTwoPanel input={leftPane} output={rightPane} className="flex-1 min-h-0" />

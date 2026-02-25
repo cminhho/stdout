@@ -168,7 +168,7 @@ const SettingsPage = () => {
   );
 
   return (
-    <ToolLayout title={tool?.label ?? DEFAULT_TITLE} description={tool?.description ?? DEFAULT_DESCRIPTION}>
+    <ToolLayout>
       {typeof document !== "undefined" && createPortal(dialogContent, document.body)}
     </ToolLayout>
   );
