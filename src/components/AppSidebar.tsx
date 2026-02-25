@@ -4,6 +4,7 @@ import {
   ArrowLeftRight, Braces, CheckCircle2, ChevronRight, Code2, FileCode, Globe, Home, Image, Lock,
   Search, Shuffle, TerminalSquare, Type, Coffee,
 } from "lucide-react";
+
 import {
   Tooltip,
   TooltipContent,
@@ -28,9 +29,6 @@ const groupIconMap: Record<string, React.ElementType> = {
   "Networking & Other": TerminalSquare,
 };
 
-const SIDEBAR_ASIDE_BASE = "shrink-0 flex flex-col border-r border-sidebar-border min-h-0 overflow-hidden app-sidebar";
-const SIDEBAR_ASIDE_LAYOUT = "h-full min-h-0 sticky top-0 bg-sidebar";
-
 function toSafeId(label: string): string {
   const slug = label.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "");
   return slug || "group";
@@ -43,8 +41,9 @@ const SidebarNavItem = ({
   isActive,
   onClick,
   onNavigate,
+  onPrefetch,
   iconOnly = false,
-}: { item: SidebarItem; isActive: boolean; onClick?: () => void; onNavigate?: () => void; iconOnly?: boolean }) => {
+}: { item: SidebarItem; isActive: boolean; onClick?: () => void; onNavigate?: () => void; onPrefetch?: () => void; iconOnly?: boolean }) => {
   const Icon = getToolIcon(item.icon);
   return (
     <NavLink
@@ -53,6 +52,8 @@ const SidebarNavItem = ({
         onNavigate?.();
         onClick?.();
       }}
+      onMouseEnter={() => onPrefetch?.()}
+      onFocus={() => onPrefetch?.()}
       className={`sidebar-link ${isActive ? "active" : ""} ${iconOnly ? "sidebar-link--icon-only justify-center" : ""}`}
     >
       <Icon className="h-4 w-4 shrink-0 opacity-90" />
@@ -116,7 +117,7 @@ const SidebarGroupSection = ({
         >
           {filteredItems.map((item) => (
             <li key={item.path}>
-              <SidebarNavItem item={item} isActive={pathname === item.path} onNavigate={onNavigate} />
+              <SidebarNavItem item={item} isActive={pathname === item.path} onNavigate={onNavigate} onPrefetch={item.preload ? () => item.preload!() : undefined} />
             </li>
           ))}
         </ul>
@@ -160,7 +161,7 @@ const AppSidebar = ({ sidebarWidthPx, isOverlay = false }: AppSidebarProps) => {
 
   return (
     <aside
-      className={`${SIDEBAR_ASIDE_BASE} ${SIDEBAR_ASIDE_LAYOUT} ${isCollapsed ? "sidebar-collapsed" : ""} ${isOverlay ? "fixed left-0 top-0 bottom-0 z-50 shadow-xl" : ""}`}
+      className={`shrink-0 flex flex-col border-r border-sidebar-border min-h-0 overflow-hidden app-sidebar h-full min-h-0 sticky top-0 bg-sidebar ${isCollapsed ? "sidebar-collapsed" : ""} ${isOverlay ? "fixed left-0 top-0 bottom-0 z-50 shadow-xl" : ""}`}
       style={{ width, minWidth: width }}
       aria-expanded={!isCollapsed}
     >
@@ -209,7 +210,7 @@ const AppSidebar = ({ sidebarWidthPx, isOverlay = false }: AppSidebarProps) => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div>
-                      <SidebarNavItem item={item} isActive={location.pathname === item.path} onNavigate={closeOnNavigate} iconOnly />
+                      <SidebarNavItem item={item} isActive={location.pathname === item.path} onNavigate={closeOnNavigate} onPrefetch={item.preload ? () => item.preload!() : undefined} iconOnly />
                     </div>
                   </TooltipTrigger>
                   <TooltipContent side="right">{item.label}</TooltipContent>
@@ -226,7 +227,7 @@ const AppSidebar = ({ sidebarWidthPx, isOverlay = false }: AppSidebarProps) => {
               <ul role="list" className="space-y-0.5 list-none">
                 {searchResults.map((item) => (
                   <li key={item.path}>
-                    <SidebarNavItem item={item} isActive={location.pathname === item.path} onClick={() => setSearch("")} onNavigate={closeOnNavigate} />
+                    <SidebarNavItem item={item} isActive={location.pathname === item.path} onClick={() => setSearch("")} onNavigate={closeOnNavigate} onPrefetch={item.preload ? () => item.preload!() : undefined} />
                   </li>
                 ))}
               </ul>
@@ -238,7 +239,7 @@ const AppSidebar = ({ sidebarWidthPx, isOverlay = false }: AppSidebarProps) => {
           <ul role="list" className="space-y-0.5 list-none">
             {visibleItems.map((item) => (
               <li key={item.path}>
-                <SidebarNavItem item={item} isActive={location.pathname === item.path} onNavigate={closeOnNavigate} />
+                <SidebarNavItem item={item} isActive={location.pathname === item.path} onNavigate={closeOnNavigate} onPrefetch={item.preload ? () => item.preload!() : undefined} />
               </li>
             ))}
           </ul>

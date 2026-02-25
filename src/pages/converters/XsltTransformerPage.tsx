@@ -2,7 +2,6 @@ import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import ResizableTwoPanel from "@/components/ResizableTwoPanel";
 import TwoPanelTopSection from "@/components/TwoPanelTopSection";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
 import FileUploadButton from "@/components/FileUploadButton";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
@@ -21,7 +20,6 @@ import {
 } from "@/utils/xsltTransformer";
 
 const XsltTransformerPage = () => {
-  const tool = useCurrentTool();
   const [xml, setXml] = useState("");
   const [xslt, setXslt] = useState("");
   const [indent, setIndent] = useState<IndentOption>(2);
@@ -92,7 +90,7 @@ const XsltTransformerPage = () => {
   };
 
   return (
-    <ToolLayout title={tool?.label ?? "XSLT Transformer"} description={tool?.description ?? "Transform XML using XSLT stylesheet"}>
+    <ToolLayout>
       <div className="flex flex-col flex-1 min-h-0 w-full">
         <TwoPanelTopSection formatError={error ? new Error(error) : undefined} />
         <ResizableTwoPanel input={leftPane} output={rightPane} className="flex-1 min-h-0" defaultInputPercent={50} />

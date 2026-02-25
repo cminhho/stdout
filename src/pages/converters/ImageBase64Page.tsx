@@ -1,11 +1,11 @@
 import { useState, useRef } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
-import CodeEditor from "@/components/CodeEditor";
-import { Button } from "@/components/ui/button";
-import { SegmentGroup } from "@/components/SegmentGroup";
-import { ClearButton } from "@/components/ClearButton";
 import { Upload } from "lucide-react";
+
+import { ClearButton } from "@/components/ClearButton";
+import CodeEditor from "@/components/CodeEditor";
+import { SegmentGroup } from "@/components/SegmentGroup";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import { Button } from "@/components/ui/button";
 import {
   base64ToDataUrl,
   formatFileSizeKb,
@@ -16,11 +16,7 @@ import {
   IMAGE_BASE64_PREVIEW_PLACEHOLDER,
 } from "@/utils/imageBase64";
 
-const DEFAULT_TITLE = "Image ↔ Base64";
-const DEFAULT_DESCRIPTION = "Convert images to/from Base64 strings";
-
 const ImageBase64Page = () => {
-  const tool = useCurrentTool();
   const [mode, setMode] = useState<"toBase64" | "toImage">("toBase64");
   const [base64, setBase64] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -98,9 +94,6 @@ const ImageBase64Page = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
-      title={tool?.label ?? DEFAULT_TITLE}
-      description={tool?.description ?? DEFAULT_DESCRIPTION}
       inputPane={{
         title: "Input",
         toolbar: (

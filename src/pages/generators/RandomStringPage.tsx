@@ -1,13 +1,13 @@
 import { useState, useEffect, type ReactNode } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
-import CodeEditor from "@/components/CodeEditor";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { ClearButton } from "@/components/ClearButton";
-import { SelectWithOptions } from "@/components/ui/select";
 import { RefreshCw } from "lucide-react";
+
+import { ClearButton } from "@/components/ClearButton";
+import CodeEditor from "@/components/CodeEditor";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { SelectWithOptions } from "@/components/ui/select";
 
 const CHAR_SETS = {
   lowercase: "abcdefghijklmnopqrstuvwxyz",
@@ -167,7 +167,6 @@ function applySeparator(s: string, sep: string, groupSize: number): string {
 }
 
 const RandomStringPage = () => {
-  const tool = useCurrentTool();
   const [presetId, setPresetId] = useState<PresetId>("strong-password");
   const [length, setLength] = useState(16);
   const [count, setCount] = useState(10);
@@ -427,12 +426,6 @@ const RandomStringPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool ?? undefined}
-      title={tool?.label ?? "Random String Generator"}
-      description={
-        tool?.description ??
-        "Generate cryptographically secure random strings with presets (password, PIN, license key, hex, …)"
-      }
       defaultInputPercent={28}
       inputPane={{
         title: "Options",

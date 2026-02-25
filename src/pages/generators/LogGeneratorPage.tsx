@@ -3,7 +3,6 @@ import ToolLayout from "@/components/ToolLayout";
 import ToolPane from "@/components/ToolPane";
 import CodeEditor from "@/components/CodeEditor";
 import { SelectWithOptions } from "@/components/ui/select";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -86,7 +85,6 @@ function pick<T>(arr: T[]): T {
 }
 
 const LogGeneratorPage = () => {
-  const tool = useCurrentTool();
   const [format, setFormat] = useState("apache");
   const [count, setCount] = useState(50);
   const [output, setOutput] = useState("");
@@ -125,7 +123,7 @@ const LogGeneratorPage = () => {
     toolbar: (
       <div className="flex items-center gap-2 flex-wrap">
         <div className="flex items-center gap-1.5">
-          <Label className="text-xs text-muted-foreground shrink-0">Format</Label>
+          <Label className="tool-field-label shrink-0">Format</Label>
           <SelectWithOptions
             size="xs"
             variant="secondary"
@@ -138,12 +136,12 @@ const LogGeneratorPage = () => {
         </div>
         {format === "json" && (
           <div className="flex items-center gap-1.5">
-            <Label className="text-xs text-muted-foreground shrink-0">Indent</Label>
+            <Label className="tool-field-label shrink-0">Indent</Label>
             <IndentSelect value={indent} onChange={setIndent} />
           </div>
         )}
         <div className="flex items-center gap-1.5">
-          <Label className="text-xs text-muted-foreground shrink-0">Lines</Label>
+          <Label className="tool-field-label shrink-0">Lines</Label>
           <Input
             type="number"
             min={1}
@@ -176,10 +174,7 @@ const LogGeneratorPage = () => {
   };
 
   return (
-    <ToolLayout
-      title={tool?.label ?? "Log Generator"}
-      description={tool?.description ?? "Generate synthetic log data for testing"}
-    >
+    <ToolLayout>
       <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack">
         <ToolPane pane={pane} />
       </div>

@@ -1,14 +1,14 @@
 import { useState, useEffect, type ReactNode } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
-import CodeEditor from "@/components/CodeEditor";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ClearButton } from "@/components/ClearButton";
-import { Checkbox } from "@/components/ui/checkbox";
-import { SelectWithOptions } from "@/components/ui/select";
 import { RefreshCw } from "lucide-react";
+
+import { ClearButton } from "@/components/ClearButton";
+import CodeEditor from "@/components/CodeEditor";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { SelectWithOptions } from "@/components/ui/select";
 
 type PresetId = "strong" | "long" | "pin" | "custom";
 
@@ -59,7 +59,6 @@ const getStrength = (pw: string) => {
 };
 
 const PasswordPage = () => {
-  const tool = useCurrentTool();
   const [presetId, setPresetId] = useState<PresetId>("strong");
   const [passwords, setPasswords] = useState<string[]>([]);
   const [count, setCount] = useState(5);
@@ -153,12 +152,6 @@ const PasswordPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool ?? undefined}
-      title={tool?.label ?? "Password Generator"}
-      description={
-        tool?.description ??
-        "Generate cryptographically secure passwords with presets and character options"
-      }
       defaultInputPercent={28}
       inputPane={{
         title: "Options",

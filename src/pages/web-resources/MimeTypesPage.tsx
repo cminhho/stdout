@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import ToolPane from "@/components/ToolPane";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ClearButton } from "@/components/ClearButton";
@@ -54,7 +53,6 @@ const MIME_LIST: { type: string; description?: string }[] = [
 ];
 
 const MimeTypesPage = () => {
-  const tool = useCurrentTool();
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
@@ -82,29 +80,29 @@ const MimeTypesPage = () => {
             aria-label="Search MIME types"
           />
         </section>
-        <p className="text-xs text-muted-foreground shrink-0" aria-live="polite">
+        <p className="tool-caption shrink-0" aria-live="polite">
           {filtered.length} of {MIME_LIST.length} types
         </p>
         {filtered.length === 0 ? (
           <p className="text-sm text-muted-foreground shrink-0">No MIME types match your search.</p>
         ) : (
           <div
-            className="flex-1 min-h-0 overflow-auto rounded-lg border border-border"
+            className="tool-reference-table-wrap flex-1 min-h-0 overflow-auto"
             role="region"
             aria-label="MIME types table"
           >
-            <table className="w-full text-xs border-collapse">
-              <thead className="sticky top-0 z-10 bg-muted/50">
+            <table className="tool-reference-table">
+              <thead className="sticky top-0 z-10">
                 <tr>
-                  <th className="px-3 py-2 text-left font-medium text-muted-foreground border-b border-border">MIME Type</th>
-                  <th className="px-3 py-2 text-left font-medium text-muted-foreground border-b border-border">Description</th>
+                  <th>MIME Type</th>
+                  <th>Description</th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((m) => (
-                  <tr key={m.type} className="border-b border-border last:border-b-0 hover:bg-muted/30">
-                    <td className="px-3 py-2 font-mono text-foreground">{m.type}</td>
-                    <td className="px-3 py-2 text-muted-foreground">{m.description ?? "—"}</td>
+                  <tr key={m.type}>
+                    <td className="font-mono">{m.type}</td>
+                    <td className="text-muted-foreground">{m.description ?? "—"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -116,10 +114,7 @@ const MimeTypesPage = () => {
   };
 
   return (
-    <ToolLayout
-      title={tool?.label ?? "List of MIME Types"}
-      description={tool?.description ?? "Reference table of common MIME types"}
-    >
+    <ToolLayout>
       <div className="flex flex-col gap-2 flex-1 min-h-0">
         <ToolPane pane={pane} />
       </div>

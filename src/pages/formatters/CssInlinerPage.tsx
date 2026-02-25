@@ -7,7 +7,6 @@ import { ClearButton } from "@/components/ClearButton";
 import { SampleButton } from "@/components/SampleButton";
 import { SaveButton } from "@/components/SaveButton";
 import ToolLayout from "@/components/ToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import {
   CSS_INLINER_CSS_ACCEPT,
   CSS_INLINER_CSS_PLACEHOLDER,
@@ -20,11 +19,7 @@ import {
   inlineCss,
 } from "@/utils/cssInliner";
 
-const DEFAULT_TITLE = "CSS Inliner (Email)";
-const DEFAULT_DESCRIPTION = "Inline CSS styles into HTML for email templates";
-
 const CssInlinerPage = () => {
-  const tool = useCurrentTool();
   const [html, setHtml] = useState("");
   const [css, setCss] = useState("");
 
@@ -89,10 +84,7 @@ const CssInlinerPage = () => {
   };
 
   return (
-    <ToolLayout
-      title={tool?.label ?? DEFAULT_TITLE}
-      description={tool?.description ?? DEFAULT_DESCRIPTION}
-    >
+    <ToolLayout>
       <ResizableTwoPanel
         input={htmlPane}
         output={cssPane}

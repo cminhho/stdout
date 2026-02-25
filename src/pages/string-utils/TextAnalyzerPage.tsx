@@ -1,6 +1,5 @@
 import { useRef, useState, useMemo, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -21,7 +20,6 @@ function getLineColumn(text: string, index: number): { line: number; column: num
 }
 
 const TextAnalyzerPage = () => {
-  const tool = useCurrentTool();
   const [text, setText] = useState("");
   const [cursor, setCursor] = useState({ start: 0, end: 0 });
   const [wordFilter, setWordFilter] = useState("");
@@ -106,7 +104,6 @@ const TextAnalyzerPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () => setText(SAMPLE_TEXT),
@@ -196,7 +193,7 @@ const TextAnalyzerPage = () => {
                   onChange={(e) => setWordFilter(e.target.value)}
                   aria-label="Filter words"
                 />
-                <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer select-none">
+                <label className="flex items-center gap-2 tool-caption cursor-pointer select-none">
                   <input
                     type="checkbox"
                     checked={caseSensitive}

@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { SegmentGroup } from "@/components/SegmentGroup";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import type { IndentOption } from "@/components/IndentSelect";
 import {
   processBase64ForLayout,
@@ -21,7 +20,6 @@ const MODE_OPTIONS: { value: Base64Mode; label: string }[] = [
 ];
 
 const Base64Page = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<Base64Mode>("encode");
 
@@ -37,7 +35,6 @@ const Base64Page = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () => setInput(mode === "encode" ? BASE64_SAMPLE : BASE64_SAMPLE_DECODE),

@@ -13,9 +13,6 @@ import { useFormatOutput } from "@/hooks/useFormatOutput";
 import { cn } from "@/utils/cn";
 import type { ParseError } from "@/utils/validationTypes";
 
-const TWO_PANEL_DEFAULT_INPUT_PERCENT = 40;
-const FORMAT_LOADING_PLACEHOLDER = "Formatting…";
-
 /** Config for default input toolbar: Sample + Clear + File upload. */
 export interface DefaultInputToolbarConfig {
   onSample: () => void;
@@ -100,18 +97,7 @@ export interface TwoPanelOutputPaneConfig {
   children?: ReactNode;
 }
 
-/** Tool metadata for layout heading; when provided, used as title/description when not passed. */
-export interface ToolHeading {
-  label?: string;
-  description?: string;
-}
-
 export interface TwoPanelToolLayoutProps {
-  /** Override or omit when passing `tool`. */
-  title?: string;
-  description?: string;
-  /** When set, title/description default to tool.label and tool.description. */
-  tool?: ToolHeading | null;
   /**
    * Optional full-width section above the two panels. Use for tool-specific options (e.g. JSONPath
    * expression + examples, filters) that would otherwise crowd the input toolbar and cause the two
@@ -239,7 +225,7 @@ function buildOutputPaneProps(
     ) : undefined);
 
   const outputKey = derived?.outputKey ?? config.outputEditor?.outputKey ?? indentControl?.resolvedIndent;
-  const outputPlaceholder = derived?.loading ? FORMAT_LOADING_PLACEHOLDER : config.outputEditor?.placeholder;
+  const outputPlaceholder = derived?.loading ? "Formatting…" : config.outputEditor?.placeholder;
   const children =
     config.children ??
     (config.outputEditor ? (
@@ -268,9 +254,6 @@ function buildOutputPaneProps(
  * Use inputPane.toolbar / outputPane.toolbar for full override; use inputToolbar / outputToolbar for defaults with no duplicated JSX.
  */
 const TwoPanelToolLayout = ({
-  title: titleProp,
-  description: descriptionProp,
-  tool,
   validationErrors,
   showValidationErrors = true,
   topSection,
@@ -283,8 +266,6 @@ const TwoPanelToolLayout = ({
   inputPane,
   outputPane,
 }: TwoPanelToolLayoutProps) => {
-  const title = titleProp ?? tool?.label ?? "";
-  const description = descriptionProp ?? tool?.description ?? "";
   const ot = outputPane.outputToolbar;
   const [internalIndent, setInternalIndent] = useState<IndentOption>(
     () => ot?.defaultIndent ?? DEFAULT_INDENT
@@ -332,7 +313,7 @@ const TwoPanelToolLayout = ({
     );
 
   return (
-    <ToolLayout title={title} description={description}>
+    <ToolLayout>
       <TwoPanelTopSection
         formatError={formatError ?? undefined}
         validationErrors={effectiveValidationErrors}
@@ -340,7 +321,7 @@ const TwoPanelToolLayout = ({
         topSection={mergedTopSection}
       />
       <ResizableTwoPanel
-        defaultInputPercent={defaultInputPercent ?? TWO_PANEL_DEFAULT_INPUT_PERCENT}
+        defaultInputPercent={defaultInputPercent ?? 40}
         minInputPercent={minInputPercent}
         maxInputPercent={maxInputPercent}
         resizerWidth={resizerWidth}

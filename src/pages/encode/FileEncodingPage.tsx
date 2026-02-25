@@ -1,6 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
 import { Label } from "@/components/ui/label";
 import ToolAlert from "@/components/ToolAlert";
@@ -44,7 +43,6 @@ const SAMPLE_BASE64 = "SGVsbG8=";
 const SAMPLE_TEXT = "Hello, UTF-8!";
 
 const FileEncodingPage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<"decode" | "encode">("decode");
   const [decodeEncoding, setDecodeEncoding] = useState<string>("utf-8");
@@ -98,7 +96,7 @@ const FileEncodingPage = () => {
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-[var(--spacing-block-gap)]">
         <div className="flex items-center gap-2">
-          <Label className="text-xs text-muted-foreground shrink-0">Mode</Label>
+          <Label className="tool-field-label shrink-0">Mode</Label>
           <SegmentGroup<"decode" | "encode">
             value={mode}
             onValueChange={setModeWithCleanup}
@@ -109,7 +107,7 @@ const FileEncodingPage = () => {
         </div>
         {mode === "decode" && (
           <div className="flex items-center gap-2">
-            <Label className="text-xs text-muted-foreground shrink-0">From encoding</Label>
+            <Label className="tool-field-label shrink-0">From encoding</Label>
             <SelectWithOptions
               value={decodeEncoding}
               onValueChange={setDecodeEncoding}
@@ -122,7 +120,7 @@ const FileEncodingPage = () => {
           </div>
         )}
         <div className="flex items-center gap-2">
-          <Label className="text-xs text-muted-foreground shrink-0">Bytes as</Label>
+          <Label className="tool-field-label shrink-0">Bytes as</Label>
           <SelectWithOptions<"hex" | "base64">
             value={bytesFormat}
             onValueChange={(v) => setBytesFormat(v)}
@@ -135,7 +133,7 @@ const FileEncodingPage = () => {
         </div>
       </div>
       {mode === "encode" && (
-        <p className="text-xs text-muted-foreground">
+        <p className="tool-caption">
           Encode output is UTF-8 only (browser limitation). Use Decode mode for other encodings.
         </p>
       )}
@@ -144,9 +142,6 @@ const FileEncodingPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool ?? undefined}
-      title={tool?.label ?? "Convert File Encoding"}
-      description={tool?.description ?? "Decode bytes from charset or encode text to UTF-8"}
       topSection={topSection}
       inputPane={{
         title: mode === "decode" ? "Bytes (hex or base64)" : "Text",

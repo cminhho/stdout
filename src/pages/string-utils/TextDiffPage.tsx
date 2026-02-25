@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
 import CopyButton from "@/components/CopyButton";
 import FileUploadButton from "@/components/FileUploadButton";
@@ -11,7 +10,6 @@ const SAMPLE_A = "line one\nline two\nline three";
 const SAMPLE_B = "line one\nline two modified\nline three\nline four";
 
 const TextDiffPage = () => {
-  const tool = useCurrentTool();
   const [textA, setTextA] = useState("");
   const [textB, setTextB] = useState("");
 
@@ -45,7 +43,6 @@ const TextDiffPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         title: "Original",
         inputToolbar: {

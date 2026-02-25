@@ -1,6 +1,8 @@
+import { memo } from "react";
+import { SlidersHorizontal } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { SlidersHorizontal } from "lucide-react";
 import { cn } from "@/utils/cn";
 
 /** Use for tool input with complex/multiple options: icon-only trigger opens popover (see .cursor/rules/options-button-complex-input.mdc). */
@@ -21,7 +23,7 @@ export interface OptionsButtonProps {
   className?: string;
 }
 
-export function OptionsButton({
+const OptionsButton = memo(function OptionsButton({
   ariaLabel,
   icon,
   children,
@@ -42,6 +44,6 @@ export function OptionsButton({
       </PopoverContent>
     </Popover>
   );
-}
+});
 
 export default OptionsButton;

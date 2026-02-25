@@ -12,6 +12,7 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import { useSidebarResize } from "@/hooks/useSidebarResize";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import { useToolTracking } from "@/hooks/useToolTracking";
+import { getRecentPaths } from "@/tools/recentTools";
 import SettingsPage from "@/pages/settings";
 import NotFound from "@/pages/NotFound";
 import HomePage from "@/pages/HomePage";
@@ -23,10 +24,19 @@ const APP_TITLE = "stdout";
 
 const ToolRoutes = () => {
   const location = useLocation();
-  const { tools } = useToolEngine();
+  const { tools, getToolByPath } = useToolEngine();
   const navigate = useNavigate();
 
   useToolTracking();
+
+  // Preload recent tools during idle so next navigation is faster
+  useEffect(() => {
+    if (typeof requestIdleCallback === "undefined") return;
+    const id = requestIdleCallback(() => {
+      getRecentPaths().forEach((path) => getToolByPath(path)?.preload?.());
+    }, { timeout: 2000 });
+    return () => cancelIdleCallback(id);
+  }, [getToolByPath]);
 
   useEffect(() => {
     const segment = location.pathname === "/" ? "Home" : location.pathname === "/settings" ? "Settings" : tools.find((t) => t.path === location.pathname)?.label;
@@ -47,8 +57,18 @@ const ToolRoutes = () => {
   return (
     <Suspense
       fallback={
-        <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
-          Loading tool...
+        <div
+          className="flex-1 flex flex-col items-center justify-center gap-3 text-muted-foreground min-h-0"
+          aria-live="polite"
+          aria-busy="true"
+        >
+          <span
+            className="inline-block h-5 w-5 rounded-full border-[1.5px] border-current border-t-transparent animate-spin"
+            aria-hidden
+          />
+          <span className="text-[13px] font-normal tracking-[0.01em] text-muted-foreground/90">
+            Loading…
+          </span>
         </div>
       }
     >

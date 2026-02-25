@@ -2,19 +2,18 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { X } from "lucide-react";
+
 import ToolLayout from "@/components/ToolLayout";
 import { Button } from "@/components/ui/button";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { cn } from "@/utils/cn";
 import { getCurrentVersion, fetchLatestRelease, isNewerVersion, type LatestRelease } from "@/utils/version";
-import { DEFAULT_TITLE, DEFAULT_DESCRIPTION, SETTINGS_TABS, type SettingsTabId } from "./constants";
+import { DEFAULT_TITLE, SETTINGS_TABS, type SettingsTabId } from "./constants";
 import SettingsGeneralPanel, { type UpdateCheckState } from "./SettingsGeneralPanel";
 import SettingsAppearancePanel from "./SettingsAppearancePanel";
 import SettingsToolsPanel from "./SettingsToolsPanel";
 
 const SettingsPage = () => {
   const navigate = useNavigate();
-  const tool = useCurrentTool();
   const [searchParams, setSearchParams] = useSearchParams();
   const [tab, setTab] = useState<SettingsTabId>("general");
   const [updateCheck, setUpdateCheck] = useState<UpdateCheckState>("idle");
@@ -167,7 +166,7 @@ const SettingsPage = () => {
   );
 
   return (
-    <ToolLayout title={tool?.label ?? DEFAULT_TITLE} description={tool?.description ?? DEFAULT_DESCRIPTION}>
+    <ToolLayout>
       {typeof document !== "undefined" && createPortal(dialogContent, document.body)}
     </ToolLayout>
   );

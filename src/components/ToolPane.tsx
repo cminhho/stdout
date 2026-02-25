@@ -1,8 +1,7 @@
+import { memo } from "react";
 import PanelHeader from "@/components/PanelHeader";
 import { ClearButton } from "@/components/ClearButton";
 import { cn } from "@/utils/cn";
-
-const PANEL_BODY_CLASS = "flex-1 min-h-0 flex flex-col overflow-hidden";
 
 const PANEL_BODY_INNER_BASE =
   "flex-1 min-h-0 flex flex-col overflow-hidden pt-0 pb-[var(--spacing-panel-inner-y)]";
@@ -48,7 +47,7 @@ export interface ToolPaneProps {
  * Reusable tool pane: header (PanelHeader or custom) + body with token padding.
  * Used by ResizableTwoPanel and by grid layouts (e.g. CssInlinerPage). Omit resizerSide when not beside a resizer.
  */
-export function ToolPane({ pane, className, style, resizerSide }: ToolPaneProps) {
+export const ToolPane = memo(function ToolPane({ pane, className, style, resizerSide }: ToolPaneProps) {
   return (
     <div className={cn("tool-panel flex flex-col min-h-0 overflow-hidden", className)} style={style}>
       {pane.customHeader ?? (
@@ -64,11 +63,11 @@ export function ToolPane({ pane, className, style, resizerSide }: ToolPaneProps)
           className={resizerSide === "left" ? "pl-[var(--spacing-panel-resizer-gap)] pr-[var(--spacing-panel-inner-x)]" : undefined}
         />
       )}
-      <div className={PANEL_BODY_CLASS}>
+      <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
         <div className={getPanelBodyInnerClass(resizerSide)}>{pane.children}</div>
       </div>
     </div>
   );
-}
+});
 
 export default ToolPane;

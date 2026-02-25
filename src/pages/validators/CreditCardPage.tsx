@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { RefreshCw } from "lucide-react";
+
 import ToolLayout from "@/components/ToolLayout";
 import ToolPane from "@/components/ToolPane";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import ToolAlert from "@/components/ToolAlert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,6 @@ import { luhnCheck, generateCardNumber, CARD_BRANDS } from "@/utils/creditcard";
 const SAMPLE_CARD = "4532015112830366";
 
 const CreditCardPage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const [generated, setGenerated] = useState<{ brand: string; numbers: string[] } | null>(null);
 
@@ -31,7 +30,7 @@ const CreditCardPage = () => {
   };
 
   const pane = {
-    title: tool?.label ?? "Credit Card Validator",
+    title: "Credit Card Validator",
     copyText: generated ? generated.numbers.join("\n") : undefined,
     toolbar: (
       <>
@@ -68,7 +67,7 @@ const CreditCardPage = () => {
           <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Generate test numbers
           </h2>
-          <p className="text-xs text-muted-foreground leading-relaxed">
+          <p className="tool-caption leading-relaxed">
             For testing only. Do not use for real transactions.
           </p>
           <div className="flex flex-wrap gap-2">
@@ -117,10 +116,7 @@ const CreditCardPage = () => {
   };
 
   return (
-    <ToolLayout
-      title={tool?.label ?? "Credit Card Validator"}
-      description={tool?.description ?? "Luhn check and generate test card numbers"}
-    >
+    <ToolLayout>
       <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack max-w-3xl mx-auto">
         <ToolPane pane={pane} />
       </div>

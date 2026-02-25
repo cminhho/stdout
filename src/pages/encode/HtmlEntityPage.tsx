@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { SegmentGroup } from "@/components/SegmentGroup";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import type { IndentOption } from "@/components/IndentSelect";
 import {
   processHtmlEntityForLayout,
@@ -21,7 +20,6 @@ const MODE_OPTIONS: { value: HtmlEntityMode; label: string }[] = [
 ];
 
 const HtmlEntityPage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<HtmlEntityMode>("encode");
 
@@ -37,7 +35,6 @@ const HtmlEntityPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () => setInput(mode === "encode" ? HTML_ENTITY_SAMPLE_ENCODE : HTML_ENTITY_SAMPLE_DECODE),

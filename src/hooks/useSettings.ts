@@ -1,4 +1,5 @@
 import { useContext } from "react";
+
 import { SettingsContext } from "@/contexts/settingsStore";
 
 export function useSettings() {

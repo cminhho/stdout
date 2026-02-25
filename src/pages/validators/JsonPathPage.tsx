@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import ToolAlert from "@/components/ToolAlert";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -123,7 +122,6 @@ const EXAMPLES = [
 ];
 
 const JsonPathPage = () => {
-  const tool = useCurrentTool();
   const [jsonInput, setJsonInput] = useState(SAMPLE_JSON);
   const [pathInput, setPathInput] = useState("$.store.books[*].title");
   const [indent, setIndent] = useState<IndentOption>(2);
@@ -144,7 +142,7 @@ const JsonPathPage = () => {
       topSection={
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-2 min-w-0">
-            <Label htmlFor="jsonpath-input" className="text-xs text-muted-foreground shrink-0">
+            <Label htmlFor="jsonpath-input" className="tool-field-label shrink-0">
               JSONPath
             </Label>
             <Input
@@ -157,7 +155,7 @@ const JsonPathPage = () => {
             />
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-muted-foreground shrink-0">Examples:</span>
+            <span className="tool-caption shrink-0">Examples:</span>
             {EXAMPLES.map((ex) => (
               <button
                 key={ex}

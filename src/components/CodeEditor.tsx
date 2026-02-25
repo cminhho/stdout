@@ -332,7 +332,6 @@ const getTokenizer = (lang: Language) => {
 };
 
 /* Min width of line number column; must match --code-gutter-min-width in CSS. */
-const CODE_GUTTER_MIN_WIDTH = 36;
 
 /* Token colors from CSS variables (key, string green, number orange, boolean/keyword purple, comment gray) */
 const tokenColors: Record<Token["type"], string> = {
@@ -446,7 +445,7 @@ const CodeEditor = ({
     [readOnly, value, handleChange, onKeyDownProp]
   );
 
-  const gutterWidth = showLineNumbers ? Math.max(String(lines.length).length * 10 + 16, CODE_GUTTER_MIN_WIDTH) : 0;
+  const gutterWidth = showLineNumbers ? Math.max(String(lines.length).length * 10 + 16, 36) : 0;
   const contentPaddingLeft = gutterWidth + 12; /* 12px matches --spacing-code-editor (0.75rem) */
 
   /* Styling: .code-editor-wrapper in index.css (--code-*, --spacing-code-editor, --radius). */

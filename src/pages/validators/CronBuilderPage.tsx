@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import ToolPane from "@/components/ToolPane";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -84,7 +83,6 @@ function generateRandomSample(): Record<string, string> {
 }
 
 const CronBuilderPage = () => {
-  const tool = useCurrentTool();
   const [fields, setFields] = useState<Record<string, string>>(() =>
     Object.fromEntries(FIELDS.map((f) => [f, "*"]))
   );
@@ -112,7 +110,7 @@ const CronBuilderPage = () => {
     setFields(Object.fromEntries(FIELDS.map((f) => [f, "*"])));
 
   const pane = {
-    title: tool?.label ?? "Cron Builder",
+    title: "Cron Builder",
     copyText: expression,
     toolbar: (
       <div className="flex items-center gap-1.5">
@@ -121,12 +119,12 @@ const CronBuilderPage = () => {
       </div>
     ),
     children: (
-      <div className="flex flex-col gap-6 flex-1 min-h-0 overflow-hidden">
+      <div className="flex flex-col gap-[var(--home-content-gap)] flex-1 min-h-0 overflow-hidden">
         <section className="space-y-3 shrink-0" aria-label="Builder">
-          <p className="text-xs text-muted-foreground">
+          <p className="tool-caption">
             Set each cron field (minute, hour, day, month, weekday). Use presets or pick an example below.
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-[var(--home-space-sm)]">
             {FIELDS.map((field) => (
               <div key={field} className="space-y-1.5">
                 <Label htmlFor={`cron-${field}`} variant="muted" className="text-xs">
@@ -143,7 +141,7 @@ const CronBuilderPage = () => {
             ))}
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-muted-foreground shrink-0">Preset</span>
+            <span className="tool-caption shrink-0">Preset</span>
             {PRESETS.map((preset) => (
               <Button
                 key={preset.value}
@@ -162,13 +160,13 @@ const CronBuilderPage = () => {
         </section>
 
         <section
-          className="shrink-0 space-y-2 rounded-xl border border-border/60 bg-muted/25 px-4 py-3 shadow-sm"
+          className="shrink-0 space-y-2 rounded-card border border-border/60 bg-muted/25 px-4 py-3 shadow-sm"
           aria-label="Result"
         >
           <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Expression
           </h2>
-          <div className="flex items-center gap-2 rounded-lg border border-border bg-background/80 px-3 py-2">
+          <div className="flex items-center gap-2 rounded-card border border-border bg-background/80 px-3 py-2">
             <code className="flex-1 text-sm font-mono text-foreground min-w-0 truncate">
               {expression}
             </code>
@@ -178,19 +176,20 @@ const CronBuilderPage = () => {
         </section>
 
         <section
-          className="flex-1 min-h-0 flex flex-col rounded-xl border border-border/60 bg-muted/25 overflow-hidden shadow-sm"
+          className="flex-1 min-h-0 flex flex-col rounded-card border border-border/60 bg-muted/25 overflow-hidden shadow-sm"
           aria-label="Examples"
         >
           <div className="shrink-0 px-4 pt-3 pb-2">
             <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
               Examples
             </h2>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="tool-caption mt-1">
               Click a row to apply that expression.
             </p>
           </div>
           <div className="flex-1 min-h-0 overflow-auto border-t border-border/60">
-            <table className="w-full text-xs border-collapse" aria-label="Cron expression examples">
+            <div className="tool-reference-table-wrap">
+            <table className="tool-reference-table border-collapse" aria-label="Cron expression examples">
               <thead className="sticky top-0 bg-muted/60 backdrop-blur-sm z-10 border-b border-border/60">
                 <tr>
                   <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">
@@ -229,6 +228,7 @@ const CronBuilderPage = () => {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         </section>
       </div>
@@ -236,10 +236,7 @@ const CronBuilderPage = () => {
   };
 
   return (
-    <ToolLayout
-      title={tool?.label ?? "Cron Builder"}
-      description={tool?.description ?? "Build and parse cron expressions (5-field)"}
-    >
+    <ToolLayout>
       <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack max-w-3xl mx-auto">
         <ToolPane pane={pane} />
       </div>

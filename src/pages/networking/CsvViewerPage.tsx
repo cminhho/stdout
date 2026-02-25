@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { SelectWithOptions } from "@/components/ui/select";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Input } from "@/components/ui/input";
 
 const DELIMITER_OPTIONS = [
@@ -15,7 +14,6 @@ const SAMPLE_CSV = "name,age,city\nAlice,30,NYC\nBob,25,LA\nCarol,28,Chicago";
 const CSV_PLACEHOLDER = "name,age,city\nAlice,30,NYC\nBob,25,LA";
 
 const CsvViewerPage = () => {
-  const tool = useCurrentTool();
   const [csv, setCsv] = useState("");
   const [delimiter, setDelimiter] = useState(",");
   const [search, setSearch] = useState("");
@@ -56,7 +54,6 @@ const CsvViewerPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () => setCsv(SAMPLE_CSV),
@@ -92,12 +89,13 @@ const CsvViewerPage = () => {
               placeholder="Search..."
               className="input-compact flex-1 min-w-[160px] max-w-xs h-7"
             />
-            <span className="text-xs text-muted-foreground shrink-0">{filtered?.rows.length ?? 0}/{parsed.rows.length} rows</span>
+            <span className="tool-caption shrink-0">{filtered?.rows.length ?? 0}/{parsed.rows.length} rows</span>
           </>
         ) : undefined,
         children: parsed && filtered && filtered.headers.length > 0 ? (
           <div className="flex-1 min-h-0 overflow-auto rounded-md border border-border bg-card">
-            <table className="w-full text-xs">
+            <div className="tool-reference-table-wrap">
+            <table className="tool-reference-table">
               <thead>
                 <tr className="bg-muted/50 sticky top-0 z-10">
                   <th className="px-3 py-2 text-left text-muted-foreground font-medium w-10 bg-muted/50">#</th>
@@ -119,8 +117,9 @@ const CsvViewerPage = () => {
                 ))}
               </tbody>
             </table>
+            </div>
             {filtered.rows.length > 500 && (
-              <div className="text-xs text-muted-foreground text-center py-2">
+              <div className="tool-caption text-center py-2">
                 Showing first 500 of {filtered.rows.length} rows
               </div>
             )}

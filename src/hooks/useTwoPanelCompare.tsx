@@ -1,5 +1,10 @@
+import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
-import { buildEditorPaneProps } from "@/components/toolPaneBuilders";
+
+import CodeEditor, { type Language } from "@/components/CodeEditor";
+import { ClearButton } from "@/components/ClearButton";
+import FileUploadButton from "@/components/FileUploadButton";
+import { SampleButton } from "@/components/SampleButton";
 import type { PaneProps } from "@/components/ToolPane";
 
 /** Config for one side of a two-panel compare (no value/onChange – those come from hook state). */
@@ -9,6 +14,53 @@ export interface TwoPanelComparePaneConfig {
   sample: string;
   fileAccept: string;
   language?: "json" | "text";
+}
+
+export interface EditorPaneConfig {
+  title: string;
+  value: string;
+  onChange: (value: string) => void;
+  onSample: () => void;
+  onClear?: () => void;
+  placeholder?: string;
+  fileAccept: string;
+  language?: Language;
+}
+
+/** Builds PaneProps for a pane with Sample + Clear + FileUpload toolbar and a CodeEditor. */
+function buildEditorPaneProps(config: EditorPaneConfig): PaneProps {
+  const {
+    title,
+    value,
+    onChange,
+    onSample,
+    onClear,
+    placeholder,
+    fileAccept,
+    language = "json",
+  } = config;
+
+  const toolbar: ReactNode = (
+    <>
+      <SampleButton onClick={onSample} />
+      <ClearButton onClick={onClear ?? (() => onChange(""))} />
+      <FileUploadButton accept={fileAccept} onText={onChange} />
+    </>
+  );
+
+  return {
+    title,
+    toolbar,
+    children: (
+      <CodeEditor
+        value={value}
+        onChange={onChange}
+        language={language}
+        placeholder={placeholder}
+        fillHeight
+      />
+    ),
+  };
 }
 
 export interface UseTwoPanelCompareResult {

@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import ToolPane from "@/components/ToolPane";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -10,8 +9,6 @@ import { ClearButton } from "@/components/ClearButton";
 import { SampleButton } from "@/components/SampleButton";
 import { NUMBER_BASE_OPTIONS, NUMBER_BASE_PLACEHOLDER, parseFromBase, convertToAllBases } from "@/utils/numberBase";
 
-const DEFAULT_TITLE = "Number Base";
-const DEFAULT_DESCRIPTION = "Convert numbers between bases (bin, oct, dec, hex)";
 const EMPTY_MESSAGE = "Enter a number.";
 const SAMPLE_BASE = 10;
 const SAMPLE_MIN = 1;
@@ -23,7 +20,6 @@ function getRandomSample(): string {
 }
 
 const NumberBasePage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const [fromBase, setFromBase] = useState(10);
 
@@ -34,7 +30,7 @@ const NumberBasePage = () => {
     results?.map((r) => `${r.label}: ${r.value}`).join("\n") ?? undefined;
 
   const pane = {
-    title: tool?.label ?? DEFAULT_TITLE,
+    title: "Number Base",
     copyText: copyAllText,
     toolbar: (
       <>
@@ -48,15 +44,15 @@ const NumberBasePage = () => {
       </>
     ),
     children: (
-      <div className="flex flex-col gap-6 flex-1 min-h-0 overflow-hidden">
+      <div className="flex flex-col gap-[var(--home-content-gap)] flex-1 min-h-0 overflow-hidden">
         <section
-          className="space-y-3 rounded-xl border border-border/60 bg-muted/25 px-4 py-3 shadow-sm shrink-0"
+          className="space-y-3 rounded-card border border-border/60 bg-muted/25 px-4 py-3 shadow-sm shrink-0"
           aria-label="Input"
         >
           <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Convert
           </h2>
-          <p className="text-xs text-muted-foreground leading-relaxed">
+          <p className="tool-caption leading-relaxed">
             Enter a number and select source base. All conversions appear below.
           </p>
           <div className="space-y-1.5">
@@ -73,7 +69,7 @@ const NumberBasePage = () => {
             />
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-muted-foreground shrink-0">Source base</span>
+            <span className="tool-caption shrink-0">Source base</span>
             {NUMBER_BASE_OPTIONS.map((b) => (
               <Button
                 key={b.radix}
@@ -92,7 +88,7 @@ const NumberBasePage = () => {
         </section>
 
         <section
-          className="flex-1 min-h-0 flex flex-col rounded-xl border border-border/60 bg-muted/25 overflow-hidden shadow-sm"
+          className="flex-1 min-h-0 flex flex-col rounded-card border border-border/60 bg-muted/25 overflow-hidden shadow-sm"
           aria-label="Results"
         >
           <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider shrink-0 px-4 pt-3 pb-2">
@@ -115,7 +111,7 @@ const NumberBasePage = () => {
                 ))}
               </ul>
             ) : (
-              <p className="text-xs text-muted-foreground py-4 leading-relaxed" role="status">
+              <p className="tool-caption py-4 leading-relaxed" role="status">
                 {EMPTY_MESSAGE}
               </p>
             )}
@@ -126,7 +122,7 @@ const NumberBasePage = () => {
   };
 
   return (
-    <ToolLayout title={tool?.label ?? DEFAULT_TITLE} description={tool?.description ?? DEFAULT_DESCRIPTION}>
+    <ToolLayout>
       <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack max-w-3xl mx-auto">
         <ToolPane pane={pane} />
       </div>

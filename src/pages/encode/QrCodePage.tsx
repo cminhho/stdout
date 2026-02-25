@@ -1,13 +1,11 @@
 import { useState, useRef, useCallback } from "react";
 import QRCode from "qrcode";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Button } from "@/components/ui/button";
 
 const SAMPLE_CONTENT = "https://example.com";
 
 const QrCodePage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [generated, setGenerated] = useState(false);
@@ -38,9 +36,6 @@ const QrCodePage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
-      title={tool?.label ?? "QR Code"}
-      description={tool?.description ?? "Generate QR codes from text or URLs"}
       inputPane={{
         title: "Content",
         inputToolbar: {
@@ -71,7 +66,7 @@ const QrCodePage = () => {
                 Download PNG
               </Button>
             ) : (
-              <p className="text-xs text-muted-foreground text-center">Enter content and click Generate QR Code.</p>
+              <p className="tool-caption text-center">Enter content and click Generate QR Code.</p>
             )}
           </div>
         ),

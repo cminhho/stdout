@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
 import ToolAlert from "@/components/ToolAlert";
 import { Input } from "@/components/ui/input";
@@ -17,7 +16,6 @@ const FLAG_OPTIONS = [
 ];
 
 const RegexTesterPage = () => {
-  const tool = useCurrentTool();
   const [pattern, setPattern] = useState("(\\d{4})-(\\d{2})-(\\d{2})");
   const [flags, setFlags] = useState("gm");
   const [testString, setTestString] = useState(SAMPLE_TEST_STRING);
@@ -139,7 +137,7 @@ const RegexTesterPage = () => {
 
       {highlighted && (
         <div className="tool-card shrink-0">
-          <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1.5">Highlighted</div>
+          <div className="tool-caption tool-caption--uppercase mb-1.5">Highlighted</div>
           <div className="code-block whitespace-pre-wrap text-xs leading-relaxed">
             {highlighted.map((part, i) =>
               part.isMatch ? (
@@ -157,7 +155,7 @@ const RegexTesterPage = () => {
       {result && !result.error && result.matches.length > 0 && (
         <div className="tool-card flex-1 overflow-auto shrink-0">
           <div className="flex justify-between items-center mb-2">
-            <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Match Details</div>
+            <div className="tool-caption tool-caption--uppercase">Match Details</div>
             <CopyButton text={result.matches.map((m) => m.match).join("\n")} />
           </div>
           <div className="space-y-2">
@@ -202,9 +200,6 @@ const RegexTesterPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
-      title={tool?.label ?? "Regex Tester"}
-      description={tool?.description ?? "Test regular expressions with live matching (JS engine; use \\ for escapes as in Java)"}
       topSection={topSection}
       inputPane={{
         title: "Test String",

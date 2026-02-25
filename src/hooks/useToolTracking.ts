@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { useToolEngine } from "./useToolEngine";
-import { trackingService } from "@/tools/tracking";
+
+import { useToolEngine } from "@/hooks/useToolEngine";
 import { recordRecentVisit } from "@/tools/recentTools";
+import { trackingService } from "@/tools/tracking";
 
 /**
  * Hook that automatically tracks tool usage and recent visits on route changes.

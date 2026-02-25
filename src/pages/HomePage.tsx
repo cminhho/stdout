@@ -1,13 +1,14 @@
+import { useMemo, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight, Search, X } from "lucide-react";
-import { useMemo, useState, useCallback } from "react";
+
+import { getToolIcon } from "@/components/toolIcons";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import { useSettings } from "@/hooks/useSettings";
 import { useRecentTools } from "@/hooks/useRecentTools";
 import type { ToolDefinition } from "@/tools/types";
-import { getToolIcon } from "@/components/toolIcons";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 
 const SEARCH_PLACEHOLDER = "Search tools by name, description, or category…";
 

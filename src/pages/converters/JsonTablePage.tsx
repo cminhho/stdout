@@ -1,17 +1,16 @@
 import { useState, useMemo } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import ToolAlert from "@/components/ToolAlert";
 import { parseJsonToTable, JSON_TABLE_FILE_ACCEPT, JSON_TABLE_SAMPLE, JSON_TABLE_PLACEHOLDER } from "@/utils/jsonTable";
 
 const JsonTablePage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
 
   const { data: tableData, error } = useMemo(() => parseJsonToTable(input), [input]);
 
   const tableContent = tableData && tableData.headers.length > 0 ? (
-    <table className="w-full text-sm">
+    <div className="tool-reference-table-wrap">
+    <table className="tool-reference-table">
       <thead>
         <tr className="border-b border-border">
           {tableData.headers.map((h) => (
@@ -33,15 +32,13 @@ const JsonTablePage = () => {
         ))}
       </tbody>
     </table>
+    </div>
   ) : !error && input.trim() ? (
     <div className="flex items-center justify-center text-muted-foreground text-sm p-8">No valid table data</div>
   ) : null;
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
-      title={tool?.label ?? "JSON → Table"}
-      description={tool?.description ?? "Visualize JSON data as a table"}
       inputPane={{
         title: "JSON Input",
         inputToolbar: {

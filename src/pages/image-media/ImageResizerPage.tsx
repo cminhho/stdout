@@ -1,16 +1,15 @@
 import { useState, useRef, useCallback } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { SelectWithOptions } from "@/components/ui/select";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton } from "@/components/ClearButton";
-import { SaveButton } from "@/components/SaveButton";
 import { Upload } from "lucide-react";
 
+import { ClearButton } from "@/components/ClearButton";
+import FileUploadButton from "@/components/FileUploadButton";
+import { SaveButton } from "@/components/SaveButton";
+import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { SelectWithOptions } from "@/components/ui/select";
+
 const ImageResizerPage = () => {
-  const tool = useCurrentTool();
   const [imageSrc, setImageSrc] = useState("");
   const [origW, setOrigW] = useState(0);
   const [origH, setOrigH] = useState(0);
@@ -87,7 +86,6 @@ const ImageResizerPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         title: "Upload Image",
         toolbar: (
@@ -115,7 +113,7 @@ const ImageResizerPage = () => {
               <div className="space-y-3 overflow-auto">
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-xs text-muted-foreground">Width</label>
+                    <label className="tool-field-label">Width</label>
                     <Input
                       type="number"
                       value={width}
@@ -124,7 +122,7 @@ const ImageResizerPage = () => {
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-muted-foreground">Height</label>
+                    <label className="tool-field-label">Height</label>
                     <Input
                       type="number"
                       value={height}
@@ -158,7 +156,7 @@ const ImageResizerPage = () => {
                   />
                   {format !== "png" && (
                     <div className="flex items-center gap-1">
-                      <label className="text-xs text-muted-foreground">Quality:</label>
+                      <label className="tool-field-label">Quality:</label>
                       <input
                         type="range"
                         min={10}

@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { SegmentGroup } from "@/components/SegmentGroup";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import type { IndentOption } from "@/components/IndentSelect";
 import type { JsonQueryStringMode } from "@/utils/jsonQueryString";
 import {
@@ -22,7 +21,6 @@ const MODE_OPTIONS: { value: JsonQueryStringMode; label: string }[] = [
 ];
 
 const JsonQueryStringPage = () => {
-  const tool = useCurrentTool();
   const [mode, setMode] = useState<JsonQueryStringMode>("toQs");
   const [input, setInput] = useState("");
 
@@ -40,7 +38,6 @@ const JsonQueryStringPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () =>

@@ -2,7 +2,6 @@ import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { Button } from "@/components/ui/button";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 
 function getSampleInput(): string {
   return [
@@ -73,7 +72,6 @@ const transforms: Record<string, (s: string) => string> = {
 };
 
 const StringTransformerPage = () => {
-  const tool = useCurrentTool();
   const [searchParams, setSearchParams] = useSearchParams();
   const [input, setInput] = useState("");
   // One selection per group (by group index); pipeline order = group order
@@ -140,7 +138,6 @@ const StringTransformerPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       topSection={transformToolbar}
       inputPane={{
         inputToolbar: {

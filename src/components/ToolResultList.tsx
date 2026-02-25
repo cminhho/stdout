@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import React, { memo } from "react";
 import { cn } from "@/utils/cn";
 
 export interface ToolResultListProps<T> {
@@ -19,7 +20,7 @@ export interface ToolResultListProps<T> {
  * Result list with count header and bordered list. Uses design tokens (border, muted, spacing).
  * Reusable for XPath results, match lists, etc.
  */
-export function ToolResultList<T>({
+export const ToolResultList = memo(function ToolResultList<T>({
   title,
   count,
   items,
@@ -29,11 +30,11 @@ export function ToolResultList<T>({
 }: ToolResultListProps<T>) {
   return (
     <div
-      className={cn("rounded-md border border-border overflow-hidden", className)}
+      className={cn("rounded-card border border-border overflow-hidden", className)}
       role="region"
       aria-label={title ? `${title} (${count} items)` : `${count} result(s)`}
     >
-      <div className="px-2 py-1.5 bg-muted/50 text-xs font-medium text-muted-foreground">
+      <div className="px-2 py-1.5 bg-muted/50 tool-caption font-medium">
         {title ? `${title} — ` : ""}
         {count} result{count !== 1 ? "s" : ""}
       </div>
@@ -49,6 +50,6 @@ export function ToolResultList<T>({
       </ul>
     </div>
   );
-}
+}) as <T>(props: ToolResultListProps<T>) => React.ReactElement;
 
 export default ToolResultList;

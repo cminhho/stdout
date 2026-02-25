@@ -1,4 +1,4 @@
-import * as React from "react";
+import { forwardRef, memo, type Ref } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/utils/cn";
 
@@ -39,7 +39,7 @@ function SegmentGroupInner<T extends string>(
     className,
     disabled = false,
   }: SegmentGroupProps<T>,
-  ref: React.Ref<HTMLDivElement>
+  ref: Ref<HTMLDivElement>
 ) {
   return (
     <div
@@ -72,8 +72,8 @@ function SegmentGroupInner<T extends string>(
   );
 }
 
-const SegmentGroup = React.forwardRef(SegmentGroupInner) as <T extends string>(
-  props: SegmentGroupProps<T> & { ref?: React.Ref<HTMLDivElement> }
+const SegmentGroup = memo(forwardRef(SegmentGroupInner)) as <T extends string>(
+  props: SegmentGroupProps<T> & { ref?: Ref<HTMLDivElement> }
 ) => React.ReactElement;
 
 export { SegmentGroup };

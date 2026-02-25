@@ -1,9 +1,5 @@
+import { memo } from "react";
 import { cn } from "@/utils/cn";
-
-const VERTICAL_CLASS =
-  "hidden lg:flex shrink-0 flex-col items-center justify-center cursor-col-resize select-none self-stretch h-full min-h-0 relative";
-const HORIZONTAL_CLASS =
-  "flex lg:hidden shrink-0 items-center justify-center cursor-row-resize select-none w-full relative touch-none";
 
 export interface PanelResizerProps {
   orientation: "horizontal" | "vertical";
@@ -21,7 +17,7 @@ export interface PanelResizerProps {
  * Accessible resizer bar between two panels. Use with useHorizontalResize / useVerticalResize
  * (from ResizableTwoPanel or a custom layout). Renders horizontal bar when stacked, vertical when side-by-side.
  */
-const PanelResizer = ({
+const PanelResizer = memo(function PanelResizer({
   orientation,
   percent,
   minPercent,
@@ -31,7 +27,8 @@ const PanelResizer = ({
   onKeyDown,
   width,
   className,
-}: PanelResizerProps) => (
+}: PanelResizerProps) {
+  return (
   <div
     role="separator"
     aria-orientation={orientation}
@@ -45,8 +42,8 @@ const PanelResizer = ({
     className={cn(
       "panel-resizer",
       orientation === "horizontal"
-        ? cn(HORIZONTAL_CLASS, "panel-resizer--horizontal")
-        : cn(VERTICAL_CLASS, "p-0 touch-none"),
+        ? cn("flex lg:hidden shrink-0 items-center justify-center cursor-row-resize select-none w-full relative touch-none", "panel-resizer--horizontal")
+        : cn("hidden lg:flex shrink-0 flex-col items-center justify-center cursor-col-resize select-none self-stretch h-full min-h-0 relative", "p-0 touch-none"),
       className
     )}
     style={
@@ -65,6 +62,7 @@ const PanelResizer = ({
       }
     />
   </div>
-);
+  );
+});
 
 export default PanelResizer;

@@ -1,3 +1,4 @@
+import { memo, useCallback } from "react";
 import {
   Select,
   SelectContent,
@@ -39,7 +40,7 @@ export interface IndentSelectProps {
  * Indentation select: 2/4/8 spaces, Tab, Minified.
  * Uses SelectTrigger size="xs" for toolbar use alongside Sample, Clear, Save.
  */
-const IndentSelect = ({
+const IndentSelect = memo(function IndentSelect({
   value,
   onChange,
   defaultValue = DEFAULT_INDENT,
@@ -47,13 +48,17 @@ const IndentSelect = ({
   includeTab = true,
   includeMinified = true,
   title = "Indentation",
-}: IndentSelectProps) => {
+}: IndentSelectProps) {
   const valueStr = typeof value === "number" ? String(value) : value;
+  const handleValueChange = useCallback(
+    (v: string) => onChange(parseIndentValue(v, spaceOptions)),
+    [onChange, spaceOptions]
+  );
 
   return (
     <Select
       value={valueStr}
-      onValueChange={(v) => onChange(parseIndentValue(v, spaceOptions))}
+      onValueChange={handleValueChange}
     >
       <SelectTrigger
         size="xs"
@@ -78,6 +83,6 @@ const IndentSelect = ({
       </SelectContent>
     </Select>
   );
-};
+});
 
 export default IndentSelect;

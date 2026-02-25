@@ -1,6 +1,5 @@
 import { useState } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import {
   processXmlToXsd,
   XSD_GENERATOR_FILE_ACCEPT,
@@ -12,12 +11,10 @@ import {
 } from "@/utils/xsdGenerator";
 
 const XsdGeneratorPage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () => setInput(XSD_GENERATOR_SAMPLE_XML),

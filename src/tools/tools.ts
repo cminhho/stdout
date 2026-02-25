@@ -10,7 +10,7 @@ function byGroup(list: ToolDefinition[]): ToolGroup[] {
     g.push(t);
     map.set(t.group, g);
   }
-  return Array.from(map.entries(), ([label, tools]) => ({ label, tools }));
+  return Array.from(map.entries(), ([label, groupTools]) => ({ label, tools: groupTools }));
 }
 
 export function getTools(): ToolDefinition[] {

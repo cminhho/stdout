@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { SegmentGroup } from "@/components/SegmentGroup";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import type { IndentOption } from "@/components/IndentSelect";
 import {
   processUrlEncodeForLayout,
@@ -21,7 +20,6 @@ const MODE_OPTIONS: { value: UrlEncodeMode; label: string }[] = [
 ];
 
 const UrlEncodePage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<UrlEncodeMode>("encode");
 
@@ -37,7 +35,6 @@ const UrlEncodePage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () => setInput(mode === "encode" ? URL_ENCODE_SAMPLE : URL_ENCODE_SAMPLE_DECODE),

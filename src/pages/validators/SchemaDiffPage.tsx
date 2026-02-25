@@ -5,7 +5,6 @@ import TwoPanelTopSection from "@/components/TwoPanelTopSection";
 import ToolResultCard from "@/components/ToolResultCard";
 import DiffLineList, { type DiffLineEntry } from "@/components/DiffLineList";
 import { useTwoPanelCompare } from "@/hooks/useTwoPanelCompare";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { formatDiffSummary, formatDiffEntriesForCopy, IDENTICAL_MESSAGE_CLASS } from "@/utils/compareResultHelpers";
 
 const SAMPLE_A = '{"id": 1, "name": "test", "roles": ["admin"]}';
@@ -65,7 +64,6 @@ const RIGHT_CONFIG = {
 } as const;
 
 const SchemaDiffPage = () => {
-  const tool = useCurrentTool();
   const { left, right, leftPane, rightPane } = useTwoPanelCompare(LEFT_CONFIG, RIGHT_CONFIG);
 
   const result = useMemo(() => {
@@ -78,7 +76,7 @@ const SchemaDiffPage = () => {
   }, [left, right]);
 
   return (
-    <ToolLayout title={tool?.label ?? "Schema Diff"} description={tool?.description ?? "Compare two JSON schemas side by side"}>
+    <ToolLayout>
       <TwoPanelTopSection formatError={result?.error ? new Error(result.error) : undefined} />
       <ResizableTwoPanel input={leftPane} output={rightPane} className="flex-1 min-h-0" />
 

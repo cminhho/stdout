@@ -1,4 +1,8 @@
-/* Fonts: system stack only so the app runs fully offline (no Google Fonts). */
+/*
+ * index.css – design tokens and shared components
+ * TOC: Base/Theme · Components (tool-*, panel-*, sidebar-*, code-editor, tables) · Settings · Home · Utilities
+ * Fonts: system stack only so the app runs fully offline (no Google Fonts).
+ */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,6 +12,18 @@
    * Theme tokens: WCAG AA contrast, semantic layers, single primary hue.
    * Dark: slate-tinted neutrals (224°). Light: warm neutrals (25°). Deep dark: true neutrals (0°).
    * Primary: blue 221 83% 53% (works on light/dark). Code syntax: VS Code–style.
+   *
+   * Token hierarchy (reuse; avoid redefining):
+   * - Spacing: --home-space-2xs|xs|sm|md|lg|xl|2xl (8px grid); --home-space-inner (12px), --home-space-stack (6px) for tight layout; --spacing-* alias where semantic.
+   * - Radius: --radius, --radius-sm, --radius-item, --home-radius-card; --settings-window-radius (mobile sheet).
+   * - Motion: --transition-duration, --transition-ease; --transition-default = both; --transition-duration-slow (e.g. body/theme).
+   * - Focus: --focus-ring, --focus-ring-sidebar (single box-shadow token for all focus-visible).
+   * - Scrollbar: --scrollbar-thumb, --scrollbar-thumb-hover per theme (desktop thin scrollbars).
+   * - Typography: --text-nav|ui|content|caption|title|hero (hero = 1.125rem for taglines/section titles).
+   * - Glass: --glass-edge, --glass-highlight-color; --glass-blur/--glass-saturate (title-bar/sidebar); --glass-blur-subtle/--glass-saturate-subtle (cards); --glass-blur-sidebar/--glass-saturate-sidebar (settings sidebar).
+   * - Settings: --settings-sidebar-width, --settings-window-radius.
+   * - Aliases (reuse, single source): --popover = --card; --accent = --primary; --segment-bg = --muted, --segment-border = --border; --sidebar-active-border = --sidebar-primary.
+   * - Tables: cell padding = var(--home-space-sm) var(--home-space-md); thead/row hover semantic per context.
    */
   :root,
   .dark {
@@ -19,8 +35,8 @@
     --card: 224 13% 20%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 224 13% 20%;
-    --popover-foreground: 210 40% 98%;
+    --popover: var(--card);
+    --popover-foreground: var(--card-foreground);
 
     /* Primary: blue-600 style, 4.5:1 on white and on dark bg */
     --primary: 221 83% 53%;
@@ -32,8 +48,8 @@
     --muted: 215 14% 26%;
     --muted-foreground: 215 9% 58%;
 
-    --accent: 221 83% 53%;
-    --accent-foreground: 0 0% 100%;
+    --accent: var(--primary);
+    --accent-foreground: var(--primary-foreground);
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
@@ -41,8 +57,8 @@
     --border: 216 12% 24%;
     --input: 216 12% 21%;
     --input-bg: 224 13% 18%;           /* VS Code input surface (slightly elevated from panel) */
-    --segment-bg: 215 14% 26%;         /* segmented control container (muted) */
-    --segment-border: 216 12% 24%;     /* segment container border (= border) */
+    --segment-bg: var(--muted);
+    --segment-border: var(--border);
     --ring: 221 83% 53%;
 
     --radius: 0.625rem;
@@ -55,7 +71,7 @@
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 216 12% 22%;
     --sidebar-ring: 221 83% 53%;
-    --sidebar-active-border: 221 83% 53%; /* VS Code activity bar: left accent on active */
+    --sidebar-active-border: var(--sidebar-primary);
 
     --header-bg: 224 13% 15%;
     --header-tab-bg: 215 14% 24%;
@@ -80,7 +96,7 @@
     --code-rs-symbol: 215 9% 58%;   /* muted – symbols */
     --code-gutter-foreground: 215 9% 48%; /* line number gutter (muted) */
     --code-line-height: 1.5;         /* unitless, editor line height */
-    --code-font-size: 0.875rem;      /* 14px, matches --text-content */
+    --code-font-size: var(--text-content);      /* 14px */
     --code-gutter-min-width: 36px;   /* min width of line number column */
 
     --outline-button-bg: 215 14% 24%;
@@ -94,6 +110,7 @@
     --text-ui: 0.8125rem;
     --text-content: 0.875rem;
     --text-caption: 0.6875rem;   /* 11px – labels, badges, compact UI */
+    --text-title: 1.0625rem;     /* 17px – panel/section titles */
     /* Responsive: breakpoints align with Tailwind (sm 640px, md 768px, lg 1024px) */
     --bp-sm: 640px;
     --bp-md: 768px;
@@ -108,13 +125,13 @@
     --spacing-content-y-md: 1.25rem;
     --spacing-panel-gap: var(--home-space-sm);    /* 8px between panel header and body */
     --spacing-panel-inner-x: var(--home-space-md);     /* 16px horizontal padding inside each pane */
-    --spacing-panel-inner-y: 0.75rem;  /* 12px vertical padding inside pane body */
+    --spacing-panel-inner-y: var(--home-space-inner);  /* 12px vertical padding inside pane body */
     --spacing-panel-resizer-gap: var(--home-space-sm); /* 8px between pane content and resizer */
     --spacing-toolbar-mb: var(--home-space-sm);   /* 8px below toolbar */
     --spacing-title-mb: var(--home-space-sm);     /* 8px below page title */
     --spacing-section-mb: var(--home-space-sm);   /* 8px between sections */
     --spacing-block-gap: var(--home-space-sm);    /* 8px between inline blocks */
-    --spacing-code-editor: 0.75rem;
+    --spacing-code-editor: var(--home-space-inner);
     --spacing-grid-gap: var(--home-space-sm);    /* 8px grid/flex gap */
     --spacing-tool-layout-x: var(--home-space-sm);  /* 8px horizontal padding for tool layout */
     /* Home hub: system design scale (8px grid, industry + macOS) */
@@ -131,13 +148,36 @@
     --home-tools-header-gap: var(--home-space-sm);
     --home-footer-padding-y: var(--home-space-xl);
     --home-footer-padding-y-md: var(--home-space-2xl);
- /* fixed width on mobile so 2-column grid doesn’t shift */
     --min-touch: 44px; /* Apple/Google minimum touch target */
-    /* Radius scale (macOS-style: card 8px, small 4px) */
+    /* Radius scale (macOS-style: card 8px, small 4px, item 6px) */
     --radius-sm: 0.25rem;   /* 4px – scrollbar thumb, small chips */
+    --radius-item: 0.375rem; /* 6px – list/item pill (settings category, etc.) */
+    /* Shorthand: use in transition properties to avoid repeating duration/ease */
+    --transition-default: var(--transition-duration) var(--transition-ease);
+    --transition-duration-slow: 0.2s;   /* theme/body color transition */
+    /* Focus ring: single token for all focus-visible (panel-resizer, settings-tab, etc.) */
+    --focus-ring: 0 0 0 2px hsl(var(--ring));
+    --focus-ring-sidebar: 0 0 0 2px hsl(var(--sidebar-ring));
+    /* Scrollbar (desktop): thumb color so one place to theme */
+    --scrollbar-thumb: hsl(0 0% 50% / 0.4);
+    --scrollbar-thumb-hover: hsl(0 0% 50% / 0.55);
+    /* Typography: hero/section title (18px) */
+    --text-hero: 1.125rem;
+    /* Softer glass for cards/panels (24px blur vs 44px for title-bar/sidebar) */
+    --glass-blur-subtle: 24px;
+    --glass-saturate-subtle: 160%;
+    /* Settings sidebar vibrancy (slightly softer than main glass) */
+    --glass-blur-sidebar: 20px;
+    --glass-saturate-sidebar: 130%;
+    /* Extra-tight gap (2px) for list items */
+    --home-space-2xs: 0.125rem;
+    /* 12px / 6px – off 8px grid for tight panel/content spacing */
+    --home-space-inner: 0.75rem;
+    --home-space-stack: 0.375rem;
+    --settings-sidebar-width: 12rem;
+    --settings-window-radius: 0.75rem;  /* mobile sheet + macOS window top corners */
     /* Settings: macOS System Settings–style radius and spacing */
     --settings-radius: var(--home-radius-card);
-    --settings-window-radius: 0.75rem;   /* 12px – macOS window corners */
     --settings-panel-gap: var(--home-space-md);
     --spacing-tool-layout-y: var(--home-space-sm);  /* 8px vertical padding for tool layout */
     /* Workbench (VS Code): editor vs panel surfaces; sidebar/activity bar; list focus for nav */
@@ -157,7 +197,7 @@
     --title-bar-height: 35px;           /* macOS-style title bar height */
     --title-bar-padding-x: var(--home-space-sm);   /* 8px horizontal (8px grid) */
     --title-bar-gap: var(--home-space-xs);         /* 4px between chrome buttons */
-    --title-bar-font-size: 0.8125rem;   /* 13px – macOS/VS Code title */
+    --title-bar-font-size: var(--text-ui);   /* 13px – macOS/VS Code title */
     --title-bar-traffic-light-width: 72px; /* macOS: reserve for system controls */
     --title-bar-end-spacer: var(--home-space-xl); /* 32px right drag region */
     --panel-resizer-width: 0;        /* visual width/height: 0, only border line; hit area via padding */
@@ -175,11 +215,13 @@
     --radius-button: var(--home-radius-card);   /* macOS-style radius for buttons (toolbar, actions) */
     --spacing-sidebar-header-h: 1.75rem; /* 28px min height for panel header */
     --spacing-footer-min-h: 2.25rem;    /* 36px min height for sidebar footer */
-    /* Liquid Glass (desktop): blur + visible edge */
+    /* Liquid Glass (desktop): blur + visible edge; edge/highlight colors for sidebar/title-bar */
     --glass-blur: 44px;
     --glass-saturate: 200%;
     --glass-border-opacity: 0.14;
     --glass-highlight: 0.1;
+    --glass-edge: 0 0% 100% / var(--glass-border-opacity);
+    --glass-highlight-color: 0 0% 100% / var(--glass-highlight);
     /* Status (alerts, validation, badges) */
     --status-success: 142 69% 42%;
     --status-warning: 38 92% 50%;
@@ -187,6 +229,9 @@
     /* Motion: VS Code–style 150–200ms */
     --transition-duration: 0.15s;
     --transition-ease: ease;
+    /* Desktop layout gradient (content area behind sidebar) */
+    --desktop-layout-start: 224 13% 22%;
+    --desktop-layout-end: 224 13% 12%;
   }
 
   .light {
@@ -198,8 +243,8 @@
     --card: 0 0% 100%;
     --card-foreground: 25 25% 18%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 25 25% 18%;
+    --popover: var(--card);
+    --popover-foreground: var(--card-foreground);
 
     --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
@@ -210,8 +255,8 @@
     --muted: 25 15% 92%;
     --muted-foreground: 25 15% 42%;
 
-    --accent: 221 83% 53%;
-    --accent-foreground: 0 0% 100%;
+    --accent: var(--primary);
+    --accent-foreground: var(--primary-foreground);
 
     --destructive: 0 72% 45%;
     --destructive-foreground: 0 0% 100%;
@@ -233,7 +278,7 @@
     --sidebar-accent-foreground: 25 25% 18%;
     --sidebar-border: 25 12% 88%;
     --sidebar-ring: 221 83% 53%;
-    --sidebar-active-border: 221 83% 53%;
+    --sidebar-active-border: var(--sidebar-primary);
 
     --code-bg: 0 0% 99%;
     --code-border: 25 10% 90%;
@@ -253,9 +298,6 @@
     --code-rs-lower: 142 45% 32%;
     --code-rs-symbol: 25 15% 42%;
     --code-gutter-foreground: 25 10% 52%;
-    --code-line-height: 1.5;
-    --code-font-size: 0.875rem;
-    --code-gutter-min-width: 36px;
 
     --outline-button-bg: 0 0% 100%;
     --outline-button-border: 25 12% 85%;
@@ -270,21 +312,22 @@
     --settings-table-header-bg: 25 12% 94%;
     --settings-table-row-hover-bg: 25 15% 92%;
 
-    /* Liquid Glass – light: same blur, visible edge */
+    /* Liquid Glass – light: same blur, darker edge for contrast on light bg */
     --glass-blur: 44px;
     --glass-saturate: 200%;
     --glass-border-opacity: 0.14;
     --glass-highlight: 0.08;
+    --glass-edge: 0 0% 0% / var(--glass-border-opacity);
+    --glass-highlight-color: 0 0% 100% / 0.5;
 
     --status-success: 142 45% 32%;
     --status-warning: 38 92% 45%;
     --status-error: 0 72% 45%;
-    --transition-duration: 0.15s;
-    --transition-ease: ease;
-
-    --text-nav: 0.75rem;
-    --text-ui: 0.8125rem;
-    --text-content: 0.875rem;
+    --desktop-layout-start: 25 25% 98%;
+    --desktop-layout-end: 25 20% 94%;
+    --scrollbar-thumb: hsl(0 0% 0% / 0.2);
+    --scrollbar-thumb-hover: hsl(0 0% 0% / 0.3);
+    /* Typography: inherits --text-nav, --text-ui, --text-content, --text-caption, --text-hero from :root */
   }
 
   /* Deep dark: near-black (0°), OLED-friendly, WCAG AA muted text */
@@ -296,8 +339,8 @@
     --card: 0 0% 10%;
     --card-foreground: 0 0% 96%;
 
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 96%;
+    --popover: var(--card);
+    --popover-foreground: var(--card-foreground);
 
     --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
@@ -308,8 +351,8 @@
     --muted: 0 0% 14%;
     --muted-foreground: 0 0% 58%;
 
-    --accent: 221 83% 53%;
-    --accent-foreground: 0 0% 100%;
+    --accent: var(--primary);
+    --accent-foreground: var(--primary-foreground);
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
@@ -331,7 +374,7 @@
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 0 0% 14%;
     --sidebar-ring: 221 83% 53%;
-    --sidebar-active-border: 221 83% 53%;
+    --sidebar-active-border: var(--sidebar-primary);
 
     --header-bg: 0 0% 8%;
     --header-tab-bg: 0 0% 14%;
@@ -360,9 +403,6 @@
     --code-rs-lower: 142 69% 58%;
     --code-rs-symbol: 0 0% 58%;
     --code-gutter-foreground: 0 0% 48%;
-    --code-line-height: 1.5;
-    --code-font-size: 0.875rem;
-    --code-gutter-min-width: 36px;
 
     --outline-button-bg: 0 0% 14%;
     --outline-button-border: 0 0% 22%;
@@ -372,12 +412,14 @@
     --glass-saturate: 200%;
     --glass-border-opacity: 0.12;
     --glass-highlight: 0.08;
+    --glass-edge: 0 0% 100% / var(--glass-border-opacity);
+    --glass-highlight-color: 0 0% 100% / var(--glass-highlight);
 
     --status-success: 142 69% 42%;
     --status-warning: 38 92% 50%;
     --status-error: 0 72% 51%;
-    --transition-duration: 0.15s;
-    --transition-ease: ease;
+    --desktop-layout-start: 0 0% 10%;
+    --desktop-layout-end: 0 0% 5%;
   }
 
   * {
@@ -390,13 +432,15 @@
     color: hsl(var(--foreground));
   }
 
-  /* Global focus-visible fallback: ring from token (buttons/links etc.; inputs excluded below) */
+  /* Global focus-visible: ring from --focus-ring (sidebar uses --focus-ring-sidebar) */
   :focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px hsl(var(--ring));
+    box-shadow: var(--focus-ring);
   }
-
-  /* No focus ring on form controls (input, select, textarea) */
+  .sidebar-link:focus-visible,
+  .sidebar-donate-link:focus-visible {
+    box-shadow: var(--focus-ring-sidebar);
+  }
   input:focus-visible,
   select:focus-visible,
   textarea:focus-visible {
@@ -407,7 +451,17 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-sans);
-    transition: background-color 0.2s ease, color 0.2s ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color var(--transition-duration-slow) var(--transition-ease), color var(--transition-duration-slow) var(--transition-ease);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 
   /* Web: root fills viewport so flex layout (App) is full height, no body scroll */
@@ -434,35 +488,21 @@
     overflow: hidden;
   }
 
-  /* Content area behind sidebar: gradient so glass blur has depth */
+  /* Content area behind sidebar: gradient per theme (--desktop-layout-start/end) */
   html.desktop .desktop-layout {
-    background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(224 13% 22%), hsl(224 13% 12%));
-  }
-  html.desktop.light .desktop-layout {
-    background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(25 25% 98%), hsl(25 20% 94%));
-  }
-  html.desktop.deep-dark .desktop-layout {
-    background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(0 0% 10%), hsl(0 0% 5%));
+    background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(var(--desktop-layout-start)), hsl(var(--desktop-layout-end)));
   }
 
-  /* Title bar: Liquid Glass – token-based, VS Code–aligned layout */
+  /* Title bar: Liquid Glass – token-based (--glass-edge, --glass-highlight-color per theme) */
   .desktop-title-bar {
     background: hsl(var(--header-bg) / 0.48);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    border-bottom: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));
-    box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / var(--glass-highlight));
+    border-bottom: 1px solid hsl(var(--glass-edge));
+    box-shadow: inset 0 1px 0 0 hsl(var(--glass-highlight-color));
     padding-left: var(--title-bar-padding-x);
     padding-right: var(--title-bar-padding-x);
     gap: var(--title-bar-gap);
-  }
-  .light .desktop-title-bar {
-    border-bottom-color: hsl(0 0% 0% / var(--glass-border-opacity));
-    box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / 0.5);
-  }
-  .deep-dark .desktop-title-bar {
-    border-bottom-color: hsl(0 0% 100% / var(--glass-border-opacity));
-    box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / var(--glass-highlight));
   }
   .desktop-title-bar .title-bar-title {
     font-size: var(--title-bar-font-size);
@@ -475,7 +515,7 @@
     border-bottom: none;
     border-radius: var(--home-radius-card) var(--home-radius-card) 0 0;
     padding: 0 var(--home-space-md);
-    min-height: 24px;
+    min-height: var(--home-space-lg);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -490,47 +530,41 @@
     width: var(--title-bar-end-spacer);
   }
 
-  /* Thin scrollbars in desktop window */
+  /* Thin scrollbars in desktop window (--scrollbar-thumb / --scrollbar-thumb-hover per theme) */
   html.desktop {
     scrollbar-width: thin;
-    scrollbar-color: hsl(0 0% 50% / 0.4) transparent;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
   }
   html.desktop ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: var(--home-space-sm);
+    height: var(--home-space-sm);
   }
   html.desktop ::-webkit-scrollbar-track {
     background: transparent;
   }
   html.desktop ::-webkit-scrollbar-thumb {
-    background: hsl(0 0% 50% / 0.4);
+    background: var(--scrollbar-thumb);
     border-radius: var(--radius-sm);
   }
   html.desktop ::-webkit-scrollbar-thumb:hover {
-    background: hsl(0 0% 50% / 0.55);
-  }
-  .light.desktop ::-webkit-scrollbar-thumb {
-    background: hsl(0 0% 0% / 0.2);
-  }
-  .light.desktop ::-webkit-scrollbar-thumb:hover {
-    background: hsl(0 0% 0% / 0.3);
+    background: var(--scrollbar-thumb-hover);
   }
 
   code, pre, .font-mono {
     font-family: var(--font-mono) !important;
   }
 
-  /* Responsive: tighter panel padding when stacked (VS Code–style density) */
+  /* Responsive: tighter panel padding when stacked (12px then 8px/6px) */
   @media (max-width: 1023px) {
     :root {
-      --spacing-panel-inner-x: 0.75rem;
+      --spacing-panel-inner-x: var(--home-space-inner);
       --spacing-panel-inner-y: var(--home-space-sm);
     }
   }
   @media (max-width: 639px) {
     :root {
       --spacing-panel-inner-x: var(--home-space-sm);
-      --spacing-panel-inner-y: 0.375rem;
+      --spacing-panel-inner-y: var(--home-space-stack);
     }
   }
 }
@@ -599,12 +633,27 @@
     display: block;
   }
 
-  /* Section heading inside tool-card (e.g. "Validate (Luhn)", "Match Details") */
-  .tool-section-heading {
-    font-size: var(--text-content);
+  /* Secondary caption text (reusable for tool pages) */
+  .tool-caption {
+    font-size: var(--text-caption);
+    color: hsl(var(--muted-foreground));
+  }
+  .tool-caption--uppercase {
     font-weight: 500;
-    color: hsl(var(--foreground));
-    margin-bottom: var(--spacing-block-gap);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Small code block / snippet (pre/code) using design tokens */
+  .tool-code-snippet {
+    font-family: var(--font-mono);
+    font-size: var(--code-font-size);
+    line-height: var(--code-line-height);
+    background: hsl(var(--code-bg));
+    border: 1px solid hsl(var(--code-border));
+    border-radius: var(--radius);
+    padding: var(--home-space-sm) var(--home-space-md);
+    color: hsl(var(--muted-foreground));
   }
 
   /* Inline alert for error/success (design tokens) */
@@ -613,7 +662,7 @@
     font-size: var(--text-ui);
     border-radius: var(--radius);
     border: 1px solid;
-    transition: background 0.15s ease, border-color 0.15s ease;
+    transition: background var(--transition-default), border-color var(--transition-default);
   }
   .tool-alert--error {
     color: hsl(var(--destructive));
@@ -655,36 +704,35 @@
     gap: var(--spacing-grid-gap);
   }
 
-  /* Reference tables (e.g. MIME types): macOS-style spacing, radius, typography */
+  /* Shared table pattern: cells, border, thead th (tool + settings); then context-specific thead bg / row hover */
+  .tool-reference-table,
+  .settings-table {
+    width: 100%;
+    font-size: var(--text-nav);
+  }
+  .tool-reference-table th, .tool-reference-table td,
+  .settings-table th, .settings-table td {
+    padding: var(--home-space-sm) var(--home-space-md);
+    text-align: left;
+    border-bottom: 1px solid hsl(var(--border));
+  }
+  .tool-reference-table thead th,
+  .settings-table thead th {
+    color: hsl(var(--muted-foreground));
+    font-weight: 500;
+  }
+  .tool-reference-table tbody tr:last-child td,
+  .settings-table tbody tr:last-child td {
+    border-bottom: none;
+  }
   .tool-reference-table-wrap {
     border: 1px solid hsl(var(--border));
     border-radius: var(--home-radius-card);
     overflow: hidden;
   }
-  .tool-reference-table {
-    width: 100%;
-    font-size: var(--text-nav);
-  }
-  .tool-reference-table th,
-  .tool-reference-table td {
-    padding: var(--home-space-sm) var(--home-space-md);
-    text-align: left;
-    border-bottom: 1px solid hsl(var(--border));
-    font-size: var(--text-caption);
-  }
-  .tool-reference-table thead tr {
-    background: hsl(var(--muted) / 0.5);
-  }
-  .tool-reference-table thead th {
-    color: hsl(var(--muted-foreground));
-    font-weight: 500;
-  }
-  .tool-reference-table tbody tr:last-child td {
-    border-bottom: none;
-  }
-  .tool-reference-table tbody tr:hover {
-    background: hsl(var(--muted) / 0.3);
-  }
+  .tool-reference-table th, .tool-reference-table td { font-size: var(--text-caption); }
+  .tool-reference-table thead tr { background: hsl(var(--muted) / 0.5); }
+  .tool-reference-table tbody tr:hover { background: hsl(var(--muted) / 0.3); }
 
   .tool-layout-content > .tool-toolbar {
     flex-shrink: 0;
@@ -740,11 +788,11 @@
   /* Resize panels separator: width/height 0, only border line visible; hit area via padding. */
   .panel-resizer {
     margin: 0;
-    padding: 0 8px;
+    padding: 0 var(--home-space-sm);
     width: var(--panel-resizer-width);
     min-width: var(--panel-resizer-width);
     background: transparent;
-    transition: background 0.15s ease;
+    transition: background var(--transition-default);
   }
   .panel-resizer:hover {
     background: hsl(var(--muted) / 0.35);
@@ -753,7 +801,7 @@
     margin: 0;
     padding: 0;
     background: hsl(var(--border));
-    transition: background 0.15s ease;
+    transition: background var(--transition-default);
   }
   .panel-resizer:hover .panel-resizer-line {
     background: hsl(var(--muted-foreground) / 0.5);
@@ -761,7 +809,7 @@
   .panel-resizer:focus-visible {
     outline: none;
     background: hsl(var(--muted) / 0.4);
-    box-shadow: 0 0 0 2px hsl(var(--ring));
+    box-shadow: var(--focus-ring);
   }
   .panel-resizer:focus-visible .panel-resizer-line {
     background: hsl(var(--primary) / 0.8);
@@ -770,7 +818,7 @@
   .panel-resizer--horizontal {
     width: 100%;
     min-width: 0;
-    padding: 8px 0;
+    padding: var(--home-space-sm) 0;
     height: var(--panel-resizer-width);
     min-height: var(--panel-resizer-width);
   }
@@ -790,7 +838,7 @@
     padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
     color: hsl(var(--destructive));
     font-size: var(--text-ui);
-    transition: background 0.15s ease, border-color 0.15s ease;
+    transition: background var(--transition-default), border-color var(--transition-default);
   }
 
   /* Settings page: tabs, option cards, section headings (design system tokens) */
@@ -812,7 +860,7 @@
     border: none;
     border-bottom: 2px solid transparent;
     cursor: pointer;
-    transition: color 0.15s ease, border-color 0.15s ease;
+    transition: color var(--transition-default), border-color var(--transition-default);
   }
   .settings-tab:hover {
     color: hsl(var(--foreground));
@@ -820,7 +868,7 @@
   .settings-tab:focus-visible {
     outline: none;
     border-radius: var(--radius) var(--radius) 0 0;
-    box-shadow: 0 0 0 2px hsl(var(--ring));
+    box-shadow: var(--focus-ring);
   }
   .settings-tab--selected {
     color: hsl(var(--primary));
@@ -834,13 +882,13 @@
     cursor: pointer;
     background: hsl(var(--background));
     color: hsl(var(--foreground));
-    transition: border-color 0.15s ease, background 0.15s ease;
+    transition: border-color var(--transition-default), background var(--transition-default);
   }
   .settings-option-card .settings-label {
     font-size: var(--text-caption);
   }
   .settings-option-card .settings-body-text {
-    font-size: 0.625rem;
+    font-size: var(--text-caption); /* compact: 11px via token */
     margin-top: var(--home-space-xs);
   }
   .settings-option-card:hover {
@@ -850,7 +898,7 @@
   .settings-option-card:focus-visible {
     outline: none;
     border-radius: var(--radius-sm);
-    box-shadow: 0 0 0 2px hsl(var(--ring));
+    box-shadow: var(--focus-ring);
   }
   .settings-option-card--selected {
     border-color: hsl(var(--primary));
@@ -907,33 +955,14 @@
     overflow: auto;
     max-height: min(22rem, 55vh);
   }
-  .settings-table {
-    width: 100%;
-    font-size: var(--text-nav);
-  }
-  .settings-table th,
-  .settings-table td {
-    padding: var(--home-space-sm) var(--home-space-md);
-    text-align: left;
-    border-bottom: 1px solid hsl(var(--border));
-    font-size: var(--text-nav);
-  }
-  .settings-table--compact th,
-  .settings-table--compact td {
+  .settings-table th, .settings-table td { font-size: var(--text-nav); }
+  .settings-table--compact th, .settings-table--compact td {
     padding: var(--home-space-sm) var(--home-space-md);
     font-size: var(--text-nav);
     vertical-align: middle;
   }
-  .settings-table--compact thead th {
-    font-weight: 500;
-  }
-  .settings-table thead tr {
-    background: hsl(var(--settings-table-header-bg));
-  }
-  .settings-table thead th {
-    color: hsl(var(--muted-foreground));
-    font-weight: 500;
-  }
+  .settings-table--compact thead th { font-weight: 500; }
+  .settings-table thead tr { background: hsl(var(--settings-table-header-bg)); }
   .settings-table-wrap .settings-table thead th {
     position: sticky;
     top: 0;
@@ -941,12 +970,7 @@
     background: hsl(var(--settings-table-header-bg));
     box-shadow: 0 1px 0 hsl(var(--border));
   }
-  .settings-table tbody tr:last-child td {
-    border-bottom: none;
-  }
-  .settings-table tbody tr:hover {
-    background: hsl(var(--settings-table-row-hover-bg));
-  }
+  .settings-table tbody tr:hover { background: hsl(var(--settings-table-row-hover-bg)); }
   .settings-body-text {
     font-size: var(--text-content);
     color: hsl(var(--muted-foreground));
@@ -967,7 +991,7 @@
   .settings-setting-label {
     flex: 0 1 auto;
     text-align: left;
-    font-size: 0.8125rem;
+    font-size: var(--text-ui);
     font-weight: 500;
     color: hsl(var(--foreground));
   }
@@ -984,11 +1008,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
-    padding-left: max(1rem, env(safe-area-inset-left));
-    padding-right: max(1rem, env(safe-area-inset-right));
-    padding-bottom: max(1rem, env(safe-area-inset-bottom));
-    padding-top: max(1rem, env(safe-area-inset-top));
+    padding: var(--home-space-md);
+    padding-left: max(var(--home-space-md), env(safe-area-inset-left));
+    padding-right: max(var(--home-space-md), env(safe-area-inset-right));
+    padding-bottom: max(var(--home-space-md), env(safe-area-inset-bottom));
+    padding-top: max(var(--home-space-md), env(safe-area-inset-top));
     pointer-events: none;
   }
   .settings-modal-container > * {
@@ -1004,7 +1028,7 @@
     position: relative;
     z-index: 1;
     width: 100%;
-    max-width: 64rem;
+    max-width: var(--home-content-max-width);
     height: min(85vh, 38rem);
     min-height: min(72vh, 28rem);
     max-height: calc(100dvh - 2rem);
@@ -1047,7 +1071,7 @@
     background: hsl(var(--background));
   }
   .settings-mobile-header-title {
-    font-size: 1.125rem;
+    font-size: var(--text-hero);
     font-weight: 600;
     color: hsl(var(--foreground));
     letter-spacing: -0.01em;
@@ -1069,7 +1093,7 @@
   /* Sidebar: macOS System Settings–style list (vibrancy, pill selection) */
   .settings-sidebar {
     flex-shrink: 0;
-    width: 12rem;
+    width: var(--settings-sidebar-width);
     padding: var(--home-space-md) var(--home-space-sm) var(--home-space-lg);
     overflow-y: auto;
     background: hsl(var(--muted) / 0.4);
@@ -1077,14 +1101,14 @@
   }
   html.desktop .settings-sidebar {
     background: hsl(var(--muted) / 0.3);
-    backdrop-filter: blur(20px) saturate(130%);
-    -webkit-backdrop-filter: blur(20px) saturate(130%);
+    backdrop-filter: blur(var(--glass-blur-sidebar)) saturate(var(--glass-saturate-sidebar));
+    -webkit-backdrop-filter: blur(var(--glass-blur-sidebar)) saturate(var(--glass-saturate-sidebar));
     border-right-color: hsl(var(--border) / 0.6);
   }
   .settings-sidebar-title {
     margin: 0 0 var(--home-space-md);
     padding: 0 var(--home-space-md);
-    font-size: 0.8125rem;
+    font-size: var(--text-ui);
     font-weight: 600;
     color: hsl(var(--muted-foreground));
     letter-spacing: 0.02em;
@@ -1092,7 +1116,7 @@
   .settings-category-list {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--home-space-2xs);
     padding: 0;
     list-style: none;
   }
@@ -1102,15 +1126,15 @@
     gap: var(--home-space-sm);
     width: 100%;
     padding: var(--home-space-sm) var(--home-space-md);
-    font-size: 0.8125rem;
+    font-size: var(--text-ui);
     font-weight: 500;
     color: hsl(var(--muted-foreground));
     background: transparent;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--radius-item);
     cursor: pointer;
     text-align: left;
-    transition: color var(--transition-duration) var(--transition-ease), background var(--transition-duration) var(--transition-ease);
+    transition: color var(--transition-default), background var(--transition-default);
   }
   .settings-category-item:hover {
     color: hsl(var(--foreground));
@@ -1118,13 +1142,13 @@
   }
   .settings-category-item:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px hsl(var(--ring));
+    box-shadow: var(--focus-ring);
   }
   .settings-category-item--selected {
     font-weight: 600;
     color: hsl(var(--primary-foreground));
     background: hsl(var(--primary));
-    border-radius: 6px;
+    border-radius: var(--radius-item);
   }
   html.desktop .settings-category-item--selected {
     border-radius: 9999px;
@@ -1140,8 +1164,8 @@
     flex-shrink: 0;
   }
   .settings-category-icon {
-    width: 0.875rem;
-    height: 0.875rem;
+    width: var(--text-content);
+    height: var(--text-content);
     flex-shrink: 0;
     opacity: 0.9;
   }
@@ -1171,7 +1195,7 @@
   }
   .settings-panel-title {
     margin: 0;
-    font-size: 1.0625rem;
+    font-size: var(--text-title);
     font-weight: 600;
     color: hsl(var(--foreground));
     letter-spacing: -0.01em;
@@ -1209,7 +1233,7 @@
   }
   .pref-section__heading {
     margin: 0 0 var(--home-space-sm);
-    font-size: 0.6875rem;
+    font-size: var(--text-caption);
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -1221,7 +1245,7 @@
     gap: 0;
   }
   .pref-group {
-    border-radius: 10px;
+    border-radius: var(--radius);
     background: hsl(var(--muted) / 0.25);
     border: 1px solid hsl(var(--border) / 0.5);
     overflow: hidden;
@@ -1301,11 +1325,12 @@
     background-color: hsl(var(--primary));
     color: hsl(var(--primary-foreground));
   }
-  .settings-section-heading {
+  /* Scoped override: larger heading inside settings content body */
+  .settings-content-body .settings-section-heading {
     font-size: var(--text-nav);
     margin-bottom: var(--home-space-sm);
   }
-  .settings-section-heading svg {
+  .settings-content-body .settings-section-heading svg {
     width: var(--text-content);
     height: var(--text-content);
   }
@@ -1337,7 +1362,7 @@
       height: 100%;
       min-height: 0;
       max-height: none;
-      border-radius: 0.75rem 0.75rem 0 0;
+      border-radius: var(--settings-window-radius) var(--settings-window-radius) 0 0;
       border-left: none;
       border-right: none;
       box-shadow: 0 -4px 24px hsl(0 0% 0% / 0.2);
@@ -1395,8 +1420,8 @@
       border-radius: 0;
     }
     .settings-category-item .settings-category-icon {
-      width: 0.875rem;
-      height: 0.875rem;
+      width: var(--text-content);
+      height: var(--text-content);
     }
     .settings-category-item .settings-category-label {
       font-size: var(--text-caption);
@@ -1480,34 +1505,13 @@
     margin-bottom: var(--spacing-toolbar-mb);
   }
 
-  /* Unified control: button, select, input – same bg, text, border, font (dark + light) */
-  .control-base {
-    background: hsl(var(--background));
-    color: hsl(var(--foreground));
-    border: 1px solid hsl(var(--input));
-    font-size: var(--text-content);
-  }
-
-  .tool-select {
-    @apply h-9 rounded-lg px-3 py-2 font-medium transition-colors duration-150 cursor-pointer;
-    background: hsl(var(--background));
-    color: hsl(var(--foreground));
-    border: 1px solid hsl(var(--input));
-    font-size: var(--text-content);
-  }
-
-  .tool-select:hover {
-    background: hsl(var(--accent));
-    color: hsl(var(--accent-foreground));
-  }
-
-  /* Standard input for tool pages – same as control-base */
+  /* Compact input: token-based control surface (reusable for tool forms) */
   .input-compact {
-    @apply h-9 rounded-lg px-3 py-2 font-mono placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-150;
     background: hsl(var(--background));
     color: hsl(var(--foreground));
     border: 1px solid hsl(var(--input));
     font-size: var(--text-content);
+    @apply h-9 rounded-lg px-3 py-2 font-mono placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-150;
   }
 
   .tool-checkbox-label {
@@ -1608,7 +1612,7 @@
     border: 1px solid hsl(var(--sidebar-border));
     background: hsl(var(--sidebar-accent) / 0.5);
     color: hsl(var(--sidebar-foreground));
-    transition: border-color 0.15s, box-shadow 0.15s;
+    transition: border-color var(--transition-default), box-shadow var(--transition-default);
   }
   .sidebar-search::placeholder {
     color: hsl(var(--muted-foreground));
@@ -1643,7 +1647,7 @@
     height: 2rem;
     border-radius: var(--radius-button);
     color: hsl(var(--muted-foreground));
-    transition: color 0.15s, background-color 0.15s, opacity 0.15s;
+    transition: color var(--transition-default), background-color var(--transition-default), opacity var(--transition-default);
   }
   .btn-icon-chrome:hover {
     color: hsl(var(--foreground));
@@ -1670,7 +1674,7 @@
     border: 1px solid hsl(var(--sidebar-border));
     background: hsl(var(--sidebar-accent) / 0.6);
     color: hsl(var(--sidebar-foreground));
-    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+    transition: background-color var(--transition-default), border-color var(--transition-default), color var(--transition-default);
     text-decoration: none;
   }
   .sidebar-donate-link:hover {
@@ -1680,7 +1684,7 @@
   }
   .sidebar-donate-link:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px hsl(var(--sidebar-ring));
+    box-shadow: var(--focus-ring-sidebar);
   }
   .sidebar-donate-link-icon {
     width: var(--text-nav);
@@ -1694,50 +1698,21 @@
 
   /* Mobile: touch targets (44px min), safe-area for notched devices, overlay above content */
   @media (max-width: 767px) {
-    .app-sidebar .sidebar-link,
-    .app-sidebar .sidebar-group-trigger {
-      min-height: var(--min-touch);
-    }
     .app-sidebar.sidebar-collapsed {
       padding-left: env(safe-area-inset-left);
     }
   }
 
-  /* Liquid Glass: sidebar in desktop window – token-based, translucent, blur, edge + shine */
-  .sidebar-glass {
-    background: hsl(var(--sidebar-background) / 0.42);
-    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    border-right: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));
-    box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / var(--glass-highlight));
-  }
-  .light .sidebar-glass {
-    background: hsl(var(--sidebar-background) / 0.5);
-    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    border-right: 1px solid hsl(0 0% 0% / var(--glass-border-opacity));
-    box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / 0.6);
-  }
-  .deep-dark .sidebar-glass {
-    background: hsl(var(--sidebar-background) / 0.5);
-    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    border-right: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));
-    box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / var(--glass-highlight));
-  }
-
-  /* macOS-style glass sidebar on desktop: apply glass to main app sidebar */
+  /* macOS-style glass sidebar on desktop: one block using --glass-edge, --glass-highlight-color */
   html.desktop .app-sidebar {
     background: hsl(var(--sidebar-background) / 0.42);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    border-right: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));
-    box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / var(--glass-highlight));
+    border-right: 1px solid hsl(var(--glass-edge));
+    box-shadow: inset 1px 0 0 0 hsl(var(--glass-highlight-color));
   }
   html.desktop.light .app-sidebar {
     background: hsl(var(--sidebar-background) / 0.5);
-    border-right: 1px solid hsl(0 0% 0% / var(--glass-border-opacity));
-    box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / 0.6);
   }
   html.desktop.deep-dark .app-sidebar {
     background: hsl(var(--sidebar-background) / 0.5);
@@ -1746,8 +1721,8 @@
   /* Reusable Liquid Glass surface (e.g. cards, panels in desktop app) */
   .glass-surface {
     background: hsl(var(--background) / 0.7);
-    backdrop-filter: blur(24px) saturate(160%);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
+    -webkit-backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
     border: 1px solid hsl(var(--border) / 0.6);
   }
   .light .glass-surface {
@@ -1853,7 +1828,7 @@
     gap: var(--home-space-md);
   }
   .home-hero-tagline {
-    font-size: 1.125rem;
+    font-size: var(--text-hero);
     font-weight: 600;
     letter-spacing: -0.01em;
     line-height: 1.4;
@@ -1872,7 +1847,7 @@
   }
   .home-intro .panel-header-label {
     margin: 0 0 var(--home-space-sm);
-    font-size: 0.8125rem;
+    font-size: var(--text-ui);
     font-weight: 600;
     letter-spacing: 0.02em;
     color: hsl(var(--foreground));
@@ -1885,8 +1860,8 @@
   }
   html.desktop .home-intro {
     background: hsl(var(--card) / 0.85);
-    backdrop-filter: blur(24px) saturate(160%);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
+    -webkit-backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
     border-color: hsl(var(--border) / 0.8);
   }
 
@@ -2031,9 +2006,9 @@
       gap: var(--home-space-xs);
     }
     .home-recent-count {
-      min-width: 1.125rem;
-      padding: 0.0625rem 0.25rem;
-      font-size: 0.6875rem;
+      min-width: var(--text-hero);
+      padding: 0.0625rem var(--home-space-xs);
+      font-size: var(--text-caption);
     }
   }
 
@@ -2043,7 +2018,7 @@
     max-width: 28rem;
   }
   .home-tools-search {
-    transition: background-color var(--transition-duration) var(--transition-ease), border-color var(--transition-duration) var(--transition-ease);
+    transition: background-color var(--transition-default), border-color var(--transition-default);
   }
 
   /* Sticky tools header: glass bar (macOS-style), below safe-area when sticky */
@@ -2057,7 +2032,7 @@
   .home-empty {
     padding: var(--home-space-xl) var(--home-space-lg) !important;
     border-radius: var(--home-radius-card);
-    transition: background-color var(--transition-duration) var(--transition-ease), border-color var(--transition-duration) var(--transition-ease);
+    transition: background-color var(--transition-default), border-color var(--transition-default);
   }
   .home-empty p {
     font-size: var(--text-content);

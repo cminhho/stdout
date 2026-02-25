@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { SelectWithOptions } from "@/components/ui/select";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import type { IndentOption } from "@/components/IndentSelect";
 import {
   processJsonToTypesForLayout,
@@ -16,7 +15,6 @@ import {
 } from "@/utils/jsonTypescript";
 
 const JsonTypescriptPage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const [lang, setLang] = useState<JsonTypescriptLang>("typescript");
 
@@ -29,7 +27,6 @@ const JsonTypescriptPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () => setInput(JSON_TYPESCRIPT_SAMPLE),

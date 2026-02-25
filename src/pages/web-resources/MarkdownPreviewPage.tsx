@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { htmlBeautify } from "@/utils/beautifier";
@@ -39,7 +38,6 @@ console.log(hello);
 const getHtml = () => document.getElementById("md-preview")?.innerHTML ?? "";
 
 const MarkdownPreviewPage = () => {
-  const tool = useCurrentTool();
   const [markdown, setMarkdown] = useState(SAMPLE_MARKDOWN);
   const [showHtml, setShowHtml] = useState(false);
   const [beautifiedHtml, setBeautifiedHtml] = useState("");
@@ -66,7 +64,6 @@ const MarkdownPreviewPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () => setMarkdown(SAMPLE_MARKDOWN),

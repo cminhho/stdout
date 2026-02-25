@@ -7,13 +7,11 @@ const SAMPLE_INPUT = 'Say "Hello" & <world>\nLine 2';
 
 interface EscaperPageProps {
   type: EscaperType;
-  title: string;
-  description: string;
   /** Optional selector (e.g. dropdown) for format/type when used in unified tool */
   formatSelector?: React.ReactNode;
 }
 
-const EscaperPage = ({ type, title, description, formatSelector }: EscaperPageProps) => {
+const EscaperPage = ({ type, formatSelector }: EscaperPageProps) => {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
 
@@ -34,8 +32,6 @@ const EscaperPage = ({ type, title, description, formatSelector }: EscaperPagePr
 
   return (
     <TwoPanelToolLayout
-      title={title}
-      description={description}
       inputPane={{
         inputToolbar: {
           onSample: () => { setInput(SAMPLE_INPUT); setOutput(""); },

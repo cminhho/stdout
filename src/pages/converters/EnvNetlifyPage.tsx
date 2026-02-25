@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { SegmentGroup } from "@/components/SegmentGroup";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import type { IndentOption } from "@/components/IndentSelect";
 import {
   processEnvNetlifyForLayout,
@@ -21,7 +20,6 @@ const OUTPUT_FORMAT_OPTIONS: { value: EnvOutputFormat; label: string }[] = [
 ];
 
 const EnvNetlifyPage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const [outputFormat, setOutputFormat] = useState<EnvOutputFormat>("netlify");
 
@@ -34,7 +32,6 @@ const EnvNetlifyPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () => setInput(ENV_NETLIFY_SAMPLE),

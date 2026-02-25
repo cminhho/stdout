@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { cn } from "@/utils/cn";
@@ -37,25 +37,27 @@ const FileUploadButton = ({
   const id = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
-
-  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setLoading(true);
-    try {
-      if (onText) {
-        const text = await readFileAsText(file);
-        onText(text);
-      } else if (onSelect) {
-        await onSelect(file);
+  const handleChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      setLoading(true);
+      try {
+        if (onText) {
+          const text = await readFileAsText(file);
+          onText(text);
+        } else if (onSelect) {
+          await onSelect(file);
+        }
+      } catch {
+        if (onText) onText("");
+      } finally {
+        e.target.value = "";
+        setLoading(false);
       }
-    } catch {
-      if (onText) onText("");
-    } finally {
-      e.target.value = "";
-      setLoading(false);
-    }
-  };
+    },
+    [onText, onSelect]
+  );
 
   const isDisabled = disabled || loading;
 

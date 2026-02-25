@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { SegmentGroup } from "@/components/SegmentGroup";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import type { IndentOption } from "@/components/IndentSelect";
 import type { XmlJsonMode } from "@/utils/xmlJson";
 import {
@@ -24,7 +23,6 @@ const MODE_OPTIONS: { value: XmlJsonMode; label: string }[] = [
 ];
 
 const XmlJsonPage = () => {
-  const tool = useCurrentTool();
   const [mode, setMode] = useState<XmlJsonMode>("xml2json");
   const [input, setInput] = useState("");
 
@@ -45,7 +43,6 @@ const XmlJsonPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () => setInput(sampleInput),

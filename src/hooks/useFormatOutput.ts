@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 
-const DEFAULT_ERROR_MSG = "Format failed";
-
 export interface UseFormatOutputOptions {
   fallbackErrorMsg?: string;
 }
@@ -16,7 +14,7 @@ export function useFormatOutput<T>(
   format: ((input: string, indent: unknown) => T | Promise<T>) | null | undefined,
   options: UseFormatOutputOptions = {}
 ): { result: T | null; loading: boolean; error: Error | null } {
-  const { fallbackErrorMsg = DEFAULT_ERROR_MSG } = options;
+  const { fallbackErrorMsg = "Format failed" } = options;
   const [asyncResult, setAsyncResult] = useState<T | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);

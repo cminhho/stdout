@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { cn } from "@/utils/cn";
 
 export type ToolAlertVariant = "error" | "success";
@@ -19,7 +20,7 @@ const DEFAULT_PREFIX: Record<ToolAlertVariant, string> = {
  * Inline alert for validator/tool error or success. Uses design tokens (destructive / status-success).
  * Consistent padding and border from --spacing-panel-inner-*, --radius.
  */
-export function ToolAlert({ variant, message, className, prefix }: ToolAlertProps) {
+export const ToolAlert = memo(function ToolAlert({ variant, message, className, prefix }: ToolAlertProps) {
   const p = prefix ?? DEFAULT_PREFIX[variant];
   return (
     <div
@@ -34,6 +35,6 @@ export function ToolAlert({ variant, message, className, prefix }: ToolAlertProp
       {message}
     </div>
   );
-}
+});
 
 export default ToolAlert;

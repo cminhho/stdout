@@ -3,7 +3,6 @@ import ToolLayout from "@/components/ToolLayout";
 import ToolPane from "@/components/ToolPane";
 import CodeEditor from "@/components/CodeEditor";
 import { SelectWithOptions } from "@/components/ui/select";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,7 +42,6 @@ const generateUUIDv7 = (): string => {
 };
 
 const UuidPage = () => {
-  const tool = useCurrentTool();
   const [uuids, setUuids] = useState<string[]>([]);
   const [count, setCount] = useState(10);
   const [version, setVersion] = useState<"v1" | "v4" | "v7">("v4");
@@ -71,7 +69,7 @@ const UuidPage = () => {
     toolbar: (
       <div className="flex items-center gap-2 flex-wrap">
         <div className="flex items-center gap-1.5">
-          <Label className="text-xs text-muted-foreground shrink-0">Count</Label>
+          <Label className="tool-field-label shrink-0">Count</Label>
           <Input
             type="number"
             min={1}
@@ -82,7 +80,7 @@ const UuidPage = () => {
           />
         </div>
         <div className="flex items-center gap-1.5">
-          <Label className="text-xs text-muted-foreground shrink-0">Version</Label>
+          <Label className="tool-field-label shrink-0">Version</Label>
           <SelectWithOptions
             size="xs"
             variant="secondary"
@@ -93,11 +91,11 @@ const UuidPage = () => {
             aria-label="UUID version"
           />
         </div>
-        <label className="flex items-center gap-1 text-xs text-muted-foreground cursor-pointer whitespace-nowrap">
+        <label className="flex items-center gap-1 tool-caption cursor-pointer whitespace-nowrap">
           <input type="checkbox" checked={uppercase} onChange={(e) => setUppercase(e.target.checked)} className="accent-primary rounded border-input" />
           Upper
         </label>
-        <label className="flex items-center gap-1 text-xs text-muted-foreground cursor-pointer whitespace-nowrap">
+        <label className="flex items-center gap-1 tool-caption cursor-pointer whitespace-nowrap">
           <input type="checkbox" checked={hyphens} onChange={(e) => setHyphens(e.target.checked)} className="accent-primary rounded border-input" />
           Hyphens
         </label>
@@ -122,10 +120,7 @@ const UuidPage = () => {
   };
 
   return (
-    <ToolLayout
-      title={tool?.label ?? "UUID Generator"}
-      description={tool?.description ?? "Generate UUIDs (v1, v4, v7)"}
-    >
+    <ToolLayout>
       <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack">
         <ToolPane pane={pane} />
       </div>

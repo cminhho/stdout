@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import ToolPane from "@/components/ToolPane";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { SelectWithOptions } from "@/components/ui/select";
@@ -9,11 +8,7 @@ import CopyButton from "@/components/CopyButton";
 import { ClearButton } from "@/components/ClearButton";
 import { CSS_UNITS_LIST, CSS_UNITS_DEFAULT_BASE, convertToAllUnits } from "@/utils/cssUnits";
 
-const DEFAULT_TITLE = "CSS Units";
-const DEFAULT_DESCRIPTION = "Convert between CSS units (px, rem, em, vw, vh, etc.)";
-
 const CssUnitsPage = () => {
-  const tool = useCurrentTool();
   const [value, setValue] = useState("16");
   const [fromUnit, setFromUnit] = useState("px");
   const [baseFontSize, setBaseFontSize] = useState(String(CSS_UNITS_DEFAULT_BASE));
@@ -38,17 +33,17 @@ const CssUnitsPage = () => {
   const unitOptions = CSS_UNITS_LIST.map((u) => ({ value: u, label: u }));
 
   const pane = {
-    title: DEFAULT_TITLE,
+    title: "CSS Units",
     toolbar: !isDefault ? <ClearButton onClick={resetToDefault} /> : undefined,
     children: (
       <div className="flex flex-col gap-6 flex-1 min-h-0 overflow-hidden">
         <section className="space-y-3 shrink-0" aria-label="Input">
-          <p className="text-xs text-muted-foreground">
+          <p className="tool-caption">
             Enter a value and source unit. Base font-size is used for rem/em. Results update live.
           </p>
           <div className="flex flex-wrap items-end gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="css-units-value" className="text-xs text-muted-foreground">
+              <Label htmlFor="css-units-value" className="tool-field-label">
                 Value
               </Label>
               <Input
@@ -61,7 +56,7 @@ const CssUnitsPage = () => {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="css-units-from" className="text-xs text-muted-foreground">
+              <Label htmlFor="css-units-from" className="tool-field-label">
                 From unit
               </Label>
               <SelectWithOptions
@@ -75,7 +70,7 @@ const CssUnitsPage = () => {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="css-units-base" className="text-xs text-muted-foreground">
+              <Label htmlFor="css-units-base" className="tool-field-label">
                 Base font-size (px)
               </Label>
               <div className="flex items-center gap-1.5">
@@ -88,14 +83,14 @@ const CssUnitsPage = () => {
                   className="w-16 h-7 font-mono text-xs"
                   aria-label="Base font size in pixels"
                 />
-                <span className="text-xs text-muted-foreground">px</span>
+                <span className="tool-caption">px</span>
               </div>
             </div>
           </div>
         </section>
 
         <section className="flex-1 min-h-0 flex flex-col" aria-label="Conversions">
-          <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider shrink-0 mb-2">
+          <h2 className="tool-caption tool-caption--uppercase shrink-0 mb-2">
             Conversions
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 overflow-auto min-h-0">
@@ -106,7 +101,7 @@ const CssUnitsPage = () => {
               >
                 <div className="min-w-0">
                   <div className="font-mono text-sm font-medium truncate">{r.value}</div>
-                  <div className="text-xs text-muted-foreground">{r.unit}</div>
+                  <div className="tool-caption">{r.unit}</div>
                 </div>
                 <CopyButton text={`${r.value}${r.unit}`} />
               </div>
@@ -118,7 +113,7 @@ const CssUnitsPage = () => {
   };
 
   return (
-    <ToolLayout title={tool?.label ?? DEFAULT_TITLE} description={tool?.description ?? DEFAULT_DESCRIPTION}>
+    <ToolLayout>
       <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack max-w-3xl">
         <ToolPane pane={pane} />
       </div>
