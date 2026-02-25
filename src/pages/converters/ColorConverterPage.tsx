@@ -16,7 +16,6 @@ import {
 } from "@/utils/colorConverter";
 
 const DEFAULT_TITLE = "Color Converter";
-const DEFAULT_DESCRIPTION = "Convert colors between HEX, RGB, HSL formats";
 const SUMMARY_CARD_CLASS = "bg-muted rounded-lg p-3";
 const SUMMARY_LABEL_CLASS = "text-xs text-muted-foreground mb-1";
 const SUMMARY_VALUE_CLASS = "font-mono text-sm font-medium";

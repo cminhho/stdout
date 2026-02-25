@@ -3,7 +3,6 @@ import { Settings, Palette, Wrench } from "lucide-react";
 import type { Theme, SidebarMode } from "@/contexts/settingsStore";
 
 export const DEFAULT_TITLE = "Settings";
-export const DEFAULT_DESCRIPTION = "Customize your stdout experience";
 export const UPDATE_BUTTON_LOADING_LABEL = "Checking…";
 export const UPDATE_BUTTON_LABEL = "Check for updates";
 export const SEARCH_PLACEHOLDER = "Search tools...";

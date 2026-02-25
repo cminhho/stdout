@@ -9,8 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { formatDateRows, unixToDate, isoToDate, getCommonRefs, setCurrentTimeValues } from "@/utils/timestamp";
 
-const DEFAULT_TITLE = "Epoch Timestamp";
-const DEFAULT_DESCRIPTION = "Convert between Unix timestamps and dates";
 const UNIX_PLACEHOLDER = "1700000000 or 1700000000000";
 const ISO_PLACEHOLDER = "2024-01-01T00:00:00.000Z or Jan 1, 2024";
 const EMPTY_UNIX_MSG = "Enter Unix seconds or milliseconds.";

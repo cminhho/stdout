@@ -10,7 +10,6 @@ import { SampleButton } from "@/components/SampleButton";
 import { NUMBER_BASE_OPTIONS, NUMBER_BASE_PLACEHOLDER, parseFromBase, convertToAllBases } from "@/utils/numberBase";
 
 const DEFAULT_TITLE = "Number Base";
-const DEFAULT_DESCRIPTION = "Convert numbers between bases (bin, oct, dec, hex)";
 const EMPTY_MESSAGE = "Enter a number.";
 const SAMPLE_BASE = 10;
 const SAMPLE_MIN = 1;

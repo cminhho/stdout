@@ -7,7 +7,7 @@ import ToolLayout from "@/components/ToolLayout";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/utils/cn";
 import { getCurrentVersion, fetchLatestRelease, isNewerVersion, type LatestRelease } from "@/utils/version";
-import { DEFAULT_TITLE, DEFAULT_DESCRIPTION, SETTINGS_TABS, type SettingsTabId } from "./constants";
+import { DEFAULT_TITLE, SETTINGS_TABS, type SettingsTabId } from "./constants";
 import SettingsGeneralPanel, { type UpdateCheckState } from "./SettingsGeneralPanel";
 import SettingsAppearancePanel from "./SettingsAppearancePanel";
 import SettingsToolsPanel from "./SettingsToolsPanel";

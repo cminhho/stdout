@@ -16,9 +16,6 @@ import {
   IMAGE_BASE64_PREVIEW_PLACEHOLDER,
 } from "@/utils/imageBase64";
 
-const DEFAULT_TITLE = "Image ↔ Base64";
-const DEFAULT_DESCRIPTION = "Convert images to/from Base64 strings";
-
 const ImageBase64Page = () => {
   const [mode, setMode] = useState<"toBase64" | "toImage">("toBase64");
   const [base64, setBase64] = useState("");

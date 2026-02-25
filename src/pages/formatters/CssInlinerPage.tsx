@@ -19,9 +19,6 @@ import {
   inlineCss,
 } from "@/utils/cssInliner";
 
-const DEFAULT_TITLE = "CSS Inliner (Email)";
-const DEFAULT_DESCRIPTION = "Inline CSS styles into HTML for email templates";
-
 const CssInlinerPage = () => {
   const [html, setHtml] = useState("");
   const [css, setCss] = useState("");

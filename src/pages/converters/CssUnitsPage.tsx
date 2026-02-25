@@ -9,7 +9,6 @@ import { ClearButton } from "@/components/ClearButton";
 import { CSS_UNITS_LIST, CSS_UNITS_DEFAULT_BASE, convertToAllUnits } from "@/utils/cssUnits";
 
 const DEFAULT_TITLE = "CSS Units";
-const DEFAULT_DESCRIPTION = "Convert between CSS units (px, rem, em, vw, vh, etc.)";
 
 const CssUnitsPage = () => {
   const [value, setValue] = useState("16");
