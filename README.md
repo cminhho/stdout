@@ -97,7 +97,7 @@ Stdout runs in the browser or as a desktop app. No backend and no data collectio
 | String Utilities | camelCase, snake_case, and more |
 | String Escaper | Escape/unescape for JSON, XML, CSV, SQL, Java, JS |
 | List Collator | Merge, sort, deduplicate lists |
-| Text Analyzer | Count words, characters, sentences |
+| String Inspector | Count chars/bytes/words/lines, cursor, word distribution |
 | Text Diff | Compare two texts and highlight differences |
 | Lorem Ipsum | Generate placeholder text |
 | URL Parser | Parse and inspect URL / query string |

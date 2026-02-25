@@ -71,40 +71,40 @@ const MimeTypesPage = () => {
     title: "MIME Types",
     toolbar: query ? <ClearButton onClick={() => setQuery("")} /> : undefined,
     children: (
-      <div className="flex flex-col gap-[var(--spacing-section-mb)] flex-1 min-h-0 overflow-auto">
-        <section className="flex flex-col gap-[var(--spacing-block-gap)] max-w-md shrink-0" aria-label="Search">
-          <Label className="tool-field-label block">Search</Label>
+      <div className="flex flex-col gap-2 flex-1 min-h-0">
+        <section className="flex flex-col gap-2 max-w-md shrink-0" aria-label="Search">
+          <Label className="text-sm text-muted-foreground mb-2 block">Search</Label>
           <Input
             placeholder="Search by type or description..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="input-compact"
+            className="h-9 rounded-lg px-3 py-2 font-mono text-sm border bg-background text-foreground placeholder:text-muted-foreground transition-colors"
             aria-label="Search MIME types"
           />
         </section>
-        <p className="text-[length:var(--text-caption)] text-muted-foreground shrink-0" aria-live="polite">
+        <p className="text-xs text-muted-foreground shrink-0" aria-live="polite">
           {filtered.length} of {MIME_LIST.length} types
         </p>
         {filtered.length === 0 ? (
-          <p className="text-[length:var(--text-ui)] text-muted-foreground shrink-0">No MIME types match your search.</p>
+          <p className="text-sm text-muted-foreground shrink-0">No MIME types match your search.</p>
         ) : (
           <div
-            className="tool-reference-table-wrap min-h-0"
+            className="flex-1 min-h-0 overflow-auto rounded-lg border border-border"
             role="region"
             aria-label="MIME types table"
           >
-            <table className="tool-reference-table">
-              <thead>
+            <table className="w-full text-xs border-collapse">
+              <thead className="sticky top-0 z-10 bg-muted/50">
                 <tr>
-                  <th>MIME Type</th>
-                  <th>Description</th>
+                  <th className="px-3 py-2 text-left font-medium text-muted-foreground border-b border-border">MIME Type</th>
+                  <th className="px-3 py-2 text-left font-medium text-muted-foreground border-b border-border">Description</th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((m) => (
-                  <tr key={m.type}>
-                    <td className="font-mono text-foreground">{m.type}</td>
-                    <td className="text-muted-foreground">{m.description ?? "—"}</td>
+                  <tr key={m.type} className="border-b border-border last:border-b-0 hover:bg-muted/30">
+                    <td className="px-3 py-2 font-mono text-foreground">{m.type}</td>
+                    <td className="px-3 py-2 text-muted-foreground">{m.description ?? "—"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -120,7 +120,7 @@ const MimeTypesPage = () => {
       title={tool?.label ?? "List of MIME Types"}
       description={tool?.description ?? "Reference table of common MIME types"}
     >
-      <div className="tool-content-stack flex-1 min-h-0 flex flex-col">
+      <div className="flex flex-col gap-2 flex-1 min-h-0">
         <ToolPane pane={pane} />
       </div>
     </ToolLayout>

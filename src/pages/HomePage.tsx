@@ -21,27 +21,38 @@ function matchTool(query: string, tool: ToolDefinition): boolean {
   );
 }
 
-const ToolCard = ({ tool, index }: { tool: ToolDefinition; index: number }) => {
+/** Shared card link: same style for All tools and Recently visited. */
+const ToolCardLink = ({
+  tool,
+  index,
+  showDescription = true,
+}: {
+  tool: ToolDefinition;
+  index: number;
+  showDescription?: boolean;
+}) => {
   const Icon = getToolIcon(tool.icon);
   return (
-    <li>
-      <Link
-        to={tool.path}
-        className="home-tool-card group relative rounded-[var(--radius)] border border-border bg-card text-left transition-[background-color,border-color,box-shadow] duration-[var(--transition-duration)] ease-[var(--transition-ease)] hover:border-border hover:bg-[hsl(var(--muted)/0.4)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-        style={{ animationDelay: `${index * 20}ms` }}
-      >
-        <span className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden>
-          <ChevronRight className="h-4 w-4" />
-        </span>
-        <Icon className="home-tool-card-icon h-7 w-7 shrink-0 text-foreground opacity-90" aria-hidden />
+    <Link
+      to={tool.path}
+      className="home-tool-card group relative rounded-[var(--radius)] border border-border bg-card text-left transition-[background-color,border-color,box-shadow] duration-[var(--transition-duration)] ease-[var(--transition-ease)] hover:border-border hover:bg-[hsl(var(--muted)/0.4)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:bg-[hsl(var(--muted)/0.5)] min-h-touch"
+      style={{ animationDelay: `${index * 20}ms` }}
+    >
+      <span className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100 sm:h-6 sm:w-6" aria-hidden>
+        <ChevronRight className="h-4 w-4" />
+      </span>
+      <Icon className="home-tool-card-icon h-7 w-7 shrink-0 text-foreground opacity-90" aria-hidden />
+      <div className="home-tool-card-text min-w-0 flex-1 flex flex-col">
         <h3 className="home-tool-card-title font-semibold text-[var(--text-content)] text-foreground line-clamp-2 min-w-0">
           {tool.label}
         </h3>
-        <p className="home-tool-card-desc text-[var(--text-nav)] text-muted-foreground leading-snug min-w-0">
-          {tool.description}
-        </p>
-      </Link>
-    </li>
+        {showDescription && (
+          <p className="home-tool-card-desc text-[var(--text-nav)] text-muted-foreground leading-snug min-w-0">
+            {tool.description}
+          </p>
+        )}
+      </div>
+    </Link>
   );
 };
 
@@ -70,7 +81,7 @@ const HomePage = () => {
   const showNoTools = visibleTools.length === 0;
 
   return (
-    <div className="flex flex-1 flex-col min-h-0 overflow-auto" role="main">
+    <div className="flex flex-1 flex-col min-h-0 overflow-auto home-main" role="main">
       <div className="flex flex-1 flex-col min-h-0 w-full home-page-pad">
         <div className="home-content flex flex-col">
           {/* Hero + About: value prop and intro (glass on desktop) */}
@@ -105,29 +116,23 @@ const HomePage = () => {
             </section>
           </header>
 
-          {/* Recently visited (only when we have data) */}
+          {/* Recently visited: same grid + list layout as All tools */}
           {recentTools.length > 0 && (
             <section className="home-recent-section" aria-labelledby="home-recent-heading">
-              <h2 id="home-recent-heading" className="home-section-label home-tools-header-margin">
-                Recently visited
-              </h2>
-              <ul className="home-recent-list flex flex-wrap gap-2 list-none p-0 m-0" role="list">
-                {recentTools.map((t) => {
-                  const Icon = getToolIcon(t.icon);
-                  return (
-                    <li key={t.id}>
-                      <Link
-                        to={t.path}
-                        className="home-recent-item inline-flex items-center gap-2 rounded-[var(--radius)] border border-border bg-card px-3 py-2 text-left text-[var(--text-content)] transition-[background-color,border-color] duration-[var(--transition-duration)] hover:border-border hover:bg-[hsl(var(--muted)/0.4)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                      >
-                        <Icon className="h-4 w-4 shrink-0 text-foreground opacity-90" aria-hidden />
-                        <span className="min-w-0 truncate max-w-[8rem] font-medium text-foreground">
-                          {t.label}
-                        </span>
-                      </Link>
-                    </li>
-                  );
-                })}
+              <div className="home-recent-header">
+                <h2 id="home-recent-heading" className="home-section-label">
+                  Recently visited
+                </h2>
+                <span className="home-recent-count" aria-hidden="true">
+                  {recentTools.length}
+                </span>
+              </div>
+              <ul className="grid grid-cols-1 tool-content-grid home-tools-grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 list-none p-0 m-0" role="list">
+                {recentTools.map((t, i) => (
+                  <li key={t.id}>
+                    <ToolCardLink tool={t} index={i} />
+                  </li>
+                ))}
               </ul>
             </section>
           )}
@@ -136,25 +141,25 @@ const HomePage = () => {
           <section className="home-tools-section" aria-labelledby="home-tools-heading">
             <div className="home-tools-header sticky top-0 z-10 home-tools-header-margin bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
               <div className="flex flex-col gap-3">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h2 id="home-tools-heading" className="home-section-label">
+                <div className="home-tools-header-row flex flex-wrap items-center justify-between gap-2">
+                  <h2 id="home-tools-heading" className="home-section-label shrink-0">
                     All tools
                   </h2>
-                  <p className="text-[var(--text-nav)] text-muted-foreground" aria-live="polite">
+                  <p className="text-[var(--text-nav)] text-muted-foreground shrink-0" aria-live="polite">
                     {filteredTools.length === visibleTools.length
                       ? `${visibleTools.length} of ${tools.length} visible`
                       : `${filteredTools.length} of ${visibleTools.length} match`}
                   </p>
                 </div>
-                <div className="home-tools-search-wrap relative flex items-center gap-2">
-                  <Search className="absolute left-2.5 h-4 w-4 shrink-0 text-muted-foreground pointer-events-none" aria-hidden />
+                <div className="home-tools-search-wrap relative flex items-center">
+                  <Search className="absolute left-3 h-4 w-4 shrink-0 text-muted-foreground pointer-events-none sm:left-2.5" aria-hidden />
                   <Input
                     type="search"
                     size="sm"
                     placeholder={SEARCH_PLACEHOLDER}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="home-tools-search pl-8 pr-8"
+                    className="home-tools-search pl-10 pr-11 min-h-touch sm:pl-8 sm:pr-8"
                     aria-label="Search tools by name, description, or category"
                     autoComplete="off"
                   />
@@ -163,11 +168,11 @@ const HomePage = () => {
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="absolute right-1 h-7 w-7 p-0 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                      className="home-tools-clear absolute right-1 min-h-[44px] min-w-[44px] h-auto py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 sm:min-h-0 sm:min-w-0 sm:h-7 sm:w-7 sm:p-0"
                       onClick={clearSearch}
                       aria-label="Clear search"
                     >
-                      <X className="h-4 w-4" />
+                      <X className="h-4 w-4 shrink-0" />
                     </Button>
                   )}
                 </div>
@@ -203,9 +208,11 @@ const HomePage = () => {
                 </Button>
               </div>
             ) : (
-              <ul className="grid grid-cols-1 tool-content-grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 list-none p-0 m-0" role="list">
+              <ul className="grid grid-cols-1 tool-content-grid home-tools-grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 list-none p-0 m-0" role="list">
                 {filteredTools.map((t, i) => (
-                  <ToolCard key={t.id} tool={t} index={i} />
+                  <li key={t.id}>
+                    <ToolCardLink tool={t} index={i} />
+                  </li>
                 ))}
               </ul>
             )}
