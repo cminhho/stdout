@@ -44,9 +44,9 @@ const NumberBasePage = () => {
       </>
     ),
     children: (
-      <div className="flex flex-col gap-6 flex-1 min-h-0 overflow-hidden">
+      <div className="flex flex-col gap-[var(--home-content-gap)] flex-1 min-h-0 overflow-hidden">
         <section
-          className="space-y-3 rounded-xl border border-border/60 bg-muted/25 px-4 py-3 shadow-sm shrink-0"
+          className="space-y-3 rounded-card border border-border/60 bg-muted/25 px-4 py-3 shadow-sm shrink-0"
           aria-label="Input"
         >
           <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
@@ -88,7 +88,7 @@ const NumberBasePage = () => {
         </section>
 
         <section
-          className="flex-1 min-h-0 flex flex-col rounded-xl border border-border/60 bg-muted/25 overflow-hidden shadow-sm"
+          className="flex-1 min-h-0 flex flex-col rounded-card border border-border/60 bg-muted/25 overflow-hidden shadow-sm"
           aria-label="Results"
         >
           <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider shrink-0 px-4 pt-3 pb-2">

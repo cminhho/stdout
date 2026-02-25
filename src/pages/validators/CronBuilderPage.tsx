@@ -119,12 +119,12 @@ const CronBuilderPage = () => {
       </div>
     ),
     children: (
-      <div className="flex flex-col gap-6 flex-1 min-h-0 overflow-hidden">
+      <div className="flex flex-col gap-[var(--home-content-gap)] flex-1 min-h-0 overflow-hidden">
         <section className="space-y-3 shrink-0" aria-label="Builder">
           <p className="tool-caption">
             Set each cron field (minute, hour, day, month, weekday). Use presets or pick an example below.
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-[var(--home-space-sm)]">
             {FIELDS.map((field) => (
               <div key={field} className="space-y-1.5">
                 <Label htmlFor={`cron-${field}`} variant="muted" className="text-xs">
@@ -160,13 +160,13 @@ const CronBuilderPage = () => {
         </section>
 
         <section
-          className="shrink-0 space-y-2 rounded-xl border border-border/60 bg-muted/25 px-4 py-3 shadow-sm"
+          className="shrink-0 space-y-2 rounded-card border border-border/60 bg-muted/25 px-4 py-3 shadow-sm"
           aria-label="Result"
         >
           <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Expression
           </h2>
-          <div className="flex items-center gap-2 rounded-lg border border-border bg-background/80 px-3 py-2">
+          <div className="flex items-center gap-2 rounded-card border border-border bg-background/80 px-3 py-2">
             <code className="flex-1 text-sm font-mono text-foreground min-w-0 truncate">
               {expression}
             </code>
@@ -176,7 +176,7 @@ const CronBuilderPage = () => {
         </section>
 
         <section
-          className="flex-1 min-h-0 flex flex-col rounded-xl border border-border/60 bg-muted/25 overflow-hidden shadow-sm"
+          className="flex-1 min-h-0 flex flex-col rounded-card border border-border/60 bg-muted/25 overflow-hidden shadow-sm"
           aria-label="Examples"
         >
           <div className="shrink-0 px-4 pt-3 pb-2">

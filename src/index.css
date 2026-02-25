@@ -451,6 +451,8 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     transition: background-color var(--transition-duration-slow) var(--transition-ease), color var(--transition-duration-slow) var(--transition-ease);
   }
 

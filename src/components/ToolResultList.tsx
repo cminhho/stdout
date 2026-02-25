@@ -30,7 +30,7 @@ export const ToolResultList = memo(function ToolResultList<T>({
 }: ToolResultListProps<T>) {
   return (
     <div
-      className={cn("rounded-md border border-border overflow-hidden", className)}
+      className={cn("rounded-card border border-border overflow-hidden", className)}
       role="region"
       aria-label={title ? `${title} (${count} items)` : `${count} result(s)`}
     >

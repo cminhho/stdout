@@ -43,9 +43,9 @@ const ColorConverterPage = () => {
     title: "Color Converter",
     toolbar: !isDefault ? <ClearButton onClick={() => setHex(COLOR_CONVERTER_DEFAULT_HEX)} /> : undefined,
     children: (
-      <div className="flex flex-col gap-6 flex-1 min-h-0 overflow-auto">
+      <div className="flex flex-col gap-[var(--home-content-gap)] flex-1 min-h-0 overflow-auto">
         <div
-          className="w-32 h-32 rounded-xl border border-border shadow-lg shrink-0"
+          className="w-32 h-32 rounded-card border border-border shadow-lg shrink-0"
           style={{ backgroundColor: hex }}
         />
         <div className="space-y-3 shrink-0">
@@ -130,9 +130,9 @@ const ColorConverterPage = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-3 gap-3 text-center shrink-0">
+        <div className="grid grid-cols-3 gap-[var(--home-space-sm)] text-center shrink-0">
           {summaryItems.map(({ label, value }) => (
-            <div key={label} className="bg-muted rounded-lg p-3">
+            <div key={label} className="bg-muted rounded-card p-3">
               <div className="tool-caption mb-1">{label}</div>
               <div className="font-mono text-sm font-medium">{value}</div>
             </div>
