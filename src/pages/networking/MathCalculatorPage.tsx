@@ -7,7 +7,6 @@ import CopyButton from "@/components/CopyButton";
 import { SampleButton } from "@/components/SampleButton";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 
 const SAMPLE_EXPR = "sqrt(2) * pi + log10(100)";
 
@@ -138,7 +137,6 @@ function parseAtom(tokens: string[], ctx: { pos: number }): number {
 }
 
 const MathCalculatorPage = () => {
-  const tool = useCurrentTool();
   const [expr, setExpr] = useState("");
   const [history, setHistory] = useState<{ expr: string; result: string }[]>([]);
 
@@ -154,7 +152,6 @@ const MathCalculatorPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         title: "Expression",
         toolbar: (

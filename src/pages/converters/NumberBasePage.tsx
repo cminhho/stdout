@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import ToolPane from "@/components/ToolPane";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -23,7 +22,6 @@ function getRandomSample(): string {
 }
 
 const NumberBasePage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const [fromBase, setFromBase] = useState(10);
 
@@ -34,7 +32,7 @@ const NumberBasePage = () => {
     results?.map((r) => `${r.label}: ${r.value}`).join("\n") ?? undefined;
 
   const pane = {
-    title: tool?.label ?? DEFAULT_TITLE,
+    title: DEFAULT_TITLE,
     copyText: copyAllText,
     toolbar: (
       <>

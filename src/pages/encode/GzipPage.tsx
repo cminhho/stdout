@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { SegmentGroup } from "@/components/SegmentGroup";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import type { IndentOption } from "@/components/IndentSelect";
 import {
   processGzipForLayout,
@@ -21,7 +20,6 @@ const MODE_OPTIONS: { value: GzipMode; label: string }[] = [
 ];
 
 const GzipPage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<GzipMode>("compress");
 
@@ -37,7 +35,6 @@ const GzipPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () => setInput(mode === "compress" ? GZIP_SAMPLE : GZIP_SAMPLE_DECODE),

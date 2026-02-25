@@ -1,6 +1,5 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import OptionsButton from "@/components/OptionsButton";
@@ -16,7 +15,6 @@ import {
 } from "@/utils/csvXml";
 
 const CsvXmlPage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const [rootTag, setRootTag] = useState("root");
   const [rowTag, setRowTag] = useState("row");
@@ -30,7 +28,6 @@ const CsvXmlPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () => setInput(CSV_XML_SAMPLE_CSV),

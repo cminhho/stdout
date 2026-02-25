@@ -8,10 +8,8 @@ import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SelectWithOptions } from "@/components/ui/select";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 
 const ImageResizerPage = () => {
-  const tool = useCurrentTool();
   const [imageSrc, setImageSrc] = useState("");
   const [origW, setOrigW] = useState(0);
   const [origH, setOrigH] = useState(0);
@@ -88,7 +86,6 @@ const ImageResizerPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         title: "Upload Image",
         toolbar: (

@@ -4,7 +4,6 @@ import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 import { SelectWithOptions, type SelectOption } from "@/components/ui/select";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { SaveButton } from "@/components/SaveButton";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import {
   type SqlDialect,
   type SqlIdentifierCase,
@@ -45,7 +44,6 @@ const DEFAULT_KEYWORD_CASE: SqlKeywordCase = "upper";
 const DEFAULT_IDENTIFIER_CASE: SqlIdentifierCase = "as-is";
 
 const SqlFormatterPage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const [indent, setIndent] = useState<IndentOption>(2);
   const [keywordCase, setKeywordCase] = useState<SqlKeywordCase>(DEFAULT_KEYWORD_CASE);
@@ -59,7 +57,6 @@ const SqlFormatterPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () => setInput(SQL_FORMATTER_SAMPLE),

@@ -100,18 +100,7 @@ export interface TwoPanelOutputPaneConfig {
   children?: ReactNode;
 }
 
-/** Tool metadata for layout heading; when provided, used as title/description when not passed. */
-export interface ToolHeading {
-  label?: string;
-  description?: string;
-}
-
 export interface TwoPanelToolLayoutProps {
-  /** Override or omit when passing `tool`. */
-  title?: string;
-  description?: string;
-  /** When set, title/description default to tool.label and tool.description. */
-  tool?: ToolHeading | null;
   /**
    * Optional full-width section above the two panels. Use for tool-specific options (e.g. JSONPath
    * expression + examples, filters) that would otherwise crowd the input toolbar and cause the two

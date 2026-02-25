@@ -6,7 +6,6 @@ import CodeEditor from "@/components/CodeEditor";
 import { SegmentGroup } from "@/components/SegmentGroup";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { Button } from "@/components/ui/button";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import {
   base64ToDataUrl,
   formatFileSizeKb,
@@ -21,7 +20,6 @@ const DEFAULT_TITLE = "Image ↔ Base64";
 const DEFAULT_DESCRIPTION = "Convert images to/from Base64 strings";
 
 const ImageBase64Page = () => {
-  const tool = useCurrentTool();
   const [mode, setMode] = useState<"toBase64" | "toImage">("toBase64");
   const [base64, setBase64] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -99,9 +97,6 @@ const ImageBase64Page = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
-      title={tool?.label ?? DEFAULT_TITLE}
-      description={tool?.description ?? DEFAULT_DESCRIPTION}
       inputPane={{
         title: "Input",
         toolbar: (

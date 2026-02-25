@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 
 interface Header {
   key: string;
@@ -17,7 +16,6 @@ interface Header {
 }
 
 const CurlBuilderPage = () => {
-  const tool = useCurrentTool();
   const [method, setMethod] = useState("GET");
   const [url, setUrl] = useState("https://api.example.com/users");
   const [headers, setHeaders] = useState<Header[]>([
@@ -115,7 +113,6 @@ const CurlBuilderPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         title: "Request",
         children: (

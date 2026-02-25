@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
 import ToolAlert from "@/components/ToolAlert";
 import ToolResultList from "@/components/ToolResultList";
@@ -14,7 +13,6 @@ const SAMPLE_XML = `<?xml version="1.0"?>
 </books>`;
 
 const XpathTesterPage = () => {
-  const tool = useCurrentTool();
   const [xml, setXml] = useState(SAMPLE_XML);
   const [xpath, setXpath] = useState("//book/title");
 
@@ -51,9 +49,6 @@ const XpathTesterPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
-      title={tool?.label ?? "XPath Tester"}
-      description={tool?.description ?? "Run XPath expressions against XML"}
       topSection={topSection}
       inputPane={{
         title: "XML",

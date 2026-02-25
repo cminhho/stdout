@@ -7,7 +7,6 @@ import ToolLayout from "@/components/ToolLayout";
 import TwoPanelTopSection from "@/components/TwoPanelTopSection";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { formatDateRows, unixToDate, isoToDate, getCommonRefs, setCurrentTimeValues } from "@/utils/timestamp";
 
 const DEFAULT_TITLE = "Epoch Timestamp";
@@ -20,7 +19,6 @@ const ROW_CLASS = "flex items-center justify-between gap-2 py-1 border-b border-
 const REF_BUTTON_CLASS = "px-2 py-1 text-xs rounded bg-muted text-muted-foreground hover:text-foreground transition-colors";
 
 const TimestampPage = () => {
-  const tool = useCurrentTool();
   const [unix, setUnix] = useState("");
   const [iso, setIso] = useState("");
   const [now, setNow] = useState(Date.now());

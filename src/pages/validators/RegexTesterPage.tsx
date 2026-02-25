@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
 import ToolAlert from "@/components/ToolAlert";
 import { Input } from "@/components/ui/input";
@@ -17,7 +16,6 @@ const FLAG_OPTIONS = [
 ];
 
 const RegexTesterPage = () => {
-  const tool = useCurrentTool();
   const [pattern, setPattern] = useState("(\\d{4})-(\\d{2})-(\\d{2})");
   const [flags, setFlags] = useState("gm");
   const [testString, setTestString] = useState(SAMPLE_TEST_STRING);
@@ -202,9 +200,6 @@ const RegexTesterPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
-      title={tool?.label ?? "Regex Tester"}
-      description={tool?.description ?? "Test regular expressions with live matching (JS engine; use \\ for escapes as in Java)"}
       topSection={topSection}
       inputPane={{
         title: "Test String",

@@ -3,7 +3,6 @@ import { RefreshCw } from "lucide-react";
 
 import ToolLayout from "@/components/ToolLayout";
 import ToolPane from "@/components/ToolPane";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import ToolAlert from "@/components/ToolAlert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +14,6 @@ import { luhnCheck, generateCardNumber, CARD_BRANDS } from "@/utils/creditcard";
 const SAMPLE_CARD = "4532015112830366";
 
 const CreditCardPage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const [generated, setGenerated] = useState<{ brand: string; numbers: string[] } | null>(null);
 
@@ -32,7 +30,7 @@ const CreditCardPage = () => {
   };
 
   const pane = {
-    title: tool?.label ?? "Credit Card Validator",
+    title: "Credit Card Validator",
     copyText: generated ? generated.numbers.join("\n") : undefined,
     toolbar: (
       <>

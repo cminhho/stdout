@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import ToolAlert from "@/components/ToolAlert";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -123,7 +122,6 @@ const EXAMPLES = [
 ];
 
 const JsonPathPage = () => {
-  const tool = useCurrentTool();
   const [jsonInput, setJsonInput] = useState(SAMPLE_JSON);
   const [pathInput, setPathInput] = useState("$.store.books[*].title");
   const [indent, setIndent] = useState<IndentOption>(2);

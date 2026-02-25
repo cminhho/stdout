@@ -1,6 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Input } from "@/components/ui/input";
 
 interface HarEntry {
@@ -28,7 +27,6 @@ const SAMPLE_HAR = JSON.stringify(
 );
 
 const HarViewerPage = () => {
-  const tool = useCurrentTool();
   const [harText, setHarText] = useState("");
   const [selected, setSelected] = useState<HarEntry | null>(null);
   const [filter, setFilter] = useState("");
@@ -63,7 +61,6 @@ const HarViewerPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () => setHarText(SAMPLE_HAR),

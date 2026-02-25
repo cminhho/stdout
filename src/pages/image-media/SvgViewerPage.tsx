@@ -1,6 +1,5 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { SaveButton } from "@/components/SaveButton";
 
 const SVG_SAMPLE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">\n  <circle cx="50" cy="50" r="40" fill="#22c55e" opacity="0.8"/>\n  <rect x="30" y="30" width="40" height="40" fill="#0ea5e9" rx="8" opacity="0.7"/>\n</svg>';
@@ -8,7 +7,6 @@ const SVG_PLACEHOLDER = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10
 const SVG_FILE_ACCEPT = ".svg,image/svg+xml";
 
 const SvgViewerPage = () => {
-  const tool = useCurrentTool();
   const [svg, setSvg] = useState(SVG_SAMPLE);
   const [bgColor, setBgColor] = useState("#1a1a2e");
 
@@ -34,7 +32,6 @@ const SvgViewerPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () => setSvg(SVG_SAMPLE),

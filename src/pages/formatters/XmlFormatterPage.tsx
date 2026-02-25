@@ -1,6 +1,5 @@
 import { useState } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import {
   XML_FILE_ACCEPT,
   XML_FORMATTER_SAMPLE,
@@ -13,12 +12,10 @@ import {
 } from "@/utils/xmlFormat";
 
 const XmlFormatterPage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () => setInput(XML_FORMATTER_SAMPLE),

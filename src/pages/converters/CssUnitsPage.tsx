@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import ToolPane from "@/components/ToolPane";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { SelectWithOptions } from "@/components/ui/select";
@@ -13,7 +12,6 @@ const DEFAULT_TITLE = "CSS Units";
 const DEFAULT_DESCRIPTION = "Convert between CSS units (px, rem, em, vw, vh, etc.)";
 
 const CssUnitsPage = () => {
-  const tool = useCurrentTool();
   const [value, setValue] = useState("16");
   const [fromUnit, setFromUnit] = useState("px");
   const [baseFontSize, setBaseFontSize] = useState(String(CSS_UNITS_DEFAULT_BASE));

@@ -1,12 +1,8 @@
 import { useState, useCallback, useEffect } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
 import ToolAlert from "@/components/ToolAlert";
 
@@ -69,7 +65,6 @@ const SAMPLE_SCHEMA = `{
 }`;
 
 const MockGeneratorPage = () => {
-  const tool = useCurrentTool();
   const [schema, setSchema] = useState(SAMPLE_SCHEMA);
   const [count, setCount] = useState(3);
   const [output, setOutput] = useState("");
@@ -123,9 +118,6 @@ const MockGeneratorPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
-      title={tool?.label ?? "Mock Payload"}
-      description={tool?.description ?? "Generate mock JSON data from a schema"}
       topSection={topSection}
       inputPane={{
         title: "Schema Template",

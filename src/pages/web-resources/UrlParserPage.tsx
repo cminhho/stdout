@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import ToolPane from "@/components/ToolPane";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import CopyButton from "@/components/CopyButton";
@@ -12,7 +11,6 @@ import { SampleButton } from "@/components/SampleButton";
 const SAMPLE_URL = "https://example.com:8080/api/users?page=1&limit=10&sort=name#section-2";
 
 const UrlParserPage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState(SAMPLE_URL);
 
   const parsed = useMemo(() => {
@@ -140,10 +138,7 @@ const UrlParserPage = () => {
   };
 
   return (
-    <ToolLayout
-      title={tool?.label ?? "URL Parser"}
-      description={tool?.description ?? "Parse and inspect URL components"}
-    >
+    <ToolLayout>
       <div className="tool-content-stack flex-1 min-h-0 flex flex-col">
         <ToolPane pane={pane} />
       </div>

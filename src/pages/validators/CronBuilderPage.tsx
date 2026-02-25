@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import ToolPane from "@/components/ToolPane";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -84,7 +83,6 @@ function generateRandomSample(): Record<string, string> {
 }
 
 const CronBuilderPage = () => {
-  const tool = useCurrentTool();
   const [fields, setFields] = useState<Record<string, string>>(() =>
     Object.fromEntries(FIELDS.map((f) => [f, "*"]))
   );
@@ -112,7 +110,7 @@ const CronBuilderPage = () => {
     setFields(Object.fromEntries(FIELDS.map((f) => [f, "*"])));
 
   const pane = {
-    title: tool?.label ?? "Cron Builder",
+    title: "Cron Builder",
     copyText: expression,
     toolbar: (
       <div className="flex items-center gap-1.5">
@@ -236,10 +234,7 @@ const CronBuilderPage = () => {
   };
 
   return (
-    <ToolLayout
-      title={tool?.label ?? "Cron Builder"}
-      description={tool?.description ?? "Build and parse cron expressions (5-field)"}
-    >
+    <ToolLayout>
       <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack max-w-3xl mx-auto">
         <ToolPane pane={pane} />
       </div>

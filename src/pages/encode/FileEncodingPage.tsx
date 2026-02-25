@@ -1,6 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
 import { Label } from "@/components/ui/label";
 import ToolAlert from "@/components/ToolAlert";
@@ -44,7 +43,6 @@ const SAMPLE_BASE64 = "SGVsbG8=";
 const SAMPLE_TEXT = "Hello, UTF-8!";
 
 const FileEncodingPage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<"decode" | "encode">("decode");
   const [decodeEncoding, setDecodeEncoding] = useState<string>("utf-8");
@@ -144,9 +142,6 @@ const FileEncodingPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool ?? undefined}
-      title={tool?.label ?? "Convert File Encoding"}
-      description={tool?.description ?? "Decode bytes from charset or encode text to UTF-8"}
       topSection={topSection}
       inputPane={{
         title: mode === "decode" ? "Bytes (hex or base64)" : "Text",

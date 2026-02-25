@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { SelectWithOptions } from "@/components/ui/select";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Input } from "@/components/ui/input";
 
 const DELIMITER_OPTIONS = [
@@ -15,7 +14,6 @@ const SAMPLE_CSV = "name,age,city\nAlice,30,NYC\nBob,25,LA\nCarol,28,Chicago";
 const CSV_PLACEHOLDER = "name,age,city\nAlice,30,NYC\nBob,25,LA";
 
 const CsvViewerPage = () => {
-  const tool = useCurrentTool();
   const [csv, setCsv] = useState("");
   const [delimiter, setDelimiter] = useState(",");
   const [search, setSearch] = useState("");
@@ -56,7 +54,6 @@ const CsvViewerPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () => setCsv(SAMPLE_CSV),

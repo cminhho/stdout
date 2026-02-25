@@ -9,7 +9,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SelectWithOptions } from "@/components/ui/select";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 
 type PresetId = "strong" | "long" | "pin" | "custom";
 
@@ -60,7 +59,6 @@ const getStrength = (pw: string) => {
 };
 
 const PasswordPage = () => {
-  const tool = useCurrentTool();
   const [presetId, setPresetId] = useState<PresetId>("strong");
   const [passwords, setPasswords] = useState<string[]>([]);
   const [count, setCount] = useState(5);
@@ -154,12 +152,6 @@ const PasswordPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool ?? undefined}
-      title={tool?.label ?? "Password Generator"}
-      description={
-        tool?.description ??
-        "Generate cryptographically secure passwords with presets and character options"
-      }
       defaultInputPercent={28}
       inputPane={{
         title: "Options",

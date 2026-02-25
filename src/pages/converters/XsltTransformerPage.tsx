@@ -2,7 +2,6 @@ import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import ResizableTwoPanel from "@/components/ResizableTwoPanel";
 import TwoPanelTopSection from "@/components/TwoPanelTopSection";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
 import FileUploadButton from "@/components/FileUploadButton";
 import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
@@ -21,7 +20,6 @@ import {
 } from "@/utils/xsltTransformer";
 
 const XsltTransformerPage = () => {
-  const tool = useCurrentTool();
   const [xml, setXml] = useState("");
   const [xslt, setXslt] = useState("");
   const [indent, setIndent] = useState<IndentOption>(2);

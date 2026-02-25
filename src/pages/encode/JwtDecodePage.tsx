@@ -1,6 +1,5 @@
 import { useState } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import {
   processJwtDecodeForLayout,
   JWT_DECODE_FILE_ACCEPT,
@@ -12,12 +11,10 @@ import {
 } from "@/utils/jwtDecode";
 
 const JwtDecodePage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () => setInput(JWT_DECODE_SAMPLE),

@@ -2,7 +2,6 @@ import { useState, useCallback } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import ToolPane from "@/components/ToolPane";
 import CodeEditor from "@/components/CodeEditor";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,7 +35,6 @@ const generateParagraph = (sentences = 5): string =>
   Array.from({ length: sentences }, () => generateSentence()).join(" ");
 
 const LoremIpsumPage = () => {
-  const tool = useCurrentTool();
   const [count, setCount] = useState(3);
   const [unit, setUnit] = useState<"paragraphs" | "sentences" | "words">("paragraphs");
   const [output, setOutput] = useState("");
@@ -102,10 +100,7 @@ const LoremIpsumPage = () => {
   };
 
   return (
-    <ToolLayout
-      title={tool?.label ?? "Lorem Ipsum"}
-      description={tool?.description ?? "Generate placeholder text"}
-    >
+    <ToolLayout>
       <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack">
         <ToolPane pane={pane} />
       </div>

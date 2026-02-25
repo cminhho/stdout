@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { SegmentGroup } from "@/components/SegmentGroup";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import type { IndentOption } from "@/components/IndentSelect";
 import {
   processJsonToYaml,
@@ -26,7 +25,6 @@ const DIRECTION_OPTIONS: { value: JsonYamlDirection; label: string }[] = [
 ];
 
 const JsonYamlPage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const [direction, setDirection] = useState<JsonYamlDirection>("json-to-yaml");
 
@@ -50,7 +48,6 @@ const JsonYamlPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () =>

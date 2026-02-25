@@ -5,7 +5,6 @@ import TwoPanelTopSection from "@/components/TwoPanelTopSection";
 import ToolResultCard from "@/components/ToolResultCard";
 import CodeEditor from "@/components/CodeEditor";
 import { useTwoPanelCompare } from "@/hooks/useTwoPanelCompare";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { formatDiffSummary, IDENTICAL_MESSAGE_CLASS } from "@/utils/compareResultHelpers";
 
 const SAMPLE_A = '{"status": "ok", "data": [1, 2, 3], "count": 3}';
@@ -69,7 +68,6 @@ const RIGHT_CONFIG = {
 } as const;
 
 const PayloadComparatorPage = () => {
-  const tool = useCurrentTool();
   const { left, right, leftPane, rightPane } = useTwoPanelCompare(LEFT_CONFIG, RIGHT_CONFIG);
 
   const result = useMemo(() => {

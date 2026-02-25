@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import ToolPane from "@/components/ToolPane";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ClearButton } from "@/components/ClearButton";
@@ -54,7 +53,6 @@ const MIME_LIST: { type: string; description?: string }[] = [
 ];
 
 const MimeTypesPage = () => {
-  const tool = useCurrentTool();
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
@@ -116,10 +114,7 @@ const MimeTypesPage = () => {
   };
 
   return (
-    <ToolLayout
-      title={tool?.label ?? "List of MIME Types"}
-      description={tool?.description ?? "Reference table of common MIME types"}
-    >
+    <ToolLayout>
       <div className="flex flex-col gap-2 flex-1 min-h-0">
         <ToolPane pane={pane} />
       </div>

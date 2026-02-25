@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { SegmentGroup } from "@/components/SegmentGroup";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,7 +19,6 @@ const computeHmac = async (message: string, secret: string, algo: HmacAlgo): Pro
 const SAMPLE_MESSAGE = "message to sign";
 
 const HmacPage = () => {
-  const tool = useCurrentTool();
   const [message, setMessage] = useState("");
   const [secret, setSecret] = useState("");
   const [algo, setAlgo] = useState<HmacAlgo>("SHA-256");
@@ -38,7 +36,6 @@ const HmacPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       topSection={
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">

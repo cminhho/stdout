@@ -3,7 +3,6 @@ import ToolLayout from "@/components/ToolLayout";
 import ToolPane from "@/components/ToolPane";
 import CodeEditor from "@/components/CodeEditor";
 import { SelectWithOptions } from "@/components/ui/select";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,7 +42,6 @@ const generateUUIDv7 = (): string => {
 };
 
 const UuidPage = () => {
-  const tool = useCurrentTool();
   const [uuids, setUuids] = useState<string[]>([]);
   const [count, setCount] = useState(10);
   const [version, setVersion] = useState<"v1" | "v4" | "v7">("v4");
@@ -122,10 +120,7 @@ const UuidPage = () => {
   };
 
   return (
-    <ToolLayout
-      title={tool?.label ?? "UUID Generator"}
-      description={tool?.description ?? "Generate UUIDs (v1, v4, v7)"}
-    >
+    <ToolLayout>
       <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack">
         <ToolPane pane={pane} />
       </div>

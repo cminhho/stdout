@@ -1,6 +1,5 @@
 import { useState } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import {
   HTML_FILE_ACCEPT,
   HTML_FORMATTER_SAMPLE,
@@ -13,12 +12,10 @@ import {
 } from "@/utils/htmlFormat";
 
 const HtmlFormatterPage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () => setInput(HTML_FORMATTER_SAMPLE),

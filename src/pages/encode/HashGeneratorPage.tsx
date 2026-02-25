@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import CodeEditor from "@/components/CodeEditor";
 import CopyButton from "@/components/CopyButton";
 import { hashText, type HashAlgorithm } from "@/utils/crypto";
@@ -10,7 +9,6 @@ const SAMPLE_INPUT = "Hello, world!";
 const HASH_FILE_ACCEPT = ".txt,text/plain";
 
 const HashGeneratorPage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
   const [results, setResults] = useState<Record<string, string>>({});
 
@@ -33,9 +31,6 @@ const HashGeneratorPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
-      title={tool?.label ?? "Message Digester"}
-      description={tool?.description ?? "MD5, SHA-1, SHA-256 hashes"}
       inputPane={{
         title: "Input",
         inputToolbar: {

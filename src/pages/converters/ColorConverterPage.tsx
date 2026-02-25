@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import ToolLayout from "@/components/ToolLayout";
 import ToolPane from "@/components/ToolPane";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import CopyButton from "@/components/CopyButton";
@@ -23,7 +22,6 @@ const SUMMARY_LABEL_CLASS = "text-xs text-muted-foreground mb-1";
 const SUMMARY_VALUE_CLASS = "font-mono text-sm font-medium";
 
 const ColorConverterPage = () => {
-  const tool = useCurrentTool();
   const [hex, setHex] = useState(COLOR_CONVERTER_DEFAULT_HEX);
 
   const rgb = useMemo(() => hexToRgb(hex), [hex]);

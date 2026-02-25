@@ -1,11 +1,9 @@
 import { useState, useMemo } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import ToolAlert from "@/components/ToolAlert";
 import { parseJsonToTable, JSON_TABLE_FILE_ACCEPT, JSON_TABLE_SAMPLE, JSON_TABLE_PLACEHOLDER } from "@/utils/jsonTable";
 
 const JsonTablePage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState("");
 
   const { data: tableData, error } = useMemo(() => parseJsonToTable(input), [input]);
@@ -39,9 +37,6 @@ const JsonTablePage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
-      title={tool?.label ?? "JSON → Table"}
-      description={tool?.description ?? "Visualize JSON data as a table"}
       inputPane={{
         title: "JSON Input",
         inputToolbar: {

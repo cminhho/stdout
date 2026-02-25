@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
 import { SelectWithOptions } from "@/components/ui/select";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
 import type { IndentOption } from "@/components/IndentSelect";
 import {
   processAsciiArtForLayout,
@@ -17,7 +16,6 @@ import {
 } from "@/utils/asciiArt";
 
 const AsciiArtPage = () => {
-  const tool = useCurrentTool();
   const [input, setInput] = useState(ASCII_ART_SAMPLE);
   const [charStyle, setCharStyle] = useState<AsciiArtCharStyle>("block");
   const [spacing, setSpacing] = useState(2);
@@ -29,7 +27,6 @@ const AsciiArtPage = () => {
 
   return (
     <TwoPanelToolLayout
-      tool={tool}
       inputPane={{
         inputToolbar: {
           onSample: () => setInput(ASCII_ART_SAMPLE),
