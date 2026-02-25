@@ -34,6 +34,8 @@
   <img src="docs/Screenshot 2026-02-25 at 17.28.39.png" width="720" alt="Stdout app overview — developer toolkit hub with sidebar and tools grid" />
 </p>
 
+**Try it:** [Web](https://stdout-tools.web.app/) · **macOS:** `brew tap cminhho/tap` then `brew install --cask cminhho/tap/stdout`
+
 ---
 
 ## Overview
@@ -151,7 +153,7 @@ xattr -cr /Applications/stdout.app
 
 ### Web
 
-Run locally (see [Development](#development)) or deploy the built `dist/` to any static host.
+Use the live app at **[https://stdout-tools.web.app/](https://stdout-tools.web.app/)**, or run locally (see [Development](#development)) and deploy the built `dist/` to any static host.
 
 ---
 
