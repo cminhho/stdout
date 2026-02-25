@@ -7,11 +7,20 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import CopyButton from "@/components/CopyButton";
 import { ClearButton } from "@/components/ClearButton";
+import { SampleButton } from "@/components/SampleButton";
 import { NUMBER_BASE_OPTIONS, NUMBER_BASE_PLACEHOLDER, parseFromBase, convertToAllBases } from "@/utils/numberBase";
 
 const DEFAULT_TITLE = "Number Base";
 const DEFAULT_DESCRIPTION = "Convert numbers between bases (bin, oct, dec, hex)";
 const EMPTY_MESSAGE = "Enter a number.";
+const SAMPLE_BASE = 10;
+const SAMPLE_MIN = 1;
+const SAMPLE_MAX = 65535;
+
+function getRandomSample(): string {
+  const n = Math.floor(Math.random() * (SAMPLE_MAX - SAMPLE_MIN + 1)) + SAMPLE_MIN;
+  return String(n);
+}
 
 const NumberBasePage = () => {
   const tool = useCurrentTool();
@@ -21,9 +30,23 @@ const NumberBasePage = () => {
   const parsed = useMemo(() => parseFromBase(input, fromBase), [input, fromBase]);
   const results = useMemo(() => (parsed === null ? null : convertToAllBases(parsed)), [parsed]);
 
+  const copyAllText =
+    results?.map((r) => `${r.label}: ${r.value}`).join("\n") ?? undefined;
+
   const pane = {
     title: tool?.label ?? DEFAULT_TITLE,
-    toolbar: input ? <ClearButton onClick={() => setInput("")} /> : undefined,
+    copyText: copyAllText,
+    toolbar: (
+      <>
+        <SampleButton
+          onClick={() => {
+            setInput(getRandomSample());
+            setFromBase(SAMPLE_BASE);
+          }}
+        />
+        {input ? <ClearButton onClick={() => setInput("")} /> : null}
+      </>
+    ),
     children: (
       <div className="flex flex-col gap-6 flex-1 min-h-0 overflow-hidden">
         <section
@@ -36,8 +59,8 @@ const NumberBasePage = () => {
           <p className="text-xs text-muted-foreground leading-relaxed">
             Enter a number and select source base. All conversions appear below.
           </p>
-          <div className="space-y-2">
-            <Label htmlFor="number-base-input" variant="muted" className="text-xs sr-only">
+          <div className="space-y-1.5">
+            <Label htmlFor="number-base-input" variant="muted" className="text-xs">
               Number
             </Label>
             <Input
@@ -92,7 +115,9 @@ const NumberBasePage = () => {
                 ))}
               </ul>
             ) : (
-              <p className="text-xs text-muted-foreground py-3">{EMPTY_MESSAGE}</p>
+              <p className="text-xs text-muted-foreground py-4 leading-relaxed" role="status">
+                {EMPTY_MESSAGE}
+              </p>
             )}
           </div>
         </section>
