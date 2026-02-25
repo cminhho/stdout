@@ -31,7 +31,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/stdout-overview.png" width="720" alt="Stdout app overview — developer toolkit hub with sidebar and tools grid" />
+  <img src="docs/Screenshot 2026-02-25 at 17.28.39.png" width="720" alt="Stdout app overview — developer toolkit hub with sidebar and tools grid" />
 </p>
 
 ---
