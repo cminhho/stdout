@@ -30,6 +30,10 @@
   <strong>stdout</strong> = <em>standard output</em> — the output stream (same idea as terminal <code>stdout</code>). One app for everything that goes to that stream: format, convert, encode, generate.
 </p>
 
+<p align="center">
+  <img src="docs/stdout-overview.png" width="720" alt="Stdout app overview — developer toolkit hub with sidebar and tools grid" />
+</p>
+
 ---
 
 ## Overview
