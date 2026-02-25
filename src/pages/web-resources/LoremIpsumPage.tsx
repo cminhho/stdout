@@ -56,7 +56,7 @@ const LoremIpsumPage = () => {
     toolbar: (
       <div className="flex items-center gap-2 flex-wrap">
         <div className="flex items-center gap-1.5">
-          <Label className="text-xs text-muted-foreground shrink-0">Count</Label>
+          <Label className="tool-field-label shrink-0">Count</Label>
           <Input
             type="number"
             min={1}
@@ -67,7 +67,7 @@ const LoremIpsumPage = () => {
           />
         </div>
         <div className="flex items-center gap-1.5">
-          <Label className="text-xs text-muted-foreground shrink-0">Unit</Label>
+          <Label className="tool-field-label shrink-0">Unit</Label>
           <Select value={unit} onValueChange={(v) => setUnit(v as typeof unit)}>
             <SelectTrigger variant="secondary" size="xs" className="w-32">
               <SelectValue />

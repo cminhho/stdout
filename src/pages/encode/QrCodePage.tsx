@@ -66,7 +66,7 @@ const QrCodePage = () => {
                 Download PNG
               </Button>
             ) : (
-              <p className="text-xs text-muted-foreground text-center">Enter content and click Generate QR Code.</p>
+              <p className="tool-caption text-center">Enter content and click Generate QR Code.</p>
             )}
           </div>
         ),

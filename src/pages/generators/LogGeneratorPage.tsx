@@ -123,7 +123,7 @@ const LogGeneratorPage = () => {
     toolbar: (
       <div className="flex items-center gap-2 flex-wrap">
         <div className="flex items-center gap-1.5">
-          <Label className="text-xs text-muted-foreground shrink-0">Format</Label>
+          <Label className="tool-field-label shrink-0">Format</Label>
           <SelectWithOptions
             size="xs"
             variant="secondary"
@@ -136,12 +136,12 @@ const LogGeneratorPage = () => {
         </div>
         {format === "json" && (
           <div className="flex items-center gap-1.5">
-            <Label className="text-xs text-muted-foreground shrink-0">Indent</Label>
+            <Label className="tool-field-label shrink-0">Indent</Label>
             <IndentSelect value={indent} onChange={setIndent} />
           </div>
         )}
         <div className="flex items-center gap-1.5">
-          <Label className="text-xs text-muted-foreground shrink-0">Lines</Label>
+          <Label className="tool-field-label shrink-0">Lines</Label>
           <Input
             type="number"
             min={1}

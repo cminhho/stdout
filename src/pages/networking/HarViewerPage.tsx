@@ -87,7 +87,7 @@ const HarViewerPage = () => {
                 placeholder="Filter..."
                 className="input-compact flex-1 min-w-0 max-w-[140px] font-mono h-7"
               />
-              <span className="text-xs text-muted-foreground shrink-0">{filtered.length}/{entries.length}</span>
+              <span className="tool-caption shrink-0">{filtered.length}/{entries.length}</span>
             </>
           ) : undefined,
         children: (

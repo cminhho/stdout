@@ -96,7 +96,7 @@ const FileEncodingPage = () => {
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-[var(--spacing-block-gap)]">
         <div className="flex items-center gap-2">
-          <Label className="text-xs text-muted-foreground shrink-0">Mode</Label>
+          <Label className="tool-field-label shrink-0">Mode</Label>
           <SegmentGroup<"decode" | "encode">
             value={mode}
             onValueChange={setModeWithCleanup}
@@ -107,7 +107,7 @@ const FileEncodingPage = () => {
         </div>
         {mode === "decode" && (
           <div className="flex items-center gap-2">
-            <Label className="text-xs text-muted-foreground shrink-0">From encoding</Label>
+            <Label className="tool-field-label shrink-0">From encoding</Label>
             <SelectWithOptions
               value={decodeEncoding}
               onValueChange={setDecodeEncoding}
@@ -120,7 +120,7 @@ const FileEncodingPage = () => {
           </div>
         )}
         <div className="flex items-center gap-2">
-          <Label className="text-xs text-muted-foreground shrink-0">Bytes as</Label>
+          <Label className="tool-field-label shrink-0">Bytes as</Label>
           <SelectWithOptions<"hex" | "base64">
             value={bytesFormat}
             onValueChange={(v) => setBytesFormat(v)}
@@ -133,7 +133,7 @@ const FileEncodingPage = () => {
         </div>
       </div>
       {mode === "encode" && (
-        <p className="text-xs text-muted-foreground">
+        <p className="tool-caption">
           Encode output is UTF-8 only (browser limitation). Use Decode mode for other encodings.
         </p>
       )}

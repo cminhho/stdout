@@ -67,7 +67,7 @@ const CreditCardPage = () => {
           <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Generate test numbers
           </h2>
-          <p className="text-xs text-muted-foreground leading-relaxed">
+          <p className="tool-caption leading-relaxed">
             For testing only. Do not use for real transactions.
           </p>
           <div className="flex flex-wrap gap-2">

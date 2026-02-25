@@ -50,7 +50,7 @@ const SvgViewerPage = () => {
         title: "Preview",
         toolbar: (
           <>
-            <label className="text-xs text-muted-foreground flex items-center gap-1">
+            <label className="tool-caption flex items-center gap-1">
               BG
               <input
                 type="color"

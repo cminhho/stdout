@@ -34,7 +34,7 @@ export const ToolResultList = memo(function ToolResultList<T>({
       role="region"
       aria-label={title ? `${title} (${count} items)` : `${count} result(s)`}
     >
-      <div className="px-2 py-1.5 bg-muted/50 text-xs font-medium text-muted-foreground">
+      <div className="px-2 py-1.5 bg-muted/50 tool-caption font-medium">
         {title ? `${title} — ` : ""}
         {count} result{count !== 1 ? "s" : ""}
       </div>

@@ -243,7 +243,7 @@ const MathCalculatorPage = () => {
         children: (
           <div className="flex flex-col flex-1 min-h-0 overflow-auto">
             {history.length === 0 ? (
-              <p className="text-xs text-muted-foreground">Enter an expression and press = or Enter.</p>
+              <p className="tool-caption">Enter an expression and press = or Enter.</p>
             ) : (
               <div className="space-y-1">
                 {history.map((h, i) => (

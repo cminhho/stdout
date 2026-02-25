@@ -52,7 +52,7 @@ const NumberBasePage = () => {
           <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Convert
           </h2>
-          <p className="text-xs text-muted-foreground leading-relaxed">
+          <p className="tool-caption leading-relaxed">
             Enter a number and select source base. All conversions appear below.
           </p>
           <div className="space-y-1.5">
@@ -69,7 +69,7 @@ const NumberBasePage = () => {
             />
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-muted-foreground shrink-0">Source base</span>
+            <span className="tool-caption shrink-0">Source base</span>
             {NUMBER_BASE_OPTIONS.map((b) => (
               <Button
                 key={b.radix}
@@ -111,7 +111,7 @@ const NumberBasePage = () => {
                 ))}
               </ul>
             ) : (
-              <p className="text-xs text-muted-foreground py-4 leading-relaxed" role="status">
+              <p className="tool-caption py-4 leading-relaxed" role="status">
                 {EMPTY_MESSAGE}
               </p>
             )}

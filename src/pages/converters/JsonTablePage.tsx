@@ -9,7 +9,8 @@ const JsonTablePage = () => {
   const { data: tableData, error } = useMemo(() => parseJsonToTable(input), [input]);
 
   const tableContent = tableData && tableData.headers.length > 0 ? (
-    <table className="w-full text-sm">
+    <div className="tool-reference-table-wrap">
+    <table className="tool-reference-table">
       <thead>
         <tr className="border-b border-border">
           {tableData.headers.map((h) => (
@@ -31,6 +32,7 @@ const JsonTablePage = () => {
         ))}
       </tbody>
     </table>
+    </div>
   ) : !error && input.trim() ? (
     <div className="flex items-center justify-center text-muted-foreground text-sm p-8">No valid table data</div>
   ) : null;

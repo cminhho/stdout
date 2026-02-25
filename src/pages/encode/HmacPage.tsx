@@ -39,7 +39,7 @@ const HmacPage = () => {
       topSection={
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
-            <Label className="text-xs text-muted-foreground shrink-0">Algorithm</Label>
+            <Label className="tool-field-label shrink-0">Algorithm</Label>
             <SegmentGroup<HmacAlgo>
               value={algo}
               onValueChange={setAlgo}
@@ -49,7 +49,7 @@ const HmacPage = () => {
             />
           </div>
           <div className="flex items-center gap-2 min-w-0 flex-1 max-w-xs">
-            <Label className="text-xs text-muted-foreground shrink-0">Secret</Label>
+            <Label className="tool-field-label shrink-0">Secret</Label>
             <Input
               type="text"
               className="h-7 flex-1 min-w-0 font-mono text-xs"

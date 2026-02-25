@@ -140,7 +140,7 @@ const MockGeneratorPage = () => {
         toolbar: (
           <div className="flex items-center gap-2 flex-wrap">
             <IndentSelect value={indent} onChange={setIndent} />
-            <label className="text-xs text-muted-foreground shrink-0">Count</label>
+            <label className="tool-field-label shrink-0">Count</label>
             <Input
               type="number"
               min={1}

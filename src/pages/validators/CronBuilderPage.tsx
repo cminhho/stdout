@@ -121,7 +121,7 @@ const CronBuilderPage = () => {
     children: (
       <div className="flex flex-col gap-6 flex-1 min-h-0 overflow-hidden">
         <section className="space-y-3 shrink-0" aria-label="Builder">
-          <p className="text-xs text-muted-foreground">
+          <p className="tool-caption">
             Set each cron field (minute, hour, day, month, weekday). Use presets or pick an example below.
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
@@ -141,7 +141,7 @@ const CronBuilderPage = () => {
             ))}
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-muted-foreground shrink-0">Preset</span>
+            <span className="tool-caption shrink-0">Preset</span>
             {PRESETS.map((preset) => (
               <Button
                 key={preset.value}
@@ -183,12 +183,13 @@ const CronBuilderPage = () => {
             <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
               Examples
             </h2>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="tool-caption mt-1">
               Click a row to apply that expression.
             </p>
           </div>
           <div className="flex-1 min-h-0 overflow-auto border-t border-border/60">
-            <table className="w-full text-xs border-collapse" aria-label="Cron expression examples">
+            <div className="tool-reference-table-wrap">
+            <table className="tool-reference-table border-collapse" aria-label="Cron expression examples">
               <thead className="sticky top-0 bg-muted/60 backdrop-blur-sm z-10 border-b border-border/60">
                 <tr>
                   <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">
@@ -227,6 +228,7 @@ const CronBuilderPage = () => {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         </section>
       </div>

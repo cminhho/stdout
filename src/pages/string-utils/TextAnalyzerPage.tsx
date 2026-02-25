@@ -193,7 +193,7 @@ const TextAnalyzerPage = () => {
                   onChange={(e) => setWordFilter(e.target.value)}
                   aria-label="Filter words"
                 />
-                <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer select-none">
+                <label className="flex items-center gap-2 tool-caption cursor-pointer select-none">
                   <input
                     type="checkbox"
                     checked={caseSensitive}

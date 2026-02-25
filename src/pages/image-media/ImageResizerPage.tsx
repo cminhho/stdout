@@ -113,7 +113,7 @@ const ImageResizerPage = () => {
               <div className="space-y-3 overflow-auto">
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-xs text-muted-foreground">Width</label>
+                    <label className="tool-field-label">Width</label>
                     <Input
                       type="number"
                       value={width}
@@ -122,7 +122,7 @@ const ImageResizerPage = () => {
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-muted-foreground">Height</label>
+                    <label className="tool-field-label">Height</label>
                     <Input
                       type="number"
                       value={height}
@@ -156,7 +156,7 @@ const ImageResizerPage = () => {
                   />
                   {format !== "png" && (
                     <div className="flex items-center gap-1">
-                      <label className="text-xs text-muted-foreground">Quality:</label>
+                      <label className="tool-field-label">Quality:</label>
                       <input
                         type="range"
                         min={10}

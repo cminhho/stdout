@@ -69,7 +69,7 @@ const UuidPage = () => {
     toolbar: (
       <div className="flex items-center gap-2 flex-wrap">
         <div className="flex items-center gap-1.5">
-          <Label className="text-xs text-muted-foreground shrink-0">Count</Label>
+          <Label className="tool-field-label shrink-0">Count</Label>
           <Input
             type="number"
             min={1}
@@ -80,7 +80,7 @@ const UuidPage = () => {
           />
         </div>
         <div className="flex items-center gap-1.5">
-          <Label className="text-xs text-muted-foreground shrink-0">Version</Label>
+          <Label className="tool-field-label shrink-0">Version</Label>
           <SelectWithOptions
             size="xs"
             variant="secondary"
@@ -91,11 +91,11 @@ const UuidPage = () => {
             aria-label="UUID version"
           />
         </div>
-        <label className="flex items-center gap-1 text-xs text-muted-foreground cursor-pointer whitespace-nowrap">
+        <label className="flex items-center gap-1 tool-caption cursor-pointer whitespace-nowrap">
           <input type="checkbox" checked={uppercase} onChange={(e) => setUppercase(e.target.checked)} className="accent-primary rounded border-input" />
           Upper
         </label>
-        <label className="flex items-center gap-1 text-xs text-muted-foreground cursor-pointer whitespace-nowrap">
+        <label className="flex items-center gap-1 tool-caption cursor-pointer whitespace-nowrap">
           <input type="checkbox" checked={hyphens} onChange={(e) => setHyphens(e.target.checked)} className="accent-primary rounded border-input" />
           Hyphens
         </label>
