@@ -34,7 +34,7 @@
   <img src="docs/Screenshot 2026-02-25 at 17.28.39.png" width="720" alt="Stdout app overview — developer toolkit hub with sidebar and tools grid" />
 </p>
 
-**Try it:** [Web](https://stdout-tools.web.app/) · **macOS:** `brew tap cminhho/tap` then `brew install --cask cminhho/tap/stdout`
+**Try it:** [Web](https://stdout-tools.web.app/) · **macOS:** `brew install --cask cminhho/tap/stdout`
 
 ---
 
@@ -141,9 +141,10 @@
 ### macOS (desktop)
 
 ```bash
-brew tap cminhho/tap
 brew install --cask cminhho/tap/stdout
 ```
+
+(Homebrew will add the tap `cminhho/tap` automatically if needed.)
 
 Open **stdout** from Applications or Spotlight. If macOS blocks the first open (“developer cannot be verified”):
 
