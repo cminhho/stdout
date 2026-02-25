@@ -1692,6 +1692,17 @@
     color: hsl(38 92% 40%);
   }
 
+  /* Mobile: touch targets (44px min), safe-area for notched devices, overlay above content */
+  @media (max-width: 767px) {
+    .app-sidebar .sidebar-link,
+    .app-sidebar .sidebar-group-trigger {
+      min-height: var(--min-touch);
+    }
+    .app-sidebar.sidebar-collapsed {
+      padding-left: env(safe-area-inset-left);
+    }
+  }
+
   /* Liquid Glass: sidebar in desktop window – token-based, translucent, blur, edge + shine */
   .sidebar-glass {
     background: hsl(var(--sidebar-background) / 0.42);

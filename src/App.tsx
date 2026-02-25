@@ -8,6 +8,7 @@ import AppSidebar from "@/components/AppSidebar";
 import PanelResizer from "@/components/PanelResizer";
 import WindowTitleBar from "@/components/WindowTitleBar";
 import { useSettings } from "@/hooks/useSettings";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { useSidebarResize } from "@/hooks/useSidebarResize";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import { useToolTracking } from "@/hooks/useToolTracking";
@@ -65,7 +66,8 @@ const ToolRoutes = () => {
 
 const DesktopLayout = () => {
   const layoutRef = useRef<HTMLDivElement>(null);
-  const { sidebarCollapsed, sidebarWidth, setSidebarWidth } = useSettings();
+  const isMobile = useIsMobile();
+  const { sidebarCollapsed, sidebarWidth, setSidebarWidth, toggleSidebar } = useSettings();
   const { widthPx, onMouseDown, onKeyDown } = useSidebarResize(layoutRef, {
     minPx: SIDEBAR_WIDTH_MIN,
     maxPx: SIDEBAR_WIDTH_MAX,
@@ -75,11 +77,23 @@ const DesktopLayout = () => {
 
   const resizerPercent =
     ((widthPx - SIDEBAR_WIDTH_MIN) / (SIDEBAR_WIDTH_MAX - SIDEBAR_WIDTH_MIN)) * 100;
+  const isOverlay = isMobile && !sidebarCollapsed;
 
   return (
     <div className="desktop-layout flex flex-1 min-h-0 overflow-hidden min-w-0" ref={layoutRef}>
-      <AppSidebar sidebarWidthPx={sidebarCollapsed ? undefined : widthPx} />
-      {!sidebarCollapsed && (
+      {isOverlay && (
+        <button
+          type="button"
+          className="fixed inset-0 z-40 bg-black/50 cursor-pointer border-0"
+          aria-label="Close sidebar"
+          onClick={toggleSidebar}
+        />
+      )}
+      <AppSidebar
+        sidebarWidthPx={sidebarCollapsed ? undefined : widthPx}
+        isOverlay={isOverlay}
+      />
+      {!isMobile && !sidebarCollapsed && (
         <PanelResizer
           orientation="vertical"
           percent={resizerPercent}
