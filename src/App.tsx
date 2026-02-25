@@ -57,9 +57,18 @@ const ToolRoutes = () => {
   return (
     <Suspense
       fallback={
-        <div className="flex-1 flex items-center justify-center gap-2 text-muted-foreground text-sm" aria-live="polite">
-          <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden />
-          Loading tool...
+        <div
+          className="flex-1 flex flex-col items-center justify-center gap-3 text-muted-foreground min-h-0"
+          aria-live="polite"
+          aria-busy="true"
+        >
+          <span
+            className="inline-block h-5 w-5 rounded-full border-[1.5px] border-current border-t-transparent animate-spin"
+            aria-hidden
+          />
+          <span className="text-[13px] font-normal tracking-[0.01em] text-muted-foreground/90">
+            Loading…
+          </span>
         </div>
       }
     >

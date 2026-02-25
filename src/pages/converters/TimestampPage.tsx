@@ -42,20 +42,20 @@ const TimestampPage = () => {
 
   const topSection = (
     <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0">
-      <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer">
+      <label className="flex items-center gap-1.5 tool-caption cursor-pointer">
         <input type="checkbox" checked={live} onChange={(e) => setLive(e.target.checked)} className="accent-primary rounded" />
         Live
       </label>
       <div className="flex items-center gap-2">
-        <span className="text-xs text-muted-foreground">Now</span>
+        <span className="tool-caption">Now</span>
         <span className="text-xs font-mono text-foreground">{Math.floor(now / 1000)}</span>
-        <span className="text-xs text-muted-foreground">s</span>
+        <span className="tool-caption">s</span>
       </div>
       <Button size="xs" variant="outline" onClick={setCurrentTime}>
         <RefreshCw className="h-3 w-3 mr-1" /> Use Now
       </Button>
       <div className="flex items-center gap-1.5 flex-wrap">
-        <Label className="text-xs text-muted-foreground shrink-0">Ref</Label>
+        <Label className="tool-field-label shrink-0">Ref</Label>
         {commonRefs.map((ref) => (
           <button
             key={ref.label}
@@ -94,7 +94,7 @@ const TimestampPage = () => {
               </div>
             ))
           ) : (
-            <p className="text-xs text-muted-foreground py-2">{EMPTY_UNIX_MSG}</p>
+            <p className="tool-caption py-2">{EMPTY_UNIX_MSG}</p>
           )}
         </div>
       </>
@@ -126,7 +126,7 @@ const TimestampPage = () => {
               </div>
             ))
           ) : (
-            <p className="text-xs text-muted-foreground py-2">{EMPTY_ISO_MSG}</p>
+            <p className="tool-caption py-2">{EMPTY_ISO_MSG}</p>
           )}
         </div>
       </>

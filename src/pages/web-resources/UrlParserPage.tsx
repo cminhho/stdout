@@ -59,7 +59,7 @@ const UrlParserPage = () => {
     children: (
       <div className="flex flex-col gap-4 flex-1 min-h-0 overflow-auto">
         <div className="shrink-0">
-          <Label className="text-xs text-muted-foreground mb-1 block">URL</Label>
+          <Label className="tool-field-label">URL</Label>
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -72,15 +72,13 @@ const UrlParserPage = () => {
         )}
         {rows.length > 0 && (
           <>
-            <div className="border border-border rounded-md overflow-hidden shrink-0">
-              <table className="w-full text-sm">
+            <div className="tool-reference-table-wrap shrink-0">
+              <table className="tool-reference-table">
                 <tbody>
                   {rows.map(([label, value]) => (
-                    <tr key={label} className="border-b border-border last:border-0">
-                      <td className="px-3 py-2 text-muted-foreground font-medium w-32">
-                        {label}
-                      </td>
-                      <td className="px-3 py-2 font-mono text-xs break-all">{value}</td>
+                    <tr key={label}>
+                      <td className="w-32">{label}</td>
+                      <td className="font-mono break-all">{value}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -89,7 +87,7 @@ const UrlParserPage = () => {
             {parsed.params.length > 0 && (
               <div className="shrink-0">
                 <div className="flex justify-between items-center mb-2">
-                  <h3 className="text-xs text-muted-foreground font-medium">
+                  <h3 className="tool-caption font-medium">
                     Query Parameters ({parsed.params.length})
                   </h3>
                   <CopyButton
@@ -100,30 +98,19 @@ const UrlParserPage = () => {
                     )}
                   />
                 </div>
-                <div className="border border-border rounded-md overflow-hidden">
-                  <table className="w-full text-sm">
+                <div className="tool-reference-table-wrap">
+                  <table className="tool-reference-table">
                     <thead>
-                      <tr className="border-b border-border bg-muted/30">
-                        <th className="px-3 py-1.5 text-left text-xs text-muted-foreground">
-                          Key
-                        </th>
-                        <th className="px-3 py-1.5 text-left text-xs text-muted-foreground">
-                          Value
-                        </th>
+                      <tr>
+                        <th>Key</th>
+                        <th>Value</th>
                       </tr>
                     </thead>
                     <tbody>
                       {parsed.params.map(([k, v]: [string, string], i: number) => (
-                        <tr
-                          key={i}
-                          className="border-b border-border last:border-0"
-                        >
-                          <td className="px-3 py-1.5 font-mono text-xs text-primary">
-                            {k}
-                          </td>
-                          <td className="px-3 py-1.5 font-mono text-xs break-all">
-                            {v}
-                          </td>
+                        <tr key={i}>
+                          <td className="font-mono text-primary">{k}</td>
+                          <td className="font-mono break-all">{v}</td>
                         </tr>
                       ))}
                     </tbody>

@@ -50,7 +50,7 @@ const ColorConverterPage = () => {
         />
         <div className="space-y-3 shrink-0">
           <div>
-            <Label className="text-xs text-muted-foreground">HEX</Label>
+            <Label className="tool-field-label">HEX</Label>
             <div className="flex gap-2 items-center mt-1">
               <Input className="font-mono flex-1" value={hex} onChange={(e) => setHex(e.target.value)} />
               <input
@@ -65,7 +65,7 @@ const ColorConverterPage = () => {
 
           {rgb && (
             <div>
-              <Label className="text-xs text-muted-foreground">RGB</Label>
+              <Label className="tool-field-label">RGB</Label>
               <div className="flex gap-2 items-center mt-1">
                 <Input
                   type="number"
@@ -98,7 +98,7 @@ const ColorConverterPage = () => {
 
           {hsl && (
             <div>
-              <Label className="text-xs text-muted-foreground">HSL</Label>
+              <Label className="tool-field-label">HSL</Label>
               <div className="flex gap-2 items-center mt-1">
                 <Input
                   type="number"
@@ -133,7 +133,7 @@ const ColorConverterPage = () => {
         <div className="grid grid-cols-3 gap-3 text-center shrink-0">
           {summaryItems.map(({ label, value }) => (
             <div key={label} className="bg-muted rounded-lg p-3">
-              <div className="text-xs text-muted-foreground mb-1">{label}</div>
+              <div className="tool-caption mb-1">{label}</div>
               <div className="font-mono text-sm font-medium">{value}</div>
             </div>
           ))}

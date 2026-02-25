@@ -137,7 +137,7 @@ const CurlBuilderPage = () => {
 
             <section aria-label="Headers">
               <div className="flex items-center justify-between mb-[var(--spacing-block-gap)]">
-                <Label className="text-[length:var(--text-caption)] font-medium text-muted-foreground">Headers</Label>
+                <Label className="tool-caption font-medium">Headers</Label>
                 <Button size="xs" variant="outline" onClick={addHeader} className="gap-1.5"><Plus className="size-3.5" />Add</Button>
               </div>
               <div className="space-y-[var(--home-space-xs)]">
@@ -153,7 +153,7 @@ const CurlBuilderPage = () => {
 
             <section aria-label="Query parameters">
               <div className="flex items-center justify-between mb-[var(--spacing-block-gap)]">
-                <Label className="text-[length:var(--text-caption)] font-medium text-muted-foreground">Query Params</Label>
+                <Label className="tool-caption font-medium">Query Params</Label>
                 <Button size="xs" variant="outline" onClick={addParam} className="gap-1.5"><Plus className="size-3.5" />Add</Button>
               </div>
               <div className="space-y-[var(--home-space-xs)]">
@@ -204,7 +204,7 @@ const CurlBuilderPage = () => {
           <div className="flex flex-col flex-1 min-h-0 gap-[var(--spacing-section-mb)]">
             <section className="flex flex-col flex-1 min-h-0 min-h-[140px]" aria-label="Generated cURL">
               <div className="flex justify-between items-center mb-[var(--spacing-block-gap)] shrink-0">
-                <span className="text-[length:var(--text-caption)] font-medium text-muted-foreground">Generated cURL</span>
+                <span className="tool-caption font-medium">Generated cURL</span>
                 <CopyButton text={curlCommand} />
               </div>
               <div className="flex-1 min-h-0 overflow-hidden">
@@ -219,7 +219,7 @@ const CurlBuilderPage = () => {
             </section>
             <section className="flex flex-col flex-1 min-h-0 min-h-[120px]" aria-label="Import cURL">
               <div className="flex justify-between items-center mb-[var(--spacing-block-gap)] shrink-0">
-                <span className="text-[length:var(--text-caption)] font-medium text-muted-foreground">Import cURL</span>
+                <span className="tool-caption font-medium">Import cURL</span>
                 <ClearButton onClick={() => setImportInput("")} />
               </div>
               <div className="flex-1 min-h-0 overflow-hidden">

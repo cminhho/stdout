@@ -36,7 +36,7 @@ const ValidationErrorList = memo(function ValidationErrorList(props: ValidationE
             <span className="text-foreground break-words min-w-0">{err.message}</span>
           </div>
           {err.snippet?.trim() ? (
-            <pre className="font-mono text-muted-foreground text-[length:var(--code-font-size)] leading-snug rounded-md overflow-x-auto border border-[hsl(var(--code-border))] bg-[hsl(var(--code-bg))] px-2 py-1.5">
+            <pre className={cn("tool-code-snippet overflow-x-auto")}>
               {err.snippet}
             </pre>
           ) : null}

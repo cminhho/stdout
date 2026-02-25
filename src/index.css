@@ -1,4 +1,8 @@
-/* Fonts: system stack only so the app runs fully offline (no Google Fonts). */
+/*
+ * index.css – design tokens and shared components
+ * TOC: Base/Theme · Components (tool-*, panel-*, sidebar-*, code-editor, tables) · Settings · Home · Utilities
+ * Fonts: system stack only so the app runs fully offline (no Google Fonts).
+ */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -627,12 +631,27 @@
     display: block;
   }
 
-  /* Section heading inside tool-card (e.g. "Validate (Luhn)", "Match Details") */
-  .tool-section-heading {
-    font-size: var(--text-content);
+  /* Secondary caption text (reusable for tool pages) */
+  .tool-caption {
+    font-size: var(--text-caption);
+    color: hsl(var(--muted-foreground));
+  }
+  .tool-caption--uppercase {
     font-weight: 500;
-    color: hsl(var(--foreground));
-    margin-bottom: var(--spacing-block-gap);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Small code block / snippet (pre/code) using design tokens */
+  .tool-code-snippet {
+    font-family: var(--font-mono);
+    font-size: var(--code-font-size);
+    line-height: var(--code-line-height);
+    background: hsl(var(--code-bg));
+    border: 1px solid hsl(var(--code-border));
+    border-radius: var(--radius);
+    padding: var(--home-space-sm) var(--home-space-md);
+    color: hsl(var(--muted-foreground));
   }
 
   /* Inline alert for error/success (design tokens) */
@@ -1304,11 +1323,12 @@
     background-color: hsl(var(--primary));
     color: hsl(var(--primary-foreground));
   }
-  .settings-section-heading {
+  /* Scoped override: larger heading inside settings content body */
+  .settings-content-body .settings-section-heading {
     font-size: var(--text-nav);
     margin-bottom: var(--home-space-sm);
   }
-  .settings-section-heading svg {
+  .settings-content-body .settings-section-heading svg {
     width: var(--text-content);
     height: var(--text-content);
   }
@@ -1483,26 +1503,12 @@
     margin-bottom: var(--spacing-toolbar-mb);
   }
 
-  /* Unified control surface: shared by .control-base, .tool-select, .input-compact (reusable token set) */
-  .control-base,
-  .tool-select,
+  /* Compact input: token-based control surface (reusable for tool forms) */
   .input-compact {
     background: hsl(var(--background));
     color: hsl(var(--foreground));
     border: 1px solid hsl(var(--input));
     font-size: var(--text-content);
-  }
-
-  .tool-select {
-    @apply h-9 rounded-lg px-3 py-2 font-medium transition-colors duration-150 cursor-pointer;
-  }
-
-  .tool-select:hover {
-    background: hsl(var(--accent));
-    color: hsl(var(--accent-foreground));
-  }
-
-  .input-compact {
     @apply h-9 rounded-lg px-3 py-2 font-mono placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-150;
   }
 

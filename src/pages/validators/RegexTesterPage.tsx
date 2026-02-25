@@ -137,7 +137,7 @@ const RegexTesterPage = () => {
 
       {highlighted && (
         <div className="tool-card shrink-0">
-          <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1.5">Highlighted</div>
+          <div className="tool-caption tool-caption--uppercase mb-1.5">Highlighted</div>
           <div className="code-block whitespace-pre-wrap text-xs leading-relaxed">
             {highlighted.map((part, i) =>
               part.isMatch ? (
@@ -155,7 +155,7 @@ const RegexTesterPage = () => {
       {result && !result.error && result.matches.length > 0 && (
         <div className="tool-card flex-1 overflow-auto shrink-0">
           <div className="flex justify-between items-center mb-2">
-            <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Match Details</div>
+            <div className="tool-caption tool-caption--uppercase">Match Details</div>
             <CopyButton text={result.matches.map((m) => m.match).join("\n")} />
           </div>
           <div className="space-y-2">
