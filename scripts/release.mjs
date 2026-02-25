@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Bump version, update lockfile, create git tag. Push triggers GitHub Release (release-mac workflow).
+ * Bump version, update lockfile, commit (message: release: vX.Y.Z), create tag.
+ * Push branch + tag to trigger GitHub Release (release-mac workflow); release body is generated from commits since previous tag.
  * Usage: node scripts/release.mjs [patch|minor|major]   (default: patch)
  */
 
@@ -33,7 +34,7 @@ console.log(`Bumped package.json to ${next}`);
 
 execSync('npm install', { cwd: root, stdio: 'inherit' });
 execSync('git add package.json package-lock.json', { cwd: root, stdio: 'inherit' });
-execSync(`git commit -m "chore: release v${next}"`, { cwd: root, stdio: 'inherit' });
+execSync(`git commit -m "release: v${next}"`, { cwd: root, stdio: 'inherit' });
 execSync(`git tag v${next}`, { cwd: root, stdio: 'inherit' });
 
 const branch = execSync('git branch --show-current', { cwd: root, encoding: 'utf8' }).trim();

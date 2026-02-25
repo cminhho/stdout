@@ -21,7 +21,7 @@ How to cut a new version and publish the macOS app (GitHub Release + Homebrew Ca
 
    - Updates `version` in `package.json`
    - Runs `npm install` (updates `package-lock.json`)
-   - Commits with message `chore: release vX.Y.Z`
+   - Commits with message `release: vX.Y.Z` (conventional; one commit per release)
    - Creates tag `vX.Y.Z`
 
 2. **Push branch and tag**
@@ -34,7 +34,7 @@ How to cut a new version and publish the macOS app (GitHub Release + Homebrew Ca
 
 3. **GitHub Actions**
 
-   Pushing the tag runs the **Release macOS** workflow: build on `macos-latest`, then upload two artifacts to the [GitHub Release](https://github.com/cminhho/stdout/releases) for that tag: `stdout-X.Y.Z-mac.zip` (x64) and `stdout-X.Y.Z-arm64-mac.zip` (arm64).
+   Pushing the tag runs the **Release macOS** workflow: build on `macos-latest`, then upload two artifacts to the [GitHub Release](https://github.com/cminhho/stdout/releases) for that tag: `stdout-X.Y.Z-mac.zip` (x64) and `stdout-X.Y.Z-arm64-mac.zip` (arm64). The release body is auto-generated from commit messages since the previous tag (industry practice).
 
 ## Requirements
 
@@ -47,5 +47,5 @@ How to cut a new version and publish the macOS app (GitHub Release + Homebrew Ca
 
 ## After release
 
-- **Homebrew Cask**: If you use a tap (e.g. `cminhho/tap`), update the cask to point at the new release URL/sha.
-- **Changelog**: Optionally add release notes in the GitHub Release UI or in a `CHANGELOG.md`.
+- **Homebrew Cask**: If you use a tap (e.g. `cminhho/tap`), update the cask to point at the new release URL and SHA256.
+- **Release notes**: The workflow fills the release body from commits since the previous tag. You can edit the body in the GitHub Release UI or maintain a `CHANGELOG.md` and paste it there.

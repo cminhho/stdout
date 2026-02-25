@@ -530,24 +530,33 @@
     width: var(--title-bar-end-spacer);
   }
 
-  /* Thin scrollbars in desktop window (--scrollbar-thumb / --scrollbar-thumb-hover per theme) */
-  html.desktop {
+  /* Thin scrollbars in desktop window (--scrollbar-thumb / --scrollbar-thumb-hover per theme). Skip on macOS so system overlay scrollbars apply (Intel + ARM). */
+  html.desktop:not(.mac) {
     scrollbar-width: thin;
     scrollbar-color: var(--scrollbar-thumb) transparent;
   }
-  html.desktop ::-webkit-scrollbar {
+  html.desktop:not(.mac) ::-webkit-scrollbar {
     width: var(--home-space-sm);
     height: var(--home-space-sm);
   }
-  html.desktop ::-webkit-scrollbar-track {
+  html.desktop:not(.mac) ::-webkit-scrollbar-track {
     background: transparent;
   }
-  html.desktop ::-webkit-scrollbar-thumb {
+  html.desktop:not(.mac) ::-webkit-scrollbar-thumb {
     background: var(--scrollbar-thumb);
     border-radius: var(--radius-sm);
   }
-  html.desktop ::-webkit-scrollbar-thumb:hover {
+  html.desktop:not(.mac) ::-webkit-scrollbar-thumb:hover {
     background: var(--scrollbar-thumb-hover);
+  }
+
+  /* macOS (Intel + ARM): native overlay scrollbars; momentum scrolling on main scroll containers */
+  html.desktop.mac main,
+  html.desktop.mac .sidebar-pad,
+  html.desktop.mac .settings-content-body,
+  html.desktop.mac .tool-layout-content,
+  html.desktop.mac .code-block {
+    -webkit-overflow-scrolling: touch;
   }
 
   code, pre, .font-mono {

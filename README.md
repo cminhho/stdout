@@ -31,8 +31,10 @@
 </p>
 
 <p align="center">
-  <img src="docs/stdout-overview.png" width="720" alt="Stdout app overview — developer toolkit hub with sidebar and tools grid" />
+  <img src="docs/Screenshot 2026-02-25 at 17.28.39.png" width="720" alt="Stdout app overview — developer toolkit hub with sidebar and tools grid" />
 </p>
+
+**Try it:** [Web](https://stdout-tools.web.app/) · **macOS:** `brew install --cask cminhho/tap/stdout`
 
 ---
 
@@ -139,9 +141,10 @@
 ### macOS (desktop)
 
 ```bash
-brew tap cminhho/tap
 brew install --cask cminhho/tap/stdout
 ```
+
+(Homebrew will add the tap `cminhho/tap` automatically if needed.)
 
 Open **stdout** from Applications or Spotlight. If macOS blocks the first open (“developer cannot be verified”):
 
@@ -151,7 +154,7 @@ xattr -cr /Applications/stdout.app
 
 ### Web
 
-Run locally (see [Development](#development)) or deploy the built `dist/` to any static host.
+Use the live app at **[https://stdout-tools.web.app/](https://stdout-tools.web.app/)**, or run locally (see [Development](#development)) and deploy the built `dist/` to any static host.
 
 ---
 
