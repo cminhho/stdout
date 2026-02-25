@@ -8,6 +8,17 @@
    * Theme tokens: WCAG AA contrast, semantic layers, single primary hue.
    * Dark: slate-tinted neutrals (224°). Light: warm neutrals (25°). Deep dark: true neutrals (0°).
    * Primary: blue 221 83% 53% (works on light/dark). Code syntax: VS Code–style.
+   *
+   * Token hierarchy (reuse; avoid redefining):
+   * - Spacing: --home-space-2xs|xs|sm|md|lg|xl|2xl (8px grid); --spacing-* alias where semantic.
+   * - Radius: --radius, --radius-sm, --radius-item, --home-radius-card; --settings-window-radius (mobile sheet).
+   * - Motion: --transition-duration, --transition-ease; --transition-default = both (use in transition:).
+   * - Focus: --focus-ring, --focus-ring-sidebar (single box-shadow token for all focus-visible).
+   * - Scrollbar: --scrollbar-thumb, --scrollbar-thumb-hover per theme (desktop thin scrollbars).
+   * - Typography: --text-nav|ui|content|caption|title|hero (hero = 1.125rem for taglines/section titles).
+   * - Glass: --glass-edge, --glass-highlight-color; --glass-blur-subtle, --glass-saturate-subtle for cards/panels.
+   * - Settings: --settings-sidebar-width, --settings-window-radius.
+   * - Tables: cell padding = var(--home-space-sm) var(--home-space-md); thead/row hover semantic per context.
    */
   :root,
   .dark {
@@ -94,6 +105,7 @@
     --text-ui: 0.8125rem;
     --text-content: 0.875rem;
     --text-caption: 0.6875rem;   /* 11px – labels, badges, compact UI */
+    --text-title: 1.0625rem;     /* 17px – panel/section titles */
     /* Responsive: breakpoints align with Tailwind (sm 640px, md 768px, lg 1024px) */
     --bp-sm: 640px;
     --bp-md: 768px;
@@ -133,8 +145,26 @@
     --home-footer-padding-y-md: var(--home-space-2xl);
  /* fixed width on mobile so 2-column grid doesn’t shift */
     --min-touch: 44px; /* Apple/Google minimum touch target */
-    /* Radius scale (macOS-style: card 8px, small 4px) */
+    /* Radius scale (macOS-style: card 8px, small 4px, item 6px) */
     --radius-sm: 0.25rem;   /* 4px – scrollbar thumb, small chips */
+    --radius-item: 0.375rem; /* 6px – list/item pill (settings category, etc.) */
+    /* Shorthand: use in transition properties to avoid repeating duration/ease */
+    --transition-default: var(--transition-duration) var(--transition-ease);
+    /* Focus ring: single token for all focus-visible (panel-resizer, settings-tab, etc.) */
+    --focus-ring: 0 0 0 2px hsl(var(--ring));
+    --focus-ring-sidebar: 0 0 0 2px hsl(var(--sidebar-ring));
+    /* Scrollbar (desktop): thumb color so one place to theme */
+    --scrollbar-thumb: hsl(0 0% 50% / 0.4);
+    --scrollbar-thumb-hover: hsl(0 0% 50% / 0.55);
+    /* Typography: hero/section title (18px) */
+    --text-hero: 1.125rem;
+    /* Softer glass for cards/panels (24px blur vs 44px for title-bar/sidebar) */
+    --glass-blur-subtle: 24px;
+    --glass-saturate-subtle: 160%;
+    /* Extra-tight gap (2px) for list items */
+    --home-space-2xs: 0.125rem;
+    --settings-sidebar-width: 12rem;
+    --settings-window-radius: 0.75rem;  /* mobile settings sheet top corners */
     /* Settings: macOS System Settings–style radius and spacing */
     --settings-radius: var(--home-radius-card);
     --settings-window-radius: 0.75rem;   /* 12px – macOS window corners */
@@ -175,11 +205,13 @@
     --radius-button: var(--home-radius-card);   /* macOS-style radius for buttons (toolbar, actions) */
     --spacing-sidebar-header-h: 1.75rem; /* 28px min height for panel header */
     --spacing-footer-min-h: 2.25rem;    /* 36px min height for sidebar footer */
-    /* Liquid Glass (desktop): blur + visible edge */
+    /* Liquid Glass (desktop): blur + visible edge; edge/highlight colors for sidebar/title-bar */
     --glass-blur: 44px;
     --glass-saturate: 200%;
     --glass-border-opacity: 0.14;
     --glass-highlight: 0.1;
+    --glass-edge: 0 0% 100% / var(--glass-border-opacity);
+    --glass-highlight-color: 0 0% 100% / var(--glass-highlight);
     /* Status (alerts, validation, badges) */
     --status-success: 142 69% 42%;
     --status-warning: 38 92% 50%;
@@ -187,6 +219,9 @@
     /* Motion: VS Code–style 150–200ms */
     --transition-duration: 0.15s;
     --transition-ease: ease;
+    /* Desktop layout gradient (content area behind sidebar) */
+    --desktop-layout-start: 224 13% 22%;
+    --desktop-layout-end: 224 13% 12%;
   }
 
   .light {
@@ -270,21 +305,24 @@
     --settings-table-header-bg: 25 12% 94%;
     --settings-table-row-hover-bg: 25 15% 92%;
 
-    /* Liquid Glass – light: same blur, visible edge */
+    /* Liquid Glass – light: same blur, darker edge for contrast on light bg */
     --glass-blur: 44px;
     --glass-saturate: 200%;
     --glass-border-opacity: 0.14;
     --glass-highlight: 0.08;
+    --glass-edge: 0 0% 0% / var(--glass-border-opacity);
+    --glass-highlight-color: 0 0% 100% / 0.5;
 
     --status-success: 142 45% 32%;
     --status-warning: 38 92% 45%;
     --status-error: 0 72% 45%;
     --transition-duration: 0.15s;
     --transition-ease: ease;
-
-    --text-nav: 0.75rem;
-    --text-ui: 0.8125rem;
-    --text-content: 0.875rem;
+    --desktop-layout-start: 25 25% 98%;
+    --desktop-layout-end: 25 20% 94%;
+    --scrollbar-thumb: hsl(0 0% 0% / 0.2);
+    --scrollbar-thumb-hover: hsl(0 0% 0% / 0.3);
+    /* Typography: inherits --text-nav, --text-ui, --text-content, --text-caption, --text-hero from :root */
   }
 
   /* Deep dark: near-black (0°), OLED-friendly, WCAG AA muted text */
@@ -372,12 +410,16 @@
     --glass-saturate: 200%;
     --glass-border-opacity: 0.12;
     --glass-highlight: 0.08;
+    --glass-edge: 0 0% 100% / var(--glass-border-opacity);
+    --glass-highlight-color: 0 0% 100% / var(--glass-highlight);
 
     --status-success: 142 69% 42%;
     --status-warning: 38 92% 50%;
     --status-error: 0 72% 51%;
     --transition-duration: 0.15s;
     --transition-ease: ease;
+    --desktop-layout-start: 0 0% 10%;
+    --desktop-layout-end: 0 0% 5%;
   }
 
   * {
@@ -390,13 +432,15 @@
     color: hsl(var(--foreground));
   }
 
-  /* Global focus-visible fallback: ring from token (buttons/links etc.; inputs excluded below) */
+  /* Global focus-visible: ring from --focus-ring (sidebar uses --focus-ring-sidebar) */
   :focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px hsl(var(--ring));
+    box-shadow: var(--focus-ring);
   }
-
-  /* No focus ring on form controls (input, select, textarea) */
+  .sidebar-link:focus-visible,
+  .sidebar-donate-link:focus-visible {
+    box-shadow: var(--focus-ring-sidebar);
+  }
   input:focus-visible,
   select:focus-visible,
   textarea:focus-visible {
@@ -408,6 +452,14 @@
     @apply bg-background text-foreground;
     font-family: var(--font-sans);
     transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 
   /* Web: root fills viewport so flex layout (App) is full height, no body scroll */
@@ -434,35 +486,21 @@
     overflow: hidden;
   }
 
-  /* Content area behind sidebar: gradient so glass blur has depth */
+  /* Content area behind sidebar: gradient per theme (--desktop-layout-start/end) */
   html.desktop .desktop-layout {
-    background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(224 13% 22%), hsl(224 13% 12%));
-  }
-  html.desktop.light .desktop-layout {
-    background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(25 25% 98%), hsl(25 20% 94%));
-  }
-  html.desktop.deep-dark .desktop-layout {
-    background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(0 0% 10%), hsl(0 0% 5%));
+    background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(var(--desktop-layout-start)), hsl(var(--desktop-layout-end)));
   }
 
-  /* Title bar: Liquid Glass – token-based, VS Code–aligned layout */
+  /* Title bar: Liquid Glass – token-based (--glass-edge, --glass-highlight-color per theme) */
   .desktop-title-bar {
     background: hsl(var(--header-bg) / 0.48);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    border-bottom: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));
-    box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / var(--glass-highlight));
+    border-bottom: 1px solid hsl(var(--glass-edge));
+    box-shadow: inset 0 1px 0 0 hsl(var(--glass-highlight-color));
     padding-left: var(--title-bar-padding-x);
     padding-right: var(--title-bar-padding-x);
     gap: var(--title-bar-gap);
-  }
-  .light .desktop-title-bar {
-    border-bottom-color: hsl(0 0% 0% / var(--glass-border-opacity));
-    box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / 0.5);
-  }
-  .deep-dark .desktop-title-bar {
-    border-bottom-color: hsl(0 0% 100% / var(--glass-border-opacity));
-    box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / var(--glass-highlight));
   }
   .desktop-title-bar .title-bar-title {
     font-size: var(--title-bar-font-size);
@@ -475,7 +513,7 @@
     border-bottom: none;
     border-radius: var(--home-radius-card) var(--home-radius-card) 0 0;
     padding: 0 var(--home-space-md);
-    min-height: 24px;
+    min-height: var(--home-space-lg);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -490,37 +528,31 @@
     width: var(--title-bar-end-spacer);
   }
 
-  /* Thin scrollbars in desktop window */
+  /* Thin scrollbars in desktop window (--scrollbar-thumb / --scrollbar-thumb-hover per theme) */
   html.desktop {
     scrollbar-width: thin;
-    scrollbar-color: hsl(0 0% 50% / 0.4) transparent;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
   }
   html.desktop ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: var(--home-space-sm);
+    height: var(--home-space-sm);
   }
   html.desktop ::-webkit-scrollbar-track {
     background: transparent;
   }
   html.desktop ::-webkit-scrollbar-thumb {
-    background: hsl(0 0% 50% / 0.4);
+    background: var(--scrollbar-thumb);
     border-radius: var(--radius-sm);
   }
   html.desktop ::-webkit-scrollbar-thumb:hover {
-    background: hsl(0 0% 50% / 0.55);
-  }
-  .light.desktop ::-webkit-scrollbar-thumb {
-    background: hsl(0 0% 0% / 0.2);
-  }
-  .light.desktop ::-webkit-scrollbar-thumb:hover {
-    background: hsl(0 0% 0% / 0.3);
+    background: var(--scrollbar-thumb-hover);
   }
 
   code, pre, .font-mono {
     font-family: var(--font-mono) !important;
   }
 
-  /* Responsive: tighter panel padding when stacked (VS Code–style density) */
+  /* Responsive: tighter panel padding when stacked (12px then 8px/6px – 0.75rem/0.375rem not in 8px grid) */
   @media (max-width: 1023px) {
     :root {
       --spacing-panel-inner-x: 0.75rem;
@@ -613,7 +645,7 @@
     font-size: var(--text-ui);
     border-radius: var(--radius);
     border: 1px solid;
-    transition: background 0.15s ease, border-color 0.15s ease;
+    transition: background var(--transition-default), border-color var(--transition-default);
   }
   .tool-alert--error {
     color: hsl(var(--destructive));
@@ -655,36 +687,35 @@
     gap: var(--spacing-grid-gap);
   }
 
-  /* Reference tables (e.g. MIME types): macOS-style spacing, radius, typography */
+  /* Shared table pattern: cells, border, thead th (tool + settings); then context-specific thead bg / row hover */
+  .tool-reference-table,
+  .settings-table {
+    width: 100%;
+    font-size: var(--text-nav);
+  }
+  .tool-reference-table th, .tool-reference-table td,
+  .settings-table th, .settings-table td {
+    padding: var(--home-space-sm) var(--home-space-md);
+    text-align: left;
+    border-bottom: 1px solid hsl(var(--border));
+  }
+  .tool-reference-table thead th,
+  .settings-table thead th {
+    color: hsl(var(--muted-foreground));
+    font-weight: 500;
+  }
+  .tool-reference-table tbody tr:last-child td,
+  .settings-table tbody tr:last-child td {
+    border-bottom: none;
+  }
   .tool-reference-table-wrap {
     border: 1px solid hsl(var(--border));
     border-radius: var(--home-radius-card);
     overflow: hidden;
   }
-  .tool-reference-table {
-    width: 100%;
-    font-size: var(--text-nav);
-  }
-  .tool-reference-table th,
-  .tool-reference-table td {
-    padding: var(--home-space-sm) var(--home-space-md);
-    text-align: left;
-    border-bottom: 1px solid hsl(var(--border));
-    font-size: var(--text-caption);
-  }
-  .tool-reference-table thead tr {
-    background: hsl(var(--muted) / 0.5);
-  }
-  .tool-reference-table thead th {
-    color: hsl(var(--muted-foreground));
-    font-weight: 500;
-  }
-  .tool-reference-table tbody tr:last-child td {
-    border-bottom: none;
-  }
-  .tool-reference-table tbody tr:hover {
-    background: hsl(var(--muted) / 0.3);
-  }
+  .tool-reference-table th, .tool-reference-table td { font-size: var(--text-caption); }
+  .tool-reference-table thead tr { background: hsl(var(--muted) / 0.5); }
+  .tool-reference-table tbody tr:hover { background: hsl(var(--muted) / 0.3); }
 
   .tool-layout-content > .tool-toolbar {
     flex-shrink: 0;
@@ -740,11 +771,11 @@
   /* Resize panels separator: width/height 0, only border line visible; hit area via padding. */
   .panel-resizer {
     margin: 0;
-    padding: 0 8px;
+    padding: 0 var(--home-space-sm);
     width: var(--panel-resizer-width);
     min-width: var(--panel-resizer-width);
     background: transparent;
-    transition: background 0.15s ease;
+    transition: background var(--transition-default);
   }
   .panel-resizer:hover {
     background: hsl(var(--muted) / 0.35);
@@ -753,7 +784,7 @@
     margin: 0;
     padding: 0;
     background: hsl(var(--border));
-    transition: background 0.15s ease;
+    transition: background var(--transition-default);
   }
   .panel-resizer:hover .panel-resizer-line {
     background: hsl(var(--muted-foreground) / 0.5);
@@ -761,7 +792,7 @@
   .panel-resizer:focus-visible {
     outline: none;
     background: hsl(var(--muted) / 0.4);
-    box-shadow: 0 0 0 2px hsl(var(--ring));
+    box-shadow: var(--focus-ring);
   }
   .panel-resizer:focus-visible .panel-resizer-line {
     background: hsl(var(--primary) / 0.8);
@@ -770,7 +801,7 @@
   .panel-resizer--horizontal {
     width: 100%;
     min-width: 0;
-    padding: 8px 0;
+    padding: var(--home-space-sm) 0;
     height: var(--panel-resizer-width);
     min-height: var(--panel-resizer-width);
   }
@@ -790,7 +821,7 @@
     padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
     color: hsl(var(--destructive));
     font-size: var(--text-ui);
-    transition: background 0.15s ease, border-color 0.15s ease;
+    transition: background var(--transition-default), border-color var(--transition-default);
   }
 
   /* Settings page: tabs, option cards, section headings (design system tokens) */
@@ -812,7 +843,7 @@
     border: none;
     border-bottom: 2px solid transparent;
     cursor: pointer;
-    transition: color 0.15s ease, border-color 0.15s ease;
+    transition: color var(--transition-default), border-color var(--transition-default);
   }
   .settings-tab:hover {
     color: hsl(var(--foreground));
@@ -820,7 +851,7 @@
   .settings-tab:focus-visible {
     outline: none;
     border-radius: var(--radius) var(--radius) 0 0;
-    box-shadow: 0 0 0 2px hsl(var(--ring));
+    box-shadow: var(--focus-ring);
   }
   .settings-tab--selected {
     color: hsl(var(--primary));
@@ -834,13 +865,13 @@
     cursor: pointer;
     background: hsl(var(--background));
     color: hsl(var(--foreground));
-    transition: border-color 0.15s ease, background 0.15s ease;
+    transition: border-color var(--transition-default), background var(--transition-default);
   }
   .settings-option-card .settings-label {
     font-size: var(--text-caption);
   }
   .settings-option-card .settings-body-text {
-    font-size: 0.625rem;
+    font-size: var(--text-caption); /* compact: 11px via token */
     margin-top: var(--home-space-xs);
   }
   .settings-option-card:hover {
@@ -850,7 +881,7 @@
   .settings-option-card:focus-visible {
     outline: none;
     border-radius: var(--radius-sm);
-    box-shadow: 0 0 0 2px hsl(var(--ring));
+    box-shadow: var(--focus-ring);
   }
   .settings-option-card--selected {
     border-color: hsl(var(--primary));
@@ -907,33 +938,14 @@
     overflow: auto;
     max-height: min(22rem, 55vh);
   }
-  .settings-table {
-    width: 100%;
-    font-size: var(--text-nav);
-  }
-  .settings-table th,
-  .settings-table td {
-    padding: var(--home-space-sm) var(--home-space-md);
-    text-align: left;
-    border-bottom: 1px solid hsl(var(--border));
-    font-size: var(--text-nav);
-  }
-  .settings-table--compact th,
-  .settings-table--compact td {
+  .settings-table th, .settings-table td { font-size: var(--text-nav); }
+  .settings-table--compact th, .settings-table--compact td {
     padding: var(--home-space-sm) var(--home-space-md);
     font-size: var(--text-nav);
     vertical-align: middle;
   }
-  .settings-table--compact thead th {
-    font-weight: 500;
-  }
-  .settings-table thead tr {
-    background: hsl(var(--settings-table-header-bg));
-  }
-  .settings-table thead th {
-    color: hsl(var(--muted-foreground));
-    font-weight: 500;
-  }
+  .settings-table--compact thead th { font-weight: 500; }
+  .settings-table thead tr { background: hsl(var(--settings-table-header-bg)); }
   .settings-table-wrap .settings-table thead th {
     position: sticky;
     top: 0;
@@ -941,12 +953,7 @@
     background: hsl(var(--settings-table-header-bg));
     box-shadow: 0 1px 0 hsl(var(--border));
   }
-  .settings-table tbody tr:last-child td {
-    border-bottom: none;
-  }
-  .settings-table tbody tr:hover {
-    background: hsl(var(--settings-table-row-hover-bg));
-  }
+  .settings-table tbody tr:hover { background: hsl(var(--settings-table-row-hover-bg)); }
   .settings-body-text {
     font-size: var(--text-content);
     color: hsl(var(--muted-foreground));
@@ -967,7 +974,7 @@
   .settings-setting-label {
     flex: 0 1 auto;
     text-align: left;
-    font-size: 0.8125rem;
+    font-size: var(--text-ui);
     font-weight: 500;
     color: hsl(var(--foreground));
   }
@@ -984,11 +991,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
-    padding-left: max(1rem, env(safe-area-inset-left));
-    padding-right: max(1rem, env(safe-area-inset-right));
-    padding-bottom: max(1rem, env(safe-area-inset-bottom));
-    padding-top: max(1rem, env(safe-area-inset-top));
+    padding: var(--home-space-md);
+    padding-left: max(var(--home-space-md), env(safe-area-inset-left));
+    padding-right: max(var(--home-space-md), env(safe-area-inset-right));
+    padding-bottom: max(var(--home-space-md), env(safe-area-inset-bottom));
+    padding-top: max(var(--home-space-md), env(safe-area-inset-top));
     pointer-events: none;
   }
   .settings-modal-container > * {
@@ -1004,7 +1011,7 @@
     position: relative;
     z-index: 1;
     width: 100%;
-    max-width: 64rem;
+    max-width: var(--home-content-max-width);
     height: min(85vh, 38rem);
     min-height: min(72vh, 28rem);
     max-height: calc(100dvh - 2rem);
@@ -1047,7 +1054,7 @@
     background: hsl(var(--background));
   }
   .settings-mobile-header-title {
-    font-size: 1.125rem;
+    font-size: var(--text-hero);
     font-weight: 600;
     color: hsl(var(--foreground));
     letter-spacing: -0.01em;
@@ -1069,7 +1076,7 @@
   /* Sidebar: macOS System Settings–style list (vibrancy, pill selection) */
   .settings-sidebar {
     flex-shrink: 0;
-    width: 12rem;
+    width: var(--settings-sidebar-width);
     padding: var(--home-space-md) var(--home-space-sm) var(--home-space-lg);
     overflow-y: auto;
     background: hsl(var(--muted) / 0.4);
@@ -1084,7 +1091,7 @@
   .settings-sidebar-title {
     margin: 0 0 var(--home-space-md);
     padding: 0 var(--home-space-md);
-    font-size: 0.8125rem;
+    font-size: var(--text-ui);
     font-weight: 600;
     color: hsl(var(--muted-foreground));
     letter-spacing: 0.02em;
@@ -1092,7 +1099,7 @@
   .settings-category-list {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--home-space-2xs);
     padding: 0;
     list-style: none;
   }
@@ -1102,15 +1109,15 @@
     gap: var(--home-space-sm);
     width: 100%;
     padding: var(--home-space-sm) var(--home-space-md);
-    font-size: 0.8125rem;
+    font-size: var(--text-ui);
     font-weight: 500;
     color: hsl(var(--muted-foreground));
     background: transparent;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--radius-item);
     cursor: pointer;
     text-align: left;
-    transition: color var(--transition-duration) var(--transition-ease), background var(--transition-duration) var(--transition-ease);
+    transition: color var(--transition-default), background var(--transition-default);
   }
   .settings-category-item:hover {
     color: hsl(var(--foreground));
@@ -1118,13 +1125,13 @@
   }
   .settings-category-item:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px hsl(var(--ring));
+    box-shadow: var(--focus-ring);
   }
   .settings-category-item--selected {
     font-weight: 600;
     color: hsl(var(--primary-foreground));
     background: hsl(var(--primary));
-    border-radius: 6px;
+    border-radius: var(--radius-item);
   }
   html.desktop .settings-category-item--selected {
     border-radius: 9999px;
@@ -1140,8 +1147,8 @@
     flex-shrink: 0;
   }
   .settings-category-icon {
-    width: 0.875rem;
-    height: 0.875rem;
+    width: var(--text-content);
+    height: var(--text-content);
     flex-shrink: 0;
     opacity: 0.9;
   }
@@ -1171,7 +1178,7 @@
   }
   .settings-panel-title {
     margin: 0;
-    font-size: 1.0625rem;
+    font-size: var(--text-title);
     font-weight: 600;
     color: hsl(var(--foreground));
     letter-spacing: -0.01em;
@@ -1209,7 +1216,7 @@
   }
   .pref-section__heading {
     margin: 0 0 var(--home-space-sm);
-    font-size: 0.6875rem;
+    font-size: var(--text-caption);
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -1221,7 +1228,7 @@
     gap: 0;
   }
   .pref-group {
-    border-radius: 10px;
+    border-radius: var(--radius);
     background: hsl(var(--muted) / 0.25);
     border: 1px solid hsl(var(--border) / 0.5);
     overflow: hidden;
@@ -1337,7 +1344,7 @@
       height: 100%;
       min-height: 0;
       max-height: none;
-      border-radius: 0.75rem 0.75rem 0 0;
+      border-radius: var(--settings-window-radius) var(--settings-window-radius) 0 0;
       border-left: none;
       border-right: none;
       box-shadow: 0 -4px 24px hsl(0 0% 0% / 0.2);
@@ -1395,8 +1402,8 @@
       border-radius: 0;
     }
     .settings-category-item .settings-category-icon {
-      width: 0.875rem;
-      height: 0.875rem;
+      width: var(--text-content);
+      height: var(--text-content);
     }
     .settings-category-item .settings-category-label {
       font-size: var(--text-caption);
@@ -1480,8 +1487,10 @@
     margin-bottom: var(--spacing-toolbar-mb);
   }
 
-  /* Unified control: button, select, input – same bg, text, border, font (dark + light) */
-  .control-base {
+  /* Unified control surface: shared by .control-base, .tool-select, .input-compact (reusable token set) */
+  .control-base,
+  .tool-select,
+  .input-compact {
     background: hsl(var(--background));
     color: hsl(var(--foreground));
     border: 1px solid hsl(var(--input));
@@ -1490,10 +1499,6 @@
 
   .tool-select {
     @apply h-9 rounded-lg px-3 py-2 font-medium transition-colors duration-150 cursor-pointer;
-    background: hsl(var(--background));
-    color: hsl(var(--foreground));
-    border: 1px solid hsl(var(--input));
-    font-size: var(--text-content);
   }
 
   .tool-select:hover {
@@ -1501,13 +1506,8 @@
     color: hsl(var(--accent-foreground));
   }
 
-  /* Standard input for tool pages – same as control-base */
   .input-compact {
     @apply h-9 rounded-lg px-3 py-2 font-mono placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-150;
-    background: hsl(var(--background));
-    color: hsl(var(--foreground));
-    border: 1px solid hsl(var(--input));
-    font-size: var(--text-content);
   }
 
   .tool-checkbox-label {
@@ -1608,7 +1608,7 @@
     border: 1px solid hsl(var(--sidebar-border));
     background: hsl(var(--sidebar-accent) / 0.5);
     color: hsl(var(--sidebar-foreground));
-    transition: border-color 0.15s, box-shadow 0.15s;
+    transition: border-color var(--transition-default), box-shadow var(--transition-default);
   }
   .sidebar-search::placeholder {
     color: hsl(var(--muted-foreground));
@@ -1643,7 +1643,7 @@
     height: 2rem;
     border-radius: var(--radius-button);
     color: hsl(var(--muted-foreground));
-    transition: color 0.15s, background-color 0.15s, opacity 0.15s;
+    transition: color var(--transition-default), background-color var(--transition-default), opacity var(--transition-default);
   }
   .btn-icon-chrome:hover {
     color: hsl(var(--foreground));
@@ -1670,7 +1670,7 @@
     border: 1px solid hsl(var(--sidebar-border));
     background: hsl(var(--sidebar-accent) / 0.6);
     color: hsl(var(--sidebar-foreground));
-    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+    transition: background-color var(--transition-default), border-color var(--transition-default), color var(--transition-default);
     text-decoration: none;
   }
   .sidebar-donate-link:hover {
@@ -1680,7 +1680,7 @@
   }
   .sidebar-donate-link:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px hsl(var(--sidebar-ring));
+    box-shadow: var(--focus-ring-sidebar);
   }
   .sidebar-donate-link-icon {
     width: var(--text-nav);
@@ -1699,41 +1699,16 @@
     }
   }
 
-  /* Liquid Glass: sidebar in desktop window – token-based, translucent, blur, edge + shine */
-  .sidebar-glass {
-    background: hsl(var(--sidebar-background) / 0.42);
-    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    border-right: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));
-    box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / var(--glass-highlight));
-  }
-  .light .sidebar-glass {
-    background: hsl(var(--sidebar-background) / 0.5);
-    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    border-right: 1px solid hsl(0 0% 0% / var(--glass-border-opacity));
-    box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / 0.6);
-  }
-  .deep-dark .sidebar-glass {
-    background: hsl(var(--sidebar-background) / 0.5);
-    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    border-right: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));
-    box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / var(--glass-highlight));
-  }
-
-  /* macOS-style glass sidebar on desktop: apply glass to main app sidebar */
+  /* macOS-style glass sidebar on desktop: one block using --glass-edge, --glass-highlight-color */
   html.desktop .app-sidebar {
     background: hsl(var(--sidebar-background) / 0.42);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    border-right: 1px solid hsl(0 0% 100% / var(--glass-border-opacity));
-    box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / var(--glass-highlight));
+    border-right: 1px solid hsl(var(--glass-edge));
+    box-shadow: inset 1px 0 0 0 hsl(var(--glass-highlight-color));
   }
   html.desktop.light .app-sidebar {
     background: hsl(var(--sidebar-background) / 0.5);
-    border-right: 1px solid hsl(0 0% 0% / var(--glass-border-opacity));
-    box-shadow: inset 1px 0 0 0 hsl(0 0% 100% / 0.6);
   }
   html.desktop.deep-dark .app-sidebar {
     background: hsl(var(--sidebar-background) / 0.5);
@@ -1742,8 +1717,8 @@
   /* Reusable Liquid Glass surface (e.g. cards, panels in desktop app) */
   .glass-surface {
     background: hsl(var(--background) / 0.7);
-    backdrop-filter: blur(24px) saturate(160%);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
+    -webkit-backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
     border: 1px solid hsl(var(--border) / 0.6);
   }
   .light .glass-surface {
@@ -1849,7 +1824,7 @@
     gap: var(--home-space-md);
   }
   .home-hero-tagline {
-    font-size: 1.125rem;
+    font-size: var(--text-hero);
     font-weight: 600;
     letter-spacing: -0.01em;
     line-height: 1.4;
@@ -1868,7 +1843,7 @@
   }
   .home-intro .panel-header-label {
     margin: 0 0 var(--home-space-sm);
-    font-size: 0.8125rem;
+    font-size: var(--text-ui);
     font-weight: 600;
     letter-spacing: 0.02em;
     color: hsl(var(--foreground));
@@ -1881,8 +1856,8 @@
   }
   html.desktop .home-intro {
     background: hsl(var(--card) / 0.85);
-    backdrop-filter: blur(24px) saturate(160%);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
+    -webkit-backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
     border-color: hsl(var(--border) / 0.8);
   }
 
@@ -2027,9 +2002,9 @@
       gap: var(--home-space-xs);
     }
     .home-recent-count {
-      min-width: 1.125rem;
+      min-width: var(--text-hero);
       padding: 0.0625rem 0.25rem;
-      font-size: 0.6875rem;
+      font-size: var(--text-caption);
     }
   }
 
@@ -2039,7 +2014,7 @@
     max-width: 28rem;
   }
   .home-tools-search {
-    transition: background-color var(--transition-duration) var(--transition-ease), border-color var(--transition-duration) var(--transition-ease);
+    transition: background-color var(--transition-default), border-color var(--transition-default);
   }
 
   /* Sticky tools header: glass bar (macOS-style), below safe-area when sticky */
@@ -2053,7 +2028,7 @@
   .home-empty {
     padding: var(--home-space-xl) var(--home-space-lg) !important;
     border-radius: var(--home-radius-card);
-    transition: background-color var(--transition-duration) var(--transition-ease), border-color var(--transition-duration) var(--transition-ease);
+    transition: background-color var(--transition-default), border-color var(--transition-default);
   }
   .home-empty p {
     font-size: var(--text-content);
