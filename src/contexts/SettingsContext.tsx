@@ -1,5 +1,5 @@
 import { useState, useEffect, ReactNode } from "react";
-import { SettingsContext, loadSettings, saveSettings, clampSidebarWidth, type Theme, type SidebarMode } from "./settingsStore";
+import { SettingsContext, loadSettings, saveSettings, clampSidebarWidth, SIDEBAR_MOBILE_BREAKPOINT_PX, type Theme, type SidebarMode } from "./settingsStore";
 
 export type { Theme, SidebarMode } from "./settingsStore";
 
@@ -47,6 +47,16 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const value = state.editorFont?.trim() || "ui-monospace, ui-serif, monospace";
     root.style.setProperty("--font-mono", value);
   }, [state.editorFont]);
+
+  /* On viewport resize to mobile, auto-collapse sidebar so content has full width. */
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${SIDEBAR_MOBILE_BREAKPOINT_PX - 1}px)`);
+    const handler = () => {
+      if (mq.matches) setState((s) => ({ ...s, sidebarCollapsed: true }));
+    };
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   const setTheme = (theme: Theme) => setState((s) => ({ ...s, theme }));
   const setSidebarMode = (sidebarMode: SidebarMode) => setState((s) => ({ ...s, sidebarMode }));

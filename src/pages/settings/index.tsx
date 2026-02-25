@@ -93,6 +93,21 @@ const SettingsPage = () => {
         onClick={(e) => e.stopPropagation()}
         onKeyDown={(e) => e.stopPropagation()}
       >
+        {/* Mobile: single top bar with title + close (macOS-style) */}
+        <div className="settings-mobile-header" aria-hidden="true">
+          <span className="settings-mobile-header-title">{DEFAULT_TITLE}</span>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={close}
+            aria-label="Close settings"
+            className="settings-dialog-close settings-mobile-close"
+          >
+            <X className="size-5" aria-hidden />
+          </Button>
+        </div>
+
         <div className="settings-layout">
           <nav className="settings-sidebar" aria-label="Settings categories">
             <h1 id="settings-dialog-title" className="settings-sidebar-title">
@@ -110,8 +125,10 @@ const SettingsPage = () => {
                   onClick={() => setTab(id)}
                   className={cn("settings-category-item", tab === id && "settings-category-item--selected")}
                 >
-                  <Icon className="settings-category-icon" aria-hidden />
-                  <span>{label}</span>
+                  <span className="settings-category-icon-wrap" aria-hidden>
+                    <Icon className="settings-category-icon" />
+                  </span>
+                  <span className="settings-category-label">{label}</span>
                 </button>
               ))}
             </div>
@@ -126,7 +143,7 @@ const SettingsPage = () => {
                 size="icon-sm"
                 onClick={close}
                 aria-label="Close settings"
-                className="settings-dialog-close"
+                className="settings-dialog-close settings-desktop-close"
               >
                 <X className="size-4" aria-hidden />
               </Button>

@@ -131,10 +131,13 @@
     --home-tools-header-gap: var(--home-space-sm);
     --home-footer-padding-y: var(--home-space-xl);
     --home-footer-padding-y-md: var(--home-space-2xl);
+ /* fixed width on mobile so 2-column grid doesn’t shift */
+    --min-touch: 44px; /* Apple/Google minimum touch target */
     /* Radius scale (macOS-style: card 8px, small 4px) */
     --radius-sm: 0.25rem;   /* 4px – scrollbar thumb, small chips */
-    /* Settings: reuse home scale (8px grid, macOS-style) for consistency */
+    /* Settings: macOS System Settings–style radius and spacing */
     --settings-radius: var(--home-radius-card);
+    --settings-window-radius: 0.75rem;   /* 12px – macOS window corners */
     --settings-panel-gap: var(--home-space-md);
     --spacing-tool-layout-y: var(--home-space-sm);  /* 8px vertical padding for tool layout */
     /* Workbench (VS Code): editor vs panel surfaces; sidebar/activity bar; list focus for nav */
@@ -1013,6 +1016,14 @@
     background: hsl(var(--background));
     border: 1px solid hsl(var(--border));
   }
+  html.desktop .settings-dialog {
+    border-radius: var(--settings-window-radius);
+    box-shadow: 0 25px 50px -12px hsl(0 0% 0% / 0.25), 0 0 0 1px hsl(var(--border) / 0.5);
+    background: hsl(var(--background) / 0.92);
+    backdrop-filter: blur(32px) saturate(150%);
+    -webkit-backdrop-filter: blur(32px) saturate(150%);
+    border-color: hsl(var(--border) / 0.6);
+  }
   .settings-dialog-close {
     color: hsl(var(--muted-foreground));
     flex-shrink: 0;
@@ -1020,39 +1031,68 @@
   .settings-dialog-close:hover {
     color: hsl(var(--foreground));
   }
+  /* Mobile-only top bar: Settings title + Close (macOS/iOS-style title bar) */
+  .settings-mobile-header {
+    display: none;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--home-space-md);
+    min-height: var(--min-touch);
+    padding: var(--home-space-sm) var(--home-space-md);
+    padding-top: max(var(--home-space-md), env(safe-area-inset-top));
+    padding-left: max(var(--home-space-md), env(safe-area-inset-left));
+    padding-right: max(var(--home-space-md), env(safe-area-inset-right));
+    border-bottom: 1px solid hsl(var(--border));
+    background: hsl(var(--background));
+  }
+  .settings-mobile-header-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: hsl(var(--foreground));
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+  .settings-mobile-close {
+    min-width: var(--min-touch);
+    min-height: var(--min-touch);
+    flex-shrink: 0;
+    margin: calc(-1 * var(--home-space-sm));
+    margin-right: calc(-1 * var(--home-space-sm));
+  }
   .settings-layout {
     display: flex;
     flex: 1 1 auto;
     min-height: 0;
     overflow: hidden;
   }
-  /* Sidebar: macOS-style spacing, glass on desktop (frontend-ui-dark-ts) */
+  /* Sidebar: macOS System Settings–style list (vibrancy, pill selection) */
   .settings-sidebar {
     flex-shrink: 0;
     width: 12rem;
-    padding: var(--home-space-md) var(--home-space-md) var(--home-space-lg) var(--home-space-md);
+    padding: var(--home-space-md) var(--home-space-sm) var(--home-space-lg);
     overflow-y: auto;
     background: hsl(var(--muted) / 0.4);
     border-right: 1px solid hsl(var(--border));
   }
   html.desktop .settings-sidebar {
-    background: hsl(var(--muted) / 0.35);
-    backdrop-filter: blur(12px) saturate(120%);
-    -webkit-backdrop-filter: blur(12px) saturate(120%);
-    border-right-color: hsl(var(--border) / 0.9);
+    background: hsl(var(--muted) / 0.3);
+    backdrop-filter: blur(20px) saturate(130%);
+    -webkit-backdrop-filter: blur(20px) saturate(130%);
+    border-right-color: hsl(var(--border) / 0.6);
   }
   .settings-sidebar-title {
     margin: 0 0 var(--home-space-md);
-    padding: 0 var(--home-space-sm);
-    font-size: 1rem;
+    padding: 0 var(--home-space-md);
+    font-size: 0.8125rem;
     font-weight: 600;
-    color: hsl(var(--foreground));
-    letter-spacing: 0.01em;
+    color: hsl(var(--muted-foreground));
+    letter-spacing: 0.02em;
   }
   .settings-category-list {
     display: flex;
     flex-direction: column;
-    gap: var(--home-space-sm);
+    gap: 2px;
     padding: 0;
     list-style: none;
   }
@@ -1062,19 +1102,19 @@
     gap: var(--home-space-sm);
     width: 100%;
     padding: var(--home-space-sm) var(--home-space-md);
-    font-size: var(--text-content);
+    font-size: 0.8125rem;
     font-weight: 500;
     color: hsl(var(--muted-foreground));
     background: transparent;
     border: none;
-    border-radius: var(--settings-radius);
+    border-radius: 6px;
     cursor: pointer;
     text-align: left;
     transition: color var(--transition-duration) var(--transition-ease), background var(--transition-duration) var(--transition-ease);
   }
   .settings-category-item:hover {
     color: hsl(var(--foreground));
-    background: hsl(var(--muted) / 0.6);
+    background: hsl(var(--muted) / 0.5);
   }
   .settings-category-item:focus-visible {
     outline: none;
@@ -1084,10 +1124,20 @@
     font-weight: 600;
     color: hsl(var(--primary-foreground));
     background: hsl(var(--primary));
+    border-radius: 6px;
+  }
+  html.desktop .settings-category-item--selected {
+    border-radius: 9999px;
   }
   .settings-category-item--selected:hover {
     background: hsl(var(--primary) / 0.9);
     color: hsl(var(--primary-foreground));
+  }
+  .settings-category-icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
   }
   .settings-category-icon {
     width: 0.875rem;
@@ -1097,6 +1147,9 @@
   }
   .settings-category-item--selected .settings-category-icon {
     opacity: 1;
+  }
+  .settings-category-label {
+    min-width: 0;
   }
   .settings-content {
     flex: 1;
@@ -1113,25 +1166,26 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--home-space-sm);
-    padding: var(--home-space-md) var(--home-space-lg);
-    border-bottom: 1px solid hsl(var(--border));
+    padding: var(--home-space-sm) var(--home-space-xl) var(--home-space-sm) var(--home-space-xl);
+    border-bottom: 1px solid hsl(var(--border) / 0.7);
   }
   .settings-panel-title {
     margin: 0;
-    font-size: 1rem;
+    font-size: 1.0625rem;
     font-weight: 600;
     color: hsl(var(--foreground));
+    letter-spacing: -0.01em;
   }
   .settings-content-body {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    padding: var(--home-space-lg) var(--home-space-lg) var(--home-space-xl);
+    padding: var(--home-space-xl) var(--home-space-xl) var(--home-space-2xl);
   }
   .settings-section {
     margin-bottom: 0;
-    padding-top: var(--home-space-md);
-    border-top: 1px solid hsl(var(--border));
+    padding-top: var(--home-space-lg);
+    border-top: 1px solid hsl(var(--border) / 0.6);
   }
   .settings-section:first-child {
     padding-top: 0;
@@ -1146,8 +1200,8 @@
   /* Checkbox in settings: visible border and background so it doesn’t blend with panel */
   /* Preferences components (generic, macOS-style): section, group, row, label, control, description */
   .pref-section {
-    padding-top: var(--home-space-lg);
-    border-top: 1px solid hsl(var(--border));
+    padding-top: var(--home-space-xl);
+    border-top: 1px solid hsl(var(--border) / 0.6);
   }
   .pref-section:first-child {
     padding-top: 0;
@@ -1155,9 +1209,9 @@
   }
   .pref-section__heading {
     margin: 0 0 var(--home-space-sm);
-    font-size: var(--text-caption);
+    font-size: 0.6875rem;
     font-weight: 600;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: hsl(var(--muted-foreground));
   }
@@ -1167,13 +1221,13 @@
     gap: 0;
   }
   .pref-group {
-    border-radius: var(--settings-radius);
-    background: hsl(var(--muted) / 0.35);
-    border: 1px solid hsl(var(--border) / 0.8);
+    border-radius: 10px;
+    background: hsl(var(--muted) / 0.25);
+    border: 1px solid hsl(var(--border) / 0.5);
     overflow: hidden;
   }
   .pref-group .pref-row {
-    border-bottom: 1px solid hsl(var(--border) / 0.6);
+    border-bottom: 1px solid hsl(var(--border) / 0.4);
   }
   .pref-group .pref-row:last-child {
     border-bottom: none;
@@ -1183,11 +1237,11 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--home-space-md);
-    min-height: 2.5rem;
-    padding: 0 var(--home-space-md);
+    min-height: 2.75rem;
+    padding: 0 var(--home-space-lg);
   }
   .pref-group .pref-row {
-    padding: 0 var(--home-space-md);
+    padding: 0 var(--home-space-lg);
     min-height: 2.75rem;
   }
   .pref-label {
@@ -1226,10 +1280,12 @@
       gap: var(--home-space-sm);
       padding-top: var(--home-space-md);
       padding-bottom: var(--home-space-md);
+      min-height: var(--min-touch);
     }
     .pref-group .pref-row {
       padding-left: var(--home-space-md);
       padding-right: var(--home-space-md);
+      min-height: var(--min-touch);
     }
     .pref-control {
       width: 100%;
@@ -1265,7 +1321,7 @@
     }
   }
 
-  /* Mobile: full-bleed sheet-style modal, horizontal tabs, touch targets */
+  /* Mobile: full-bleed sheet (macOS/iOS-style), safe areas, 8px grid, 44px touch targets */
   @media (max-width: 640px) {
     .settings-modal-container {
       padding: 0;
@@ -1281,44 +1337,102 @@
       height: 100%;
       min-height: 0;
       max-height: none;
-      border-radius: 0;
+      border-radius: 0.75rem 0.75rem 0 0;
       border-left: none;
       border-right: none;
+      box-shadow: 0 -4px 24px hsl(0 0% 0% / 0.2);
+    }
+    .settings-mobile-header {
+      display: flex;
+    }
+    .settings-content-header {
+      display: none;
     }
     .settings-layout {
       flex-direction: column;
       min-height: 0;
+      flex: 1;
+      overflow: hidden;
     }
     .settings-sidebar {
       width: 100%;
       flex-shrink: 0;
-      padding: var(--home-space-md);
+      padding: var(--home-space-sm) var(--home-space-md);
+      padding-left: max(var(--home-space-md), env(safe-area-inset-left));
+      padding-right: max(var(--home-space-md), env(safe-area-inset-right));
       border-right: none;
       border-bottom: 1px solid hsl(var(--border));
+      background: hsl(var(--muted) / 0.25);
     }
     .settings-sidebar-title {
-      margin-bottom: var(--home-space-sm);
-      font-size: 0.875rem;
+      display: none;
     }
+    /* Segmented control: equal-width tabs, no horizontal scroll (industry practice) */
     .settings-category-list {
       flex-direction: row;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       gap: var(--home-space-xs);
+      overflow: hidden;
+      padding: 0;
     }
+    /* Each tab shares width so all fit on one row */
     .settings-category-item {
-      min-height: 2.75rem;
-      padding: var(--home-space-md);
+      flex: 1 1 0;
+      min-width: 0;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--home-space-xs);
+      min-height: var(--min-touch);
+      padding: var(--home-space-xs) var(--home-space-sm);
       font-size: var(--text-content);
+      border-radius: var(--home-radius-card);
     }
-    .settings-content-header {
-      padding: var(--home-space-md) var(--home-space-md) var(--home-space-md) var(--home-space-lg);
+    .settings-category-item .settings-category-icon-wrap {
+      width: auto;
+      height: auto;
+      background: transparent;
+      border-radius: 0;
     }
-    .settings-panel-title {
-      font-size: 1rem;
+    .settings-category-item .settings-category-icon {
+      width: 0.875rem;
+      height: 0.875rem;
+    }
+    .settings-category-item .settings-category-label {
+      font-size: var(--text-caption);
+      font-weight: 500;
+      text-align: center;
+      line-height: 1.2;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .settings-content-body {
-      padding: var(--home-space-md);
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: var(--home-space-lg) var(--home-space-md);
+      padding-left: max(var(--home-space-md), env(safe-area-inset-left));
+      padding-right: max(var(--home-space-md), env(safe-area-inset-right));
+      padding-bottom: max(var(--home-space-2xl), env(safe-area-inset-bottom));
       -webkit-overflow-scrolling: touch;
+    }
+    .settings-section {
+      padding-top: var(--home-space-lg);
+      margin-bottom: 0;
+    }
+    .settings-section:first-child {
+      padding-top: 0;
+    }
+    .settings-option-grid {
+      gap: var(--home-space-sm);
+    }
+    .settings-table th,
+    .settings-table td {
+      padding: var(--home-space-sm) var(--home-space-md);
+      min-height: var(--min-touch);
+      box-sizing: border-box;
     }
   }
 
@@ -1578,6 +1692,17 @@
     color: hsl(38 92% 40%);
   }
 
+  /* Mobile: touch targets (44px min), safe-area for notched devices, overlay above content */
+  @media (max-width: 767px) {
+    .app-sidebar .sidebar-link,
+    .app-sidebar .sidebar-group-trigger {
+      min-height: var(--min-touch);
+    }
+    .app-sidebar.sidebar-collapsed {
+      padding-left: env(safe-area-inset-left);
+    }
+  }
+
   /* Liquid Glass: sidebar in desktop window – token-based, translucent, blur, edge + shine */
   .sidebar-glass {
     background: hsl(var(--sidebar-background) / 0.42);
@@ -1685,21 +1810,40 @@
     border-color: hsl(var(--border));
   }
 
-  /* Home hub: layout – max-width, center, 8px grid padding (system design + macOS) */
+  /* Touch target utility (mobile a11y) */
+  .min-h-touch {
+    min-height: var(--min-touch);
+  }
+
+  /* Home hub: layout – max-width, center, 8px grid, safe-area (notched devices) */
+  .home-main {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
   .home-page-pad {
     width: 100%;
     max-width: var(--home-content-max-width);
     margin-inline: auto;
     padding: var(--home-space-md) var(--home-space-lg);
+    padding-top: max(var(--home-space-md), env(safe-area-inset-top));
+    padding-bottom: max(var(--home-space-md), env(safe-area-inset-bottom));
   }
   @media (min-width: 768px) {
     .home-page-pad {
-      padding: var(--home-space-lg) var(--home-space-xl);
+      padding-left: var(--home-space-xl);
+      padding-right: var(--home-space-xl);
+      padding-top: max(var(--home-space-lg), env(safe-area-inset-top));
+      padding-bottom: max(var(--home-space-lg), env(safe-area-inset-bottom));
     }
   }
 
   .home-content {
     gap: var(--home-content-gap);
+  }
+  @media (max-width: 639px) {
+    .home-content {
+      gap: var(--home-space-md);
+    }
   }
 
   /* Hero: section title typography (industry page/section title) */
@@ -1800,25 +1944,111 @@
     color: hsl(var(--muted-foreground));
   }
 
-  /* Recently visited: pills with system spacing */
-  .home-recent-list {
-    gap: var(--home-space-sm) !important;
-  }
-  .home-recent-item {
-    padding: var(--home-space-sm) var(--home-space-md) !important;
-    border-radius: var(--home-radius-card) !important;
+  /* Mobile: compact list layout for All tools – icon + title + description */
+  @media (max-width: 639px) {
+    .home-tools-grid {
+      grid-template-columns: 1fr;
+      gap: var(--home-space-sm);
+    }
+    .home-tools-grid .home-tool-card {
+      height: auto;
+      min-height: var(--min-touch);
+      flex-direction: row;
+      align-items: flex-start;
+      padding: var(--home-space-sm) var(--home-space-md);
+      gap: var(--home-space-sm);
+    }
+    .home-tools-grid .home-tool-card .home-tool-card-icon {
+      margin-bottom: 0;
+      margin-right: 0;
+      flex-shrink: 0;
+      width: 2.25rem;
+      height: 2.25rem;
+    }
+    .home-tools-grid .home-tool-card .home-tool-card-title {
+      flex: 1;
+      min-width: 0;
+      margin-bottom: var(--home-space-xs);
+      padding-right: 1.75rem;
+      -webkit-line-clamp: 1;
+      line-clamp: 1;
+      font-size: var(--text-nav);
+      font-weight: 600;
+    }
+    .home-tools-grid .home-tool-card .home-tool-card-desc {
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      flex: 1;
+      min-width: 0;
+      margin-bottom: 0;
+      font-size: var(--text-caption);
+      line-height: 1.35;
+    }
+    .home-tools-grid .home-tool-card > span[aria-hidden] {
+      right: var(--home-space-sm);
+      top: var(--home-space-sm);
+      transform: none;
+    }
   }
 
-  /* Search: max-width, transition */
+  /* Recently visited: quick-access strip, left-accent anchor (differentiation), system 8px grid */
+  .home-recent-section {
+    margin-bottom: 0;
+  }
+  .home-recent-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--home-space-sm);
+    margin-bottom: var(--home-space-sm);
+  }
+  .home-recent-header .home-section-label {
+    margin-bottom: 0;
+  }
+  .home-recent-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.25rem;
+    padding: 0.125rem 0.375rem;
+    font-size: var(--text-caption);
+    font-weight: 600;
+    line-height: 1.2;
+    color: hsl(var(--muted-foreground) / 0.95);
+    letter-spacing: 0.02em;
+    border-radius: var(--radius-sm);
+    background: hsl(var(--muted) / 0.4);
+  }
+  /* Recently visited: same grid + list as All tools (.home-tools-grid); only section/header/count styled here */
+  @media (max-width: 639px) {
+    .home-recent-section {
+      margin-top: var(--home-space-xs);
+    }
+    .home-recent-header {
+      margin-bottom: var(--home-space-xs);
+      gap: var(--home-space-xs);
+    }
+    .home-recent-count {
+      min-width: 1.125rem;
+      padding: 0.0625rem 0.25rem;
+      font-size: 0.6875rem;
+    }
+  }
+
+  /* Search: full width on mobile, max-width on sm+ */
   .home-tools-search-wrap {
+    width: 100%;
     max-width: 28rem;
   }
   .home-tools-search {
     transition: background-color var(--transition-duration) var(--transition-ease), border-color var(--transition-duration) var(--transition-ease);
   }
 
-  /* Sticky tools header: glass bar (macOS-style) */
+  /* Sticky tools header: glass bar (macOS-style), below safe-area when sticky */
   .home-tools-header {
+    top: env(safe-area-inset-top);
     padding-top: var(--home-space-md) !important;
     padding-bottom: var(--home-space-md) !important;
   }
@@ -1835,17 +2065,17 @@
     line-height: 1.5;
   }
 
-  /* Footer: caption typography, separator */
+  /* Footer: caption typography, separator, safe-area bottom */
   .home-footer {
     margin-top: var(--home-content-gap);
     padding-top: var(--home-footer-padding-y);
-    padding-bottom: var(--home-footer-padding-y);
+    padding-bottom: max(var(--home-footer-padding-y), env(safe-area-inset-bottom));
     border-top: 1px solid hsl(var(--border) / 0.6);
   }
   @media (min-width: 768px) {
     .home-footer {
       padding-top: var(--home-footer-padding-y-md);
-      padding-bottom: var(--home-footer-padding-y-md);
+      padding-bottom: max(var(--home-footer-padding-y-md), env(safe-area-inset-bottom));
     }
   }
   .home-footer-text {

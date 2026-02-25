@@ -14,6 +14,7 @@
   <a href="#philosophy">Philosophy</a> •
   <a href="#installation">Installation</a> •
   <a href="#development">Development</a> •
+  <a href="#faq">FAQ</a> •
   <a href="#contributing">Contributing</a> •
   <a href="#license">License</a>
 </p>
@@ -33,7 +34,7 @@
 
 ## Overview
 
-Stdout runs in the browser or as a desktop app. No backend and no data collection — everything stays on your machine. Use it to format JSON/XML/HTML, convert units and encodings, generate test data, and more, with a modular UI that works offline.
+**Stdout** is a client-side developer tools app for formatting, converting, encoding, and generating data. It runs in the browser or as a desktop app. No backend, no signup, no data collection — everything stays on your machine. Use it to format JSON/XML/HTML, convert units and encodings, generate test data, and more. 59 tools in one place, works offline.
 
 ---
 
@@ -44,7 +45,7 @@ Stdout runs in the browser or as a desktop app. No backend and no data collectio
 | Need | Stdout |
 |------|--------|
 | Format or convert without sending data anywhere | 100% client-side; nothing leaves your device |
-| One place for JSON, XML, Base64, hashes, etc. | 70+ tools in a single app (web or desktop) |
+| One place for JSON, XML, Base64, hashes, etc. | 59 tools in a single app (web or desktop) |
 | No signup, no API keys | Run locally; works offline after first load |
 | Quick dev tasks (decode JWT, test regex, build cURL) | Focused tools with copy/paste and samples |
 
@@ -56,64 +57,62 @@ Stdout runs in the browser or as a desktop app. No backend and no data collectio
 |------|-------------|
 | JSON Format/Validate | Format, validate & beautify JSON with strict RFC compliance |
 | XML Format/Validate | Beautify, minify & validate XML |
-| HTML Beautify/Minify/Validate | Beautify, minify & validate HTML |
+| HTML Beautify/Minify | Beautify, minify & validate HTML |
 | SQL Formatter | Format and beautify SQL queries |
-| CSS Beautifier/Minifier | Beautify or minify CSS |
-| JS Beautifier/Minifier | Beautify or minify JavaScript |
+| CSS Beautifier/Minifier | Beautify or minify CSS (format/minify) |
+| JS Beautifier/Minifier | Beautify or minify JavaScript (format/minify) |
 | CSS Inliner (Email) | Inline CSS styles into HTML for email templates |
 | JSONPath Tester | Test JSONPath expressions against JSON data |
 | Schema Diff | Compare two JSON schemas side by side |
 | Payload Comparator | Compare two JSON payloads and highlight differences |
-| Regex Tester | Test regular expressions with live matching |
-| Java Regex Tester | Test Java-style regular expressions |
+| Regex Tester | Test regular expressions with live matching (JS engine; Java-style \ escapes supported) |
 | XPath Tester | Run XPath expressions against XML |
 | Credit Card Generator & Validator | Luhn check and generate test card numbers |
 | Cron Parser | Build and parse cron expressions (Quartz-style) |
-| JSON ↔ YAML | Convert between JSON and YAML |
-| CSV ↔ JSON | Convert between CSV and JSON |
-| JSON → Table | Visualize JSON as a table |
+| JSON ↔ YAML | Convert between JSON and YAML formats |
+| CSV ↔ JSON | Convert between CSV and JSON formats |
+| JSON → Table | Visualize JSON data as a table |
 | JSON → Types | Generate TypeScript types from JSON |
 | JSON ↔ Query String | Convert between JSON and URL query strings |
 | Epoch Timestamp | Convert between Unix timestamps and dates |
-| Number Base | Convert between bin, oct, dec, hex |
-| Color Converter | Convert between HEX, RGB, HSL |
-| Image ↔ Base64 | Convert images to/from Base64 |
-| .env Converter | Convert .env to Netlify, Docker, YAML formats |
-| CSS Units | Convert between px, rem, em, vw |
-| XSD Generator | Generate minimal XSD from XML |
-| XSLT Transformer | Transform XML using XSLT |
+| Number Base | Convert numbers between bases (bin, oct, dec, hex) |
+| Color Converter | Convert colors between HEX, RGB, HSL formats |
+| Image ↔ Base64 | Convert images to/from Base64 strings |
+| .env Converter | Convert .env files to Netlify, Docker, YAML formats |
+| CSS Units | Convert between CSS units (px, rem, em, vw) |
+| XSD Generator | Generate minimal XSD schema from XML |
+| XSLT Transformer | Transform XML using XSLT stylesheet |
 | XML ↔ JSON | Convert between XML and JSON |
 | CSV → XML | Convert CSV to XML (first row as element names) |
 | URL Encode/Decode | Encode and decode URL components |
-| Base64 Encode/Decode | Encode and decode Base64 strings |
+| Base64 String Encode/Decode | Encode and decode Base64 strings |
 | HTML Entity Encode/Decode | Encode and decode HTML entities |
 | JWT Debugger | Decode and inspect JWT tokens |
 | QR Code | Generate QR codes from text or URLs |
 | Gzip | Compress and decompress with Gzip |
 | Certificate Inspector | Inspect and decode X.509 certificates |
-| File Encoding | Decode bytes from charset or encode to UTF-8 |
+| Convert File Encoding | Decode bytes from charset or encode text to UTF-8 |
 | Message Digester | MD5, SHA-1, SHA-256 hashes |
 | HMAC Generator | Generate HMAC signatures |
-| String Utilities | camelCase, snake_case, and more |
-| String Escaper | Escape/unescape for JSON, XML, CSV, SQL, Java, JS |
-| List Collator | Merge, sort, deduplicate lists |
-| Text Analyzer | Count words, characters, sentences |
+| String & List Utilities | Case conversion, line ops (trim, sort, dedupe, list cleanup), escape quotes |
+| String Escaper | Escape or unescape text for JSON, XML, CSV, SQL, Java/.NET, and JavaScript string literals |
+| String Inspector | Inspect text: character/byte/word/line counts, cursor position, word distribution |
 | Text Diff | Compare two texts and highlight differences |
 | Lorem Ipsum | Generate placeholder text |
 | URL Parser | Parse and inspect URL / query string |
-| MIME Types | Reference table of common MIME types |
-| Markdown Preview | Live preview with GFM support |
-| UUID Generator | UUIDs v1, v4, v7 |
-| Password Generator | Secure passwords with custom rules |
-| Random String | Cryptographically secure random strings |
-| Mock Payload | Generate mock JSON from a schema |
+| List of MIME Types | Reference table of common MIME types |
+| Markdown Preview | Live preview of Markdown with GFM support |
+| UUID Generator | Generate UUIDs (v1, v4, v7) |
+| Password Generator | Generate secure passwords with custom rules |
+| Random String Generator | Generate cryptographically secure random strings (password, PIN, license key, hex, …) |
+| Mock Payload | Generate mock JSON data from a schema |
 | ASCII Art | Turn text into ASCII art |
-| Log Generator | Synthetic log data for testing |
-| SVG Viewer | View, edit, export SVG |
+| Log Generator | Generate synthetic log data for testing |
+| SVG Viewer | View, edit, and export SVG graphics |
 | Image Resizer | Resize images with format conversion |
 | cURL Builder | Build cURL commands visually |
 | HAR Viewer | Inspect HAR (HTTP Archive) files |
-| CSV Viewer | View and search CSV in a table |
+| CSV Viewer | View and search CSV files in a table |
 | Math Calculator | Evaluate math expressions |
 
 - 100% client-side — no server, no data collection
@@ -226,6 +225,18 @@ src/
 ```
 
 Tools are registered in `src/tools/registry.ts`; each page is self-contained and lazy-loaded.
+
+---
+
+## FAQ
+
+| Question | Answer |
+|----------|--------|
+| **What is Stdout?** | Stdout is a client-side developer tools app: format (JSON, XML, HTML, SQL, CSS, JS), convert (units, encodings, bases), encode/decode (Base64, URL, JWT, Gzip), and generate (UUIDs, passwords, mock data). One app, 59 tools, no server. |
+| **Is Stdout free?** | Yes. MIT license; free to use, modify, and distribute. |
+| **Does Stdout send my data anywhere?** | No. 100% client-side; nothing leaves your device. Works offline. |
+| **What platforms are supported?** | Web (any browser), macOS, Windows, Linux. Desktop builds via Electron. |
+| **Where are the tools defined?** | In `src/tools/registry.ts`; each tool is a lazy-loaded page. |
 
 ---
 

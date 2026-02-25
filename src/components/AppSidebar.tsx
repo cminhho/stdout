@@ -42,13 +42,17 @@ const SidebarNavItem = ({
   item,
   isActive,
   onClick,
+  onNavigate,
   iconOnly = false,
-}: { item: SidebarItem; isActive: boolean; onClick?: () => void; iconOnly?: boolean }) => {
+}: { item: SidebarItem; isActive: boolean; onClick?: () => void; onNavigate?: () => void; iconOnly?: boolean }) => {
   const Icon = getToolIcon(item.icon);
   return (
     <NavLink
       to={item.path}
-      onClick={onClick}
+      onClick={() => {
+        onNavigate?.();
+        onClick?.();
+      }}
       className={`sidebar-link ${isActive ? "active" : ""} ${iconOnly ? "sidebar-link--icon-only justify-center" : ""}`}
     >
       <Icon className="h-4 w-4 shrink-0 opacity-90" />
@@ -62,11 +66,13 @@ const SidebarGroupSection = ({
   searchQuery,
   isToolVisible,
   pathname,
+  onNavigate,
 }: {
   group: ToolGroup;
   searchQuery: string;
   isToolVisible: (path: string) => boolean;
   pathname: string;
+  onNavigate?: () => void;
 }) => {
   const [open, setOpen] = useState(true);
   const GroupIcon = groupIconMap[group.label] || Braces;
@@ -110,7 +116,7 @@ const SidebarGroupSection = ({
         >
           {filteredItems.map((item) => (
             <li key={item.path}>
-              <SidebarNavItem item={item} isActive={pathname === item.path} />
+              <SidebarNavItem item={item} isActive={pathname === item.path} onNavigate={onNavigate} />
             </li>
           ))}
         </ul>
@@ -122,14 +128,17 @@ const SidebarGroupSection = ({
 interface AppSidebarProps {
   /** When expanded, use this width (px) so resizer can control it. */
   sidebarWidthPx?: number;
+  /** When true, sidebar is shown as fixed overlay (mobile drawer). */
+  isOverlay?: boolean;
 }
 
-const AppSidebar = ({ sidebarWidthPx }: AppSidebarProps) => {
+const AppSidebar = ({ sidebarWidthPx, isOverlay = false }: AppSidebarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const { sidebarMode, sidebarCollapsed, isToolVisible } = useSettings();
+  const { sidebarMode, sidebarCollapsed, setSidebarCollapsed, isToolVisible } = useSettings();
   const { tools, groups } = useToolEngine();
+  const closeOnNavigate = isOverlay ? () => setSidebarCollapsed(true) : undefined;
 
   const visibleItems = useMemo(
     () => tools.filter((item) => isToolVisible(item.path)),
@@ -151,7 +160,7 @@ const AppSidebar = ({ sidebarWidthPx }: AppSidebarProps) => {
 
   return (
     <aside
-      className={`${SIDEBAR_ASIDE_BASE} ${SIDEBAR_ASIDE_LAYOUT} ${isCollapsed ? "sidebar-collapsed" : ""}`}
+      className={`${SIDEBAR_ASIDE_BASE} ${SIDEBAR_ASIDE_LAYOUT} ${isCollapsed ? "sidebar-collapsed" : ""} ${isOverlay ? "fixed left-0 top-0 bottom-0 z-50 shadow-xl" : ""}`}
       style={{ width, minWidth: width }}
       aria-expanded={!isCollapsed}
     >
@@ -182,6 +191,7 @@ const AppSidebar = ({ sidebarWidthPx }: AppSidebarProps) => {
             <TooltipTrigger asChild>
               <NavLink
                 to="/"
+                onClick={() => closeOnNavigate?.()}
                 className={`sidebar-link ${location.pathname === "/" ? "active" : ""} ${isCollapsed ? "sidebar-link--icon-only justify-center" : ""}`}
                 end
               >
@@ -199,7 +209,7 @@ const AppSidebar = ({ sidebarWidthPx }: AppSidebarProps) => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div>
-                      <SidebarNavItem item={item} isActive={location.pathname === item.path} iconOnly />
+                      <SidebarNavItem item={item} isActive={location.pathname === item.path} onNavigate={closeOnNavigate} iconOnly />
                     </div>
                   </TooltipTrigger>
                   <TooltipContent side="right">{item.label}</TooltipContent>
@@ -216,7 +226,7 @@ const AppSidebar = ({ sidebarWidthPx }: AppSidebarProps) => {
               <ul role="list" className="space-y-0.5 list-none">
                 {searchResults.map((item) => (
                   <li key={item.path}>
-                    <SidebarNavItem item={item} isActive={location.pathname === item.path} onClick={() => setSearch("")} />
+                    <SidebarNavItem item={item} isActive={location.pathname === item.path} onClick={() => setSearch("")} onNavigate={closeOnNavigate} />
                   </li>
                 ))}
               </ul>
@@ -228,7 +238,7 @@ const AppSidebar = ({ sidebarWidthPx }: AppSidebarProps) => {
           <ul role="list" className="space-y-0.5 list-none">
             {visibleItems.map((item) => (
               <li key={item.path}>
-                <SidebarNavItem item={item} isActive={location.pathname === item.path} />
+                <SidebarNavItem item={item} isActive={location.pathname === item.path} onNavigate={closeOnNavigate} />
               </li>
             ))}
           </ul>
@@ -240,6 +250,7 @@ const AppSidebar = ({ sidebarWidthPx }: AppSidebarProps) => {
               searchQuery={search}
               isToolVisible={isToolVisible}
               pathname={location.pathname}
+              onNavigate={closeOnNavigate}
             />
           ))
         )}

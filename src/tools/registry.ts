@@ -50,10 +50,9 @@ export const tools: ToolDefinition[] = [
     { id: "hmac-generator", path: "/generators/hmac", label: "HMAC Generator", description: "Generate HMAC signatures", group: "Encode & Crypto", icon: "KeySquare", component: lazy(() => import("@/pages/encode/HmacPage")) },
 
     // ─── String Escaper & Utilities ─────────────────────────
-    { id: "string-transformer", path: "/text/transform", label: "String Utilities", description: "Convert between camelCase, snake_case, and more", group: "String & Utilities", icon: "Wand2", component: lazy(() => import("@/pages/string-utils/StringTransformerPage")) },
-    { id: "string-escaper", path: "/text/escape", label: "String Escaper (JSON, XML, CSV, SQL, Java, JS)", description: "Escape or unescape text for JSON, XML, CSV, SQL, Java/.NET, JavaScript string literals", group: "String & Utilities", icon: "Code2", component: lazy(() => import("@/pages/string-utils/UnifiedEscaperPage")) },
-    { id: "list-collator", path: "/text/list-collator", label: "List Collator", description: "Merge, sort, and deduplicate lists", group: "String & Utilities", icon: "List", component: lazy(() => import("@/pages/string-utils/ListCollatorPage")) },
-    { id: "text-analyzer", path: "/text/analyzer", label: "Text Analyzer", description: "Count words, characters, sentences in text", group: "String & Utilities", icon: "Type", component: lazy(() => import("@/pages/string-utils/TextAnalyzerPage")) },
+    { id: "string-transformer", path: "/text/transform", label: "String & List Utilities", description: "Case conversion, line ops (trim, sort, dedupe, list cleanup), escape quotes", group: "String & Utilities", icon: "Wand2", component: lazy(() => import("@/pages/string-utils/StringTransformerPage")) },
+    { id: "string-escaper", path: "/text/escape", label: "String Escaper", description: "Escape or unescape text for JSON, XML, CSV, SQL, Java/.NET, and JavaScript string literals", group: "String & Utilities", icon: "Code2", component: lazy(() => import("@/pages/string-utils/UnifiedEscaperPage")) },
+    { id: "text-analyzer", path: "/text/analyzer", label: "String Inspector", description: "Inspect text: character/byte/word/line counts, cursor position, word distribution", group: "String & Utilities", icon: "Type", component: lazy(() => import("@/pages/string-utils/TextAnalyzerPage")) },
     { id: "text-diff", path: "/text/diff", label: "Text Diff", description: "Compare two texts and highlight differences", group: "String & Utilities", icon: "GitCompare", component: lazy(() => import("@/pages/string-utils/TextDiffPage")) },
 
     // ─── Web Resources ───────────────────────────────────────

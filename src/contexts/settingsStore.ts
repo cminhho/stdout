@@ -47,6 +47,14 @@ function clampSidebarWidth(w: number): number {
   return Math.min(SIDEBAR_WIDTH_MAX, Math.max(SIDEBAR_WIDTH_MIN, w));
 }
 
+/** Mobile breakpoint: sidebar collapsed by default below this width. */
+export const SIDEBAR_MOBILE_BREAKPOINT_PX = 768;
+
+function isMobileViewport(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.matchMedia(`(max-width: ${SIDEBAR_MOBILE_BREAKPOINT_PX - 1}px)`).matches;
+}
+
 export function loadSettings(): SettingsState {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -62,6 +70,10 @@ export function loadSettings(): SettingsState {
         editorFont: typeof parsed.editorFont === "string" ? parsed.editorFont : defaults.editorFont,
         wordWrap: typeof parsed.wordWrap === "boolean" ? parsed.wordWrap : defaults.wordWrap,
       };
+    }
+    /* First load: on mobile viewport, default sidebar to collapsed so content gets full width. */
+    if (isMobileViewport()) {
+      return { ...defaults, sidebarCollapsed: true };
     }
   } catch { /* invalid stored settings */ }
   return defaults;
