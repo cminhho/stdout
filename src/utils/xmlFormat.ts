@@ -14,19 +14,8 @@ export const XML_LANGUAGE = "xml";
 export const XML_INPUT_PLACEHOLDER = "<?xml version=\"1.0\"?>...";
 export const XML_OUTPUT_PLACEHOLDER = "Result will appear here...";
 
-export const XML_FORMATTER_SAMPLE = `<?xml version="1.0" encoding="UTF-8"?>
-<catalog>
-  <book id="1">
-    <title>XML Guide</title>
-    <author>John Doe</author>
-    <price>29.99</price>
-  </book>
-  <book id="2">
-    <title>Advanced XML</title>
-    <author>Jane Smith</author>
-    <price>39.99</price>
-  </book>
-</catalog>`;
+export const XML_FORMATTER_SAMPLE =
+  `<?xml version="1.0" encoding="UTF-8"?><catalog><book id="1"><title>XML Guide</title><author>John Doe</author><price>29.99</price></book><book id="2"><title>Advanced XML</title><author>Jane Smith</author><price>39.99</price></book></catalog>`;
 
 export interface XmlFormatResult {
   output: string;

@@ -4,6 +4,7 @@ import ToolPane from "@/components/ToolPane";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import CopyButton from "@/components/CopyButton";
 import { ClearButton } from "@/components/ClearButton";
 import { SampleButton } from "@/components/SampleButton";
@@ -144,50 +145,58 @@ const CronBuilderPage = () => {
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs text-muted-foreground shrink-0">Preset</span>
             {PRESETS.map((preset) => (
-              <button
+              <Button
                 key={preset.value}
                 type="button"
+                size="xs"
+                variant={expression === preset.value ? "default" : "outline"}
                 onClick={() => applyPreset(preset.value)}
-                className={cn(
-                  "px-2 py-1 text-xs rounded border transition-colors",
-                  expression === preset.value
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "border-border bg-muted/50 text-muted-foreground hover:text-foreground hover:border-border"
-                )}
-                title={preset.label}
+                className="min-h-touch font-mono"
+                aria-label={`Apply preset: ${preset.label}`}
+                aria-pressed={expression === preset.value}
               >
                 {preset.value}
-              </button>
+              </Button>
             ))}
           </div>
         </section>
 
-        <section className="shrink-0 space-y-2" aria-label="Result">
+        <section
+          className="shrink-0 space-y-2 rounded-xl border border-border/60 bg-muted/25 px-4 py-3 shadow-sm"
+          aria-label="Result"
+        >
           <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Expression
           </h2>
-          <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2">
-            <code className="flex-1 text-sm font-mono text-foreground">{expression}</code>
+          <div className="flex items-center gap-2 rounded-lg border border-border bg-background/80 px-3 py-2">
+            <code className="flex-1 text-sm font-mono text-foreground min-w-0 truncate">
+              {expression}
+            </code>
             <CopyButton text={expression} />
           </div>
-          <p className="text-sm text-muted-foreground">{description}</p>
+          <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
         </section>
 
-        <section className="flex-1 min-h-0 flex flex-col" aria-label="Examples">
-          <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider shrink-0 mb-2">
-            Examples
-          </h2>
-          <p className="text-xs text-muted-foreground shrink-0 mb-2">
-            Click a row to apply that expression.
-          </p>
-          <div className="flex-1 min-h-0 overflow-auto rounded-lg border border-border">
-            <table className="w-full text-xs border-collapse">
-              <thead className="sticky top-0 bg-muted/80 backdrop-blur-sm z-10">
-                <tr className="border-b border-border">
-                  <th className="text-left py-2 px-3 font-medium text-muted-foreground">
+        <section
+          className="flex-1 min-h-0 flex flex-col rounded-xl border border-border/60 bg-muted/25 overflow-hidden shadow-sm"
+          aria-label="Examples"
+        >
+          <div className="shrink-0 px-4 pt-3 pb-2">
+            <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Examples
+            </h2>
+            <p className="text-xs text-muted-foreground mt-1">
+              Click a row to apply that expression.
+            </p>
+          </div>
+          <div className="flex-1 min-h-0 overflow-auto border-t border-border/60">
+            <table className="w-full text-xs border-collapse" aria-label="Cron expression examples">
+              <thead className="sticky top-0 bg-muted/60 backdrop-blur-sm z-10 border-b border-border/60">
+                <tr>
+                  <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">
                     Cron expression
                   </th>
-                  <th className="text-left py-2 px-3 font-medium text-muted-foreground">
+                  <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">
                     Schedule
                   </th>
                 </tr>
@@ -199,14 +208,23 @@ const CronBuilderPage = () => {
                     role="button"
                     tabIndex={0}
                     onClick={() => applyExample(expr)}
-                    onKeyDown={(e) => e.key === "Enter" && applyExample(expr)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        applyExample(expr);
+                      }
+                    }}
                     className={cn(
-                      "border-b border-border/50 transition-colors",
-                      expression === expr ? "bg-primary/10" : "hover:bg-muted/50 cursor-pointer"
+                      "border-b border-border/50 transition-colors duration-150 min-h-touch",
+                      expression === expr
+                        ? "bg-primary/10 ring-inset ring-1 ring-primary/30"
+                        : "hover:bg-muted/50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
                     )}
+                    aria-label={`Apply: ${expr} — ${schedule}`}
+                    aria-pressed={expression === expr}
                   >
-                    <td className="py-2 px-3 font-mono text-foreground">{expr}</td>
-                    <td className="py-2 px-3 text-muted-foreground">{schedule}</td>
+                    <td className="py-2.5 px-3 font-mono text-foreground">{expr}</td>
+                    <td className="py-2.5 px-3 text-muted-foreground">{schedule}</td>
                   </tr>
                 ))}
               </tbody>
@@ -222,7 +240,7 @@ const CronBuilderPage = () => {
       title={tool?.label ?? "Cron Builder"}
       description={tool?.description ?? "Build and parse cron expressions (5-field)"}
     >
-      <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack">
+      <div className="flex flex-col flex-1 min-h-0 w-full tool-content-stack max-w-3xl mx-auto">
         <ToolPane pane={pane} />
       </div>
     </ToolLayout>

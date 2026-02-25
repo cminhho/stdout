@@ -15,24 +15,8 @@ export const HTML_LANGUAGE = "html";
 export const HTML_INPUT_PLACEHOLDER = "<div>...</div>";
 export const HTML_OUTPUT_PLACEHOLDER = "Result will appear here...";
 
-export const HTML_FORMATTER_SAMPLE = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Sample</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <div class="container">
-    <header><h1>Hello</h1></header>
-    <main>
-      <p>Edit this HTML and use Beautify or Minify.</p>
-      <ul><li>Item 1</li><li>Item 2</li><li>Item 3</li></ul>
-    </main>
-    <footer><p>&copy; Example</p></footer>
-  </div>
-</body>
-</html>`;
+export const HTML_FORMATTER_SAMPLE =
+  `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><title>Sample</title><link rel="stylesheet" href="styles.css"/></head><body><div class="container"><header><h1>Hello</h1></header><main><p>Edit this HTML and use Beautify or Minify.</p><ul><li>Item 1</li><li>Item 2</li><li>Item 3</li></ul></main><footer><p>&copy; Example</p></footer></div></body></html>`;
 
 function minifyHtml(html: string): string {
   return html.replace(/>\s+</g, "><").replace(/\s+/g, " ").trim();
