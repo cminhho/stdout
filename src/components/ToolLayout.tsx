@@ -1,8 +1,6 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 interface ToolLayoutProps {
-  title?: string;
-  description?: string;
   children: ReactNode;
 }
 

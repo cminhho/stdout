@@ -10,14 +10,15 @@
    * Primary: blue 221 83% 53% (works on light/dark). Code syntax: VS Code–style.
    *
    * Token hierarchy (reuse; avoid redefining):
-   * - Spacing: --home-space-2xs|xs|sm|md|lg|xl|2xl (8px grid); --spacing-* alias where semantic.
+   * - Spacing: --home-space-2xs|xs|sm|md|lg|xl|2xl (8px grid); --home-space-inner (12px), --home-space-stack (6px) for tight layout; --spacing-* alias where semantic.
    * - Radius: --radius, --radius-sm, --radius-item, --home-radius-card; --settings-window-radius (mobile sheet).
-   * - Motion: --transition-duration, --transition-ease; --transition-default = both (use in transition:).
+   * - Motion: --transition-duration, --transition-ease; --transition-default = both; --transition-duration-slow (e.g. body/theme).
    * - Focus: --focus-ring, --focus-ring-sidebar (single box-shadow token for all focus-visible).
    * - Scrollbar: --scrollbar-thumb, --scrollbar-thumb-hover per theme (desktop thin scrollbars).
    * - Typography: --text-nav|ui|content|caption|title|hero (hero = 1.125rem for taglines/section titles).
    * - Glass: --glass-edge, --glass-highlight-color; --glass-blur/--glass-saturate (title-bar/sidebar); --glass-blur-subtle/--glass-saturate-subtle (cards); --glass-blur-sidebar/--glass-saturate-sidebar (settings sidebar).
    * - Settings: --settings-sidebar-width, --settings-window-radius.
+   * - Aliases (reuse, single source): --popover = --card; --accent = --primary; --segment-bg = --muted, --segment-border = --border; --sidebar-active-border = --sidebar-primary.
    * - Tables: cell padding = var(--home-space-sm) var(--home-space-md); thead/row hover semantic per context.
    */
   :root,
@@ -30,8 +31,8 @@
     --card: 224 13% 20%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 224 13% 20%;
-    --popover-foreground: 210 40% 98%;
+    --popover: var(--card);
+    --popover-foreground: var(--card-foreground);
 
     /* Primary: blue-600 style, 4.5:1 on white and on dark bg */
     --primary: 221 83% 53%;
@@ -43,8 +44,8 @@
     --muted: 215 14% 26%;
     --muted-foreground: 215 9% 58%;
 
-    --accent: 221 83% 53%;
-    --accent-foreground: 0 0% 100%;
+    --accent: var(--primary);
+    --accent-foreground: var(--primary-foreground);
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
@@ -52,8 +53,8 @@
     --border: 216 12% 24%;
     --input: 216 12% 21%;
     --input-bg: 224 13% 18%;           /* VS Code input surface (slightly elevated from panel) */
-    --segment-bg: 215 14% 26%;         /* segmented control container (muted) */
-    --segment-border: 216 12% 24%;     /* segment container border (= border) */
+    --segment-bg: var(--muted);
+    --segment-border: var(--border);
     --ring: 221 83% 53%;
 
     --radius: 0.625rem;
@@ -66,7 +67,7 @@
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 216 12% 22%;
     --sidebar-ring: 221 83% 53%;
-    --sidebar-active-border: 221 83% 53%; /* VS Code activity bar: left accent on active */
+    --sidebar-active-border: var(--sidebar-primary);
 
     --header-bg: 224 13% 15%;
     --header-tab-bg: 215 14% 24%;
@@ -91,7 +92,7 @@
     --code-rs-symbol: 215 9% 58%;   /* muted – symbols */
     --code-gutter-foreground: 215 9% 48%; /* line number gutter (muted) */
     --code-line-height: 1.5;         /* unitless, editor line height */
-    --code-font-size: 0.875rem;      /* 14px, matches --text-content */
+    --code-font-size: var(--text-content);      /* 14px */
     --code-gutter-min-width: 36px;   /* min width of line number column */
 
     --outline-button-bg: 215 14% 24%;
@@ -120,13 +121,13 @@
     --spacing-content-y-md: 1.25rem;
     --spacing-panel-gap: var(--home-space-sm);    /* 8px between panel header and body */
     --spacing-panel-inner-x: var(--home-space-md);     /* 16px horizontal padding inside each pane */
-    --spacing-panel-inner-y: 0.75rem;  /* 12px vertical padding inside pane body */
+    --spacing-panel-inner-y: var(--home-space-inner);  /* 12px vertical padding inside pane body */
     --spacing-panel-resizer-gap: var(--home-space-sm); /* 8px between pane content and resizer */
     --spacing-toolbar-mb: var(--home-space-sm);   /* 8px below toolbar */
     --spacing-title-mb: var(--home-space-sm);     /* 8px below page title */
     --spacing-section-mb: var(--home-space-sm);   /* 8px between sections */
     --spacing-block-gap: var(--home-space-sm);    /* 8px between inline blocks */
-    --spacing-code-editor: 0.75rem;
+    --spacing-code-editor: var(--home-space-inner);
     --spacing-grid-gap: var(--home-space-sm);    /* 8px grid/flex gap */
     --spacing-tool-layout-x: var(--home-space-sm);  /* 8px horizontal padding for tool layout */
     /* Home hub: system design scale (8px grid, industry + macOS) */
@@ -143,13 +144,13 @@
     --home-tools-header-gap: var(--home-space-sm);
     --home-footer-padding-y: var(--home-space-xl);
     --home-footer-padding-y-md: var(--home-space-2xl);
- /* fixed width on mobile so 2-column grid doesn’t shift */
     --min-touch: 44px; /* Apple/Google minimum touch target */
     /* Radius scale (macOS-style: card 8px, small 4px, item 6px) */
     --radius-sm: 0.25rem;   /* 4px – scrollbar thumb, small chips */
     --radius-item: 0.375rem; /* 6px – list/item pill (settings category, etc.) */
     /* Shorthand: use in transition properties to avoid repeating duration/ease */
     --transition-default: var(--transition-duration) var(--transition-ease);
+    --transition-duration-slow: 0.2s;   /* theme/body color transition */
     /* Focus ring: single token for all focus-visible (panel-resizer, settings-tab, etc.) */
     --focus-ring: 0 0 0 2px hsl(var(--ring));
     --focus-ring-sidebar: 0 0 0 2px hsl(var(--sidebar-ring));
@@ -166,6 +167,9 @@
     --glass-saturate-sidebar: 130%;
     /* Extra-tight gap (2px) for list items */
     --home-space-2xs: 0.125rem;
+    /* 12px / 6px – off 8px grid for tight panel/content spacing */
+    --home-space-inner: 0.75rem;
+    --home-space-stack: 0.375rem;
     --settings-sidebar-width: 12rem;
     --settings-window-radius: 0.75rem;  /* mobile sheet + macOS window top corners */
     /* Settings: macOS System Settings–style radius and spacing */
@@ -235,8 +239,8 @@
     --card: 0 0% 100%;
     --card-foreground: 25 25% 18%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 25 25% 18%;
+    --popover: var(--card);
+    --popover-foreground: var(--card-foreground);
 
     --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
@@ -247,8 +251,8 @@
     --muted: 25 15% 92%;
     --muted-foreground: 25 15% 42%;
 
-    --accent: 221 83% 53%;
-    --accent-foreground: 0 0% 100%;
+    --accent: var(--primary);
+    --accent-foreground: var(--primary-foreground);
 
     --destructive: 0 72% 45%;
     --destructive-foreground: 0 0% 100%;
@@ -270,7 +274,7 @@
     --sidebar-accent-foreground: 25 25% 18%;
     --sidebar-border: 25 12% 88%;
     --sidebar-ring: 221 83% 53%;
-    --sidebar-active-border: 221 83% 53%;
+    --sidebar-active-border: var(--sidebar-primary);
 
     --code-bg: 0 0% 99%;
     --code-border: 25 10% 90%;
@@ -290,9 +294,6 @@
     --code-rs-lower: 142 45% 32%;
     --code-rs-symbol: 25 15% 42%;
     --code-gutter-foreground: 25 10% 52%;
-    --code-line-height: 1.5;
-    --code-font-size: 0.875rem;
-    --code-gutter-min-width: 36px;
 
     --outline-button-bg: 0 0% 100%;
     --outline-button-border: 25 12% 85%;
@@ -318,8 +319,6 @@
     --status-success: 142 45% 32%;
     --status-warning: 38 92% 45%;
     --status-error: 0 72% 45%;
-    --transition-duration: 0.15s;
-    --transition-ease: ease;
     --desktop-layout-start: 25 25% 98%;
     --desktop-layout-end: 25 20% 94%;
     --scrollbar-thumb: hsl(0 0% 0% / 0.2);
@@ -336,8 +335,8 @@
     --card: 0 0% 10%;
     --card-foreground: 0 0% 96%;
 
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 96%;
+    --popover: var(--card);
+    --popover-foreground: var(--card-foreground);
 
     --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
@@ -348,8 +347,8 @@
     --muted: 0 0% 14%;
     --muted-foreground: 0 0% 58%;
 
-    --accent: 221 83% 53%;
-    --accent-foreground: 0 0% 100%;
+    --accent: var(--primary);
+    --accent-foreground: var(--primary-foreground);
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
@@ -371,7 +370,7 @@
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 0 0% 14%;
     --sidebar-ring: 221 83% 53%;
-    --sidebar-active-border: 221 83% 53%;
+    --sidebar-active-border: var(--sidebar-primary);
 
     --header-bg: 0 0% 8%;
     --header-tab-bg: 0 0% 14%;
@@ -400,9 +399,6 @@
     --code-rs-lower: 142 69% 58%;
     --code-rs-symbol: 0 0% 58%;
     --code-gutter-foreground: 0 0% 48%;
-    --code-line-height: 1.5;
-    --code-font-size: 0.875rem;
-    --code-gutter-min-width: 36px;
 
     --outline-button-bg: 0 0% 14%;
     --outline-button-border: 0 0% 22%;
@@ -418,8 +414,6 @@
     --status-success: 142 69% 42%;
     --status-warning: 38 92% 50%;
     --status-error: 0 72% 51%;
-    --transition-duration: 0.15s;
-    --transition-ease: ease;
     --desktop-layout-start: 0 0% 10%;
     --desktop-layout-end: 0 0% 5%;
   }
@@ -453,7 +447,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-sans);
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: background-color var(--transition-duration-slow) var(--transition-ease), color var(--transition-duration-slow) var(--transition-ease);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -554,17 +548,17 @@
     font-family: var(--font-mono) !important;
   }
 
-  /* Responsive: tighter panel padding when stacked (12px then 8px/6px – 0.75rem/0.375rem not in 8px grid) */
+  /* Responsive: tighter panel padding when stacked (12px then 8px/6px) */
   @media (max-width: 1023px) {
     :root {
-      --spacing-panel-inner-x: 0.75rem;
+      --spacing-panel-inner-x: var(--home-space-inner);
       --spacing-panel-inner-y: var(--home-space-sm);
     }
   }
   @media (max-width: 639px) {
     :root {
       --spacing-panel-inner-x: var(--home-space-sm);
-      --spacing-panel-inner-y: 0.375rem;
+      --spacing-panel-inner-y: var(--home-space-stack);
     }
   }
 }

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { X } from "lucide-react";
+
 import ToolLayout from "@/components/ToolLayout";
 import { Button } from "@/components/ui/button";
 import { useCurrentTool } from "@/hooks/useCurrentTool";

@@ -268,9 +268,6 @@ function buildOutputPaneProps(
  * Use inputPane.toolbar / outputPane.toolbar for full override; use inputToolbar / outputToolbar for defaults with no duplicated JSX.
  */
 const TwoPanelToolLayout = ({
-  title: titleProp,
-  description: descriptionProp,
-  tool,
   validationErrors,
   showValidationErrors = true,
   topSection,
@@ -283,8 +280,6 @@ const TwoPanelToolLayout = ({
   inputPane,
   outputPane,
 }: TwoPanelToolLayoutProps) => {
-  const title = titleProp ?? tool?.label ?? "";
-  const description = descriptionProp ?? tool?.description ?? "";
   const ot = outputPane.outputToolbar;
   const [internalIndent, setInternalIndent] = useState<IndentOption>(
     () => ot?.defaultIndent ?? DEFAULT_INDENT
@@ -332,7 +327,7 @@ const TwoPanelToolLayout = ({
     );
 
   return (
-    <ToolLayout title={title} description={description}>
+    <ToolLayout>
       <TwoPanelTopSection
         formatError={formatError ?? undefined}
         validationErrors={effectiveValidationErrors}
