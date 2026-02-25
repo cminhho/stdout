@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
 
       - name: Version check
         id: ver
@@ -49,11 +49,27 @@ jobs:
           ELECTRON_BUILD: 1
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Generate release notes
+        id: notes
+        run: |
+          ver="${{ steps.ver.outputs.VERSION }}"
+          prev=$(git tag -l 'v*' --sort=-version:refname | sed -n '2p')
+          if [ -z "$prev" ]; then
+            echo "## Release v${ver}" > release-body.md
+            echo "" >> release-body.md
+            echo "First release." >> release-body.md
+          else
+            echo "## What's changed" >> release-body.md
+            echo "" >> release-body.md
+            git log "${prev}..HEAD" --pretty=format:'- %s' >> release-body.md || true
+          fi
+
       - uses: softprops/action-gh-release@v2
         with:
           files: |
             release/stdout-${{ steps.ver.outputs.VERSION }}-mac.zip
             release/stdout-${{ steps.ver.outputs.VERSION }}-arm64-mac.zip
+          body_path: release-body.md
           generate_release_notes: false
           fail_on_unmatched_files: true
         env:
