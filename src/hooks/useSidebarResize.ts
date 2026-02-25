@@ -4,8 +4,6 @@ function clamp(min: number, max: number, value: number): number {
   return Math.min(max, Math.max(min, value));
 }
 
-const KEYBOARD_STEP_PX = 8;
-
 export interface UseSidebarResizeOptions {
   minPx: number;
   maxPx: number;
@@ -70,7 +68,7 @@ export function useSidebarResize(
     (e: React.KeyboardEvent) => {
       if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
       e.preventDefault();
-      const delta = e.key === "ArrowRight" ? KEYBOARD_STEP_PX : -KEYBOARD_STEP_PX;
+      const delta = e.key === "ArrowRight" ? 8 : -8;
       const next = clamp(minPx, maxPx, localPx + delta);
       setLocalPx(next);
       onChange(next);

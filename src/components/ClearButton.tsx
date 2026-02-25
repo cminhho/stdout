@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Eraser } from "lucide-react";
 
@@ -8,11 +9,16 @@ export interface ClearButtonProps {
   variant?: React.ComponentProps<typeof Button>["variant"];
 }
 
-export function ClearButton({ onClick, disabled, className, variant = "outline" }: ClearButtonProps) {
+export const ClearButton = memo(function ClearButton({
+  onClick,
+  disabled,
+  className,
+  variant = "outline",
+}: ClearButtonProps) {
   return (
     <Button type="button" size="xs" variant={variant} className={className} onClick={onClick} disabled={disabled}>
       <Eraser className="h-3.5 w-3.5" />
       Clear
     </Button>
   );
-}
+});

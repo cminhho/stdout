@@ -1,9 +1,7 @@
-import { type ReactNode } from "react";
+import { memo, type ReactNode } from "react";
 import ValidationErrorList from "@/components/ValidationErrorList";
 import { cn } from "@/utils/cn";
 import type { ParseError } from "@/utils/validationTypes";
-
-const FORMAT_ERROR_FALLBACK_MSG = "Format failed";
 
 export interface TwoPanelTopSectionProps {
   /** When set, show an alert with the message */
@@ -20,7 +18,7 @@ export interface TwoPanelTopSectionProps {
  * Optional top block for two-panel tools: format error alert + ValidationErrorList + custom topSection.
  * Renders nothing when all props are empty/hidden.
  */
-export function TwoPanelTopSection({
+const TwoPanelTopSection = memo(function TwoPanelTopSection({
   formatError,
   validationErrors = [],
   showValidationErrors = true,
@@ -35,7 +33,7 @@ export function TwoPanelTopSection({
     <div className={cn("tool-layout-top-section", className)}>
       {formatError ? (
         <div className="tool-layout-format-error" role="alert">
-          {FORMAT_ERROR_FALLBACK_MSG}: {formatError.message}
+          Format failed: {formatError.message}
         </div>
       ) : null}
       {showList ? (
@@ -48,6 +46,6 @@ export function TwoPanelTopSection({
       ) : null}
     </div>
   );
-}
+});
 
 export default TwoPanelTopSection;

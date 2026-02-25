@@ -9,7 +9,6 @@ import { ClearButton } from "@/components/ClearButton";
 import { SampleButton } from "@/components/SampleButton";
 import { NUMBER_BASE_OPTIONS, NUMBER_BASE_PLACEHOLDER, parseFromBase, convertToAllBases } from "@/utils/numberBase";
 
-const DEFAULT_TITLE = "Number Base";
 const EMPTY_MESSAGE = "Enter a number.";
 const SAMPLE_BASE = 10;
 const SAMPLE_MIN = 1;
@@ -31,7 +30,7 @@ const NumberBasePage = () => {
     results?.map((r) => `${r.label}: ${r.value}`).join("\n") ?? undefined;
 
   const pane = {
-    title: DEFAULT_TITLE,
+    title: "Number Base",
     copyText: copyAllText,
     toolbar: (
       <>

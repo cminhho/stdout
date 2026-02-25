@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { cn } from "@/utils/cn";
 
 export type DiffLineType = "added" | "removed" | "changed";
@@ -15,7 +16,6 @@ export interface DiffLineListProps {
   className?: string;
 }
 
-const PREFIX_WIDTH_CLASS = "w-24";
 const PREFIX_LABELS: Record<DiffLineType, string> = {
   added: "+ Added",
   removed: "- Removed",
@@ -23,7 +23,7 @@ const PREFIX_LABELS: Record<DiffLineType, string> = {
 };
 
 /** VS Code–style diff line: semantic colors (primary/destructive/accent), mono font, 8px grid spacing */
-function DiffLineRow({ path, type, oldValue, newValue }: DiffLineEntry) {
+const DiffLineRow = memo(function DiffLineRow({ path, type, oldValue, newValue }: DiffLineEntry) {
   const typeClass =
     type === "added"
       ? "text-primary"
@@ -39,7 +39,7 @@ function DiffLineRow({ path, type, oldValue, newValue }: DiffLineEntry) {
       )}
       role="listitem"
     >
-      <span className={cn("inline-block shrink-0", PREFIX_WIDTH_CLASS)}>
+      <span className="inline-block shrink-0 w-24">
         {PREFIX_LABELS[type]}
       </span>
       <span className="text-foreground">{path}</span>
@@ -56,13 +56,13 @@ function DiffLineRow({ path, type, oldValue, newValue }: DiffLineEntry) {
       )}
     </div>
   );
-}
+});
 
 /**
  * List of diff lines with consistent VS Code–style styling (primary/destructive/accent, mono, spacing).
  * Use for Schema Diff and any tool that shows added/removed/changed entries.
  */
-export function DiffLineList({ entries, className }: DiffLineListProps) {
+export const DiffLineList = memo(function DiffLineList({ entries, className }: DiffLineListProps) {
   return (
     <div
       className={cn("flex flex-col gap-1", className)}
@@ -74,6 +74,6 @@ export function DiffLineList({ entries, className }: DiffLineListProps) {
       ))}
     </div>
   );
-}
+});
 
 export default DiffLineList;

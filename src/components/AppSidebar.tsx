@@ -29,9 +29,6 @@ const groupIconMap: Record<string, React.ElementType> = {
   "Networking & Other": TerminalSquare,
 };
 
-const SIDEBAR_ASIDE_BASE = "shrink-0 flex flex-col border-r border-sidebar-border min-h-0 overflow-hidden app-sidebar";
-const SIDEBAR_ASIDE_LAYOUT = "h-full min-h-0 sticky top-0 bg-sidebar";
-
 function toSafeId(label: string): string {
   const slug = label.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "");
   return slug || "group";
@@ -161,7 +158,7 @@ const AppSidebar = ({ sidebarWidthPx, isOverlay = false }: AppSidebarProps) => {
 
   return (
     <aside
-      className={`${SIDEBAR_ASIDE_BASE} ${SIDEBAR_ASIDE_LAYOUT} ${isCollapsed ? "sidebar-collapsed" : ""} ${isOverlay ? "fixed left-0 top-0 bottom-0 z-50 shadow-xl" : ""}`}
+      className={`shrink-0 flex flex-col border-r border-sidebar-border min-h-0 overflow-hidden app-sidebar h-full min-h-0 sticky top-0 bg-sidebar ${isCollapsed ? "sidebar-collapsed" : ""} ${isOverlay ? "fixed left-0 top-0 bottom-0 z-50 shadow-xl" : ""}`}
       style={{ width, minWidth: width }}
       aria-expanded={!isCollapsed}
     >

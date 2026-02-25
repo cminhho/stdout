@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { memo } from "react";
 import CopyButton from "@/components/CopyButton";
 import { cn } from "@/utils/cn";
 
@@ -16,7 +17,7 @@ export interface ToolResultCardProps {
  * Standard card for tool results: optional summary + CopyButton row, then content.
  * Uses .tool-card styling for consistency with other tool pages.
  */
-export function ToolResultCard({
+export const ToolResultCard = memo(function ToolResultCard({
   summary,
   copyText,
   children,
@@ -39,6 +40,6 @@ export function ToolResultCard({
       {children}
     </div>
   );
-}
+});
 
 export default ToolResultCard;

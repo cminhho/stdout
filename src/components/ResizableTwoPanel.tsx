@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 
 import PanelResizer from "@/components/PanelResizer";
 import ToolPane from "@/components/ToolPane";
@@ -6,13 +6,6 @@ import type { PaneProps } from "@/components/ToolPane";
 import { useHorizontalResize, useVerticalResize } from "@/hooks/useResizeSplit";
 import { useIsLg } from "@/hooks/useMediaQuery";
 import { cn } from "@/utils/cn";
-
-const DEFAULT_INPUT_PERCENT = 50;
-const DEFAULT_MIN_INPUT_PERCENT = 20;
-const DEFAULT_MAX_INPUT_PERCENT = 80;
-const DEFAULT_INPUT_TITLE = "Input";
-const DEFAULT_OUTPUT_TITLE = "Output";
-const STACKED_PANE_MIN_HEIGHT = "min(120px, 30vh)";
 
 export type { PaneProps };
 
@@ -35,9 +28,9 @@ export interface ResizableTwoPanelProps {
 const ResizableTwoPanel = ({
   input,
   output,
-  defaultInputPercent = DEFAULT_INPUT_PERCENT,
-  minInputPercent = DEFAULT_MIN_INPUT_PERCENT,
-  maxInputPercent = DEFAULT_MAX_INPUT_PERCENT,
+  defaultInputPercent = 50,
+  minInputPercent = 20,
+  maxInputPercent = 80,
   resizerWidth,
   className,
 }: ResizableTwoPanelProps) => {
@@ -57,6 +50,15 @@ const ResizableTwoPanel = ({
     containerRef
   );
 
+  const inputPaneProps = useMemo(
+    () => ({ ...input, title: input.title ?? "Input" }),
+    [input]
+  );
+  const outputPaneProps = useMemo(
+    () => ({ ...output, title: output.title ?? "Output" }),
+    [output]
+  );
+
   return (
     <div
       ref={containerRef}
@@ -69,13 +71,13 @@ const ResizableTwoPanel = ({
       )}
     >
       <ToolPane
-        pane={{ ...input, title: input.title ?? DEFAULT_INPUT_TITLE }}
+        pane={inputPaneProps}
         resizerSide={isLg ? "right" : undefined}
         className={cn("min-w-0", isLg ? "flex-none shrink-0" : "flex-shrink-0")}
         style={
           isLg
             ? { width: `${horizontal.percent}%`, minWidth: "var(--panel-min-width)" }
-            : { height: `${vertical.percent}%`, minHeight: STACKED_PANE_MIN_HEIGHT }
+            : { height: `${vertical.percent}%`, minHeight: "min(120px, 30vh)" }
         }
       />
 
@@ -101,7 +103,7 @@ const ResizableTwoPanel = ({
       />
 
       <ToolPane
-        pane={{ ...output, title: output.title ?? DEFAULT_OUTPUT_TITLE }}
+        pane={outputPaneProps}
         resizerSide={isLg ? "left" : undefined}
         className="flex-1 min-w-0 min-h-0"
       />

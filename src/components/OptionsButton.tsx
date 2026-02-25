@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { SlidersHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -22,7 +23,7 @@ export interface OptionsButtonProps {
   className?: string;
 }
 
-export function OptionsButton({
+const OptionsButton = memo(function OptionsButton({
   ariaLabel,
   icon,
   children,
@@ -43,6 +44,6 @@ export function OptionsButton({
       </PopoverContent>
     </Popover>
   );
-}
+});
 
 export default OptionsButton;

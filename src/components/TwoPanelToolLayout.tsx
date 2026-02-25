@@ -13,9 +13,6 @@ import { useFormatOutput } from "@/hooks/useFormatOutput";
 import { cn } from "@/utils/cn";
 import type { ParseError } from "@/utils/validationTypes";
 
-const TWO_PANEL_DEFAULT_INPUT_PERCENT = 40;
-const FORMAT_LOADING_PLACEHOLDER = "Formatting…";
-
 /** Config for default input toolbar: Sample + Clear + File upload. */
 export interface DefaultInputToolbarConfig {
   onSample: () => void;
@@ -228,7 +225,7 @@ function buildOutputPaneProps(
     ) : undefined);
 
   const outputKey = derived?.outputKey ?? config.outputEditor?.outputKey ?? indentControl?.resolvedIndent;
-  const outputPlaceholder = derived?.loading ? FORMAT_LOADING_PLACEHOLDER : config.outputEditor?.placeholder;
+  const outputPlaceholder = derived?.loading ? "Formatting…" : config.outputEditor?.placeholder;
   const children =
     config.children ??
     (config.outputEditor ? (
@@ -324,7 +321,7 @@ const TwoPanelToolLayout = ({
         topSection={mergedTopSection}
       />
       <ResizableTwoPanel
-        defaultInputPercent={defaultInputPercent ?? TWO_PANEL_DEFAULT_INPUT_PERCENT}
+        defaultInputPercent={defaultInputPercent ?? 40}
         minInputPercent={minInputPercent}
         maxInputPercent={maxInputPercent}
         resizerWidth={resizerWidth}

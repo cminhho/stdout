@@ -8,8 +8,6 @@ import CopyButton from "@/components/CopyButton";
 import { ClearButton } from "@/components/ClearButton";
 import { CSS_UNITS_LIST, CSS_UNITS_DEFAULT_BASE, convertToAllUnits } from "@/utils/cssUnits";
 
-const DEFAULT_TITLE = "CSS Units";
-
 const CssUnitsPage = () => {
   const [value, setValue] = useState("16");
   const [fromUnit, setFromUnit] = useState("px");
@@ -35,7 +33,7 @@ const CssUnitsPage = () => {
   const unitOptions = CSS_UNITS_LIST.map((u) => ({ value: u, label: u }));
 
   const pane = {
-    title: DEFAULT_TITLE,
+    title: "CSS Units",
     toolbar: !isDefault ? <ClearButton onClick={resetToDefault} /> : undefined,
     children: (
       <div className="flex flex-col gap-6 flex-1 min-h-0 overflow-hidden">

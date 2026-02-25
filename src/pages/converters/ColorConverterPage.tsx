@@ -15,11 +15,6 @@ import {
   formatHslString,
 } from "@/utils/colorConverter";
 
-const DEFAULT_TITLE = "Color Converter";
-const SUMMARY_CARD_CLASS = "bg-muted rounded-lg p-3";
-const SUMMARY_LABEL_CLASS = "text-xs text-muted-foreground mb-1";
-const SUMMARY_VALUE_CLASS = "font-mono text-sm font-medium";
-
 const ColorConverterPage = () => {
   const [hex, setHex] = useState(COLOR_CONVERTER_DEFAULT_HEX);
 
@@ -45,7 +40,7 @@ const ColorConverterPage = () => {
   const isDefault = hex === COLOR_CONVERTER_DEFAULT_HEX;
 
   const pane = {
-    title: DEFAULT_TITLE,
+    title: "Color Converter",
     toolbar: !isDefault ? <ClearButton onClick={() => setHex(COLOR_CONVERTER_DEFAULT_HEX)} /> : undefined,
     children: (
       <div className="flex flex-col gap-6 flex-1 min-h-0 overflow-auto">
@@ -137,9 +132,9 @@ const ColorConverterPage = () => {
 
         <div className="grid grid-cols-3 gap-3 text-center shrink-0">
           {summaryItems.map(({ label, value }) => (
-            <div key={label} className={SUMMARY_CARD_CLASS}>
-              <div className={SUMMARY_LABEL_CLASS}>{label}</div>
-              <div className={SUMMARY_VALUE_CLASS}>{value}</div>
+            <div key={label} className="bg-muted rounded-lg p-3">
+              <div className="text-xs text-muted-foreground mb-1">{label}</div>
+              <div className="font-mono text-sm font-medium">{value}</div>
             </div>
           ))}
         </div>

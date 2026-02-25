@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { ParseError } from "@/utils/validationTypes";
 import { cn } from "@/utils/cn";
 
@@ -12,11 +13,8 @@ export interface ValidationErrorListProps {
  * Reusable list of parse/validation errors with line, column, message, and optional snippet.
  * Use across JSON, XML, CSV, and other tools that report line-based errors.
  */
-const ValidationErrorList = ({
-  errors,
-  maxHeight = "120px",
-  className,
-}: ValidationErrorListProps) => {
+const ValidationErrorList = memo(function ValidationErrorList(props: ValidationErrorListProps) {
+  const { errors, maxHeight = "120px", className } = props;
   if (errors.length === 0) return null;
 
   return (
@@ -46,6 +44,6 @@ const ValidationErrorList = ({
       ))}
     </ul>
   );
-};
+});
 
 export default ValidationErrorList;

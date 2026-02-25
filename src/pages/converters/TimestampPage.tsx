@@ -13,8 +13,6 @@ const UNIX_PLACEHOLDER = "1700000000 or 1700000000000";
 const ISO_PLACEHOLDER = "2024-01-01T00:00:00.000Z or Jan 1, 2024";
 const EMPTY_UNIX_MSG = "Enter Unix seconds or milliseconds.";
 const EMPTY_ISO_MSG = "Enter ISO or locale date string.";
-const ROW_CLASS = "flex items-center justify-between gap-2 py-1 border-b border-border/50 last:border-0";
-const REF_BUTTON_CLASS = "px-2 py-1 text-xs rounded bg-muted text-muted-foreground hover:text-foreground transition-colors";
 
 const TimestampPage = () => {
   const [unix, setUnix] = useState("");
@@ -62,7 +60,7 @@ const TimestampPage = () => {
           <button
             key={ref.label}
             onClick={() => setUnix(String(ref.ts))}
-            className={REF_BUTTON_CLASS}
+            className="px-2 py-1 text-xs rounded bg-muted text-muted-foreground hover:text-foreground transition-colors"
           >
             {ref.label}
           </button>
@@ -87,7 +85,7 @@ const TimestampPage = () => {
         <div className="flex-1 min-h-0 overflow-auto mt-3 space-y-2">
           {convertedFromUnix ? (
             formatDateRows(convertedFromUnix).map((f) => (
-              <div key={f.label} className={ROW_CLASS}>
+              <div key={f.label} className="flex items-center justify-between gap-2 py-1 border-b border-border/50 last:border-0">
                 <div className="min-w-0 flex-1">
                   <div className="text-[10px] text-muted-foreground">{f.label}</div>
                   <div className="text-xs font-mono text-foreground truncate">{f.value}</div>
@@ -119,7 +117,7 @@ const TimestampPage = () => {
         <div className="flex-1 min-h-0 overflow-auto mt-3 space-y-2">
           {convertedFromIso ? (
             formatDateRows(convertedFromIso).map((f) => (
-              <div key={f.label} className={ROW_CLASS}>
+              <div key={f.label} className="flex items-center justify-between gap-2 py-1 border-b border-border/50 last:border-0">
                 <div className="min-w-0 flex-1">
                   <div className="text-[10px] text-muted-foreground">{f.label}</div>
                   <div className="text-xs font-mono text-foreground truncate">{f.value}</div>
