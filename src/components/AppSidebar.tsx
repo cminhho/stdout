@@ -41,8 +41,9 @@ const SidebarNavItem = ({
   isActive,
   onClick,
   onNavigate,
+  onPrefetch,
   iconOnly = false,
-}: { item: SidebarItem; isActive: boolean; onClick?: () => void; onNavigate?: () => void; iconOnly?: boolean }) => {
+}: { item: SidebarItem; isActive: boolean; onClick?: () => void; onNavigate?: () => void; onPrefetch?: () => void; iconOnly?: boolean }) => {
   const Icon = getToolIcon(item.icon);
   return (
     <NavLink
@@ -51,6 +52,8 @@ const SidebarNavItem = ({
         onNavigate?.();
         onClick?.();
       }}
+      onMouseEnter={() => onPrefetch?.()}
+      onFocus={() => onPrefetch?.()}
       className={`sidebar-link ${isActive ? "active" : ""} ${iconOnly ? "sidebar-link--icon-only justify-center" : ""}`}
     >
       <Icon className="h-4 w-4 shrink-0 opacity-90" />
@@ -114,7 +117,7 @@ const SidebarGroupSection = ({
         >
           {filteredItems.map((item) => (
             <li key={item.path}>
-              <SidebarNavItem item={item} isActive={pathname === item.path} onNavigate={onNavigate} />
+              <SidebarNavItem item={item} isActive={pathname === item.path} onNavigate={onNavigate} onPrefetch={item.preload ? () => item.preload!() : undefined} />
             </li>
           ))}
         </ul>
@@ -207,7 +210,7 @@ const AppSidebar = ({ sidebarWidthPx, isOverlay = false }: AppSidebarProps) => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div>
-                      <SidebarNavItem item={item} isActive={location.pathname === item.path} onNavigate={closeOnNavigate} iconOnly />
+                      <SidebarNavItem item={item} isActive={location.pathname === item.path} onNavigate={closeOnNavigate} onPrefetch={item.preload ? () => item.preload!() : undefined} iconOnly />
                     </div>
                   </TooltipTrigger>
                   <TooltipContent side="right">{item.label}</TooltipContent>
@@ -224,7 +227,7 @@ const AppSidebar = ({ sidebarWidthPx, isOverlay = false }: AppSidebarProps) => {
               <ul role="list" className="space-y-0.5 list-none">
                 {searchResults.map((item) => (
                   <li key={item.path}>
-                    <SidebarNavItem item={item} isActive={location.pathname === item.path} onClick={() => setSearch("")} onNavigate={closeOnNavigate} />
+                    <SidebarNavItem item={item} isActive={location.pathname === item.path} onClick={() => setSearch("")} onNavigate={closeOnNavigate} onPrefetch={item.preload ? () => item.preload!() : undefined} />
                   </li>
                 ))}
               </ul>
@@ -236,7 +239,7 @@ const AppSidebar = ({ sidebarWidthPx, isOverlay = false }: AppSidebarProps) => {
           <ul role="list" className="space-y-0.5 list-none">
             {visibleItems.map((item) => (
               <li key={item.path}>
-                <SidebarNavItem item={item} isActive={location.pathname === item.path} onNavigate={closeOnNavigate} />
+                <SidebarNavItem item={item} isActive={location.pathname === item.path} onNavigate={closeOnNavigate} onPrefetch={item.preload ? () => item.preload!() : undefined} />
               </li>
             ))}
           </ul>

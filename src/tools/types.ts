@@ -9,6 +9,8 @@ export interface ToolDefinition {
   icon: string;
   tags?: string[];
   component: LazyExoticComponent<ComponentType<unknown>> | ComponentType<unknown>;
+  /** Call to prefetch the tool chunk (e.g. on link hover). Same module as component. */
+  preload?: () => Promise<{ default: ComponentType<unknown> }>;
 }
 
 export interface ToolGroup {
