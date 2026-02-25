@@ -16,7 +16,7 @@
    * - Focus: --focus-ring, --focus-ring-sidebar (single box-shadow token for all focus-visible).
    * - Scrollbar: --scrollbar-thumb, --scrollbar-thumb-hover per theme (desktop thin scrollbars).
    * - Typography: --text-nav|ui|content|caption|title|hero (hero = 1.125rem for taglines/section titles).
-   * - Glass: --glass-edge, --glass-highlight-color; --glass-blur-subtle, --glass-saturate-subtle for cards/panels.
+   * - Glass: --glass-edge, --glass-highlight-color; --glass-blur/--glass-saturate (title-bar/sidebar); --glass-blur-subtle/--glass-saturate-subtle (cards); --glass-blur-sidebar/--glass-saturate-sidebar (settings sidebar).
    * - Settings: --settings-sidebar-width, --settings-window-radius.
    * - Tables: cell padding = var(--home-space-sm) var(--home-space-md); thead/row hover semantic per context.
    */
@@ -161,13 +161,15 @@
     /* Softer glass for cards/panels (24px blur vs 44px for title-bar/sidebar) */
     --glass-blur-subtle: 24px;
     --glass-saturate-subtle: 160%;
+    /* Settings sidebar vibrancy (slightly softer than main glass) */
+    --glass-blur-sidebar: 20px;
+    --glass-saturate-sidebar: 130%;
     /* Extra-tight gap (2px) for list items */
     --home-space-2xs: 0.125rem;
     --settings-sidebar-width: 12rem;
-    --settings-window-radius: 0.75rem;  /* mobile settings sheet top corners */
+    --settings-window-radius: 0.75rem;  /* mobile sheet + macOS window top corners */
     /* Settings: macOS System Settings–style radius and spacing */
     --settings-radius: var(--home-radius-card);
-    --settings-window-radius: 0.75rem;   /* 12px – macOS window corners */
     --settings-panel-gap: var(--home-space-md);
     --spacing-tool-layout-y: var(--home-space-sm);  /* 8px vertical padding for tool layout */
     /* Workbench (VS Code): editor vs panel surfaces; sidebar/activity bar; list focus for nav */
@@ -187,7 +189,7 @@
     --title-bar-height: 35px;           /* macOS-style title bar height */
     --title-bar-padding-x: var(--home-space-sm);   /* 8px horizontal (8px grid) */
     --title-bar-gap: var(--home-space-xs);         /* 4px between chrome buttons */
-    --title-bar-font-size: 0.8125rem;   /* 13px – macOS/VS Code title */
+    --title-bar-font-size: var(--text-ui);   /* 13px – macOS/VS Code title */
     --title-bar-traffic-light-width: 72px; /* macOS: reserve for system controls */
     --title-bar-end-spacer: var(--home-space-xl); /* 32px right drag region */
     --panel-resizer-width: 0;        /* visual width/height: 0, only border line; hit area via padding */
@@ -1084,8 +1086,8 @@
   }
   html.desktop .settings-sidebar {
     background: hsl(var(--muted) / 0.3);
-    backdrop-filter: blur(20px) saturate(130%);
-    -webkit-backdrop-filter: blur(20px) saturate(130%);
+    backdrop-filter: blur(var(--glass-blur-sidebar)) saturate(var(--glass-saturate-sidebar));
+    -webkit-backdrop-filter: blur(var(--glass-blur-sidebar)) saturate(var(--glass-saturate-sidebar));
     border-right-color: hsl(var(--border) / 0.6);
   }
   .settings-sidebar-title {
@@ -2003,7 +2005,7 @@
     }
     .home-recent-count {
       min-width: var(--text-hero);
-      padding: 0.0625rem 0.25rem;
+      padding: 0.0625rem var(--home-space-xs);
       font-size: var(--text-caption);
     }
   }
