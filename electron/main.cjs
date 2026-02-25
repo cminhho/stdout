@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, ipcMain, shell } = require("electron");
+const { app, BrowserWindow, Menu, ipcMain, shell, protocol } = require("electron");
 const path = require("path");
 const fs = require("fs");
 
@@ -191,9 +191,8 @@ function createWindow() {
     mainWindow.loadURL("http://localhost:8080");
     mainWindow.webContents.openDevTools();
   } else {
-    const indexPath = path.join(__dirname, "../dist/index.html").replace(/\\/g, "/");
-    const fileUrl = indexPath.startsWith("/") ? `file://${indexPath}#/` : `file:///${indexPath}#/`;
-    mainWindow.loadURL(fileUrl);
+    // Use custom app:// protocol so assets load correctly from asar on macOS (file:// can show gibberish).
+    mainWindow.loadURL("app://./index.html#/");
   }
 }
 
@@ -222,7 +221,36 @@ ipcMain.handle("window:maximize", () => {
   if (w) (w.isMaximized() ? w.unmaximize() : w.maximize());
 });
 
-app.whenReady().then(createWindow);
+// Custom app:// protocol: must register scheme before app ready (packaged only).
+if (!isDev) {
+  protocol.registerSchemesAsPrivileged([
+    { scheme: "app", privileges: { standard: true, secure: true, supportFetchAPI: true } },
+  ]);
+}
+
+function registerAppProtocol() {
+  const distPath = path.join(__dirname, "../dist");
+  protocol.registerFileProtocol("app", (request, callback) => {
+    try {
+      const u = new URL(request.url);
+      let requestPath = decodeURIComponent(u.pathname || "").replace(/^\/+/, "") || "index.html";
+      const filePath = path.join(distPath, requestPath);
+      const resolved = path.resolve(filePath);
+      const distResolved = path.resolve(distPath);
+      if (resolved !== distResolved && !resolved.startsWith(distResolved + path.sep)) {
+        return callback({ error: -2 });
+      }
+      callback({ path: resolved });
+    } catch {
+      callback({ error: -2 });
+    }
+  });
+}
+
+app.whenReady().then(() => {
+  if (!isDev) registerAppProtocol();
+  createWindow();
+});
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();

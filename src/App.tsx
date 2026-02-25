@@ -17,7 +17,9 @@ import SettingsPage from "@/pages/settings";
 import NotFound from "@/pages/NotFound";
 import HomePage from "@/pages/HomePage";
 
-const useHashRouter = typeof window !== "undefined" && window.location?.protocol === "file:";
+const useHashRouter =
+  typeof window !== "undefined" &&
+  (window.location?.protocol === "file:" || window.location?.protocol === "app:");
 const Router = useHashRouter ? HashRouter : BrowserRouter;
 
 const APP_TITLE = "stdout";
