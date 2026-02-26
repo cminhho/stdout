@@ -1,8 +1,8 @@
 import { useState } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
-import FileUploadButton from "@/components/FileUploadButton";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
+import { ClearButton } from "@/components/common/ClearButton";
+import { SampleButton } from "@/components/common/SampleButton";
+import FileUploadButton from "@/components/common/FileUploadButton";
 import {
   processCertificateForLayout,
   CERTIFICATE_FILE_ACCEPT,

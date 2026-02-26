@@ -1,10 +1,10 @@
 import { useState, useRef, useCallback } from "react";
 import { Upload } from "lucide-react";
 
-import { ClearButton } from "@/components/ClearButton";
-import FileUploadButton from "@/components/FileUploadButton";
-import { SaveButton } from "@/components/SaveButton";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import { ClearButton } from "@/components/common/ClearButton";
+import FileUploadButton from "@/components/common/FileUploadButton";
+import { SaveButton } from "@/components/common/SaveButton";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SelectWithOptions } from "@/components/ui/select";

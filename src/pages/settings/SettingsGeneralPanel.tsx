@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { useSettings } from "@/hooks/useSettings";
 import { useToolEngine } from "@/hooks/useToolEngine";
-import { PrefSection, PrefGroup, PrefRow } from "@/components/preferences";
+import { PrefSection, PrefGroup, PrefRow } from "@/components/settings";
 import { SITE } from "@/site";
 import type { LatestRelease } from "@/utils/version";
 import { UPDATE_BUTTON_LOADING_LABEL, UPDATE_BUTTON_LABEL } from "./constants";

@@ -1,13 +1,13 @@
 import { useState } from "react";
-import ToolLayout from "@/components/ToolLayout";
-import ToolPane from "@/components/ToolPane";
-import CodeEditor from "@/components/CodeEditor";
+import ToolLayout from "@/components/layout/ToolLayout";
+import ToolPane from "@/components/layout/ToolPane";
+import CodeEditor from "@/components/common/CodeEditor";
 import { SelectWithOptions } from "@/components/ui/select";
-import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
+import IndentSelect, { type IndentOption } from "@/components/common/IndentSelect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SaveButton } from "@/components/SaveButton";
+import { SaveButton } from "@/components/common/SaveButton";
 
 const LOG_FORMATS = [
   {

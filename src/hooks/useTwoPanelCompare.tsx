@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
 
-import CodeEditor, { type Language } from "@/components/CodeEditor";
-import { ClearButton } from "@/components/ClearButton";
-import FileUploadButton from "@/components/FileUploadButton";
-import { SampleButton } from "@/components/SampleButton";
-import type { PaneProps } from "@/components/ToolPane";
+import CodeEditor, { type Language } from "@/components/common/CodeEditor";
+import { ClearButton } from "@/components/common/ClearButton";
+import FileUploadButton from "@/components/common/FileUploadButton";
+import { SampleButton } from "@/components/common/SampleButton";
+import type { PaneProps } from "@/components/layout/ToolPane";
 
 /** Config for one side of a two-panel compare (no value/onChange – those come from hook state). */
 export interface TwoPanelComparePaneConfig {

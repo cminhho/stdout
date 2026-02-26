@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { SaveButton } from "@/components/SaveButton";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
+import { SaveButton } from "@/components/common/SaveButton";
 
 const SVG_SAMPLE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">\n  <circle cx="50" cy="50" r="40" fill="#22c55e" opacity="0.8"/>\n  <rect x="30" y="30" width="40" height="40" fill="#0ea5e9" rx="8" opacity="0.7"/>\n</svg>';
 const SVG_PLACEHOLDER = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">...</svg>';

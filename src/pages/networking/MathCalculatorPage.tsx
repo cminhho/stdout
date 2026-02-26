@@ -1,11 +1,11 @@
 import { useState, useCallback } from "react";
 import { HelpCircle } from "lucide-react";
 
-import { ClearButton } from "@/components/ClearButton";
-import CodeEditor from "@/components/CodeEditor";
-import CopyButton from "@/components/CopyButton";
-import { SampleButton } from "@/components/SampleButton";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import { ClearButton } from "@/components/common/ClearButton";
+import CodeEditor from "@/components/common/CodeEditor";
+import CopyButton from "@/components/common/CopyButton";
+import { SampleButton } from "@/components/common/SampleButton";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const SAMPLE_EXPR = "sqrt(2) * pi + log10(100)";

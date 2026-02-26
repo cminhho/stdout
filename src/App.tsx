@@ -4,9 +4,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, HashRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import { SIDEBAR_WIDTH_MIN, SIDEBAR_WIDTH_MAX } from "@/contexts/settingsStore";
-import AppSidebar from "@/components/AppSidebar";
-import PanelResizer from "@/components/PanelResizer";
-import WindowTitleBar from "@/components/WindowTitleBar";
+import TitleBar from "@/components/layout/TitleBar";
+import Sidebar from "@/components/layout/Sidebar";
+import PanelResizer from "@/components/layout/PanelResizer";
 import { useSettings } from "@/hooks/useSettings";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useSidebarResize } from "@/hooks/useSidebarResize";
@@ -111,7 +111,7 @@ const DesktopLayout = () => {
           onClick={toggleSidebar}
         />
       )}
-      <AppSidebar
+      <Sidebar
         sidebarWidthPx={sidebarCollapsed ? undefined : widthPx}
         isOverlay={isOverlay}
       />
@@ -140,7 +140,7 @@ const App = () => {
         <SettingsProvider>
           <Toaster />
           <div className="flex flex-col h-screen overflow-hidden min-w-0">
-            <WindowTitleBar />
+            <TitleBar />
             <DesktopLayout />
           </div>
         </SettingsProvider>

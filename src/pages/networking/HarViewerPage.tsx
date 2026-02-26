@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
 import { Input } from "@/components/ui/input";
 
 interface HarEntry {

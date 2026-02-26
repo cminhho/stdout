@@ -2,7 +2,7 @@
  * JSON → TypeScript/Go/Java/Kotlin types. Single place for conversion logic and constants.
  */
 
-import type { IndentOption } from "@/components/IndentSelect";
+import type { IndentOption } from "@/components/common/IndentSelect";
 import type { ParseError } from "@/utils/validationTypes";
 import { singleErrorToParseErrors } from "@/utils/validationTypes";
 

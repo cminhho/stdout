@@ -1,12 +1,12 @@
 import { useState, useMemo } from "react";
-import ToolLayout from "@/components/ToolLayout";
-import ToolPane from "@/components/ToolPane";
+import ToolLayout from "@/components/layout/ToolLayout";
+import ToolPane from "@/components/layout/ToolPane";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import CopyButton from "@/components/CopyButton";
-import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
+import CopyButton from "@/components/common/CopyButton";
+import FileUploadButton from "@/components/common/FileUploadButton";
+import { ClearButton } from "@/components/common/ClearButton";
+import { SampleButton } from "@/components/common/SampleButton";
 
 const SAMPLE_URL = "https://example.com:8080/api/users?page=1&limit=10&sort=name#section-2";
 

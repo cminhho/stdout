@@ -1,11 +1,11 @@
 import { useState, useMemo } from "react";
-import ToolLayout from "@/components/ToolLayout";
-import ToolPane from "@/components/ToolPane";
+import ToolLayout from "@/components/layout/ToolLayout";
+import ToolPane from "@/components/layout/ToolPane";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { SelectWithOptions } from "@/components/ui/select";
-import CopyButton from "@/components/CopyButton";
-import { ClearButton } from "@/components/ClearButton";
+import CopyButton from "@/components/common/CopyButton";
+import { ClearButton } from "@/components/common/ClearButton";
 import { CSS_UNITS_LIST, CSS_UNITS_DEFAULT_BASE, convertToAllUnits } from "@/utils/cssUnits";
 
 const CssUnitsPage = () => {

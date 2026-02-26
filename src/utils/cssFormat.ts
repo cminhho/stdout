@@ -2,7 +2,7 @@
  * CSS formatter: beautify, minify. Single place for CSS formatter logic.
  */
 
-import type { IndentOption } from "@/components/IndentSelect";
+import type { IndentOption } from "@/components/common/IndentSelect";
 import { cssBeautify } from "@/utils/beautifier";
 import { cssMinify } from "@/utils/minify";
 

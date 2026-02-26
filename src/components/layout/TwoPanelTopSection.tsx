@@ -1,5 +1,5 @@
 import { memo, type ReactNode } from "react";
-import ValidationErrorList from "@/components/ValidationErrorList";
+import ValidationErrorList from "@/components/common/ValidationErrorList";
 import { cn } from "@/utils/cn";
 import type { ParseError } from "@/utils/validationTypes";
 

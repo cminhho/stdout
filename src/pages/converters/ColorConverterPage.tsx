@@ -1,10 +1,10 @@
 import { useState, useMemo } from "react";
-import ToolLayout from "@/components/ToolLayout";
-import ToolPane from "@/components/ToolPane";
+import ToolLayout from "@/components/layout/ToolLayout";
+import ToolPane from "@/components/layout/ToolPane";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import CopyButton from "@/components/CopyButton";
-import { ClearButton } from "@/components/ClearButton";
+import CopyButton from "@/components/common/CopyButton";
+import { ClearButton } from "@/components/common/ClearButton";
 import {
   COLOR_CONVERTER_DEFAULT_HEX,
   hexToRgb,

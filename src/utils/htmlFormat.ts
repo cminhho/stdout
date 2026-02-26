@@ -2,7 +2,7 @@
  * HTML formatter: validation, beautify, minify. Single place for HTML formatter logic.
  */
 
-import type { IndentOption } from "@/components/IndentSelect";
+import type { IndentOption } from "@/components/common/IndentSelect";
 import type { ParseError } from "@/utils/validationTypes";
 import { htmlBeautify } from "@/utils/beautifier";
 import { singleErrorToParseErrors } from "@/utils/validationTypes";

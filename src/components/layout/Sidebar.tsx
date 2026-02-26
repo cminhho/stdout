@@ -13,7 +13,7 @@ import {
 import { useSettings } from "@/hooks/useSettings";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import type { ToolGroup } from "@/tools/types";
-import { getToolIcon } from "@/components/toolIcons";
+import { getToolIcon } from "@/components/common/ToolIcons";
 
 // Group icon mapping (order in sidebar follows first occurrence in tool packs)
 const groupIconMap: Record<string, React.ElementType> = {
@@ -126,14 +126,14 @@ const SidebarGroupSection = ({
   );
 };
 
-interface AppSidebarProps {
+export interface SidebarProps {
   /** When expanded, use this width (px) so resizer can control it. */
   sidebarWidthPx?: number;
   /** When true, sidebar is shown as fixed overlay (mobile drawer). */
   isOverlay?: boolean;
 }
 
-const AppSidebar = ({ sidebarWidthPx, isOverlay = false }: AppSidebarProps) => {
+export function Sidebar({ sidebarWidthPx, isOverlay = false }: SidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
@@ -277,6 +277,6 @@ const AppSidebar = ({ sidebarWidthPx, isOverlay = false }: AppSidebarProps) => {
       </footer>
     </aside>
   );
-};
+}
 
-export default AppSidebar;
+export default Sidebar;

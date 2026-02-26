@@ -2,7 +2,7 @@ import { useMemo, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight, Search, X } from "lucide-react";
 
-import { getToolIcon } from "@/components/toolIcons";
+import { getToolIcon } from "@/components/common/ToolIcons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToolEngine } from "@/hooks/useToolEngine";

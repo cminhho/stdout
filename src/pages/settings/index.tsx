@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { X } from "lucide-react";
 
-import ToolLayout from "@/components/ToolLayout";
+import ToolLayout from "@/components/layout/ToolLayout";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/utils/cn";
 import { getCurrentVersion, fetchLatestRelease, isNewerVersion, type LatestRelease } from "@/utils/version";

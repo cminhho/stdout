@@ -1,10 +1,10 @@
 import { useState, useCallback, useEffect } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import CodeEditor from "@/components/CodeEditor";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
+import CodeEditor from "@/components/common/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
-import ToolAlert from "@/components/ToolAlert";
+import IndentSelect, { type IndentOption } from "@/components/common/IndentSelect";
+import ToolAlert from "@/components/common/ToolAlert";
 
 function randomString(len = 8): string {
   return Array.from(crypto.getRandomValues(new Uint8Array(len)), (b) => b.toString(36)).join("").slice(0, len);

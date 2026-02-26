@@ -1,10 +1,10 @@
 import { useState, useMemo } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import CodeEditor from "@/components/CodeEditor";
-import CopyButton from "@/components/CopyButton";
-import FileUploadButton from "@/components/FileUploadButton";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
+import CodeEditor from "@/components/common/CodeEditor";
+import CopyButton from "@/components/common/CopyButton";
+import FileUploadButton from "@/components/common/FileUploadButton";
+import { ClearButton } from "@/components/common/ClearButton";
+import { SampleButton } from "@/components/common/SampleButton";
 
 const SAMPLE_A = "line one\nline two\nline three";
 const SAMPLE_B = "line one\nline two modified\nline three\nline four";

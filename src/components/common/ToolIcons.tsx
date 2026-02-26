@@ -52,7 +52,7 @@ import {
   ScrollText,
 } from "lucide-react";
 
-/** Single source of truth for tool icon names → Lucide component. Used by HomePage grid and AppSidebar. */
+/** Single source of truth for tool icon names → Lucide component. Used by HomePage grid and Sidebar. */
 export const toolIconMap: Record<string, ElementType> = {
   Braces,
   Type,

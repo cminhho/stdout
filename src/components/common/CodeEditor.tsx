@@ -331,8 +331,6 @@ const getTokenizer = (lang: Language) => {
   }
 };
 
-/* Min width of line number column; must match --code-gutter-min-width in CSS. */
-
 /* Token colors from CSS variables (key, string green, number orange, boolean/keyword purple, comment gray) */
 const tokenColors: Record<Token["type"], string> = {
   key: "hsl(var(--code-key))",
@@ -389,9 +387,6 @@ function useCodeEditorScrollSync(
 }
 
 // ── Component ────────────────────────────────────────────────────────
-// Line-by-line friendly: lines/tokenizedLines are memoized from value; onChange optionally
-// receives meta.lines so parents can update by line without re-splitting. Stable keys (L0, L1…)
-// keep reconciliation predictable when only some lines change.
 
 const CodeEditor = ({
   value,
@@ -446,9 +441,7 @@ const CodeEditor = ({
   );
 
   const gutterWidth = showLineNumbers ? Math.max(String(lines.length).length * 10 + 16, 36) : 0;
-  const contentPaddingLeft = gutterWidth + 12; /* 12px matches --spacing-code-editor (0.75rem) */
-
-  /* Styling: .code-editor-wrapper in index.css (--code-*, --spacing-code-editor, --radius). */
+  const contentPaddingLeft = gutterWidth + 12;
 
   if (customContent != null) {
     return (

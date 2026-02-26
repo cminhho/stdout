@@ -2,7 +2,7 @@
  * PEM / X.509 certificate inspect. Single place for logic and constants.
  */
 
-import type { IndentOption } from "@/components/IndentSelect";
+import type { IndentOption } from "@/components/common/IndentSelect";
 import { singleErrorToParseErrors } from "@/utils/validationTypes";
 
 export const CERTIFICATE_FILE_ACCEPT = ".pem,.crt,.cer,text/plain";

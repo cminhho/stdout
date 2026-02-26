@@ -1,5 +1,5 @@
 import { memo } from "react";
-import CopyButton from "@/components/CopyButton";
+import CopyButton from "@/components/common/CopyButton";
 import { cn } from "@/utils/cn";
 
 interface PanelHeaderProps {

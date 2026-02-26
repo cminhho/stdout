@@ -1,9 +1,9 @@
 import { useState, useMemo } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import ToolAlert from "@/components/ToolAlert";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
+import ToolAlert from "@/components/common/ToolAlert";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
+import IndentSelect, { type IndentOption } from "@/components/common/IndentSelect";
 
 const SAMPLE_JSON = `{
   "store": {

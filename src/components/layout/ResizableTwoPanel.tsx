@@ -1,8 +1,8 @@
 import { useMemo, useRef } from "react";
 
-import PanelResizer from "@/components/PanelResizer";
-import ToolPane from "@/components/ToolPane";
-import type { PaneProps } from "@/components/ToolPane";
+import PanelResizer from "@/components/layout/PanelResizer";
+import ToolPane from "@/components/layout/ToolPane";
+import type { PaneProps } from "@/components/layout/ToolPane";
 import { useHorizontalResize, useVerticalResize } from "@/hooks/useResizeSplit";
 import { useIsLg } from "@/hooks/useMediaQuery";
 import { cn } from "@/utils/cn";

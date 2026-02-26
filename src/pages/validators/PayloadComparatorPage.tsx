@@ -1,9 +1,9 @@
 import { useMemo } from "react";
-import ToolLayout from "@/components/ToolLayout";
-import ResizableTwoPanel from "@/components/ResizableTwoPanel";
-import TwoPanelTopSection from "@/components/TwoPanelTopSection";
-import ToolResultCard from "@/components/ToolResultCard";
-import CodeEditor from "@/components/CodeEditor";
+import ToolLayout from "@/components/layout/ToolLayout";
+import ResizableTwoPanel from "@/components/layout/ResizableTwoPanel";
+import TwoPanelTopSection from "@/components/layout/TwoPanelTopSection";
+import ToolResultCard from "@/components/common/ToolResultCard";
+import CodeEditor from "@/components/common/CodeEditor";
 import { useTwoPanelCompare } from "@/hooks/useTwoPanelCompare";
 import { formatDiffSummary, IDENTICAL_MESSAGE_CLASS } from "@/utils/compareResultHelpers";
 

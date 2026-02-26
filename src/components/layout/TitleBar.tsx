@@ -8,7 +8,7 @@ import { useSettings } from "@/hooks/useSettings";
 const noDrag = { WebkitAppRegion: "no-drag" } as React.CSSProperties;
 
 /** Title bar: sidebar toggle, title, Settings. On Electron: drag region + optional window controls. */
-const WindowTitleBar = () => {
+export function TitleBar() {
   const location = useLocation();
   const { tools } = useToolEngine();
   const { sidebarCollapsed, toggleSidebar } = useSettings();
@@ -66,6 +66,6 @@ const WindowTitleBar = () => {
       <div className="title-bar-end-spacer shrink-0" style={noDrag} />
     </header>
   );
-};
+}
 
-export default WindowTitleBar;
+export default TitleBar;

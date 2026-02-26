@@ -1,9 +1,9 @@
 import { useState, useCallback } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import OptionsButton from "@/components/OptionsButton";
-import type { IndentOption } from "@/components/IndentSelect";
+import OptionsButton from "@/components/common/OptionsButton";
+import type { IndentOption } from "@/components/common/IndentSelect";
 import {
   processCsvToXmlForLayout,
   CSV_XML_FILE_ACCEPT,

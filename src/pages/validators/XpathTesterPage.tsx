@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import CodeEditor from "@/components/CodeEditor";
-import ToolAlert from "@/components/ToolAlert";
-import ToolResultList from "@/components/ToolResultList";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
+import CodeEditor from "@/components/common/CodeEditor";
+import ToolAlert from "@/components/common/ToolAlert";
+import ToolResultList from "@/components/common/ToolResultList";
 import { Input } from "@/components/ui/input";
 import { evaluateXPath } from "@/utils/validators";
 

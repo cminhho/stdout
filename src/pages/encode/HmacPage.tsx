@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { SegmentGroup } from "@/components/SegmentGroup";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
+import { SegmentGroup } from "@/components/common/SegmentGroup";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

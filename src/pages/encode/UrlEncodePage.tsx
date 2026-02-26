@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { SegmentGroup } from "@/components/SegmentGroup";
-import type { IndentOption } from "@/components/IndentSelect";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
+import { SegmentGroup } from "@/components/common/SegmentGroup";
+import type { IndentOption } from "@/components/common/IndentSelect";
 import {
   processUrlEncodeForLayout,
   type UrlEncodeMode,

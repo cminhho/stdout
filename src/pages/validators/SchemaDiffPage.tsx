@@ -1,9 +1,9 @@
 import { useMemo } from "react";
-import ToolLayout from "@/components/ToolLayout";
-import ResizableTwoPanel from "@/components/ResizableTwoPanel";
-import TwoPanelTopSection from "@/components/TwoPanelTopSection";
-import ToolResultCard from "@/components/ToolResultCard";
-import DiffLineList, { type DiffLineEntry } from "@/components/DiffLineList";
+import ToolLayout from "@/components/layout/ToolLayout";
+import ResizableTwoPanel from "@/components/layout/ResizableTwoPanel";
+import TwoPanelTopSection from "@/components/layout/TwoPanelTopSection";
+import ToolResultCard from "@/components/common/ToolResultCard";
+import DiffLineList, { type DiffLineEntry } from "@/components/common/DiffLineList";
 import { useTwoPanelCompare } from "@/hooks/useTwoPanelCompare";
 import { formatDiffSummary, formatDiffEntriesForCopy, IDENTICAL_MESSAGE_CLASS } from "@/utils/compareResultHelpers";
 

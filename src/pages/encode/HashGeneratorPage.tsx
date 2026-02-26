@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import CodeEditor from "@/components/CodeEditor";
-import CopyButton from "@/components/CopyButton";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
+import CodeEditor from "@/components/common/CodeEditor";
+import CopyButton from "@/components/common/CopyButton";
 import { hashText, type HashAlgorithm } from "@/utils/crypto";
 
 const ALGOS: HashAlgorithm[] = ["SHA-1", "SHA-256", "SHA-384", "SHA-512"];
