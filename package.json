@@ -25,7 +25,7 @@
   ],
   "license": "MIT",
   "author": "cminhho (https://github.com/cminhho)",
-  "main": "electron/main.cjs",
+  "main": "electron/main/index.cjs",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
