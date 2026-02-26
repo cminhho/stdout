@@ -140,7 +140,7 @@ const HomePage = () => {
 
           {/* Tools: search + grid (industry: filter on home) */}
           <section className="home-tools-section" aria-labelledby="home-tools-heading">
-            <div className="home-tools-header home-tools-header-glass sticky top-0 z-10 home-tools-header-margin">
+            <div className="home-tools-header sticky top-0 z-10 home-tools-header-margin">
               <div className="flex flex-col gap-3">
                 <div className="home-tools-header-row flex flex-wrap items-center justify-between gap-2">
                   <h2 id="home-tools-heading" className="home-section-label shrink-0">

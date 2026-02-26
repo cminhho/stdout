@@ -7,9 +7,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { PrefSection, PrefGroup, PrefRow, PrefDescription } from "@/components/settings";
-import type { Theme, SidebarMode, GlassTint } from "@/types/settings";
+import type { Theme, SidebarMode } from "@/contexts/settingsStore";
 import { THEMES, EDITOR_FONTS } from "./constants";
 
 const SIDEBAR_NAV_OPTIONS: { value: SidebarMode; label: string }[] = [
@@ -18,11 +17,6 @@ const SIDEBAR_NAV_OPTIONS: { value: SidebarMode; label: string }[] = [
 ];
 
 const DEFAULT_EDITOR_FONT = EDITOR_FONTS[0].value;
-
-const GLASS_TINT_OPTIONS: { value: GlassTint; label: string }[] = [
-  { value: "none", label: "None" },
-  { value: "accent", label: "Tint with accent" },
-];
 
 const SettingsAppearancePanel = () => {
   const settings = useSettings();
@@ -58,38 +52,6 @@ const SettingsAppearancePanel = () => {
             }
           />
           <PrefRow
-            label="Liquid Glass"
-            control={
-              <Checkbox
-                id="settings-liquid-glass"
-                checked={settings.liquidGlass}
-                onCheckedChange={(v) => settings.setLiquidGlass(v === true)}
-                aria-label="Enable Liquid Glass (translucent, specular surfaces)"
-              />
-            }
-          />
-          <PrefRow
-            label="Glass tint"
-            control={
-              <Select
-                value={settings.glassTint}
-                onValueChange={(v) => settings.setGlassTint(v as GlassTint)}
-                disabled={!settings.liquidGlass}
-              >
-                <SelectTrigger size="sm" className="w-auto min-w-[10rem] focus:ring-0 focus:ring-offset-0">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {GLASS_TINT_OPTIONS.map((o) => (
-                    <SelectItem key={o.value} value={o.value}>
-                      {o.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            }
-          />
-          <PrefRow
             label="Sidebar nav"
             control={
               <Select value={settings.sidebarMode} onValueChange={(v) => settings.setSidebarMode(v as SidebarMode)}>
@@ -107,7 +69,7 @@ const SettingsAppearancePanel = () => {
             }
           />
         </PrefGroup>
-        <PrefDescription>Liquid Glass: translucent, specular menus and windows. Tint: subtle accent on glass (adapts to theme). Sidebar nav: grouped (by category) or flat list.</PrefDescription>
+        <PrefDescription>Grouped: tools by category with expand/collapse. Flat: single list of tools.</PrefDescription>
       </PrefSection>
 
       <PrefSection heading="Text editor" headingId="settings-editor-heading">

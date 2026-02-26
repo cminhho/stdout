@@ -20,7 +20,7 @@
    * - Focus: --focus-ring, --focus-ring-sidebar (single box-shadow token for all focus-visible).
    * - Scrollbar: --scrollbar-thumb, --scrollbar-thumb-hover per theme (desktop thin scrollbars).
    * - Typography: --text-nav|ui|content|caption|title|hero (hero = 1.125rem for taglines/section titles).
-   * - Glass: Liquid Glass (macOS 26–inspired): --glass-edge, --glass-highlight-color, --glass-jelly-bottom; --glass-blur/--glass-saturate (title-bar/sidebar); --glass-blur-subtle/--glass-saturate-subtle (cards); --glass-blur-sidebar/--glass-saturate-sidebar (settings sidebar); --glass-edge-subtle for panels.
+   * - Glass: Liquid Glass (macOS 26): specular highlight, theme-adaptive tint (--glass-tint), layered edge; --glass-blur/--glass-saturate; --glass-edge-subtle/--glass-highlight-subtle for panels; consistent across surfaces (menus, windows, controls).
    * - Settings: --settings-sidebar-width, --settings-window-radius.
    * - Aliases (reuse, single source): --popover = --card; --accent = --primary; --segment-bg = --muted, --segment-border = --border; --sidebar-active-border = --sidebar-primary.
    * - Tables: cell padding = var(--home-space-sm) var(--home-space-md); thead/row hover semantic per context.
@@ -163,7 +163,7 @@
     --scrollbar-thumb-hover: hsl(0 0% 50% / 0.55);
     /* Typography: hero/section title (18px) */
     --text-hero: 1.125rem;
-    /* Liquid Glass (macOS 26–inspired): deep translucency, layered edge/highlight, theme-aware. */
+    /* Liquid Glass (macOS 26): translucent, specular highlight, adapts to theme (--glass-tint). */
     /* Softer glass for cards/panels (28px blur vs 48px for title-bar/sidebar) */
     --glass-blur-subtle: 28px;
     --glass-saturate-subtle: 180%;
@@ -216,18 +216,17 @@
     --radius-button: var(--home-radius-card);   /* macOS-style radius for buttons (toolbar, actions) */
     --spacing-sidebar-header-h: 1.75rem; /* 28px min height for panel header */
     --spacing-footer-min-h: 2.25rem;    /* 36px min height for sidebar footer */
-    /* Liquid Glass (desktop): blur + layered edge/highlight for sidebar/title-bar */
+    /* Liquid Glass (desktop): specular + layered edge; --glass-tint = theme/wallpaper-style tint */
     --glass-blur: 48px;
     --glass-saturate: 200%;
     --glass-border-opacity: 0.14;
-    --glass-highlight: 0.1;
+    --glass-highlight: 0.12;
     --glass-edge: 0 0% 100% / var(--glass-border-opacity);
     --glass-highlight-color: 0 0% 100% / var(--glass-highlight);
     --glass-jelly-bottom: 0 0% 0% / 0.04;
     --glass-edge-subtle: 0 0% 100% / 0.08;
-    --glass-highlight-subtle: 0 0% 100% / 0.05;
-    --glass-specular: 0 0% 100% / 0.14;
-    --glass-tint: 221 83% 53% / 0.06;
+    --glass-highlight-subtle: 0 0% 100% / 0.07;
+    --glass-tint: 221 83% 53% / 0.04;
     /* Status (alerts, validation, badges) */
     --status-success: 142 69% 42%;
     --status-warning: 38 92% 50%;
@@ -318,18 +317,17 @@
     --settings-table-header-bg: 25 12% 94%;
     --settings-table-row-hover-bg: 25 15% 92%;
 
-    /* Liquid Glass – light: same blur, darker edge for contrast on light bg */
+    /* Liquid Glass – light: specular, darker edge; tint from primary (wallpaper-style) */
     --glass-blur: 48px;
     --glass-saturate: 200%;
     --glass-border-opacity: 0.14;
-    --glass-highlight: 0.08;
+    --glass-highlight: 0.1;
     --glass-edge: 0 0% 0% / var(--glass-border-opacity);
     --glass-highlight-color: 0 0% 100% / 0.5;
     --glass-jelly-bottom: 0 0% 0% / 0.06;
     --glass-edge-subtle: 0 0% 0% / 0.1;
     --glass-highlight-subtle: 0 0% 100% / 0.35;
-    --glass-specular: 0 0% 100% / 0.2;
-    --glass-tint: 221 83% 53% / 0.05;
+    --glass-tint: 221 83% 53% / 0.03;
 
     --status-success: 142 45% 32%;
     --status-warning: 38 92% 45%;
@@ -427,9 +425,8 @@
     --glass-highlight-color: 0 0% 100% / var(--glass-highlight);
     --glass-jelly-bottom: 0 0% 0% / 0.03;
     --glass-edge-subtle: 0 0% 100% / 0.06;
-    --glass-highlight-subtle: 0 0% 100% / 0.04;
-    --glass-specular: 0 0% 100% / 0.12;
-    --glass-tint: 221 83% 53% / 0.05;
+    --glass-highlight-subtle: 0 0% 100% / 0.05;
+    --glass-tint: 221 83% 53% / 0.025;
 
     --status-success: 142 69% 42%;
     --status-warning: 38 92% 50%;
@@ -509,22 +506,21 @@
     background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(var(--desktop-layout-start)), hsl(var(--desktop-layout-end)));
   }
 
-  /* Title bar: Liquid Glass (macOS 26) – layered edge/highlight, specular top edge */
+  /* Title bar: Liquid Glass – specular, theme tint (adapts to content/lighting), layered edge */
   .desktop-title-bar {
-    background: hsl(var(--header-bg) / 0.4);
+    background:
+      linear-gradient(180deg, hsl(var(--glass-tint)) 0%, transparent 55%),
+      hsl(var(--header-bg) / 0.4);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     border-bottom: 1px solid hsl(var(--glass-edge));
     box-shadow:
-      inset 0 1px 0 0 hsl(var(--glass-specular)),
+      inset 0 1px 0 0 hsl(var(--glass-highlight-color)),
       inset 0 -1px 0 0 hsl(var(--glass-jelly-bottom));
     transition: background var(--transition-default), backdrop-filter var(--transition-default), border-color var(--transition-default), box-shadow var(--transition-default);
     padding-left: var(--title-bar-padding-x);
     padding-right: var(--title-bar-padding-x);
     gap: var(--title-bar-gap);
-  }
-  html.glass-tint-accent .desktop-title-bar {
-    background: hsl(var(--glass-tint)), hsl(var(--header-bg) / 0.4);
   }
   .desktop-title-bar .title-bar-title {
     font-size: var(--title-bar-font-size);
@@ -1077,7 +1073,9 @@
       0 25px 50px -12px hsl(0 0% 0% / 0.25),
       0 0 0 1px hsl(var(--glass-edge-subtle)),
       inset 0 1px 0 0 hsl(var(--glass-highlight-subtle));
-    background: hsl(var(--background) / 0.88);
+    background:
+      linear-gradient(180deg, hsl(var(--glass-tint)) 0%, transparent 40%),
+      hsl(var(--background) / 0.88);
     backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
     -webkit-backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
     border: 1px solid hsl(var(--glass-edge-subtle));
@@ -1140,70 +1138,15 @@
     border-right: 1px solid hsl(var(--border));
   }
   html.desktop .settings-sidebar {
-    background: hsl(var(--muted) / 0.28);
+    background:
+      linear-gradient(90deg, hsl(var(--glass-tint)) 0%, transparent 50%),
+      hsl(var(--muted) / 0.28);
     backdrop-filter: blur(var(--glass-blur-sidebar)) saturate(var(--glass-saturate-sidebar));
     -webkit-backdrop-filter: blur(var(--glass-blur-sidebar)) saturate(var(--glass-saturate-sidebar));
     border-right: 1px solid hsl(var(--glass-edge-subtle));
     box-shadow: inset 1px 0 0 0 hsl(var(--glass-highlight-subtle));
     transition: background var(--transition-default), backdrop-filter var(--transition-default), border-color var(--transition-default), box-shadow var(--transition-default);
   }
-  html.glass-tint-accent.desktop .settings-sidebar {
-    background: hsl(var(--glass-tint)), hsl(var(--muted) / 0.28);
-  }
-
-  /* Liquid Glass off: opaque surfaces, no blur (user preference) */
-  html.liquid-glass-off {
-    --glass-blur: 0;
-    --glass-blur-subtle: 0;
-    --glass-blur-sidebar: 0;
-  }
-  html.liquid-glass-off .desktop-title-bar {
-    background: hsl(var(--header-bg));
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-  html.liquid-glass-off.desktop .app-sidebar {
-    background: hsl(var(--sidebar-background));
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-  html.liquid-glass-off .glass-surface {
-    background: hsl(var(--background));
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-  html.liquid-glass-off .light .glass-surface {
-    background: hsl(var(--background));
-  }
-  html.liquid-glass-off .deep-dark .glass-surface {
-    background: hsl(var(--background));
-  }
-  html.liquid-glass-off.desktop .home-intro {
-    background: hsl(var(--card));
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-  html.liquid-glass-off .home-tools-header-glass {
-    background: hsl(var(--background));
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-  html.liquid-glass-off.desktop .settings-sidebar {
-    background: hsl(var(--settings-nav-bg));
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-
-  /* Menus and popovers: Liquid Glass on desktop when enabled (consistency with title bar/sidebar) */
-  html.desktop:not(.liquid-glass-off) [data-stdout-layer="dropdown"],
-  html.desktop:not(.liquid-glass-off) [data-stdout-layer="popover"] {
-    background: hsl(var(--popover) / 0.88) !important;
-    backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
-    -webkit-backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
-    border-color: hsl(var(--glass-edge-subtle)) !important;
-    box-shadow: 0 4px 16px hsl(0 0% 0% / 0.15), inset 0 1px 0 0 hsl(var(--glass-highlight-subtle));
-  }
-
   .settings-sidebar-title {
     margin: 0 0 var(--home-space-md);
     padding: 0 var(--home-space-md);
@@ -1826,14 +1769,16 @@
     }
   }
 
-  /* macOS Liquid Glass sidebar on desktop: specular leading edge, deeper translucency */
+  /* Sidebar: Liquid Glass – specular, theme tint, layered edge (consistent with title bar) */
   html.desktop .app-sidebar {
-    background: hsl(var(--sidebar-background) / 0.38);
+    background:
+      linear-gradient(90deg, hsl(var(--glass-tint)) 0%, transparent 45%),
+      hsl(var(--sidebar-background) / 0.38);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     border-right: 1px solid hsl(var(--glass-edge));
     box-shadow:
-      inset 1px 0 0 0 hsl(var(--glass-specular)),
+      inset 1px 0 0 0 hsl(var(--glass-highlight-color)),
       inset -1px 0 0 0 hsl(var(--glass-jelly-bottom));
     transition: background var(--transition-default), backdrop-filter var(--transition-default), border-color var(--transition-default), box-shadow var(--transition-default);
   }
@@ -1842,42 +1787,6 @@
   }
   html.desktop.deep-dark .app-sidebar {
     background: hsl(var(--sidebar-background) / 0.48);
-  }
-  html.glass-tint-accent.desktop .app-sidebar {
-    background: hsl(var(--glass-tint)), hsl(var(--sidebar-background) / 0.38);
-  }
-  html.glass-tint-accent.desktop.light .app-sidebar {
-    background: hsl(var(--glass-tint)), hsl(var(--sidebar-background) / 0.52);
-  }
-  html.glass-tint-accent.desktop.deep-dark .app-sidebar {
-    background: hsl(var(--glass-tint)), hsl(var(--sidebar-background) / 0.48);
-  }
-
-  /* Reusable Liquid Glass surface (e.g. cards, panels in desktop app) */
-  .glass-surface {
-    background: hsl(var(--background) / 0.7);
-    backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
-    -webkit-backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
-    border: 1px solid hsl(var(--glass-edge-subtle));
-    box-shadow: inset 0 1px 0 0 hsl(var(--glass-highlight-subtle));
-    transition: background var(--transition-default), backdrop-filter var(--transition-default), border-color var(--transition-default), box-shadow var(--transition-default);
-  }
-  .light .glass-surface {
-    background: hsl(var(--background) / 0.78);
-    border-color: hsl(var(--glass-edge-subtle));
-  }
-  .deep-dark .glass-surface {
-    background: hsl(var(--background) / 0.75);
-    border-color: hsl(var(--glass-edge-subtle));
-  }
-  html.glass-tint-accent .glass-surface {
-    background: hsl(var(--glass-tint)), hsl(var(--background) / 0.7);
-  }
-  html.glass-tint-accent .light .glass-surface {
-    background: hsl(var(--glass-tint)), hsl(var(--background) / 0.78);
-  }
-  html.glass-tint-accent .deep-dark .glass-surface {
-    background: hsl(var(--glass-tint)), hsl(var(--background) / 0.75);
   }
 
   .prose-markdown {
@@ -2005,15 +1914,14 @@
     line-height: 1.5;
   }
   html.desktop .home-intro {
-    background: hsl(var(--card) / 0.82);
+    background:
+      linear-gradient(145deg, hsl(var(--glass-tint)) 0%, transparent 55%),
+      hsl(var(--card) / 0.82);
     backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
     -webkit-backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
     border-color: hsl(var(--glass-edge-subtle));
     box-shadow: inset 0 1px 0 0 hsl(var(--glass-highlight-subtle));
     transition: background var(--transition-default), backdrop-filter var(--transition-default), border-color var(--transition-default), box-shadow var(--transition-default);
-  }
-  html.glass-tint-accent.desktop .home-intro {
-    background: hsl(var(--glass-tint)), hsl(var(--card) / 0.82);
   }
 
   /* Section labels: uppercase, muted (macOS-style group headers) */
@@ -2172,22 +2080,21 @@
     transition: background-color var(--transition-default), border-color var(--transition-default);
   }
 
-  /* Sticky tools header: Liquid Glass bar (token-based) when sticky */
+  /* Sticky tools header: layout; Liquid Glass on desktop (no extra class) */
   .home-tools-header {
     top: env(safe-area-inset-top);
     padding-top: var(--home-space-md) !important;
     padding-bottom: var(--home-space-md) !important;
   }
-  .home-tools-header-glass {
-    background: hsl(var(--background) / 0.85);
+  html.desktop .home-tools-header {
+    background:
+      linear-gradient(180deg, hsl(var(--glass-tint)) 0%, transparent 50%),
+      hsl(var(--background) / 0.85);
     backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
     -webkit-backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
     border-bottom: 1px solid hsl(var(--glass-edge-subtle));
     box-shadow: inset 0 1px 0 0 hsl(var(--glass-highlight-subtle));
     transition: background var(--transition-default), backdrop-filter var(--transition-default), border-color var(--transition-default), box-shadow var(--transition-default);
-  }
-  html.glass-tint-accent .home-tools-header-glass {
-    background: hsl(var(--glass-tint)), hsl(var(--background) / 0.85);
   }
 
   /* Empty states: system padding, body text */

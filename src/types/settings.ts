@@ -14,9 +14,6 @@ export type Theme = "dark" | "light" | "deep-dark" | "system";
 /** Sidebar display mode. */
 export type SidebarMode = "grouped" | "flat";
 
-/** Glass tint (adaptability: tint windows with accent/wallpaper-like). */
-export type GlassTint = "none" | "accent";
-
 /** Persisted settings state (stored in localStorage). */
 export interface SettingsState {
   theme: Theme;
@@ -27,8 +24,4 @@ export interface SettingsState {
   hiddenTools: string[];
   editorFont: string;
   wordWrap: boolean;
-  /** Liquid Glass: translucent, specular surfaces (menus, windows, controls). */
-  liquidGlass: boolean;
-  /** Tint glass surfaces with accent color (adaptability / wallpaper-like). */
-  glassTint: GlassTint;
 }
