@@ -48,6 +48,13 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     root.style.setProperty("--font-mono", value);
   }, [state.editorFont]);
 
+  /* Liquid Glass: toggle and tint (customization + adaptability). */
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.toggle("liquid-glass-off", !state.liquidGlass);
+    root.classList.toggle("glass-tint-accent", state.liquidGlass && state.glassTint === "accent");
+  }, [state.liquidGlass, state.glassTint]);
+
   /* On viewport resize to mobile, auto-collapse sidebar so content has full width. */
   useEffect(() => {
     const mq = window.matchMedia(`(max-width: ${SIDEBAR_MOBILE_BREAKPOINT_PX - 1}px)`);
@@ -66,6 +73,8 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     setState((s) => ({ ...s, sidebarWidth: clampSidebarWidth(sidebarWidth) }));
   const setEditorFont = (editorFont: string) => setState((s) => ({ ...s, editorFont }));
   const setWordWrap = (wordWrap: boolean) => setState((s) => ({ ...s, wordWrap }));
+  const setLiquidGlass = (liquidGlass: boolean) => setState((s) => ({ ...s, liquidGlass }));
+  const setGlassTint = (glassTint: import("@/types/settings").GlassTint) => setState((s) => ({ ...s, glassTint }));
 
   const toggleTool = (path: string) =>
     setState((s) => ({
@@ -80,7 +89,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <SettingsContext.Provider
-      value={{ ...state, setTheme, setSidebarMode, setSidebarCollapsed, toggleSidebar, setSidebarWidth, toggleTool, setAllToolsVisible, isToolVisible, setEditorFont, setWordWrap }}
+      value={{ ...state, setTheme, setSidebarMode, setSidebarCollapsed, toggleSidebar, setSidebarWidth, toggleTool, setAllToolsVisible, isToolVisible, setEditorFont, setWordWrap, setLiquidGlass, setGlassTint }}
     >
       {children}
     </SettingsContext.Provider>

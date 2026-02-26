@@ -1,7 +1,7 @@
 import { createContext } from "react";
-import type { Theme, SidebarMode, SettingsState } from "@/types/settings";
+import type { Theme, SidebarMode, GlassTint, SettingsState } from "@/types/settings";
 
-export type { Theme, SidebarMode, SettingsState };
+export type { Theme, SidebarMode, GlassTint, SettingsState };
 
 export interface SettingsContextType extends SettingsState {
   setTheme: (t: Theme) => void;
@@ -14,6 +14,8 @@ export interface SettingsContextType extends SettingsState {
   isToolVisible: (path: string) => boolean;
   setEditorFont: (font: string) => void;
   setWordWrap: (wrap: boolean) => void;
+  setLiquidGlass: (on: boolean) => void;
+  setGlassTint: (tint: GlassTint) => void;
 }
 
 const STORAGE_KEY = "stdout-settings";
@@ -30,6 +32,8 @@ const defaults: SettingsState = {
   hiddenTools: [],
   editorFont: "ui-monospace, ui-serif, monospace",
   wordWrap: false,
+  liquidGlass: true,
+  glassTint: "accent",
 };
 
 function clampSidebarWidth(w: number): number {
@@ -58,6 +62,8 @@ export function loadSettings(): SettingsState {
         hiddenTools: Array.isArray(parsed.hiddenTools) ? parsed.hiddenTools : defaults.hiddenTools,
         editorFont: typeof parsed.editorFont === "string" ? parsed.editorFont : defaults.editorFont,
         wordWrap: typeof parsed.wordWrap === "boolean" ? parsed.wordWrap : defaults.wordWrap,
+        liquidGlass: typeof parsed.liquidGlass === "boolean" ? parsed.liquidGlass : defaults.liquidGlass,
+        glassTint: parsed.glassTint === "none" || parsed.glassTint === "accent" ? parsed.glassTint : defaults.glassTint,
       };
     }
     /* First load: on mobile viewport, default sidebar to collapsed so content gets full width. */
