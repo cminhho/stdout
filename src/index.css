@@ -1930,36 +1930,52 @@
     }
   }
 
-  /* Hero: section title typography (industry page/section title) */
+  /* Hero: macOS-style large title + grouped content */
   .home-hero {
     display: flex;
     flex-direction: column;
-    gap: var(--home-space-md);
+    gap: var(--home-space-lg);
   }
   .home-hero-tagline {
     font-size: var(--text-hero);
     font-weight: 600;
     letter-spacing: -0.01em;
-    line-height: 1.4;
+    line-height: 1.35;
     max-width: 42rem;
     margin: 0;
     color: hsl(var(--foreground));
   }
+  @media (min-width: 768px) {
+    .home-hero {
+      gap: var(--home-space-xl);
+    }
+    .home-hero-tagline {
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+  }
 
-  /* Intro card: solid on mobile, Liquid Glass on desktop */
+  /* Intro card: macOS-style inset group; solid on mobile, Liquid Glass on desktop */
   .home-intro {
     margin: 0;
-    padding: var(--home-space-md) !important;
+    padding: var(--home-space-lg) var(--home-space-md) !important;
     border-radius: var(--home-radius-card);
     border: 1px solid hsl(var(--border));
     background: hsl(var(--card));
   }
+  @media (min-width: 768px) {
+    .home-intro {
+      padding: var(--home-space-xl) var(--home-space-lg) !important;
+    }
+  }
+  .home-intro-heading,
   .home-intro .panel-header-label {
     margin: 0 0 var(--home-space-sm);
-    font-size: var(--text-ui);
+    font-size: var(--text-caption);
     font-weight: 600;
-    letter-spacing: 0.02em;
-    color: hsl(var(--foreground));
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
   }
   .home-intro p,
   .home-intro .space-y-2 {
@@ -1986,6 +2002,12 @@
     text-transform: uppercase;
     color: hsl(var(--muted-foreground));
     margin: 0 0 var(--home-space-sm);
+  }
+  @media (min-width: 768px) {
+    .home-content .home-tools-grid,
+    .home-recent-section .home-tools-grid {
+      gap: var(--home-space-md);
+    }
   }
   .home-tools-header-margin {
     margin-bottom: var(--home-tools-header-gap);
@@ -2182,7 +2204,7 @@
     border-color: hsl(var(--glass-edge-subtle));
   }
 
-  /* Footer: caption typography, separator, safe-area bottom */
+  /* Footer: macOS-style caption, separator, safe-area bottom; glass edge on desktop */
   .home-footer {
     margin-top: var(--home-content-gap);
     padding-top: var(--home-footer-padding-y);
@@ -2193,6 +2215,7 @@
     .home-footer {
       padding-top: var(--home-footer-padding-y-md);
       padding-bottom: max(var(--home-footer-padding-y-md), env(safe-area-inset-bottom));
+      border-top-color: hsl(var(--glass-edge-subtle));
     }
   }
   .home-footer-text {
@@ -2203,10 +2226,16 @@
     color: hsl(var(--muted-foreground) / 0.9);
   }
 
-  /* Card stagger (short duration, macOS-like) */
+  /* Card: Liquid Glass on desktop, subtle hover lift (macOS-style) */
   html.desktop .home-tool-card {
     border-color: hsl(var(--glass-edge-subtle));
     box-shadow: inset 0 1px 0 0 hsl(var(--glass-highlight-subtle));
+    transition: background-color var(--transition-default), border-color var(--transition-default), box-shadow var(--transition-default), transform var(--transition-default);
+  }
+  html.desktop .home-tool-card:hover {
+    box-shadow:
+      inset 0 1px 0 0 hsl(var(--glass-highlight-subtle)),
+      0 2px 8px hsl(0 0% 0% / 0.06);
   }
   .home-content .home-tool-card {
     animation: home-card-in 0.22s var(--transition-ease) backwards;

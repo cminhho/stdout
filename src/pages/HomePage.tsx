@@ -36,7 +36,7 @@ const ToolCardLink = ({
   return (
     <Link
       to={tool.path}
-      className="home-tool-card group relative rounded-[var(--radius)] border border-border bg-card text-left transition-[background-color,border-color,box-shadow] duration-[var(--transition-duration)] ease-[var(--transition-ease)] hover:border-border hover:bg-[hsl(var(--muted)/0.4)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:bg-[hsl(var(--muted)/0.5)] min-h-touch"
+      className="home-tool-card group relative rounded-[var(--radius)] border border-border bg-card text-left cursor-pointer transition-[background-color,border-color,box-shadow] duration-[var(--transition-duration)] ease-[var(--transition-ease)] hover:border-border hover:bg-[hsl(var(--muted)/0.4)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:bg-[hsl(var(--muted)/0.5)] min-h-touch"
       style={{ animationDelay: `${index * 20}ms` }}
     >
       <span className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100 sm:h-6 sm:w-6" aria-hidden>
@@ -85,8 +85,8 @@ const HomePage = () => {
     <div className="flex flex-1 flex-col min-h-0 overflow-auto home-main" role="main">
       <div className="flex flex-1 flex-col min-h-0 w-full home-page-pad">
         <div className="home-content flex flex-col">
-          {/* Hero + About: value prop and intro (glass on desktop) */}
-          <header className="home-hero">
+          {/* Hero + About: macOS-style large title + inset group (glass on desktop) */}
+          <header className="home-hero" aria-label="Welcome">
             <p className="home-hero-tagline">
               Your standard output for dev tools—format, convert, encode, generate. All run locally.
             </p>
@@ -94,7 +94,7 @@ const HomePage = () => {
               className="home-intro"
               aria-labelledby="home-about-heading"
             >
-              <h2 id="home-about-heading" className="panel-header-label">
+              <h2 id="home-about-heading" className="home-intro-heading">
                 About this toolkit
               </h2>
               <div className="space-y-2">
