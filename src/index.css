@@ -194,7 +194,7 @@
     /* Sidebar: VS Code–aligned widths and density */
     --sidebar-width-collapsed: 48px;   /* activity bar width */
     --sidebar-width-expanded: 272px;   /* primary sidebar (slightly wider than VS Code default) */
-    --title-bar-height: 35px;           /* macOS-style title bar height */
+    --title-bar-height: 40px;           /* macOS native title bar height (traffic lights + content) */
     --title-bar-padding-x: var(--home-space-sm);   /* 8px horizontal (8px grid) */
     --title-bar-gap: var(--home-space-xs);         /* 4px between chrome buttons */
     --title-bar-font-size: var(--text-ui);   /* 13px – macOS/VS Code title */
