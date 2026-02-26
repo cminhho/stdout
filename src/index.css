@@ -177,9 +177,9 @@
     --home-space-stack: 0.375rem;
     --settings-sidebar-width: 12rem;
     --settings-window-radius: 0.75rem;  /* mobile sheet + macOS window top corners */
-    /* Settings: macOS System Settings–style radius and spacing */
+    /* Settings: macOS System Settings–style radius and spacing (compact, 8px grid) */
     --settings-radius: var(--home-radius-card);
-    --settings-panel-gap: var(--home-space-md);
+    --settings-panel-gap: var(--home-space-sm);
     --spacing-tool-layout-y: var(--home-space-sm);  /* 8px vertical padding for tool layout */
     /* Workbench (VS Code): editor vs panel surfaces; sidebar/activity bar; list focus for nav */
     --workbench-editor-bg: var(--code-bg);
@@ -983,7 +983,7 @@
     gap: var(--home-space-sm);
   }
   .settings-tools-count {
-    margin: var(--home-space-sm) 0 var(--home-space-sm);
+    margin: var(--home-space-xs) 0 var(--home-space-sm);
   }
   .settings-table-wrap {
     border: 1px solid hsl(var(--border));
@@ -1147,12 +1147,12 @@
     min-height: 0;
     overflow: hidden;
   }
-  /* Sidebar: macOS System Settings–style list (vibrancy, pill selection); 8px grid */
+  /* Sidebar: macOS System Settings–style list (vibrancy, pill selection); compact 8px grid */
   .settings-sidebar {
     flex-shrink: 0;
     width: var(--settings-sidebar-width);
-    padding: var(--home-space-md);
-    padding-bottom: var(--home-space-lg);
+    padding: var(--home-space-sm);
+    padding-bottom: var(--home-space-md);
     overflow-y: auto;
     background: hsl(var(--muted) / 0.4);
     border-right: 1px solid hsl(var(--border));
@@ -1183,7 +1183,7 @@
   }
 
   .settings-sidebar-title {
-    margin: 0 0 var(--home-space-md);
+    margin: 0 0 var(--home-space-sm);
     padding: 0 var(--home-space-sm);
     font-size: var(--text-ui);
     font-weight: 600;
@@ -1202,7 +1202,7 @@
     align-items: center;
     gap: var(--home-space-sm);
     width: 100%;
-    padding: var(--home-space-sm) var(--home-space-md);
+    padding: var(--home-space-xs) var(--home-space-sm);
     font-size: var(--text-ui);
     font-weight: 500;
     color: hsl(var(--muted-foreground));
@@ -1268,7 +1268,7 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--home-space-sm);
-    padding: var(--home-space-md) var(--home-space-xl);
+    padding: var(--home-space-sm) var(--home-space-lg);
     border-bottom: 1px solid hsl(var(--border) / 0.7);
   }
   html.desktop .settings-content-header {
@@ -1285,11 +1285,11 @@
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    padding: var(--home-space-xl) var(--home-space-xl) var(--home-space-2xl);
+    padding: var(--home-space-lg) var(--home-space-lg) var(--home-space-xl);
   }
   .settings-section {
     margin-bottom: 0;
-    padding-top: var(--home-space-xl);
+    padding-top: var(--home-space-lg);
     border-top: 1px solid hsl(var(--border) / 0.6);
   }
   html.desktop .settings-section {
@@ -1308,7 +1308,7 @@
   /* Checkbox in settings: visible border and background so it doesn’t blend with panel */
   /* Preferences components (generic, macOS-style): section, group, row, label, control, description */
   .pref-section {
-    padding-top: var(--home-space-xl);
+    padding-top: var(--home-space-lg);
     border-top: 1px solid hsl(var(--border) / 0.6);
   }
   html.desktop .pref-section {
@@ -1319,7 +1319,7 @@
     border-top: none;
   }
   .pref-section__heading {
-    margin: 0 0 var(--home-space-sm);
+    margin: 0 0 var(--home-space-xs);
     font-size: var(--text-caption);
     font-weight: 600;
     letter-spacing: 0.06em;
@@ -1329,7 +1329,7 @@
   .pref-section__content {
     display: flex;
     flex-direction: column;
-    gap: var(--home-space-md);
+    gap: var(--home-space-sm);
   }
   .pref-group {
     border-radius: var(--radius);
@@ -1352,12 +1352,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--home-space-md);
+    gap: var(--home-space-sm);
     min-height: var(--min-touch);
-    padding: var(--home-space-sm) var(--home-space-lg);
+    padding: var(--home-space-xs) var(--home-space-md);
   }
   .pref-group .pref-row {
-    padding: var(--home-space-sm) var(--home-space-lg);
+    padding: var(--home-space-xs) var(--home-space-md);
     min-height: var(--min-touch);
   }
   .pref-label {
@@ -1422,7 +1422,7 @@
   /* Scoped override: larger heading inside settings content body */
   .settings-content-body .settings-section-heading {
     font-size: var(--text-nav);
-    margin-bottom: var(--home-space-sm);
+    margin-bottom: var(--home-space-xs);
   }
   .settings-content-body .settings-section-heading svg {
     width: var(--text-content);
@@ -1436,7 +1436,7 @@
       min-height: min(70dvh, 24rem);
     }
     .settings-content-body {
-      padding: var(--home-space-md) var(--home-space-lg) var(--home-space-md);
+      padding: var(--home-space-sm) var(--home-space-md) var(--home-space-lg);
     }
   }
 
@@ -1541,14 +1541,14 @@
       flex: 1;
       min-height: 0;
       overflow-y: auto;
-      padding: var(--home-space-md) var(--home-space-md);
+      padding: var(--home-space-sm) var(--home-space-md);
       padding-left: max(var(--home-space-md), env(safe-area-inset-left));
       padding-right: max(var(--home-space-md), env(safe-area-inset-right));
-      padding-bottom: max(var(--home-space-2xl), env(safe-area-inset-bottom));
+      padding-bottom: max(var(--home-space-xl), env(safe-area-inset-bottom));
       -webkit-overflow-scrolling: touch;
     }
     .settings-section {
-      padding-top: var(--home-space-md);
+      padding-top: var(--home-space-sm);
       margin-bottom: 0;
     }
     .settings-section:first-child {
