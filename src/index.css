@@ -878,6 +878,9 @@
     margin-bottom: var(--spacing-section-mb);
     border-bottom: 1px solid hsl(var(--border));
   }
+  html.desktop .settings-tabs {
+    border-bottom-color: hsl(var(--glass-edge-subtle));
+  }
   .settings-tab {
     display: flex;
     align-items: center;
@@ -935,6 +938,9 @@
     background: hsl(var(--primary) / 0.12);
     box-shadow: 0 0 0 1px hsl(var(--primary));
   }
+  html.desktop .settings-option-card:not(.settings-option-card--selected) {
+    border-color: hsl(var(--glass-edge-subtle));
+  }
   .settings-section-heading {
     display: flex;
     align-items: center;
@@ -984,6 +990,10 @@
     border-radius: var(--settings-radius);
     overflow: auto;
     max-height: min(22rem, 55vh);
+  }
+  html.desktop .settings-table-wrap {
+    border-color: hsl(var(--glass-edge-subtle));
+    transition: border-color var(--transition-default);
   }
   .settings-table th, .settings-table td { font-size: var(--text-nav); }
   .settings-table--compact th, .settings-table--compact td {
@@ -1054,6 +1064,11 @@
     background: hsl(0 0% 0% / 0.5);
     cursor: pointer;
   }
+  html.desktop .settings-backdrop {
+    background: hsl(0 0% 0% / 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
   .settings-dialog {
     position: relative;
     z-index: 1;
@@ -1087,6 +1102,7 @@
   .settings-dialog-close {
     color: hsl(var(--muted-foreground));
     flex-shrink: 0;
+    transition: color var(--transition-default);
   }
   .settings-dialog-close:hover {
     color: hsl(var(--foreground));
@@ -1131,11 +1147,12 @@
     min-height: 0;
     overflow: hidden;
   }
-  /* Sidebar: macOS System Settings–style list (vibrancy, pill selection) */
+  /* Sidebar: macOS System Settings–style list (vibrancy, pill selection); 8px grid */
   .settings-sidebar {
     flex-shrink: 0;
     width: var(--settings-sidebar-width);
-    padding: var(--home-space-md) var(--home-space-sm) var(--home-space-lg);
+    padding: var(--home-space-md);
+    padding-bottom: var(--home-space-lg);
     overflow-y: auto;
     background: hsl(var(--muted) / 0.4);
     border-right: 1px solid hsl(var(--border));
@@ -1167,7 +1184,7 @@
 
   .settings-sidebar-title {
     margin: 0 0 var(--home-space-md);
-    padding: 0 var(--home-space-md);
+    padding: 0 var(--home-space-sm);
     font-size: var(--text-ui);
     font-weight: 600;
     color: hsl(var(--muted-foreground));
@@ -1212,6 +1229,7 @@
   }
   html.desktop .settings-category-item--selected {
     border-radius: 9999px;
+    box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / 0.15);
   }
   .settings-category-item--selected:hover {
     background: hsl(var(--primary) / 0.9);
@@ -1250,8 +1268,11 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--home-space-sm);
-    padding: var(--home-space-sm) var(--home-space-xl) var(--home-space-sm) var(--home-space-xl);
+    padding: var(--home-space-md) var(--home-space-xl);
     border-bottom: 1px solid hsl(var(--border) / 0.7);
+  }
+  html.desktop .settings-content-header {
+    border-bottom-color: hsl(var(--glass-edge-subtle));
   }
   .settings-panel-title {
     margin: 0;
@@ -1268,8 +1289,11 @@
   }
   .settings-section {
     margin-bottom: 0;
-    padding-top: var(--home-space-lg);
+    padding-top: var(--home-space-xl);
     border-top: 1px solid hsl(var(--border) / 0.6);
+  }
+  html.desktop .settings-section {
+    border-top-color: hsl(var(--glass-edge-subtle));
   }
   .settings-section:first-child {
     padding-top: 0;
@@ -1286,6 +1310,9 @@
   .pref-section {
     padding-top: var(--home-space-xl);
     border-top: 1px solid hsl(var(--border) / 0.6);
+  }
+  html.desktop .pref-section {
+    border-top-color: hsl(var(--glass-edge-subtle));
   }
   .pref-section:first-child {
     padding-top: 0;
@@ -1309,6 +1336,11 @@
     background: hsl(var(--muted) / 0.25);
     border: 1px solid hsl(var(--border) / 0.5);
     overflow: hidden;
+    transition: border-color var(--transition-default), background var(--transition-default);
+  }
+  html.desktop .pref-group {
+    border-color: hsl(var(--glass-edge-subtle));
+    box-shadow: inset 0 1px 0 0 hsl(var(--glass-highlight-subtle));
   }
   .pref-group .pref-row {
     border-bottom: 1px solid hsl(var(--border) / 0.4);
@@ -1321,12 +1353,12 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--home-space-md);
-    min-height: 2.75rem;
-    padding: 0 var(--home-space-lg);
+    min-height: var(--min-touch);
+    padding: var(--home-space-sm) var(--home-space-lg);
   }
   .pref-group .pref-row {
-    padding: 0 var(--home-space-lg);
-    min-height: 2.75rem;
+    padding: var(--home-space-sm) var(--home-space-lg);
+    min-height: var(--min-touch);
   }
   .pref-label {
     flex: 0 1 auto;
@@ -2146,6 +2178,9 @@
     color: hsl(var(--muted-foreground));
     line-height: 1.5;
   }
+  html.desktop .home-empty {
+    border-color: hsl(var(--glass-edge-subtle));
+  }
 
   /* Footer: caption typography, separator, safe-area bottom */
   .home-footer {
@@ -2169,6 +2204,10 @@
   }
 
   /* Card stagger (short duration, macOS-like) */
+  html.desktop .home-tool-card {
+    border-color: hsl(var(--glass-edge-subtle));
+    box-shadow: inset 0 1px 0 0 hsl(var(--glass-highlight-subtle));
+  }
   .home-content .home-tool-card {
     animation: home-card-in 0.22s var(--transition-ease) backwards;
   }
