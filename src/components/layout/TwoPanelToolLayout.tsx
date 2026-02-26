@@ -1,3 +1,4 @@
+/** Two-panel tool layout with resizable input/output panes, top section (errors/options), and default toolbar. */
 import { useMemo, useState, type ReactNode } from "react";
 import CodeEditor from "@/components/common/CodeEditor";
 import FileUploadButton from "@/components/common/FileUploadButton";

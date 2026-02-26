@@ -1,14 +1,16 @@
 import type React from "react";
+import { memo } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { PanelLeftClose, PanelLeftOpen, Settings } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/utils/cn";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import { useSettings } from "@/hooks/useSettings";
 
 const noDrag = { WebkitAppRegion: "no-drag" } as React.CSSProperties;
 
 /** Title bar: sidebar toggle, title, Settings. On Electron: drag region + optional window controls. */
-export function TitleBar() {
+export const TitleBar = memo(function TitleBar() {
   const location = useLocation();
   const { tools } = useToolEngine();
   const { sidebarCollapsed, toggleSidebar } = useSettings();
@@ -46,12 +48,12 @@ export function TitleBar() {
             { ariaLabel: "Minimize", className: "bg-[#febc2e]", onClick: () => win.minimize() },
             { ariaLabel: "Maximize", className: "bg-[#28c840]", onClick: () => win.maximize() },
           ].map((b) => (
-            <button key={b.ariaLabel} type="button" className={`w-3 h-3 rounded-full hover:opacity-80 active:opacity-70 transition-opacity ${b.className}`} onClick={b.onClick} aria-label={b.ariaLabel} />
+            <button key={b.ariaLabel} type="button" className={cn("w-3 h-3 rounded-full hover:opacity-80 active:opacity-70 transition-opacity", b.className)} onClick={b.onClick} aria-label={b.ariaLabel} />
           ))}
         </div>
       )}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-[var(--title-bar-padding-x)]">
-        <span className={`title-bar-title truncate max-w-full ${isMac ? "desktop-title-plain" : "title-tab"}`}>{title}</span>
+        <span className={cn("title-bar-title truncate max-w-full", isMac ? "desktop-title-plain" : "title-tab")}>{title}</span>
       </div>
       <div className="absolute top-0 bottom-0 right-0 flex items-center justify-end pr-[var(--title-bar-padding-x)] pointer-events-none [&>*]:pointer-events-auto" style={noDrag}>
         <Tooltip>
@@ -66,6 +68,6 @@ export function TitleBar() {
       <div className="title-bar-end-spacer shrink-0" style={noDrag} />
     </header>
   );
-}
+});
 
 export default TitleBar;

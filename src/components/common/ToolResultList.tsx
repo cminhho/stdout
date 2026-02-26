@@ -1,3 +1,4 @@
+/** Scrollable result list with title, count, and per-item render. */
 import type { ReactNode } from "react";
 import React, { memo } from "react";
 import { cn } from "@/utils/cn";

@@ -1,4 +1,5 @@
-import { useCallback, useId, useRef, useState } from "react";
+/** File upload button – accepts file(s) and passes content via onText or onSelect. */
+import { memo, useCallback, useId, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { cn } from "@/utils/cn";
@@ -23,7 +24,7 @@ export type FileUploadButtonProps = {
 /**
  * Generic file upload. Use onText for text content (component reads UTF-8); use onSelect when you need the File (e.g. images).
  */
-const FileUploadButton = ({
+const FileUploadButton = memo(function FileUploadButton({
   accept,
   onSelect,
   onText,
@@ -33,7 +34,7 @@ const FileUploadButton = ({
   disabled = false,
   multiple = false,
   variant = "outline",
-}: FileUploadButtonProps) => {
+}: FileUploadButtonProps) {
   const id = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
@@ -96,6 +97,6 @@ const FileUploadButton = ({
       </label>
     </span>
   );
-};
+});
 
 export default FileUploadButton;

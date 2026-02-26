@@ -1,3 +1,4 @@
+/** Single tool pane with optional header (title, toolbar, copy, clear) and body content. */
 import { memo } from "react";
 import PanelHeader from "@/components/layout/PanelHeader";
 import { ClearButton } from "@/components/common/ClearButton";

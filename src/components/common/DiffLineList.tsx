@@ -1,3 +1,4 @@
+/** Diff line list – renders added/removed/changed entries for payload or text comparison. */
 import { memo } from "react";
 import { cn } from "@/utils/cn";
 

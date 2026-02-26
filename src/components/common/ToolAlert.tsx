@@ -1,7 +1,13 @@
 import { memo } from "react";
+import { cva } from "class-variance-authority";
 import { cn } from "@/utils/cn";
 
 export type ToolAlertVariant = "error" | "success";
+
+const toolAlertVariants = cva("tool-alert", {
+  variants: { variant: { error: "tool-alert--error", success: "tool-alert--success" } },
+  defaultVariants: { variant: "error" },
+});
 
 export interface ToolAlertProps {
   variant: ToolAlertVariant;
@@ -25,11 +31,7 @@ export const ToolAlert = memo(function ToolAlert({ variant, message, className, 
   return (
     <div
       role="alert"
-      className={cn(
-        "tool-alert",
-        variant === "error" ? "tool-alert--error" : "tool-alert--success",
-        className
-      )}
+      className={cn(toolAlertVariants({ variant }), className)}
     >
       {p}
       {message}

@@ -1,3 +1,4 @@
+/** Clear button – triggers clear/reset action (e.g. clear input). */
 import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Eraser } from "lucide-react";

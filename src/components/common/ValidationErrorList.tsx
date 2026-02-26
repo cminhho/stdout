@@ -1,3 +1,4 @@
+/** List of parse/validation errors with line, column, message, and optional code snippet. */
 import { memo } from "react";
 import type { ParseError } from "@/utils/validationTypes";
 import { cn } from "@/utils/cn";

@@ -1,3 +1,4 @@
+/** Sample button – loads sample data into the tool (e.g. example JSON). */
 import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { FileCode } from "lucide-react";

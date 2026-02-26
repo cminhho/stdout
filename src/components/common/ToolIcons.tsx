@@ -1,3 +1,4 @@
+/** Tool icons – maps icon names to Lucide components for sidebar and tool pages. */
 import type { ElementType } from "react";
 import {
   Braces,

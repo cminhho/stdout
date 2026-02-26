@@ -1,3 +1,4 @@
+/** Save button – downloads content as file or triggers custom onClick. */
 import { memo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";

@@ -1,3 +1,4 @@
+/** Panel header – label, optional extra (toolbar/clear), and copy button. */
 import { memo } from "react";
 import CopyButton from "@/components/common/CopyButton";
 import { cn } from "@/utils/cn";

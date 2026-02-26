@@ -1,3 +1,4 @@
+/** Segment group – compact option group (e.g. CSV/JSON direction) with single selection. */
 import { forwardRef, memo, type Ref } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/utils/cn";

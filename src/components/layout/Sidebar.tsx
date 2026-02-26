@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { memo, useState, useMemo } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   ArrowLeftRight, Braces, CheckCircle2, ChevronRight, Code2, FileCode, Globe, Home, Image, Lock,
@@ -10,6 +10,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { cn } from "@/utils/cn";
 import { useSettings } from "@/hooks/useSettings";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import type { ToolGroup } from "@/tools/types";
@@ -36,14 +37,23 @@ function toSafeId(label: string): string {
 
 type SidebarItem = { path: string; icon: string; label: string };
 
-const SidebarNavItem = ({
+interface SidebarNavItemProps {
+  item: SidebarItem;
+  isActive: boolean;
+  onClick?: () => void;
+  onNavigate?: () => void;
+  onPrefetch?: () => void;
+  iconOnly?: boolean;
+}
+
+const SidebarNavItem = memo(function SidebarNavItem({
   item,
   isActive,
   onClick,
   onNavigate,
   onPrefetch,
   iconOnly = false,
-}: { item: SidebarItem; isActive: boolean; onClick?: () => void; onNavigate?: () => void; onPrefetch?: () => void; iconOnly?: boolean }) => {
+}: SidebarNavItemProps) {
   const Icon = getToolIcon(item.icon);
   return (
     <NavLink
@@ -54,27 +64,29 @@ const SidebarNavItem = ({
       }}
       onMouseEnter={() => onPrefetch?.()}
       onFocus={() => onPrefetch?.()}
-      className={`sidebar-link ${isActive ? "active" : ""} ${iconOnly ? "sidebar-link--icon-only justify-center" : ""}`}
+      className={cn("sidebar-link", isActive && "active", iconOnly && "sidebar-link--icon-only justify-center")}
     >
       <Icon className="h-4 w-4 shrink-0 opacity-90" />
       {!iconOnly && <span className="min-w-0 truncate">{item.label}</span>}
     </NavLink>
   );
-};
+});
 
-const SidebarGroupSection = ({
-  group,
-  searchQuery,
-  isToolVisible,
-  pathname,
-  onNavigate,
-}: {
+interface SidebarGroupSectionProps {
   group: ToolGroup;
   searchQuery: string;
   isToolVisible: (path: string) => boolean;
   pathname: string;
   onNavigate?: () => void;
-}) => {
+}
+
+const SidebarGroupSection = memo(function SidebarGroupSection({
+  group,
+  searchQuery,
+  isToolVisible,
+  pathname,
+  onNavigate,
+}: SidebarGroupSectionProps) {
   const [open, setOpen] = useState(true);
   const GroupIcon = groupIconMap[group.label] || Braces;
   const q = searchQuery.toLowerCase();
@@ -105,7 +117,7 @@ const SidebarGroupSection = ({
           <span className="sidebar-group-label truncate text-left">{group.label}</span>
         </span>
         <ChevronRight
-          className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-150 ${isOpen ? "rotate-90" : ""}`}
+          className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-150", isOpen && "rotate-90")}
           aria-hidden
         />
       </button>
@@ -124,7 +136,7 @@ const SidebarGroupSection = ({
       )}
     </section>
   );
-};
+});
 
 export interface SidebarProps {
   /** When expanded, use this width (px) so resizer can control it. */
@@ -133,7 +145,7 @@ export interface SidebarProps {
   isOverlay?: boolean;
 }
 
-export function Sidebar({ sidebarWidthPx, isOverlay = false }: SidebarProps) {
+export const Sidebar = memo(function Sidebar({ sidebarWidthPx, isOverlay = false }: SidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
@@ -161,7 +173,7 @@ export function Sidebar({ sidebarWidthPx, isOverlay = false }: SidebarProps) {
 
   return (
     <aside
-      className={`shrink-0 flex flex-col border-r border-sidebar-border min-h-0 overflow-hidden app-sidebar h-full min-h-0 sticky top-0 bg-sidebar ${isCollapsed ? "sidebar-collapsed" : ""} ${isOverlay ? "fixed left-0 top-0 bottom-0 z-50 shadow-xl" : ""}`}
+      className={cn("shrink-0 flex flex-col border-r border-sidebar-border min-h-0 overflow-hidden app-sidebar h-full min-h-0 sticky top-0 bg-sidebar", isCollapsed && "sidebar-collapsed", isOverlay && "fixed left-0 top-0 bottom-0 z-50 shadow-xl")}
       style={{ width, minWidth: width }}
       aria-expanded={!isCollapsed}
     >
@@ -187,13 +199,13 @@ export function Sidebar({ sidebarWidthPx, isOverlay = false }: SidebarProps) {
       )}
 
       <nav className="flex-1 min-h-0 sidebar-pad overflow-y-auto min-w-0 space-y-0.5" aria-label="Tools">
-        <div className={isCollapsed ? "border-b border-sidebar-border pb-1 mb-1" : "mb-1.5 pb-1.5 border-b border-sidebar-border"}>
+        <div className={cn("border-b border-sidebar-border", isCollapsed ? "pb-1 mb-1" : "mb-1.5 pb-1.5")}>
           <Tooltip>
             <TooltipTrigger asChild>
               <NavLink
                 to="/"
                 onClick={() => closeOnNavigate?.()}
-                className={`sidebar-link ${location.pathname === "/" ? "active" : ""} ${isCollapsed ? "sidebar-link--icon-only justify-center" : ""}`}
+                className={cn("sidebar-link", location.pathname === "/" && "active", isCollapsed && "sidebar-link--icon-only justify-center")}
                 end
               >
                 <Home className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
@@ -264,7 +276,7 @@ export function Sidebar({ sidebarWidthPx, isOverlay = false }: SidebarProps) {
               href="https://www.buymeacoffee.com/chungho"
               target="_blank"
               rel="noopener noreferrer"
-              className={`sidebar-donate-link ${isCollapsed ? "sidebar-donate-link--icon-only justify-center" : ""}`}
+              className={cn("sidebar-donate-link", isCollapsed && "sidebar-donate-link--icon-only justify-center")}
               title="Support the project — Buy me a coffee"
               aria-label="Buy me a coffee"
             >
@@ -277,6 +289,6 @@ export function Sidebar({ sidebarWidthPx, isOverlay = false }: SidebarProps) {
       </footer>
     </aside>
   );
-}
+});
 
 export default Sidebar;

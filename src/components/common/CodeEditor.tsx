@@ -1,4 +1,6 @@
-import { useRef, useCallback, useEffect, useMemo } from "react";
+/** Code editor – textarea with optional line numbers, syntax highlighting, and error line markers. */
+import { memo, useRef, useCallback, useEffect, useMemo } from "react";
+import { cn } from "@/utils/cn";
 
 export type Language =
   | "json"
@@ -29,7 +31,7 @@ export interface CodeEditorChangeMeta {
   lineCount: number;
 }
 
-interface CodeEditorProps {
+export interface CodeEditorProps {
   /** Current editor content (controlled). */
   value: string;
   /** Called on content change. Second arg provides lines array for line-by-line consumers. */
@@ -388,7 +390,7 @@ function useCodeEditorScrollSync(
 
 // ── Component ────────────────────────────────────────────────────────
 
-const CodeEditor = ({
+const CodeEditor = memo(function CodeEditor({
   value,
   onChange,
   language = "json",
@@ -401,7 +403,7 @@ const CodeEditor = ({
   showLineNumbers = true,
   customContent,
   ariaLabel,
-}: CodeEditorProps) => {
+}: CodeEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const highlightRef = useRef<HTMLDivElement>(null);
   const gutterRef = useRef<HTMLDivElement>(null);
@@ -446,7 +448,7 @@ const CodeEditor = ({
   if (customContent != null) {
     return (
       <div
-        className={`code-editor-wrapper relative z-0 overflow-hidden ${fillHeight ? "h-full min-h-0" : ""} ${className}`}
+        className={cn("code-editor-wrapper relative z-0 overflow-hidden", fillHeight && "h-full min-h-0", className)}
         data-language={language}
         style={fillHeight ? { height: "100%", minHeight: 0 } : undefined}
       >
@@ -466,7 +468,7 @@ const CodeEditor = ({
 
   return (
     <div
-      className={`code-editor-wrapper relative z-0 overflow-hidden ${fillHeight ? "h-full min-h-0" : ""} ${className}`}
+      className={cn("code-editor-wrapper relative z-0 overflow-hidden", fillHeight && "h-full min-h-0", className)}
       data-language={language}
       style={fillHeight ? { height: "100%", minHeight: 0 } : undefined}
     >
@@ -556,6 +558,6 @@ const CodeEditor = ({
       />
     </div>
   );
-};
+});
 
 export default CodeEditor;
