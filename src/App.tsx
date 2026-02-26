@@ -46,7 +46,7 @@ const ToolRoutes = () => {
   }, [location.pathname, tools]);
 
   useEffect(() => {
-    const menu = (window as { electronAPI?: { menu?: { onOpenSettings: (cb: () => void) => () => void; onCheckUpdates: (cb: () => void) => () => void } } }).electronAPI?.menu;
+    const menu = window.electronAPI?.menu;
     if (!menu) return;
     const unsubSettings = menu.onOpenSettings(() => navigate("/settings"));
     const unsubCheck = menu.onCheckUpdates(() => navigate("/settings?checkUpdates=1"));
