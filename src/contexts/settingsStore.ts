@@ -1,18 +1,7 @@
 import { createContext } from "react";
+import type { Theme, SidebarMode, SettingsState } from "@/types/settings";
 
-export type Theme = "dark" | "light" | "deep-dark" | "system";
-export type SidebarMode = "grouped" | "flat";
-
-export interface SettingsState {
-  theme: Theme;
-  sidebarMode: SidebarMode;
-  sidebarCollapsed: boolean;
-  /** Sidebar width in px when expanded (resizable). Clamped on load. */
-  sidebarWidth: number;
-  hiddenTools: string[];
-  editorFont: string;
-  wordWrap: boolean;
-}
+export type { Theme, SidebarMode, SettingsState };
 
 export interface SettingsContextType extends SettingsState {
   setTheme: (t: Theme) => void;

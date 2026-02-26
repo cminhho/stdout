@@ -6,9 +6,10 @@ import { X } from "lucide-react";
 import ToolLayout from "@/components/layout/ToolLayout";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/utils/cn";
+import type { SettingsTabId, UpdateCheckState } from "@/types/settings";
 import { getCurrentVersion, fetchLatestRelease, isNewerVersion, type LatestRelease } from "@/utils/version";
-import { DEFAULT_TITLE, SETTINGS_TABS, type SettingsTabId } from "./constants";
-import SettingsGeneralPanel, { type UpdateCheckState } from "./SettingsGeneralPanel";
+import { DEFAULT_TITLE, SETTINGS_TABS } from "./constants";
+import SettingsGeneralPanel from "./SettingsGeneralPanel";
 import SettingsAppearancePanel from "./SettingsAppearancePanel";
 import SettingsToolsPanel from "./SettingsToolsPanel";
 
