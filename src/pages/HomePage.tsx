@@ -138,20 +138,13 @@ const HomePage = () => {
             </section>
           )}
 
-          {/* Tools: search + grid (industry: filter on home) */}
+          {/* Tools: one bar = label + search + count (wraps on small screens) */}
           <section className="home-tools-section" aria-labelledby="home-tools-heading">
             <div className="home-tools-header sticky top-0 z-10 home-tools-header-margin">
-              <div className="flex flex-col gap-3">
-                <div className="home-tools-header-row flex flex-wrap items-center justify-between gap-2">
-                  <h2 id="home-tools-heading" className="home-section-label shrink-0">
-                    All tools
-                  </h2>
-                  <p className="text-[var(--text-nav)] text-muted-foreground shrink-0" aria-live="polite">
-                    {filteredTools.length === visibleTools.length
-                      ? `${visibleTools.length} of ${tools.length} visible`
-                      : `${filteredTools.length} of ${visibleTools.length} match`}
-                  </p>
-                </div>
+              <div className="home-tools-header-inner">
+                <h2 id="home-tools-heading" className="home-section-label">
+                  All tools
+                </h2>
                 <div className="home-tools-search-wrap relative flex items-center">
                   <Search className="absolute left-3 h-4 w-4 shrink-0 text-muted-foreground pointer-events-none sm:left-2.5" aria-hidden />
                   <Input
@@ -177,6 +170,11 @@ const HomePage = () => {
                     </Button>
                   )}
                 </div>
+                <p className="home-tools-count text-[var(--text-nav)] text-muted-foreground shrink-0" aria-live="polite">
+                  {filteredTools.length === visibleTools.length
+                    ? `${visibleTools.length} of ${tools.length} visible`
+                    : `${filteredTools.length} of ${visibleTools.length} match`}
+                </p>
               </div>
             </div>
 
