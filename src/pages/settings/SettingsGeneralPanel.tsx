@@ -11,12 +11,11 @@ import {
 } from "@/components/ui/select";
 import { useSettings } from "@/hooks/useSettings";
 import { useToolEngine } from "@/hooks/useToolEngine";
-import { PrefSection, PrefGroup, PrefRow } from "@/components/preferences";
+import { PrefSection, PrefGroup, PrefRow } from "@/components/settings";
 import { SITE } from "@/site";
+import type { UpdateCheckState } from "@/types/settings";
 import type { LatestRelease } from "@/utils/version";
 import { UPDATE_BUTTON_LOADING_LABEL, UPDATE_BUTTON_LABEL } from "./constants";
-
-export type UpdateCheckState = "idle" | "loading" | "current" | "available" | "error";
 
 type ElectronUpdaterStatus = "idle" | "checking" | "available" | "downloading" | "downloaded" | "not-available" | "error";
 

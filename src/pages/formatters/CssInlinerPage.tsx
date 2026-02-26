@@ -1,12 +1,12 @@
 import { useMemo, useState } from "react";
-import CodeEditor from "@/components/CodeEditor";
-import FileUploadButton from "@/components/FileUploadButton";
-import ResizableTwoPanel from "@/components/ResizableTwoPanel";
-import ToolPane, { type PaneProps } from "@/components/ToolPane";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
-import { SaveButton } from "@/components/SaveButton";
-import ToolLayout from "@/components/ToolLayout";
+import CodeEditor from "@/components/common/CodeEditor";
+import FileUploadButton from "@/components/common/FileUploadButton";
+import ResizableTwoPanel from "@/components/layout/ResizableTwoPanel";
+import ToolPane, { type PaneProps } from "@/components/layout/ToolPane";
+import { ClearButton } from "@/components/common/ClearButton";
+import { SampleButton } from "@/components/common/SampleButton";
+import { SaveButton } from "@/components/common/SaveButton";
+import ToolLayout from "@/components/layout/ToolLayout";
 import {
   CSS_INLINER_CSS_ACCEPT,
   CSS_INLINER_CSS_PLACEHOLDER,

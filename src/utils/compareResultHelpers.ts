@@ -1,4 +1,4 @@
-import type { DiffLineEntry } from "@/components/DiffLineList";
+import type { DiffLineEntry } from "@/components/common/DiffLineList";
 
 /**
  * Shared helpers for two-panel compare tools (Payload Comparator, Schema Diff).

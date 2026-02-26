@@ -1,3 +1,4 @@
+/** Tool icons – maps icon names to Lucide components for sidebar and tool pages. */
 import type { ElementType } from "react";
 import {
   Braces,
@@ -52,7 +53,7 @@ import {
   ScrollText,
 } from "lucide-react";
 
-/** Single source of truth for tool icon names → Lucide component. Used by HomePage grid and AppSidebar. */
+/** Single source of truth for tool icon names → Lucide component. Used by HomePage grid and Sidebar. */
 export const toolIconMap: Record<string, ElementType> = {
   Braces,
   Type,

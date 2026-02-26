@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { RefreshCw } from "lucide-react";
 
-import ToolLayout from "@/components/ToolLayout";
-import ToolPane from "@/components/ToolPane";
-import ToolAlert from "@/components/ToolAlert";
+import ToolLayout from "@/components/layout/ToolLayout";
+import ToolPane from "@/components/layout/ToolPane";
+import ToolAlert from "@/components/common/ToolAlert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import CopyButton from "@/components/CopyButton";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
+import CopyButton from "@/components/common/CopyButton";
+import { ClearButton } from "@/components/common/ClearButton";
+import { SampleButton } from "@/components/common/SampleButton";
 import { luhnCheck, generateCardNumber, CARD_BRANDS } from "@/utils/creditcard";
 
 const SAMPLE_CARD = "4532015112830366";

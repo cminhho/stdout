@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
 import { Button } from "@/components/ui/button";
 
 function getSampleInput(): string {

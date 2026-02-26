@@ -1,5 +1,6 @@
+/** Top section for two-panel tools: format error alert, validation error list, and optional custom content. */
 import { memo, type ReactNode } from "react";
-import ValidationErrorList from "@/components/ValidationErrorList";
+import ValidationErrorList from "@/components/common/ValidationErrorList";
 import { cn } from "@/utils/cn";
 import type { ParseError } from "@/utils/validationTypes";
 

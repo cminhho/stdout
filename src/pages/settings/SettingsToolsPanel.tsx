@@ -4,7 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { useSettings } from "@/hooks/useSettings";
 import { useToolEngine } from "@/hooks/useToolEngine";
-import { PrefSection } from "@/components/preferences";
+import { PrefSection } from "@/components/settings";
 import { SEARCH_PLACEHOLDER, SHOW_ALL_LABEL } from "./constants";
 
 const SettingsToolsPanel = () => {

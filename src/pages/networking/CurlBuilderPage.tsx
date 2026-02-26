@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 
-import { ClearButton } from "@/components/ClearButton";
-import CodeEditor from "@/components/CodeEditor";
-import CopyButton from "@/components/CopyButton";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import { ClearButton } from "@/components/common/ClearButton";
+import CodeEditor from "@/components/common/CodeEditor";
+import CopyButton from "@/components/common/CopyButton";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

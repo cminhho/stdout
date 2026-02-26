@@ -1,10 +1,10 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { RefreshCw } from "lucide-react";
 
-import CopyButton from "@/components/CopyButton";
-import ResizableTwoPanel from "@/components/ResizableTwoPanel";
-import ToolLayout from "@/components/ToolLayout";
-import TwoPanelTopSection from "@/components/TwoPanelTopSection";
+import CopyButton from "@/components/common/CopyButton";
+import ResizableTwoPanel from "@/components/layout/ResizableTwoPanel";
+import ToolLayout from "@/components/layout/ToolLayout";
+import TwoPanelTopSection from "@/components/layout/TwoPanelTopSection";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { formatDateRows, unixToDate, isoToDate, getCommonRefs, setCurrentTimeValues } from "@/utils/timestamp";

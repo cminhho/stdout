@@ -2,7 +2,7 @@
  * Shared XML format/minify for use in XmlFormatterPage, XsdGeneratorPage, XsltTransformerPage.
  */
 
-import type { IndentOption } from "@/components/IndentSelect";
+import type { IndentOption } from "@/components/common/IndentSelect";
 import type { ParseError } from "@/utils/validationTypes";
 import { singleErrorToParseErrors } from "@/utils/validationTypes";
 import { validateXml } from "@/utils/validators";

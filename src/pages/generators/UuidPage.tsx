@@ -1,12 +1,12 @@
 import { useState, useCallback } from "react";
-import ToolLayout from "@/components/ToolLayout";
-import ToolPane from "@/components/ToolPane";
-import CodeEditor from "@/components/CodeEditor";
+import ToolLayout from "@/components/layout/ToolLayout";
+import ToolPane from "@/components/layout/ToolPane";
+import CodeEditor from "@/components/common/CodeEditor";
 import { SelectWithOptions } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ClearButton } from "@/components/ClearButton";
+import { ClearButton } from "@/components/common/ClearButton";
 
 const UUID_VERSION_OPTIONS = [
   { value: "v1", label: "v1" },

@@ -1,12 +1,12 @@
 import { useState, useMemo } from "react";
-import ToolLayout from "@/components/ToolLayout";
-import ToolPane from "@/components/ToolPane";
+import ToolLayout from "@/components/layout/ToolLayout";
+import ToolPane from "@/components/layout/ToolPane";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import CopyButton from "@/components/CopyButton";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
+import CopyButton from "@/components/common/CopyButton";
+import { ClearButton } from "@/components/common/ClearButton";
+import { SampleButton } from "@/components/common/SampleButton";
 import { NUMBER_BASE_OPTIONS, NUMBER_BASE_PLACEHOLDER, parseFromBase, convertToAllBases } from "@/utils/numberBase";
 
 const EMPTY_MESSAGE = "Enter a number.";

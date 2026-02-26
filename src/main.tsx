@@ -3,7 +3,7 @@ import App from "./App.tsx";
 import "./index.css";
 
 /* Register PWA service worker for web only (offline cache). Skip in Electron. */
-const electronAPI = typeof window !== "undefined" ? (window as { electronAPI?: { platform?: string } }).electronAPI : undefined;
+const electronAPI = typeof window !== "undefined" ? window.electronAPI : undefined;
 if (typeof window !== "undefined" && !electronAPI) {
   import("virtual:pwa-register").then(({ registerSW }) => registerSW({ immediate: true })).catch(() => {});
 }

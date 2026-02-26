@@ -1,6 +1,7 @@
+/** Single tool pane with optional header (title, toolbar, copy, clear) and body content. */
 import { memo } from "react";
-import PanelHeader from "@/components/PanelHeader";
-import { ClearButton } from "@/components/ClearButton";
+import PanelHeader from "@/components/layout/PanelHeader";
+import { ClearButton } from "@/components/common/ClearButton";
 import { cn } from "@/utils/cn";
 
 const PANEL_BODY_INNER_BASE =

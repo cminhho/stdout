@@ -1,14 +1,12 @@
 import type { LucideIcon } from "lucide-react";
 import { Settings, Palette, Wrench } from "lucide-react";
-import type { Theme, SidebarMode } from "@/contexts/settingsStore";
+import type { SettingsTabId, Theme, SidebarMode } from "@/types/settings";
 
 export const DEFAULT_TITLE = "Settings";
 export const UPDATE_BUTTON_LOADING_LABEL = "Checking…";
 export const UPDATE_BUTTON_LABEL = "Check for updates";
 export const SEARCH_PLACEHOLDER = "Search tools...";
 export const SHOW_ALL_LABEL = "Show All";
-
-export type SettingsTabId = "general" | "appearance" | "tools";
 
 export const SETTINGS_TABS: {
   id: SettingsTabId;

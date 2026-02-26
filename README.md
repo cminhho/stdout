@@ -9,6 +9,7 @@
 </p>
 
 <p align="center">
+  <a href="#screenshots">Screenshots</a> •
   <a href="#features">Features</a> •
   <a href="#why-stdout">Why Stdout</a> •
   <a href="#philosophy">Philosophy</a> •
@@ -41,6 +42,18 @@
 ## Overview
 
 **Stdout** is a client-side developer tools app for formatting, converting, encoding, and generating data. It runs in the browser or as a desktop app. No backend, no signup, no data collection — everything stays on your machine. Use it to format JSON/XML/HTML, convert units and encodings, generate test data, and more. 59 tools in one place, works offline.
+
+---
+
+## Screenshots
+
+<p align="center">
+  <img src="docs/stdout-json-format.png" style="width: 100%; height: auto;" alt="JSON Format/Validate — input and pretty-printed output" />
+</p>
+
+<p align="center">
+  <img src="docs/stdout-random-string-generator.png" style="width: 100%; height: auto;" alt="Random String Generator — options and generated strings" />
+</p>
 
 ---
 

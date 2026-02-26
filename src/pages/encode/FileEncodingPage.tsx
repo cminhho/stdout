@@ -1,13 +1,13 @@
 import { useState, useMemo, useCallback } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import CodeEditor from "@/components/CodeEditor";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
+import CodeEditor from "@/components/common/CodeEditor";
 import { Label } from "@/components/ui/label";
-import ToolAlert from "@/components/ToolAlert";
-import { SegmentGroup } from "@/components/SegmentGroup";
+import ToolAlert from "@/components/common/ToolAlert";
+import { SegmentGroup } from "@/components/common/SegmentGroup";
 import { SelectWithOptions } from "@/components/ui/select";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
-import FileUploadButton from "@/components/FileUploadButton";
+import { ClearButton } from "@/components/common/ClearButton";
+import { SampleButton } from "@/components/common/SampleButton";
+import FileUploadButton from "@/components/common/FileUploadButton";
 import {
   FILE_ENCODING_LABELS,
   decodeBytes,

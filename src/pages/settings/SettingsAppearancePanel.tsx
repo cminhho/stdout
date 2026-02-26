@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PrefSection, PrefGroup, PrefRow, PrefDescription } from "@/components/preferences";
+import { PrefSection, PrefGroup, PrefRow, PrefDescription } from "@/components/settings";
 import type { Theme, SidebarMode } from "@/contexts/settingsStore";
 import { THEMES, EDITOR_FONTS } from "./constants";
 

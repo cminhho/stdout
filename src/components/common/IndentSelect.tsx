@@ -1,3 +1,4 @@
+/** Indent select – spaces (2/4/8), tab, or minified for formatters. */
 import { memo, useCallback } from "react";
 import {
   Select,

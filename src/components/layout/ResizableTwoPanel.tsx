@@ -1,8 +1,9 @@
-import { useMemo, useRef } from "react";
+/** Resizable two-pane layout: input | resizer | output; side-by-side on lg+, stacked below. */
+import { memo, useMemo, useRef } from "react";
 
-import PanelResizer from "@/components/PanelResizer";
-import ToolPane from "@/components/ToolPane";
-import type { PaneProps } from "@/components/ToolPane";
+import PanelResizer from "@/components/layout/PanelResizer";
+import ToolPane from "@/components/layout/ToolPane";
+import type { PaneProps } from "@/components/layout/ToolPane";
 import { useHorizontalResize, useVerticalResize } from "@/hooks/useResizeSplit";
 import { useIsLg } from "@/hooks/useMediaQuery";
 import { cn } from "@/utils/cn";
@@ -25,7 +26,7 @@ export interface ResizableTwoPanelProps {
  * Resizable two-pane layout: input | resizer | output.
  * Side-by-side on lg+; stacked with horizontal resizer below lg.
  */
-const ResizableTwoPanel = ({
+const ResizableTwoPanel = memo(function ResizableTwoPanel({
   input,
   output,
   defaultInputPercent = 50,
@@ -33,7 +34,7 @@ const ResizableTwoPanel = ({
   maxInputPercent = 80,
   resizerWidth,
   className,
-}: ResizableTwoPanelProps) => {
+}: ResizableTwoPanelProps) {
   const isLg = useIsLg();
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -109,6 +110,6 @@ const ResizableTwoPanel = ({
       />
     </div>
   );
-};
+});
 
 export default ResizableTwoPanel;

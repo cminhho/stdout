@@ -1,13 +1,14 @@
-import { useCallback, useState } from "react";
+/** Copy button – copies text to clipboard and shows brief “Copied” state. */
+import { memo, useCallback, useState } from "react";
 import { Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-interface CopyButtonProps {
+export interface CopyButtonProps {
   text: string;
   className?: string;
 }
 
-const CopyButton = ({ text, className }: CopyButtonProps) => {
+const CopyButton = memo(function CopyButton({ text, className }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
   const handleCopy = useCallback(async () => {
     await navigator.clipboard.writeText(text);
@@ -21,6 +22,7 @@ const CopyButton = ({ text, className }: CopyButtonProps) => {
       {copied ? "Copied" : "Copy"}
     </Button>
   );
-};
+});
 
+export { CopyButton };
 export default CopyButton;

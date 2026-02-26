@@ -1,3 +1,4 @@
+/** Panel resizer – accessible resizer bar between two panels (horizontal when stacked, vertical when side-by-side). */
 import { memo } from "react";
 import { cn } from "@/utils/cn";
 

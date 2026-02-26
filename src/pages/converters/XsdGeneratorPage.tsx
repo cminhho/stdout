@@ -1,5 +1,5 @@
 import { useState } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
 import {
   processXmlToXsd,
   XSD_GENERATOR_FILE_ACCEPT,

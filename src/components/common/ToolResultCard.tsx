@@ -1,6 +1,7 @@
+/** Result card for tool output – optional summary, copy button, and content. */
 import type { ReactNode } from "react";
 import { memo } from "react";
-import CopyButton from "@/components/CopyButton";
+import CopyButton from "@/components/common/CopyButton";
 import { cn } from "@/utils/cn";
 
 export interface ToolResultCardProps {

@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
 import { SelectWithOptions } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 

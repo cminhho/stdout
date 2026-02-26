@@ -1,24 +1,25 @@
+/** Clear button – triggers clear/reset action (e.g. clear input). */
 import { memo } from "react";
 import { Button } from "@/components/ui/button";
-import { FileCode } from "lucide-react";
+import { Eraser } from "lucide-react";
 
-export interface SampleButtonProps {
+export interface ClearButtonProps {
   onClick: () => void;
   disabled?: boolean;
   className?: string;
   variant?: React.ComponentProps<typeof Button>["variant"];
 }
 
-export const SampleButton = memo(function SampleButton({
+export const ClearButton = memo(function ClearButton({
   onClick,
   disabled,
   className,
   variant = "outline",
-}: SampleButtonProps) {
+}: ClearButtonProps) {
   return (
     <Button type="button" size="xs" variant={variant} className={className} onClick={onClick} disabled={disabled}>
-      <FileCode className="h-3.5 w-3.5" />
-      Sample
+      <Eraser className="h-3.5 w-3.5" />
+      Clear
     </Button>
   );
 });

@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
 import { SelectWithOptions } from "@/components/ui/select";
-import type { IndentOption } from "@/components/IndentSelect";
+import type { IndentOption } from "@/components/common/IndentSelect";
 import {
   processAsciiArtForLayout,
   type AsciiArtCharStyle,

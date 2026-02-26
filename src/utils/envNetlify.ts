@@ -2,7 +2,7 @@
  * .env to Netlify/Docker/YAML converter. Single place for parsing and format logic.
  */
 
-import type { IndentOption } from "@/components/IndentSelect";
+import type { IndentOption } from "@/components/common/IndentSelect";
 
 export const ENV_NETLIFY_FILE_ACCEPT = ".env,.env.*,text/plain";
 export const ENV_NETLIFY_SAMPLE = `# Database

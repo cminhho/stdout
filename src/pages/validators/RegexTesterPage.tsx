@@ -1,9 +1,9 @@
 import { useState, useMemo } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import CodeEditor from "@/components/CodeEditor";
-import ToolAlert from "@/components/ToolAlert";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
+import CodeEditor from "@/components/common/CodeEditor";
+import ToolAlert from "@/components/common/ToolAlert";
 import { Input } from "@/components/ui/input";
-import CopyButton from "@/components/CopyButton";
+import CopyButton from "@/components/common/CopyButton";
 
 const SAMPLE_TEST_STRING = "Order placed on 2024-01-15\nShipped on 2024-02-20\nDelivered 2024-03-01\nNo date here";
 

@@ -1,3 +1,4 @@
+/** Options button – icon trigger and popover for complex/multiple tool options. */
 import { memo } from "react";
 import { SlidersHorizontal } from "lucide-react";
 

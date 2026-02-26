@@ -2,7 +2,7 @@
  * JavaScript formatter: beautify, minify. Single place for JS formatter logic.
  */
 
-import type { IndentOption } from "@/components/IndentSelect";
+import type { IndentOption } from "@/components/common/IndentSelect";
 import { jsBeautify } from "@/utils/beautifier";
 import { jsMinify } from "@/utils/minify";
 

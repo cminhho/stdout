@@ -1,9 +1,9 @@
 import { useState, useEffect, type ReactNode } from "react";
 import { RefreshCw } from "lucide-react";
 
-import { ClearButton } from "@/components/ClearButton";
-import CodeEditor from "@/components/CodeEditor";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import { ClearButton } from "@/components/common/ClearButton";
+import CodeEditor from "@/components/common/CodeEditor";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";

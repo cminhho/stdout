@@ -1,4 +1,6 @@
-import { useRef, useCallback, useEffect, useMemo } from "react";
+/** Code editor – textarea with optional line numbers, syntax highlighting, and error line markers. */
+import { memo, useRef, useCallback, useEffect, useMemo } from "react";
+import { cn } from "@/utils/cn";
 
 export type Language =
   | "json"
@@ -29,7 +31,7 @@ export interface CodeEditorChangeMeta {
   lineCount: number;
 }
 
-interface CodeEditorProps {
+export interface CodeEditorProps {
   /** Current editor content (controlled). */
   value: string;
   /** Called on content change. Second arg provides lines array for line-by-line consumers. */
@@ -331,8 +333,6 @@ const getTokenizer = (lang: Language) => {
   }
 };
 
-/* Min width of line number column; must match --code-gutter-min-width in CSS. */
-
 /* Token colors from CSS variables (key, string green, number orange, boolean/keyword purple, comment gray) */
 const tokenColors: Record<Token["type"], string> = {
   key: "hsl(var(--code-key))",
@@ -389,11 +389,8 @@ function useCodeEditorScrollSync(
 }
 
 // ── Component ────────────────────────────────────────────────────────
-// Line-by-line friendly: lines/tokenizedLines are memoized from value; onChange optionally
-// receives meta.lines so parents can update by line without re-splitting. Stable keys (L0, L1…)
-// keep reconciliation predictable when only some lines change.
 
-const CodeEditor = ({
+const CodeEditor = memo(function CodeEditor({
   value,
   onChange,
   language = "json",
@@ -406,7 +403,7 @@ const CodeEditor = ({
   showLineNumbers = true,
   customContent,
   ariaLabel,
-}: CodeEditorProps) => {
+}: CodeEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const highlightRef = useRef<HTMLDivElement>(null);
   const gutterRef = useRef<HTMLDivElement>(null);
@@ -446,14 +443,12 @@ const CodeEditor = ({
   );
 
   const gutterWidth = showLineNumbers ? Math.max(String(lines.length).length * 10 + 16, 36) : 0;
-  const contentPaddingLeft = gutterWidth + 12; /* 12px matches --spacing-code-editor (0.75rem) */
-
-  /* Styling: .code-editor-wrapper in index.css (--code-*, --spacing-code-editor, --radius). */
+  const contentPaddingLeft = gutterWidth + 12;
 
   if (customContent != null) {
     return (
       <div
-        className={`code-editor-wrapper relative z-0 overflow-hidden ${fillHeight ? "h-full min-h-0" : ""} ${className}`}
+        className={cn("code-editor-wrapper relative z-0 overflow-hidden", fillHeight && "h-full min-h-0", className)}
         data-language={language}
         style={fillHeight ? { height: "100%", minHeight: 0 } : undefined}
       >
@@ -473,7 +468,7 @@ const CodeEditor = ({
 
   return (
     <div
-      className={`code-editor-wrapper relative z-0 overflow-hidden ${fillHeight ? "h-full min-h-0" : ""} ${className}`}
+      className={cn("code-editor-wrapper relative z-0 overflow-hidden", fillHeight && "h-full min-h-0", className)}
       data-language={language}
       style={fillHeight ? { height: "100%", minHeight: 0 } : undefined}
     >
@@ -563,6 +558,6 @@ const CodeEditor = ({
       />
     </div>
   );
-};
+});
 
 export default CodeEditor;

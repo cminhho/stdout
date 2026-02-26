@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import ToolAlert from "@/components/ToolAlert";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
+import ToolAlert from "@/components/common/ToolAlert";
 import { parseJsonToTable, JSON_TABLE_FILE_ACCEPT, JSON_TABLE_SAMPLE, JSON_TABLE_PLACEHOLDER } from "@/utils/jsonTable";
 
 const JsonTablePage = () => {

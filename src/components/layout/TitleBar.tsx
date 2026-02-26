@@ -1,17 +1,26 @@
 import type React from "react";
+import { memo, useMemo } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { PanelLeftClose, PanelLeftOpen, Settings } from "lucide-react";
+import { PanelLeftClose, PanelLeftOpen, Settings, Sun, Moon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/utils/cn";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import { useSettings } from "@/hooks/useSettings";
 
 const noDrag = { WebkitAppRegion: "no-drag" } as React.CSSProperties;
 
 /** Title bar: sidebar toggle, title, Settings. On Electron: drag region + optional window controls. */
-const WindowTitleBar = () => {
+export const TitleBar = memo(function TitleBar() {
   const location = useLocation();
   const { tools } = useToolEngine();
-  const { sidebarCollapsed, toggleSidebar } = useSettings();
+  const { theme, setTheme, sidebarCollapsed, toggleSidebar } = useSettings();
+  const isDark = useMemo(() => {
+    if (theme === "light") return false;
+    if (theme === "dark" || theme === "deep-dark") return true;
+    return typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }, [theme]);
+  const toggleTheme = () => setTheme(isDark ? "light" : "dark");
+
   const electron = typeof window !== "undefined" ? window.electronAPI : undefined;
   const isMac = electron?.platform === "darwin";
   const win = electron?.window;
@@ -46,14 +55,27 @@ const WindowTitleBar = () => {
             { ariaLabel: "Minimize", className: "bg-[#febc2e]", onClick: () => win.minimize() },
             { ariaLabel: "Maximize", className: "bg-[#28c840]", onClick: () => win.maximize() },
           ].map((b) => (
-            <button key={b.ariaLabel} type="button" className={`w-3 h-3 rounded-full hover:opacity-80 active:opacity-70 transition-opacity ${b.className}`} onClick={b.onClick} aria-label={b.ariaLabel} />
+            <button key={b.ariaLabel} type="button" className={cn("w-3 h-3 rounded-full hover:opacity-80 active:opacity-70 transition-opacity", b.className)} onClick={b.onClick} aria-label={b.ariaLabel} />
           ))}
         </div>
       )}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-[var(--title-bar-padding-x)]">
-        <span className={`title-bar-title truncate max-w-full ${isMac ? "desktop-title-plain" : "title-tab"}`}>{title}</span>
+        <span className={cn("title-bar-title truncate max-w-full", isMac ? "desktop-title-plain" : "title-tab")}>{title}</span>
       </div>
-      <div className="absolute top-0 bottom-0 right-0 flex items-center justify-end pr-[var(--title-bar-padding-x)] pointer-events-none [&>*]:pointer-events-auto" style={noDrag}>
+      <div className="absolute top-0 bottom-0 right-0 flex items-center justify-end gap-0.5 pr-[var(--title-bar-padding-x)] pointer-events-none [&>*]:pointer-events-auto" style={noDrag}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="btn-icon-chrome btn-icon-chrome-sm shrink-0"
+              aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+            >
+              {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">{isDark ? "Light theme" : "Dark theme"}</TooltipContent>
+        </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
             <NavLink to="/settings" className="btn-icon-chrome btn-icon-chrome-sm shrink-0" aria-label="Settings">
@@ -66,6 +88,6 @@ const WindowTitleBar = () => {
       <div className="title-bar-end-spacer shrink-0" style={noDrag} />
     </header>
   );
-};
+});
 
-export default WindowTitleBar;
+export default TitleBar;

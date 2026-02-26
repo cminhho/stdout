@@ -2,7 +2,7 @@
  * JWT decode/inspect. Single place for decode logic and constants.
  */
 
-import type { IndentOption } from "@/components/IndentSelect";
+import type { IndentOption } from "@/components/common/IndentSelect";
 import { singleErrorToParseErrors } from "@/utils/validationTypes";
 
 export const JWT_DECODE_FILE_ACCEPT = ".txt,text/plain";

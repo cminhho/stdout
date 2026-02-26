@@ -2,7 +2,7 @@
  * CSV → XML converter. Single place for conversion logic and constants.
  */
 
-import type { IndentOption } from "@/components/IndentSelect";
+import type { IndentOption } from "@/components/common/IndentSelect";
 import { singleErrorToParseErrors } from "@/utils/validationTypes";
 
 export const CSV_XML_FILE_ACCEPT = ".csv,text/csv";

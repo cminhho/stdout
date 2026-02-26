@@ -1,5 +1,5 @@
 import { useRef, useState, useMemo, useCallback } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 

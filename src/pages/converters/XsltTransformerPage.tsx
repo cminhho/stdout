@@ -1,12 +1,12 @@
 import { useState, useMemo } from "react";
-import ToolLayout from "@/components/ToolLayout";
-import ResizableTwoPanel from "@/components/ResizableTwoPanel";
-import TwoPanelTopSection from "@/components/TwoPanelTopSection";
-import CodeEditor from "@/components/CodeEditor";
-import FileUploadButton from "@/components/FileUploadButton";
-import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
-import { ClearButton } from "@/components/ClearButton";
-import { SampleButton } from "@/components/SampleButton";
+import ToolLayout from "@/components/layout/ToolLayout";
+import ResizableTwoPanel from "@/components/layout/ResizableTwoPanel";
+import TwoPanelTopSection from "@/components/layout/TwoPanelTopSection";
+import CodeEditor from "@/components/common/CodeEditor";
+import FileUploadButton from "@/components/common/FileUploadButton";
+import IndentSelect, { type IndentOption } from "@/components/common/IndentSelect";
+import { ClearButton } from "@/components/common/ClearButton";
+import { SampleButton } from "@/components/common/SampleButton";
 import { formatXml, minifyXml } from "@/utils/xmlFormat";
 import {
   transformWithXslt,

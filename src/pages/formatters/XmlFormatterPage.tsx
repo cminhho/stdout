@@ -1,5 +1,5 @@
 import { useState } from "react";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
 import {
   XML_FILE_ACCEPT,
   XML_FORMATTER_SAMPLE,

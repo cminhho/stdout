@@ -2,7 +2,7 @@
  * XML to JSON and JSON to XML (attributes in @, text in #text).
  */
 
-import type { IndentOption } from "@/components/IndentSelect";
+import type { IndentOption } from "@/components/common/IndentSelect";
 import type { ParseError } from "@/utils/validationTypes";
 import { singleErrorToParseErrors } from "@/utils/validationTypes";
 

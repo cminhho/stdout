@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
-import CodeEditor from "@/components/CodeEditor";
-import IndentSelect, { type IndentOption } from "@/components/IndentSelect";
+import CodeEditor from "@/components/common/CodeEditor";
+import IndentSelect, { type IndentOption } from "@/components/common/IndentSelect";
 import { SelectWithOptions, type SelectOption } from "@/components/ui/select";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
-import { SaveButton } from "@/components/SaveButton";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
+import { SaveButton } from "@/components/common/SaveButton";
 import {
   type SqlDialect,
   type SqlIdentifierCase,

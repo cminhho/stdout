@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import QRCode from "qrcode";
-import TwoPanelToolLayout from "@/components/TwoPanelToolLayout";
+import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
 import { Button } from "@/components/ui/button";
 
 const SAMPLE_CONTENT = "https://example.com";
