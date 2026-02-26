@@ -715,6 +715,7 @@
     font-family: var(--font-mono);
     font-size: var(--code-font-size);
     line-height: var(--code-line-height);
+    transition: border-color var(--transition-default), background var(--transition-default);
   }
   .code-editor-wrapper .code-editor-pad {
     padding: var(--spacing-code-editor);
@@ -810,6 +811,7 @@
     overflow: hidden;
     margin: 0;
     padding: 0;
+    transition: border-color var(--transition-default), background-color var(--transition-default);
   }
 
   /* Resize panels separator: width/height 0, only border line visible; hit area via padding. */
@@ -850,7 +852,7 @@
     min-height: var(--panel-resizer-width);
   }
 
-  /* Two-panel top section (alerts, validation, options): panel-style border + bg (VS Code message area) */
+  /* Two-panel top section (alerts, validation, options): panel-style; transition for Liquid Glass consistency */
   .tool-layout-top-section {
     padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
     display: flex;
@@ -860,6 +862,7 @@
     min-height: 0;
     overflow: auto;
     max-height: min(40vh, 20rem);
+    transition: border-color var(--transition-default), background-color var(--transition-default);
   }
   .tool-layout-format-error {
     padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
@@ -1147,6 +1150,21 @@
     box-shadow: inset 1px 0 0 0 hsl(var(--glass-highlight-subtle));
     transition: background var(--transition-default), backdrop-filter var(--transition-default), border-color var(--transition-default), box-shadow var(--transition-default);
   }
+
+  /* Liquid Glass: overlays (Popover, Select, Tooltip) – specular, tint, consistent with menus */
+  html.desktop .glass-overlay {
+    border-color: hsl(var(--glass-edge-subtle));
+    box-shadow:
+      0 4px 16px hsl(0 0% 0% / 0.2),
+      inset 0 1px 0 0 hsl(var(--glass-highlight-subtle));
+    background:
+      linear-gradient(145deg, hsl(var(--glass-tint)) 0%, transparent 45%),
+      hsl(var(--popover));
+    backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
+    -webkit-backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
+    transition: background var(--transition-default), border-color var(--transition-default), box-shadow var(--transition-default), backdrop-filter var(--transition-default);
+  }
+
   .settings-sidebar-title {
     margin: 0 0 var(--home-space-md);
     padding: 0 var(--home-space-md);
@@ -1669,7 +1687,7 @@
     color: inherit;
   }
 
-  /* Sidebar search: macOS-style radius, 8px grid, glass-like input */
+  /* Sidebar search: macOS-style radius, 8px grid; Liquid Glass border on desktop */
   .sidebar-search {
     height: var(--sidebar-search-height);
     padding: 0 var(--home-space-sm) 0 1.75rem;
@@ -1678,7 +1696,11 @@
     border: 1px solid hsl(var(--sidebar-border));
     background: hsl(var(--sidebar-accent) / 0.5);
     color: hsl(var(--sidebar-foreground));
-    transition: border-color var(--transition-default), box-shadow var(--transition-default);
+    transition: border-color var(--transition-default), box-shadow var(--transition-default), background var(--transition-default);
+  }
+  html.desktop .sidebar-search {
+    border-color: hsl(var(--glass-edge-subtle));
+    background: hsl(var(--sidebar-accent) / 0.35);
   }
   .sidebar-search::placeholder {
     color: hsl(var(--muted-foreground));
