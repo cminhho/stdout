@@ -904,6 +904,43 @@
     min-height: 0;
   }
 
+  /* Panel header: title + actions row; token spacing, compact on mobile */
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-block-gap);
+    min-height: var(--spacing-sidebar-header-h);
+    padding-top: var(--spacing-panel-inner-y);
+    padding-bottom: 0;
+  }
+  .panel-header .panel-header-label {
+    min-width: 0;
+    flex: 1 1 0%;
+  }
+  .panel-header-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--home-space-sm);
+    flex-shrink: 0;
+  }
+  @media (max-width: 639px) {
+    .panel-header {
+      gap: var(--home-space-sm);
+      min-height: 1.5rem;
+    }
+    .panel-header .panel-header-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .panel-header-actions {
+      gap: var(--home-space-xs);
+    }
+  }
+
   /* Panel header label: VS Code–style small, uppercase, letter-spacing */
   .panel-header-label {
     font-size: var(--text-nav);

@@ -13,17 +13,22 @@ interface PanelHeaderProps {
 }
 
 /**
- * Panel header: label, extra (toolbar + optional clear), copy. Padding matches pane body.
+ * Panel header: label, extra (toolbar + optional clear), copy. Padding matches pane body. Mobile: compact gap, label truncates.
  */
 const PanelHeader = memo(function PanelHeader({ label, text, extra, className }: PanelHeaderProps) {
   return (
-    <div className={cn("flex items-center justify-between flex-wrap min-h-[var(--spacing-sidebar-header-h)] pt-[var(--spacing-panel-inner-y)] pb-0", className ?? "px-[var(--spacing-panel-inner-x)]")}>
-      <span className="panel-header-label select-none">{label}</span>
-      <div className="flex items-center gap-1.5 flex-wrap">
+    <header
+      className={cn(
+        "panel-header select-none",
+        className ?? "pl-[var(--spacing-panel-inner-x)] pr-[var(--spacing-panel-inner-x)]"
+      )}
+    >
+      <span className="panel-header-label">{label}</span>
+      <div className="panel-header-actions">
         {extra}
         {text !== undefined ? <CopyButton text={text} /> : null}
       </div>
-    </div>
+    </header>
   );
 });
 
