@@ -121,9 +121,9 @@ const LogGeneratorPage = () => {
     copyText: output || undefined,
     onClear: () => setOutput(""),
     toolbar: (
-      <div className="flex items-center gap-2 flex-wrap">
-        <div className="flex items-center gap-1.5">
-          <Label className="tool-field-label shrink-0">Format</Label>
+      <div className="flex items-center gap-[var(--spacing-block-gap)] flex-wrap">
+        <div className="flex items-center gap-2">
+          <span className="tool-caption shrink-0">Format</span>
           <SelectWithOptions
             size="xs"
             variant="secondary"
@@ -132,30 +132,43 @@ const LogGeneratorPage = () => {
             options={LOG_FORMATS.map((f) => ({ value: f.id, label: f.name }))}
             title="Log format"
             aria-label="Log format"
+            triggerClassName="cursor-pointer min-h-touch sm:min-h-0 transition-colors duration-150"
           />
         </div>
         {format === "json" && (
-          <div className="flex items-center gap-1.5">
-            <Label className="tool-field-label shrink-0">Indent</Label>
+          <div className="flex items-center gap-2">
+            <span className="tool-caption shrink-0">Indent</span>
             <IndentSelect value={indent} onChange={setIndent} />
           </div>
         )}
-        <div className="flex items-center gap-1.5">
-          <Label className="tool-field-label shrink-0">Lines</Label>
+        <div className="flex items-center gap-2">
+          <Label htmlFor="log-lines" className="tool-caption shrink-0">
+            Lines
+          </Label>
           <Input
+            id="log-lines"
             type="number"
             min={1}
             max={10000}
             value={count}
             onChange={(e) => setCount(Math.max(1, Math.min(10000, Number(e.target.value) || 1)))}
-            className="h-7 w-20 font-mono text-xs"
+            className="input-compact w-20"
+            aria-label="Number of log lines"
           />
         </div>
-        <Button size="xs" className="h-7 text-xs" onClick={generate}>
+        <Button
+          size="xs"
+          onClick={generate}
+          className="cursor-pointer min-h-touch sm:min-h-0 transition-colors duration-150"
+        >
           Generate
         </Button>
         {output ? (
-          <SaveButton label="Save .log" onClick={download} className="h-7 text-xs" />
+          <SaveButton
+            label="Save .log"
+            onClick={download}
+            className="cursor-pointer min-h-touch sm:min-h-0 transition-colors duration-150"
+          />
         ) : null}
       </div>
     ),

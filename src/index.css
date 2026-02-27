@@ -95,11 +95,11 @@
     --code-punctuation: 215 9% 62%;
     --code-comment: 215 9% 48%;
     --code-tag: 0 70% 65%;           /* HTML/XML tag name (VS Code–style) */
-    /* Random string view: digit / upper / lower / symbol (industry practice: distinct, scannable) */
-    --code-rs-digit: 38 92% 55%;     /* amber – digits */
-    --code-rs-upper: 199 89% 48%;   /* cyan – uppercase */
-    --code-rs-lower: 142 69% 58%;   /* green – lowercase */
-    --code-rs-symbol: 215 9% 58%;   /* muted – symbols */
+    /* Random string: digit / upper / lower / symbol (macOS + Liquid Glass–friendly, WCAG AA) */
+    --code-rs-digit: 36 85% 52%;    /* warm amber – digits */
+    --code-rs-upper: 197 72% 52%;  /* cyan – uppercase */
+    --code-rs-lower: 145 52% 58%;  /* green – lowercase */
+    --code-rs-symbol: 220 12% 58%; /* muted slate – symbols */
     --code-gutter-foreground: 215 9% 48%; /* line number gutter (muted) */
     --code-line-height: 1.5;         /* unitless, editor line height */
     --code-font-size: var(--text-content);      /* 14px */
@@ -305,11 +305,11 @@
     --code-punctuation: 25 15% 42%;
     --code-comment: 25 10% 52%;
     --code-tag: 0 60% 42%;
-    /* Random string view (light): darker shades for contrast on white */
-    --code-rs-digit: 32 85% 42%;
-    --code-rs-upper: 199 70% 36%;
-    --code-rs-lower: 142 45% 32%;
-    --code-rs-symbol: 25 15% 42%;
+    /* Random string (light): darker shades for contrast on white, macOS-style */
+    --code-rs-digit: 32 78% 38%;
+    --code-rs-upper: 197 65% 32%;
+    --code-rs-lower: 145 40% 28%;
+    --code-rs-symbol: 25 12% 42%;
     --code-gutter-foreground: 25 10% 52%;
 
     --outline-button-bg: 0 0% 100%;
@@ -414,11 +414,11 @@
     --code-punctuation: 0 0% 58%;
     --code-comment: 0 0% 48%;
     --code-tag: 0 70% 65%;
-    /* Random string view (deep dark): same semantics, OLED-safe */
-    --code-rs-digit: 38 92% 55%;
-    --code-rs-upper: 199 89% 48%;
-    --code-rs-lower: 142 69% 58%;
-    --code-rs-symbol: 0 0% 58%;
+    /* Random string (deep dark): same semantics, OLED-safe, refined */
+    --code-rs-digit: 36 85% 52%;
+    --code-rs-upper: 197 72% 52%;
+    --code-rs-lower: 145 52% 58%;
+    --code-rs-symbol: 0 0% 56%;
     --code-gutter-foreground: 0 0% 48%;
 
     --outline-button-bg: 0 0% 14%;

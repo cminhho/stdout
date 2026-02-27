@@ -264,7 +264,7 @@ const tokenizeCode = (line: string): Token[] => {
 
 const tokenizePlain = (line: string): Token[] => [{ type: "text", value: line }];
 
-/** Random string / password view: colorize digits, uppercase, lowercase, symbols (industry practice for readability). */
+/** Random string / password: tokenize digits, uppercase, lowercase, symbols (industry practice for scannability). */
 const REGEX_RANDOMSTRING = /(\d+)|([A-Z]+)|([a-z]+)|([^0-9A-Za-z]+)/g;
 
 const tokenizeRandomString = (line: string): Token[] => {
@@ -349,7 +349,7 @@ const tokenColors: Record<Token["type"], string> = {
   text: "hsl(var(--foreground))",
 };
 
-/* Random string view: distinct colors per character type (digit / upper / lower / symbol) for quick scan */
+/* Random string: distinct colors per character type (digit / upper / lower / symbol). Uses --code-rs-* (macOS + Liquid Glass–friendly, WCAG AA). */
 const randomStringTokenColors: Record<Token["type"], string> = {
   ...tokenColors,
   number: "hsl(var(--code-rs-digit))",
