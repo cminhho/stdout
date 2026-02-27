@@ -27,7 +27,7 @@ export const ToolResultCard = memo(function ToolResultCard({
   const hasHeader = summary != null || copyText != null;
 
   return (
-    <div className={cn("tool-card m-4", className)}>
+    <div className={cn("tool-card tool-card--spaced", className)}>
       {hasHeader && (
         <div className="flex items-center justify-between gap-[var(--spacing-block-gap)] mb-[var(--spacing-block-gap)]">
           {summary != null ? (

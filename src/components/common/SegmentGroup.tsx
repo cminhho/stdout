@@ -48,7 +48,7 @@ function SegmentGroupInner<T extends string>(
       role="group"
       aria-label={ariaLabel}
       className={cn(
-        "inline-flex h-7 items-center rounded-md border border-outlineButton-border bg-segment-bg p-0.5",
+        "segment-group inline-flex items-center gap-0",
         className
       )}
     >
@@ -60,7 +60,7 @@ function SegmentGroupInner<T extends string>(
             type="button"
             variant={isActive ? "default" : "ghost"}
             size={size}
-            className="min-w-0 !h-6 px-2 text-xs"
+            className="min-w-0 text-xs"
             aria-pressed={isActive}
             disabled={disabled}
             onClick={() => onValueChange(option.value)}

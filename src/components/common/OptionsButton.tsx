@@ -40,7 +40,7 @@ const OptionsButton = memo(function OptionsButton({
           {icon ?? <SlidersHorizontal className="h-3.5 w-3.5" />}
         </Button>
       </PopoverTrigger>
-      <PopoverContent align={align} className={cn("w-56 p-3", contentClassName)}>
+      <PopoverContent align={align} className={cn("w-56 options-button-content", contentClassName)}>
         {children}
       </PopoverContent>
     </Popover>

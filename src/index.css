@@ -646,6 +646,9 @@
     background: transparent;
     border-color: hsl(var(--border));
   }
+  .tool-card--spaced {
+    margin: var(--spacing-section-mb);
+  }
 
   .tool-textarea {
     @apply w-full rounded-xl border font-mono leading-relaxed resize-y transition-colors duration-150;
@@ -740,7 +743,56 @@
     color: hsl(var(--status-success));
   }
 
-  /* Code editor: VS Code–style panel (workbench editor surface) */
+  /* Common components: macOS-style spacing (8px grid, --home-space-* / --spacing-*) */
+  .segment-group {
+    padding: var(--home-space-2xs);
+    min-height: 1.75rem;
+    border-radius: var(--radius);
+    border: 1px solid hsl(var(--segment-border));
+    background: hsl(var(--segment-bg));
+  }
+  .segment-group button {
+    min-height: 1.5rem;
+    padding-left: var(--home-space-sm);
+    padding-right: var(--home-space-sm);
+  }
+  .options-button-content {
+    padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
+  }
+  .validation-error-list {
+    gap: var(--spacing-block-gap);
+  }
+  .validation-error-list__item {
+    padding: var(--home-space-sm) var(--home-space-inner);
+    border-radius: var(--radius);
+    border: 1px solid hsl(var(--destructive) / 0.25);
+    border-left-width: 2px;
+    border-left-color: hsl(var(--destructive));
+    background: hsl(var(--destructive) / 0.05);
+  }
+  .validation-error-list__item .validation-error-list__meta {
+    gap: var(--home-space-xs) var(--home-space-sm);
+  }
+  .validation-error-list__item .validation-error-list__meta + pre {
+    margin-top: var(--home-space-xs);
+  }
+  .diff-line-list {
+    gap: var(--home-space-xs);
+  }
+  .diff-line-list__row {
+    gap: var(--home-space-xs) var(--home-space-sm);
+  }
+  .tool-result-list__header {
+    padding: var(--home-space-xs) var(--home-space-sm);
+  }
+  .tool-result-list__item {
+    padding: var(--home-space-sm);
+  }
+  .file-upload-button__inner {
+    gap: var(--home-space-sm);
+  }
+
+  /* Code editor: VS Code–style panel, macOS/Liquid Glass alignment (8px grid, --spacing-code-editor) */
   .code-editor-wrapper {
     background: hsl(var(--workbench-editor-bg));
     border: 1px solid hsl(var(--code-border));
@@ -752,6 +804,17 @@
   }
   .code-editor-wrapper .code-editor-pad {
     padding: var(--spacing-code-editor);
+  }
+  .code-editor-wrapper .code-editor-gutter {
+    padding-top: var(--spacing-code-editor);
+    padding-bottom: var(--spacing-code-editor);
+  }
+  .code-editor-wrapper .code-editor-gutter__cell {
+    padding-right: var(--home-space-sm);
+  }
+  /* Content area left = gutter width + this padding (matches --spacing-code-editor for alignment) */
+  .code-editor-wrapper .code-editor-content {
+    padding-left: var(--spacing-code-editor);
   }
 
   /* Use with grid/flex for consistent gap from --spacing-grid-gap */
@@ -896,6 +959,52 @@
     overflow: auto;
     max-height: min(40vh, 20rem);
     transition: border-color var(--transition-default), background-color var(--transition-default);
+  }
+  /* Top section form: macOS-style 8px grid (label+control rows, consistent gaps) */
+  .tool-top-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-section-mb);
+  }
+  .tool-top-form-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-block-gap);
+  }
+  .tool-top-form-field {
+    display: flex;
+    align-items: center;
+    gap: var(--home-space-sm);
+  }
+  /* Inline label in top form: no bottom margin, match control height for vertical center */
+  .tool-top-form-field .tool-field-label {
+    margin-bottom: 0;
+    line-height: 1.75rem;
+    display: inline-block;
+  }
+  /* Mobile: compact top section, label + control centered */
+  @media (max-width: 639px) {
+    .tool-top-form {
+      gap: var(--home-space-sm);
+    }
+    .tool-top-form-row {
+      flex-direction: column;
+      gap: var(--home-space-sm);
+      align-items: stretch;
+    }
+    .tool-top-form-field {
+      justify-content: center;
+      gap: var(--home-space-sm);
+    }
+  }
+  /* Output pane content: alert + editor stack with token gap */
+  .tool-output-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    gap: var(--spacing-block-gap);
   }
   .tool-layout-format-error {
     padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
@@ -1932,6 +2041,46 @@
     min-height: var(--min-touch);
   }
 
+  /* Page-level: 404 and standalone pages (macOS/Liquid Glass alignment) */
+  .page-not-found {
+    display: flex;
+    min-height: 100dvh;
+    align-items: center;
+    justify-content: center;
+    padding: var(--home-space-xl);
+    padding-left: max(var(--home-space-xl), env(safe-area-inset-left));
+    padding-right: max(var(--home-space-xl), env(safe-area-inset-right));
+  }
+  .page-not-found-inner {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-section-mb);
+  }
+  .page-not-found-title {
+    margin: 0;
+    font-size: var(--text-hero);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: hsl(var(--foreground));
+  }
+  .page-not-found-message {
+    margin: 0;
+    font-size: var(--text-content);
+    color: hsl(var(--muted-foreground));
+  }
+  .page-not-found-link {
+    font-size: var(--text-ui);
+    font-weight: 500;
+    color: hsl(var(--primary));
+    text-underline-offset: 0.2em;
+    transition: color var(--transition-default);
+  }
+  .page-not-found-link:hover {
+    color: hsl(var(--primary) / 0.9);
+  }
+
   /* Home hub: layout – max-width, center, 8px grid, safe-area (notched devices) */
   .home-main {
     padding-left: env(safe-area-inset-left);
@@ -2010,8 +2159,14 @@
     text-transform: uppercase;
     color: hsl(var(--muted-foreground));
   }
+  .home-intro-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--home-space-sm);
+  }
   .home-intro p,
-  .home-intro .space-y-2 {
+  .home-intro .space-y-2,
+  .home-intro .home-intro-text {
     font-size: var(--text-content);
     color: hsl(var(--muted-foreground));
     line-height: 1.5;
@@ -2235,6 +2390,18 @@
   }
   html.desktop .home-empty {
     border-color: hsl(var(--glass-edge-subtle));
+  }
+  .home-empty-actions {
+    margin-top: var(--spacing-section-mb);
+  }
+  .home-empty-actions .home-empty-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--home-space-sm);
+  }
+  .home-tool-card-arrow {
+    right: var(--home-space-sm);
+    top: var(--home-space-sm);
   }
 
   /* Footer: macOS-style caption, separator, safe-area bottom; glass edge on desktop */

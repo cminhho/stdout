@@ -39,7 +39,7 @@ const ToolCardLink = ({
       className="home-tool-card group relative rounded-[var(--radius)] border border-border bg-card text-left cursor-pointer transition-[background-color,border-color,box-shadow] duration-[var(--transition-duration)] ease-[var(--transition-ease)] hover:border-border hover:bg-[hsl(var(--muted)/0.4)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:bg-[hsl(var(--muted)/0.5)] min-h-touch"
       style={{ animationDelay: `${index * 20}ms` }}
     >
-      <span className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100 sm:h-6 sm:w-6" aria-hidden>
+      <span className="home-tool-card-arrow absolute flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100 sm:h-6 sm:w-6" aria-hidden>
         <ChevronRight className="h-4 w-4" />
       </span>
       <Icon className="home-tool-card-icon h-7 w-7 shrink-0 text-foreground opacity-90" aria-hidden />
@@ -97,7 +97,7 @@ const HomePage = () => {
               <h2 id="home-about-heading" className="home-intro-heading">
                 About this toolkit
               </h2>
-              <div className="space-y-2">
+              <div className="home-intro-text">
                 <p>
                   Developer toolkit hub for everyday dev tasks. No backend, no data sent to any server.
                 </p>
@@ -183,28 +183,31 @@ const HomePage = () => {
                 <p>
                   No tools visible. Enable tools in Settings to see them here.
                 </p>
-                <Link
-                  to="/settings"
-                  className="mt-4 inline-flex items-center gap-1.5 text-[var(--text-ui)] font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded px-2 py-1"
-                >
-                  Open Settings
-                  <ChevronRight className="h-4 w-4" />
-                </Link>
+                <div className="home-empty-actions">
+                  <Link
+                    to="/settings"
+                    className="home-empty-link text-[var(--text-ui)] font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded px-2 py-1"
+                  >
+                    Open Settings
+                    <ChevronRight className="h-4 w-4" />
+                  </Link>
+                </div>
               </div>
             ) : showNoResults ? (
               <div className="home-empty home-no-results border border-border bg-card text-center" role="status">
                 <p>
                   No tools match &ldquo;{searchQuery.trim()}&rdquo;. Clear search or enable more tools in Settings.
                 </p>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="mt-4"
-                  onClick={clearSearch}
-                >
-                  Clear search
-                </Button>
+                <div className="home-empty-actions">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={clearSearch}
+                  >
+                    Clear search
+                  </Button>
+                </div>
               </div>
             ) : (
               <ul className="grid grid-cols-1 tool-content-grid home-tools-grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 list-none p-0 m-0" role="list">
