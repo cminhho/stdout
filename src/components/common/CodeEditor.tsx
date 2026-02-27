@@ -21,7 +21,8 @@ export type Language =
   | "java"
   | "kotlin"
   | "plaintext"
-  | "randomstring";
+  | "randomstring"
+  | "log";
 
 /** Metadata passed when content changes; useful for line-by-line handling without re-splitting. */
 export interface CodeEditorChangeMeta {
@@ -288,6 +289,37 @@ const tokenizeRandomString = (line: string): Token[] => {
   return tokens;
 };
 
+/** Log lines: timestamps, IPs, log levels, HTTP methods, status codes, quoted strings, app names (Apache, Nginx, Syslog, JSON, Docker). */
+const REGEX_LOG =
+  /("(?:[^"\\]|\\.)*")|(\d{4}-\d{2}-\d{2}T[\d.:Z+-]+)|(\[\d{2}\/\w+\/\d{4}:\d{2}:\d{2}:\d{2}[^\]]*\]|\d{2}:\d{2}:\d{2})|(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|(\b(?:INFO|WARN|WARNING|ERROR|DEBUG|emerg|alert|crit|err|notice|info|debug)\b)|(\b(?:GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\b)|(\b\d{3}\b)|(\b\d+\b)|([\[\]<>])|([|:,-])|([a-zA-Z][a-zA-Z0-9_.-]*(?:\.[a-zA-Z0-9_.-]+)*)|(\S+)/g;
+
+const tokenizeLog = (line: string): Token[] => {
+  const tokens: Token[] = [];
+  REGEX_LOG.lastIndex = 0;
+  let match: RegExpExecArray | null;
+  let lastIndex = 0;
+  while ((match = REGEX_LOG.exec(line)) !== null) {
+    if (match.index > lastIndex) {
+      tokens.push({ type: "text", value: line.slice(lastIndex, match.index) });
+    }
+    if (match[1]) tokens.push({ type: "string", value: match[1] });
+    else if (match[2] || match[3]) tokens.push({ type: "key", value: match[2] ?? match[3]! });
+    else if (match[4]) tokens.push({ type: "keyword", value: match[4] });
+    else if (match[5] || match[6]) tokens.push({ type: "keyword", value: match[5] ?? match[6]! });
+    else if (match[7]) tokens.push({ type: "keyword", value: match[7] });
+    else if (match[8] || match[9]) tokens.push({ type: "number", value: match[8] ?? match[9]! });
+    else if (match[10]) tokens.push({ type: "bracket", value: match[10] });
+    else if (match[11]) tokens.push({ type: "punctuation", value: match[11] });
+    else if (match[12]) tokens.push({ type: "tag", value: match[12] });
+    else if (match[13]) tokens.push({ type: "text", value: match[13] });
+    lastIndex = REGEX_LOG.lastIndex;
+  }
+  if (lastIndex < line.length) {
+    tokens.push({ type: "text", value: line.slice(lastIndex) });
+  }
+  return tokens;
+};
+
 /** cURL / terminal command: curl, options (-X, -H, -d, -v, -L, -k, --*), quoted strings, HTTP methods, URLs */
 const tokenizeCurl = (line: string): Token[] => {
   const tokens: Token[] = [];
@@ -328,6 +360,7 @@ const getTokenizer = (lang: Language) => {
     case "curl": return tokenizeCurl;
     case "javascript": case "typescript": case "go": case "java": case "kotlin": return tokenizeCode;
     case "randomstring": return tokenizeRandomString;
+    case "log": return tokenizeLog;
     case "text": case "plaintext": return tokenizePlain;
     default: return tokenizePlain;
   }
@@ -357,6 +390,14 @@ const randomStringTokenColors: Record<Token["type"], string> = {
   string: "hsl(var(--code-rs-lower))",
   punctuation: "hsl(var(--code-rs-symbol))",
   text: "hsl(var(--foreground))",
+};
+
+/* Log view: timestamp, level/method, number, string, tag (app name). Uses --code-log-* (macOS + Liquid Glass–friendly). */
+const logTokenColors: Record<Token["type"], string> = {
+  ...tokenColors,
+  key: "hsl(var(--code-log-timestamp))",
+  keyword: "hsl(var(--code-log-level))",
+  tag: "hsl(var(--code-log-app))",
 };
 
 // ── Hooks ───────────────────────────────────────────────────────────
@@ -524,7 +565,11 @@ const CodeEditor = memo(function CodeEditor({
                   <span
                     key={j}
                     style={{
-                      color: (language === "randomstring" ? randomStringTokenColors : tokenColors)[token.type],
+                      color: (language === "randomstring"
+                        ? randomStringTokenColors
+                        : language === "log"
+                          ? logTokenColors
+                          : tokenColors)[token.type],
                     }}
                   >
                     {token.value}

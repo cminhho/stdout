@@ -2,12 +2,15 @@ import { useState } from "react";
 import ToolLayout from "@/components/layout/ToolLayout";
 import ToolPane from "@/components/layout/ToolPane";
 import CodeEditor from "@/components/common/CodeEditor";
+import FileUploadButton from "@/components/common/FileUploadButton";
 import { SelectWithOptions } from "@/components/ui/select";
 import IndentSelect, { type IndentOption } from "@/components/common/IndentSelect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SaveButton } from "@/components/common/SaveButton";
+
+const LOG_FILE_ACCEPT = ".log,.txt,text/plain";
 
 const LOG_FORMATS = [
   {
@@ -163,6 +166,12 @@ const LogGeneratorPage = () => {
         >
           Generate
         </Button>
+        <FileUploadButton
+          accept={LOG_FILE_ACCEPT}
+          onText={setOutput}
+          variant="outline"
+          buttonClassName="cursor-pointer min-h-touch sm:min-h-0 transition-colors duration-150"
+        />
         {output ? (
           <SaveButton
             label="Save .log"
@@ -177,7 +186,7 @@ const LogGeneratorPage = () => {
         <CodeEditor
           value={output}
           readOnly
-          language="text"
+          language="log"
           placeholder="Click Generate to create log data..."
           fillHeight
           showLineNumbers={false}
