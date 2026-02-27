@@ -247,16 +247,14 @@
     --desktop-layout-end: 224 13% 12%;
   }
 
-  /* Light theme: Liquid Glass style – frosted panels, slate-900/600 contrast, visible borders (ui-ux-pro-max) */
   .light {
     color-scheme: light;
-    /* Background: soft off-white for glass layering; foreground slate-900 (4.5:1+) */
-    --background: 220 20% 97%;
-    --foreground: 222 47% 11%;
+    /* Warm neutrals (25°), WCAG AA on background; elevated surfaces pure white */
+    --background: 25 20% 97%;
+    --foreground: 25 25% 18%;
 
-    /* Card/panels: white/90 for Liquid Glass (bg-white/80+); visible on light */
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 25 25% 18%;
 
     --popover: var(--card);
     --popover-foreground: var(--card-foreground);
@@ -264,11 +262,11 @@
     --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 92%;
-    --secondary-foreground: 222 47% 14%;
+    --secondary: 25 15% 90%;
+    --secondary-foreground: 25 25% 22%;
 
-    --muted: 220 14% 94%;
-    --muted-foreground: 215 20% 37%;
+    --muted: 25 15% 92%;
+    --muted-foreground: 25 15% 42%;
 
     --accent: var(--primary);
     --accent-foreground: var(--primary-foreground);
@@ -276,76 +274,77 @@
     --destructive: 0 72% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Border: gray-200 visible in light (ui-ux-pro-max) */
-    --border: 220 13% 91%;
-    --input: 220 13% 93%;
+    --border: 25 12% 88%;
+    --input: 25 12% 91%;
     --input-bg: 0 0% 100%;
-    --segment-bg: 220 14% 94%;
-    --segment-border: 220 13% 88%;
+    --segment-bg: 25 15% 92%;
+    --segment-border: 25 12% 85%;
     --ring: 221 83% 53%;
 
     --radius: 0.625rem;
 
-    /* Sidebar: light glass base (blur applied in .app-sidebar) */
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 47% 11%;
+    --sidebar-background: 25 18% 94%;
+    --sidebar-foreground: 25 25% 22%;
     --sidebar-primary: 221 83% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 14% 94%;
-    --sidebar-accent-foreground: 222 47% 14%;
-    --sidebar-border: 220 13% 91%;
+    --sidebar-accent: 25 15% 90%;
+    --sidebar-accent-foreground: 25 25% 18%;
+    --sidebar-border: 25 12% 88%;
     --sidebar-ring: 221 83% 53%;
     --sidebar-active-border: var(--sidebar-primary);
 
     --code-bg: 0 0% 99%;
-    --code-border: 220 13% 91%;
-    --code-text: 222 47% 14%;
-    --code-key: 222 47% 14%;
+    --code-border: 25 10% 90%;
+    --code-text: 25 25% 22%;
+    --code-key: 25 35% 22%;
     --code-string: 142 45% 32%;
     --code-number: 25 75% 32%;
     --code-boolean: 258 55% 38%;
     --code-null: 258 55% 38%;
-    --code-bracket: 215 20% 37%;
-    --code-punctuation: 215 20% 37%;
-    --code-comment: 215 16% 47%;
+    --code-bracket: 25 15% 42%;
+    --code-punctuation: 25 15% 42%;
+    --code-comment: 25 10% 52%;
     --code-tag: 0 60% 42%;
+    /* Random string view (light): darker shades for contrast on white */
     --code-rs-digit: 32 85% 42%;
     --code-rs-upper: 199 70% 36%;
     --code-rs-lower: 142 45% 32%;
-    --code-rs-symbol: 215 20% 37%;
-    --code-gutter-foreground: 215 16% 47%;
+    --code-rs-symbol: 25 15% 42%;
+    --code-gutter-foreground: 25 10% 52%;
 
     --outline-button-bg: 0 0% 100%;
-    --outline-button-border: 220 13% 88%;
-    --outline-button-foreground: 222 47% 11%;
+    --outline-button-border: 25 12% 85%;
+    --outline-button-foreground: 25 25% 18%;
 
-    --header-bg: 0 0% 100%;
+    --header-bg: 0 0% 98%;
     --header-tab-bg: 0 0% 100%;
 
-    --settings-nav-bg: 220 14% 96%;
+    /* Settings page: light theme (subtle nav strip) */
+    --settings-nav-bg: 25 15% 95%;
     --settings-content-bg: var(--background);
-    --settings-table-header-bg: 220 13% 95%;
-    --settings-table-row-hover-bg: 220 14% 93%;
+    --settings-table-header-bg: 25 12% 94%;
+    --settings-table-row-hover-bg: 25 15% 92%;
 
-    /* Liquid Glass light: specular highlight, subtle dark edge, primary tint */
+    /* Liquid Glass – light: specular, darker edge; tint from primary (wallpaper-style) */
     --glass-blur: 48px;
-    --glass-saturate: 180%;
-    --glass-border-opacity: 0.12;
-    --glass-highlight: 0.45;
+    --glass-saturate: 200%;
+    --glass-border-opacity: 0.14;
+    --glass-highlight: 0.1;
     --glass-edge: 0 0% 0% / var(--glass-border-opacity);
-    --glass-highlight-color: 0 0% 100% / 0.7;
-    --glass-jelly-bottom: 0 0% 0% / 0.04;
-    --glass-edge-subtle: 0 0% 0% / 0.08;
-    --glass-highlight-subtle: 0 0% 100% / 0.4;
-    --glass-tint: 221 83% 53% / 0.04;
+    --glass-highlight-color: 0 0% 100% / 0.5;
+    --glass-jelly-bottom: 0 0% 0% / 0.06;
+    --glass-edge-subtle: 0 0% 0% / 0.1;
+    --glass-highlight-subtle: 0 0% 100% / 0.35;
+    --glass-tint: 221 83% 53% / 0.03;
 
     --status-success: 142 45% 32%;
     --status-warning: 38 92% 45%;
     --status-error: 0 72% 45%;
-    --desktop-layout-start: 220 25% 98%;
-    --desktop-layout-end: 220 20% 95%;
-    --scrollbar-thumb: hsl(0 0% 0% / 0.22);
-    --scrollbar-thumb-hover: hsl(0 0% 0% / 0.32);
+    --desktop-layout-start: 25 25% 98%;
+    --desktop-layout-end: 25 20% 94%;
+    --scrollbar-thumb: hsl(0 0% 0% / 0.2);
+    --scrollbar-thumb-hover: hsl(0 0% 0% / 0.3);
+    /* Typography: inherits --text-nav, --text-ui, --text-content, --text-caption, --text-hero from :root */
   }
 
   /* Deep dark: near-black (0°), OLED-friendly, WCAG AA muted text */
@@ -577,12 +576,6 @@
   .desktop-title-bar .btn-icon-chrome:focus-visible {
     outline: none;
     box-shadow: var(--focus-ring);
-  }
-  /* Light: title bar slightly more opaque for readable Liquid Glass */
-  html.desktop.light .desktop-title-bar {
-    background:
-      linear-gradient(180deg, hsl(var(--glass-tint)) 0%, transparent 55%),
-      hsl(0 0% 100% / 0.72);
   }
   /* Non-macOS window controls: traffic-light style with subtle depth */
   .desktop-title-bar .title-bar-win-btn {
@@ -2045,15 +2038,8 @@
       inset -1px 0 0 0 hsl(var(--glass-jelly-bottom));
     transition: background var(--transition-default), backdrop-filter var(--transition-default), border-color var(--transition-default), box-shadow var(--transition-default);
   }
-  /* Light: Liquid Glass sidebar – frosted white/85, tint, keep blur for consistency */
   html.desktop.light .app-sidebar {
-    background:
-      linear-gradient(90deg, hsl(var(--glass-tint)) 0%, transparent 50%),
-      hsl(0 0% 100% / 0.85);
-    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    border-right-color: hsl(var(--glass-edge-subtle));
-    box-shadow: inset -1px 0 0 0 hsl(0 0% 100% / 0.5);
+    background: hsl(var(--sidebar-background) / 0.52);
   }
   html.desktop.deep-dark .app-sidebar {
     background: hsl(var(--sidebar-background) / 0.48);
