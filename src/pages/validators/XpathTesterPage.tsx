@@ -20,15 +20,17 @@ const XpathTesterPage = () => {
   const resultText = result.items.map((i) => `[${i.type}] ${i.value}`).join("\n\n") || "";
 
   const topSection = (
-    <div className="space-y-3">
-      <div>
-        <label className="tool-field-label">XPath expression</label>
-        <Input
-          value={xpath}
-          onChange={(e) => setXpath(e.target.value)}
-          placeholder="e.g. //book/title or //item[@id='1']"
-          className="font-mono"
-        />
+    <div className="tool-top-form">
+      <div className="tool-top-form-row">
+        <div className="tool-top-form-field">
+          <label className="tool-field-label shrink-0">XPath expression</label>
+          <Input
+            value={xpath}
+            onChange={(e) => setXpath(e.target.value)}
+            placeholder="e.g. //book/title or //item[@id='1']"
+            className="font-mono h-7 min-w-[16rem]"
+          />
+        </div>
       </div>
       {result.error && <ToolAlert variant="error" message={result.error} prefix="✗ " />}
       {result.items.length > 0 && (

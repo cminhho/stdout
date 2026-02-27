@@ -140,19 +140,21 @@ const JsonPathPage = () => {
   return (
     <TwoPanelToolLayout
       topSection={
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-2 min-w-0">
-            <Label htmlFor="jsonpath-input" className="tool-field-label shrink-0">
-              JSONPath
-            </Label>
-            <Input
-              id="jsonpath-input"
-              className="h-7 font-mono flex-1 min-w-[16rem] max-w-2xl"
-              value={pathInput}
-              onChange={(e) => setPathInput(e.target.value)}
-              placeholder="$..."
-              aria-label="JSONPath expression"
-            />
+        <div className="tool-top-form">
+          <div className="tool-top-form-row">
+            <div className="tool-top-form-field flex-1 min-w-0">
+              <Label htmlFor="jsonpath-input" className="tool-field-label shrink-0">
+                JSONPath
+              </Label>
+              <Input
+                id="jsonpath-input"
+                className="h-7 font-mono flex-1 min-w-[16rem] max-w-2xl"
+                value={pathInput}
+                onChange={(e) => setPathInput(e.target.value)}
+                placeholder="$..."
+                aria-label="JSONPath expression"
+              />
+            </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <span className="tool-caption shrink-0">Examples:</span>

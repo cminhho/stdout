@@ -744,17 +744,34 @@
   }
 
   /* Common components: macOS-style spacing (8px grid, --home-space-* / --spacing-*) */
+  /* Segment group: compact, same height as toolbar buttons (CopyButton, h-7), border matches outline button */
   .segment-group {
-    padding: var(--home-space-2xs);
-    min-height: 1.75rem;
-    border-radius: var(--radius);
-    border: 1px solid hsl(var(--segment-border));
+    display: inline-flex;
+    align-items: stretch;
+    gap: 0;
+    height: 1.75rem;
+    padding: 0;
+    border: 1px solid hsl(var(--outline-button-border));
+    border-radius: var(--radius-button);
     background: hsl(var(--segment-bg));
+    box-sizing: border-box;
   }
   .segment-group button {
-    min-height: 1.5rem;
+    min-width: 0;
+    height: 100%;
+    min-height: 0;
     padding-left: var(--home-space-sm);
     padding-right: var(--home-space-sm);
+    border-radius: 0;
+  }
+  .segment-group button:first-child {
+    border-radius: var(--radius-button) 0 0 var(--radius-button);
+  }
+  .segment-group button:last-child {
+    border-radius: 0 var(--radius-button) var(--radius-button) 0;
+  }
+  .segment-group button:only-child {
+    border-radius: var(--radius-button);
   }
   .options-button-content {
     padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);

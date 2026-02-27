@@ -41,30 +41,34 @@ const TimestampPage = () => {
   const commonRefs = useMemo(() => getCommonRefs(), []);
 
   const topSection = (
-    <div className="tool-toolbar flex flex-wrap items-center gap-3 shrink-0">
-      <label className="flex items-center gap-1.5 tool-caption cursor-pointer">
-        <input type="checkbox" checked={live} onChange={(e) => setLive(e.target.checked)} className="accent-primary rounded" />
-        Live
-      </label>
-      <div className="flex items-center gap-2">
-        <span className="tool-caption">Now</span>
-        <span className="text-xs font-mono text-foreground">{Math.floor(now / 1000)}</span>
-        <span className="tool-caption">s</span>
-      </div>
-      <Button size="xs" variant="outline" onClick={setCurrentTime}>
-        <RefreshCw className="h-3 w-3 mr-1" /> Use Now
-      </Button>
-      <div className="flex items-center gap-1.5 flex-wrap">
-        <Label className="tool-field-label shrink-0">Ref</Label>
-        {commonRefs.map((ref) => (
-          <button
-            key={ref.label}
-            onClick={() => setUnix(String(ref.ts))}
-            className="px-2 py-1 text-xs rounded bg-muted text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {ref.label}
-          </button>
-        ))}
+    <div className="tool-top-form">
+      <div className="tool-top-form-row">
+        <label className="flex items-center gap-1.5 tool-caption cursor-pointer shrink-0">
+          <input type="checkbox" checked={live} onChange={(e) => setLive(e.target.checked)} className="accent-primary rounded" />
+          Live
+        </label>
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="tool-caption">Now</span>
+          <span className="text-xs font-mono text-foreground">{Math.floor(now / 1000)}</span>
+          <span className="tool-caption">s</span>
+        </div>
+        <Button size="xs" variant="outline" onClick={setCurrentTime}>
+          <RefreshCw className="h-3 w-3 mr-1" /> Use Now
+        </Button>
+        <div className="tool-top-form-field flex-wrap">
+          <Label className="tool-field-label shrink-0">Ref</Label>
+          <div className="flex flex-wrap gap-1.5">
+            {commonRefs.map((ref) => (
+              <button
+                key={ref.label}
+                onClick={() => setUnix(String(ref.ts))}
+                className="px-2 py-1 text-xs rounded bg-muted text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {ref.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
