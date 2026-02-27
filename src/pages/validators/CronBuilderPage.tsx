@@ -113,10 +113,10 @@ const CronBuilderPage = () => {
     title: "Cron Builder",
     copyText: expression,
     toolbar: (
-      <div className="toolbar-actions-row">
+      <>
         <SampleButton onClick={() => setFields(generateRandomSample())} />
         {!isDefault ? <ClearButton onClick={clearExpression} /> : null}
-      </div>
+      </>
     ),
     children: (
       <div className="flex flex-col gap-[var(--home-content-gap)] flex-1 min-h-0 overflow-hidden">

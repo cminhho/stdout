@@ -138,7 +138,7 @@ const MockGeneratorPage = () => {
         title: "Output",
         copyText: output || undefined,
         toolbar: (
-          <div className="toolbar-actions-row">
+          <>
             <IndentSelect value={indent} onChange={setIndent} />
             <label className="tool-field-label shrink-0">Count</label>
             <Input
@@ -152,7 +152,7 @@ const MockGeneratorPage = () => {
             <Button size="xs" onClick={generate}>
               Generate
             </Button>
-          </div>
+          </>
         ),
         children: outputPaneContent,
       }}

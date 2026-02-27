@@ -67,7 +67,7 @@ const UuidPage = () => {
     title: "Output",
     copyText: outputText,
     toolbar: (
-      <div className="toolbar-actions-row">
+      <>
         <div className="flex items-center gap-1.5">
           <Label className="tool-field-label shrink-0">Count</Label>
           <Input
@@ -103,7 +103,7 @@ const UuidPage = () => {
           Generate
         </Button>
         <ClearButton onClick={() => setUuids([])} />
-      </div>
+      </>
     ),
     children: (
       <div className="flex-1 min-h-0 overflow-hidden">

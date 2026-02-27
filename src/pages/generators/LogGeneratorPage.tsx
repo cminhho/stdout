@@ -124,7 +124,7 @@ const LogGeneratorPage = () => {
     copyText: output || undefined,
     onClear: () => setOutput(""),
     toolbar: (
-      <div className="toolbar-actions-row">
+      <>
         <div className="flex items-center gap-2">
           <span className="tool-caption shrink-0">Format</span>
           <SelectWithOptions
@@ -179,7 +179,7 @@ const LogGeneratorPage = () => {
             className="cursor-pointer transition-colors duration-150"
           />
         ) : null}
-      </div>
+      </>
     ),
     children: (
       <div className="flex-1 min-h-0 overflow-hidden">

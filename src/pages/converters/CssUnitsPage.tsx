@@ -34,11 +34,7 @@ const CssUnitsPage = () => {
 
   const pane = {
     title: "CSS Units",
-    toolbar: !isDefault ? (
-      <div className="toolbar-actions-row">
-        <ClearButton onClick={resetToDefault} />
-      </div>
-    ) : undefined,
+    toolbar: !isDefault ? <ClearButton onClick={resetToDefault} /> : undefined,
     children: (
       <div className="flex flex-col gap-[var(--home-content-gap)] flex-1 min-h-0 overflow-auto">
         <section className="tool-section-card shrink-0 space-y-4" aria-label="Input">

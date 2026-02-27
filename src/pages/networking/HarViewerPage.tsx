@@ -80,7 +80,7 @@ const HarViewerPage = () => {
         title: "Entries",
         toolbar:
           entries.length > 0 ? (
-            <div className="toolbar-actions-row">
+            <>
               <Input
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
@@ -88,7 +88,7 @@ const HarViewerPage = () => {
                 className="input-compact flex-1 min-w-0 max-w-[140px] font-mono"
               />
               <span className="tool-caption shrink-0">{filtered.length}/{entries.length}</span>
-            </div>
+            </>
           ) : undefined,
         children: (
           <>

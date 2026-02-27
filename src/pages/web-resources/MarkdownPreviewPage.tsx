@@ -82,7 +82,7 @@ const MarkdownPreviewPage = () => {
         title: showHtml ? "HTML Output" : "Preview",
         copyText: showHtml ? (beautifiedHtml || getHtml()) : markdown,
         toolbar: (
-          <div className="toolbar-actions-row">
+          <>
             <Button
               size="xs"
               variant={showHtml ? "outline" : "default"}
@@ -97,7 +97,7 @@ const MarkdownPreviewPage = () => {
             >
               HTML
             </Button>
-          </div>
+          </>
         ),
         children: (
           <div className="flex-1 min-h-0 flex flex-col overflow-hidden">

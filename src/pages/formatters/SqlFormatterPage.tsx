@@ -84,7 +84,7 @@ const SqlFormatterPage = () => {
       outputPane={{
         copyText: output,
         toolbar: (
-          <div className="toolbar-actions-row">
+          <>
             <SelectWithOptions<SqlKeywordCase>
               {...TOOLBAR_SELECT_PROPS}
               value={keywordCase}
@@ -105,7 +105,7 @@ const SqlFormatterPage = () => {
             {output ? (
               <SaveButton content={output} filename={SQL_OUTPUT_FILENAME} mimeType={SQL_MIME_TYPE} />
             ) : null}
-          </div>
+          </>
         ),
         children: (
           <CodeEditor

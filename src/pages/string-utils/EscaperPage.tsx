@@ -50,11 +50,11 @@ const EscaperPage = ({ type, formatSelector }: EscaperPageProps) => {
       outputPane={{
         copyText: output || undefined,
         toolbar: (
-          <div className="toolbar-actions-row">
+          <>
             {formatSelector}
             <Button size="xs" onClick={() => run("encode")}>Escape</Button>
             <Button size="xs" variant="outline" onClick={() => run("decode")}>Unescape</Button>
-          </div>
+          </>
         ),
         outputEditor: {
           value: output,

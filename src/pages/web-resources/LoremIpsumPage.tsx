@@ -54,7 +54,7 @@ const LoremIpsumPage = () => {
     copyText: output || undefined,
     onClear: output ? () => setOutput("") : undefined,
     toolbar: (
-      <div className="toolbar-actions-row">
+      <>
         <div className="flex items-center gap-1.5">
           <Label className="tool-field-label shrink-0">Count</Label>
           <Input
@@ -83,7 +83,7 @@ const LoremIpsumPage = () => {
           Generate
         </Button>
         {output ? <ClearButton onClick={() => setOutput("")} /> : null}
-      </div>
+      </>
     ),
     children: (
       <div className="flex-1 min-h-0 flex flex-col overflow-hidden">

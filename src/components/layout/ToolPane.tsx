@@ -65,7 +65,9 @@ export const ToolPane = memo(function ToolPane({ pane, className, style, resizer
         >
           <span className="panel-header-label">{pane.title ?? "Panel"}</span>
           <div className="panel-header-actions">
-            {pane.toolbar}
+            {pane.toolbar ? (
+              <div className="toolbar-actions-row">{pane.toolbar}</div>
+            ) : null}
             {pane.onClear ? <ClearButton onClick={pane.onClear} /> : null}
             {pane.copyText !== undefined ? <CopyButton text={pane.copyText} /> : null}
           </div>

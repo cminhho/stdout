@@ -470,7 +470,7 @@ const RandomStringPage = () => {
             : "Output",
         copyText: outputText || undefined,
         toolbar: (
-          <div className="toolbar-actions-row">
+          <>
             <Button
               type="button"
               size="xs"
@@ -507,7 +507,7 @@ const RandomStringPage = () => {
               onClick={() => setStrings([])}
               className="cursor-pointer transition-colors duration-150"
             />
-          </div>
+          </>
         ),
         children: (
           <div className="flex-1 min-h-0 flex flex-col overflow-hidden">

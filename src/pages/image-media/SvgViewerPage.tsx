@@ -49,7 +49,7 @@ const SvgViewerPage = () => {
       outputPane={{
         title: "Preview",
         toolbar: (
-          <div className="toolbar-actions-row">
+          <>
             <label className="tool-caption flex items-center gap-1">
               BG
               <input
@@ -60,7 +60,7 @@ const SvgViewerPage = () => {
               />
             </label>
             <SaveButton label="Export PNG" onClick={downloadPng} />
-          </div>
+          </>
         ),
         children: (
           <div

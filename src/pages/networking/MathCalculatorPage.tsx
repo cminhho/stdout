@@ -156,7 +156,7 @@ const MathCalculatorPage = () => {
       inputPane={{
         title: "Expression",
         toolbar: (
-          <div className="toolbar-actions-row">
+          <>
             <SampleButton onClick={() => setExpr(SAMPLE_EXPR)} />
             <ClearButton onClick={() => setExpr("")} />
             <Button size="xs" onClick={calc} className="shrink-0">
@@ -208,7 +208,7 @@ const MathCalculatorPage = () => {
                 </div>
               </PopoverContent>
             </Popover>
-          </div>
+          </>
         ),
         children: (
           <div className="flex flex-col gap-3 flex-1 min-h-0">
@@ -238,11 +238,7 @@ const MathCalculatorPage = () => {
       }}
       outputPane={{
         title: "History",
-        toolbar: history.length > 0 ? (
-          <div className="toolbar-actions-row">
-            <ClearButton onClick={() => setHistory([])} />
-          </div>
-        ) : undefined,
+        toolbar: history.length > 0 ? <ClearButton onClick={() => setHistory([])} /> : undefined,
         children: (
           <div className="flex flex-col flex-1 min-h-0 overflow-auto">
             {history.length === 0 ? (
