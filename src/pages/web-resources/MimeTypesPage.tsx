@@ -67,7 +67,11 @@ const MimeTypesPage = () => {
 
   const pane = {
     title: "MIME Types",
-    toolbar: query ? <ClearButton onClick={() => setQuery("")} /> : undefined,
+    toolbar: query ? (
+      <div className="toolbar-actions-row">
+        <ClearButton onClick={() => setQuery("")} />
+      </div>
+    ) : undefined,
     children: (
       <div className="flex flex-col gap-2 flex-1 min-h-0">
         <section className="flex flex-col gap-2 max-w-md shrink-0" aria-label="Search">

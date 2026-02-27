@@ -124,7 +124,7 @@ const LogGeneratorPage = () => {
     copyText: output || undefined,
     onClear: () => setOutput(""),
     toolbar: (
-      <div className="flex items-center gap-[var(--spacing-block-gap)] flex-wrap">
+      <div className="toolbar-actions-row">
         <div className="flex items-center gap-2">
           <span className="tool-caption shrink-0">Format</span>
           <SelectWithOptions
@@ -135,7 +135,7 @@ const LogGeneratorPage = () => {
             options={LOG_FORMATS.map((f) => ({ value: f.id, label: f.name }))}
             title="Log format"
             aria-label="Log format"
-            triggerClassName="cursor-pointer min-h-touch sm:min-h-0 transition-colors duration-150"
+            triggerClassName="cursor-pointer transition-colors duration-150"
           />
         </div>
         {format === "json" && (
@@ -162,7 +162,7 @@ const LogGeneratorPage = () => {
         <Button
           size="xs"
           onClick={generate}
-          className="cursor-pointer min-h-touch sm:min-h-0 transition-colors duration-150"
+          className="cursor-pointer transition-colors duration-150"
         >
           Generate
         </Button>
@@ -170,13 +170,13 @@ const LogGeneratorPage = () => {
           accept={LOG_FILE_ACCEPT}
           onText={setOutput}
           variant="outline"
-          buttonClassName="cursor-pointer min-h-touch sm:min-h-0 transition-colors duration-150"
+          buttonClassName="cursor-pointer transition-colors duration-150"
         />
         {output ? (
           <SaveButton
             label="Save .log"
             onClick={download}
-            className="cursor-pointer min-h-touch sm:min-h-0 transition-colors duration-150"
+            className="cursor-pointer transition-colors duration-150"
           />
         ) : null}
       </div>

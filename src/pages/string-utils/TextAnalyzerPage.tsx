@@ -119,7 +119,7 @@ const TextAnalyzerPage = () => {
             size="xs"
             variant="outline"
             onClick={pasteFromClipboard}
-            className="cursor-pointer min-h-touch sm:min-h-0 transition-colors duration-150"
+            className="cursor-pointer transition-colors duration-150"
           >
             Clipboard
           </Button>

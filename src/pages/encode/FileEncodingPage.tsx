@@ -146,11 +146,11 @@ const FileEncodingPage = () => {
       inputPane={{
         title: mode === "decode" ? "Bytes (hex or base64)" : "Text",
         toolbar: (
-          <>
+          <div className="toolbar-actions-row">
             <SampleButton onClick={handleSample} />
             <ClearButton onClick={() => setInput("")} />
             <FileUploadButton accept=".txt,text/plain" onText={setInput} />
-          </>
+          </div>
         ),
         inputEditor: {
           value: input,
@@ -165,7 +165,11 @@ const FileEncodingPage = () => {
       outputPane={{
         title: mode === "decode" ? "Decoded text" : "UTF-8 bytes",
         copyText: output || undefined,
-        toolbar: <ClearButton onClick={() => setInput("")} />,
+        toolbar: (
+          <div className="toolbar-actions-row">
+            <ClearButton onClick={() => setInput("")} />
+          </div>
+        ),
         children: (
           <div className="tool-output-content">
             {error && (

@@ -45,7 +45,7 @@ const AsciiArtPage = () => {
               options={ASCII_ART_CHAR_STYLES}
               title="Character style"
               aria-label="Character style"
-              triggerClassName="cursor-pointer min-h-touch sm:min-h-0 transition-colors duration-150"
+              triggerClassName="cursor-pointer transition-colors duration-150"
             />
             <SelectWithOptions
               size="xs"
@@ -55,7 +55,7 @@ const AsciiArtPage = () => {
               options={ASCII_ART_SPACING_OPTIONS.map((o) => ({ value: String(o.value), label: o.label }))}
               title="Spacing"
               aria-label="Spacing"
-              triggerClassName="cursor-pointer min-h-touch sm:min-h-0 transition-colors duration-150"
+              triggerClassName="cursor-pointer transition-colors duration-150"
             />
           </>
         ),

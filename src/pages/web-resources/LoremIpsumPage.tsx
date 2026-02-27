@@ -54,7 +54,7 @@ const LoremIpsumPage = () => {
     copyText: output || undefined,
     onClear: output ? () => setOutput("") : undefined,
     toolbar: (
-      <div className="flex items-center gap-2 flex-wrap">
+      <div className="toolbar-actions-row">
         <div className="flex items-center gap-1.5">
           <Label className="tool-field-label shrink-0">Count</Label>
           <Input
@@ -63,7 +63,7 @@ const LoremIpsumPage = () => {
             max={100}
             value={count}
             onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
-            className="h-7 w-14 font-mono text-xs"
+            className="input-compact w-14"
           />
         </div>
         <div className="flex items-center gap-1.5">
@@ -79,7 +79,7 @@ const LoremIpsumPage = () => {
             </SelectContent>
           </Select>
         </div>
-        <Button size="xs" className="h-7 text-xs" onClick={generate}>
+        <Button size="xs" onClick={generate}>
           Generate
         </Button>
         {output ? <ClearButton onClick={() => setOutput("")} /> : null}

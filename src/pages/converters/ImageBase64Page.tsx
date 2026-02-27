@@ -112,7 +112,7 @@ const ImageBase64Page = () => {
       inputPane={{
         title: "Input",
         toolbar: (
-          <>
+          <div className="toolbar-actions-row">
             <SegmentGroup<"toBase64" | "toImage">
               value={mode}
               onValueChange={(v) => setMode(v)}
@@ -122,7 +122,7 @@ const ImageBase64Page = () => {
             {mode === "toImage" && base64 ? (
               <ClearButton onClick={() => handleBase64Input("")} />
             ) : null}
-          </>
+          </div>
         ),
         children: inputPaneContent,
       }}
@@ -131,15 +131,17 @@ const ImageBase64Page = () => {
         copyText: mode === "toBase64" ? base64 : undefined,
         toolbar:
           mode === "toImage" && imageUrl ? (
-            <Button
-              size="xs"
-              variant="outline"
-              onClick={downloadImage}
-              className="cursor-pointer transition-colors duration-150 min-h-touch sm:min-h-0"
-              aria-label="Download decoded image"
-            >
-              Download
-            </Button>
+            <div className="toolbar-actions-row">
+              <Button
+                size="xs"
+                variant="outline"
+                onClick={downloadImage}
+                className="cursor-pointer transition-colors duration-150"
+                aria-label="Download decoded image"
+              >
+                Download
+              </Button>
+            </div>
           ) : undefined,
         children: outputPaneContent,
       }}

@@ -44,7 +44,7 @@ const JsonTypescriptPage = () => {
             options={JSON_TYPESCRIPT_LANGS.map((l) => ({ value: l.value, label: l.label }))}
             title="Output language"
             aria-label="Output language"
-            triggerClassName="cursor-pointer min-h-touch sm:min-h-0"
+            triggerClassName="cursor-pointer transition-colors duration-150"
           />
         ),
         inputEditor: {

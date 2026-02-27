@@ -33,7 +33,7 @@ const NumberBasePage = () => {
     title: "Number Base",
     copyText: copyAllText,
     toolbar: (
-      <>
+      <div className="toolbar-actions-row">
         <SampleButton
           onClick={() => {
             setInput(getRandomSample());
@@ -41,7 +41,7 @@ const NumberBasePage = () => {
           }}
         />
         {input ? <ClearButton onClick={() => setInput("")} /> : null}
-      </>
+      </div>
     ),
     children: (
       <div className="flex flex-col gap-[var(--home-content-gap)] flex-1 min-h-0 overflow-hidden">

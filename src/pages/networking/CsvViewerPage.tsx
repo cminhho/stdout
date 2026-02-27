@@ -82,15 +82,15 @@ const CsvViewerPage = () => {
       outputPane={{
         title: "Table",
         toolbar: parsed ? (
-          <>
+          <div className="toolbar-actions-row">
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search..."
-              className="input-compact flex-1 min-w-[160px] max-w-xs h-7"
+              className="input-compact flex-1 min-w-[160px] max-w-xs"
             />
             <span className="tool-caption shrink-0">{filtered?.rows.length ?? 0}/{parsed.rows.length} rows</span>
-          </>
+          </div>
         ) : undefined,
         children: parsed && filtered && filtered.headers.length > 0 ? (
           <div className="flex-1 min-h-0 overflow-auto rounded-md border border-border bg-card">

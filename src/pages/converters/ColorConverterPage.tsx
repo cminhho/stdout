@@ -41,7 +41,11 @@ const ColorConverterPage = () => {
 
   const pane = {
     title: "Color Converter",
-    toolbar: !isDefault ? <ClearButton onClick={() => setHex(COLOR_CONVERTER_DEFAULT_HEX)} /> : undefined,
+    toolbar: !isDefault ? (
+      <div className="toolbar-actions-row">
+        <ClearButton onClick={() => setHex(COLOR_CONVERTER_DEFAULT_HEX)} />
+      </div>
+    ) : undefined,
     children: (
       <div className="flex flex-col gap-[var(--home-content-gap)] flex-1 min-h-0 overflow-auto">
         <section className="tool-section-card shrink-0 space-y-3" aria-label="Preview">

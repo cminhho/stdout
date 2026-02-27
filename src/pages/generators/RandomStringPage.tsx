@@ -277,7 +277,7 @@ const RandomStringPage = () => {
             onValueChange={handlePresetChange}
             options={PRESETS.map((p) => ({ value: p.id, label: p.label }))}
             variant="secondary"
-            triggerClassName="w-full min-w-0 cursor-pointer min-h-touch sm:min-h-0 transition-colors duration-150"
+            triggerClassName="w-full min-w-0 cursor-pointer transition-colors duration-150"
             aria-label="Preset"
           />
         </div>
@@ -390,7 +390,7 @@ const RandomStringPage = () => {
                   { value: "_", label: "Underscore (_)" },
                 ]}
                 variant="secondary"
-                triggerClassName="w-full min-w-0 cursor-pointer min-h-touch sm:min-h-0 transition-colors duration-150"
+                triggerClassName="w-full min-w-0 cursor-pointer transition-colors duration-150"
               />
             )}
             {field(
@@ -470,7 +470,7 @@ const RandomStringPage = () => {
             : "Output",
         copyText: outputText || undefined,
         toolbar: (
-          <div className="flex items-center gap-[var(--spacing-block-gap)] flex-wrap">
+          <div className="toolbar-actions-row">
             <Button
               type="button"
               size="xs"
@@ -478,7 +478,7 @@ const RandomStringPage = () => {
               onClick={() => setRegenerateKey((k) => k + 1)}
               title="Generate with current options"
               aria-label="Generate"
-              className="cursor-pointer min-h-touch sm:min-h-0 transition-colors duration-150"
+              className="cursor-pointer transition-colors duration-150"
             >
               <RefreshCw className="h-3 w-3" aria-hidden />
               Generate
@@ -505,7 +505,7 @@ const RandomStringPage = () => {
             </div>
             <ClearButton
               onClick={() => setStrings([])}
-              className="cursor-pointer min-h-touch sm:min-h-0 transition-colors duration-150"
+              className="cursor-pointer transition-colors duration-150"
             />
           </div>
         ),

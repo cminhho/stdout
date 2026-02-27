@@ -139,7 +139,7 @@ function buildInputPaneProps(
   const toolbar =
     config.toolbar ??
     (config.inputToolbar ? (
-      <>
+      <div className="toolbar-actions-row">
         {config.inputToolbarExtra ?? null}
         <SampleButton onClick={config.inputToolbar.onSample} />
         {clearHandler ? <ClearButton onClick={clearHandler} /> : null}
@@ -147,7 +147,7 @@ function buildInputPaneProps(
           accept={config.inputToolbar.fileAccept}
           onText={config.inputToolbar.onFileText}
         />
-      </>
+      </div>
     ) : undefined);
 
   const headerClear = config.toolbar != null || !clearHandler ? (config.onClear ?? clearHandler) : undefined;

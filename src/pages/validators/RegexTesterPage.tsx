@@ -147,7 +147,7 @@ const RegexTesterPage = () => {
                 variant={isOn ? "default" : "outline"}
                 onClick={() => toggleFlag(f.flag)}
                 title={f.desc}
-                className="min-h-touch sm:min-h-0 cursor-pointer transition-colors duration-150 font-mono gap-1"
+                className="cursor-pointer transition-colors duration-150 font-mono gap-1"
                 aria-label={`${f.label}: ${f.desc}`}
                 aria-pressed={isOn}
               >

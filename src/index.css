@@ -1856,13 +1856,31 @@
     margin-bottom: var(--spacing-toolbar-mb);
   }
 
-  /* Compact input: token-based control surface (reusable for tool forms) */
+  /* Toolbar actions row: same height controls (h-7), vertically centered. Stays compact on mobile. */
+  .toolbar-actions-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-block-gap);
+  }
+
+  /* Force toolbar controls to stay h-7 on all viewports (no min-h-touch growth on mobile) */
+  .toolbar-actions-row button,
+  .toolbar-actions-row input:not([type="color"]):not([type="checkbox"]):not([type="radio"]) {
+    min-height: 1.75rem;
+    height: 1.75rem;
+  }
+  .toolbar-actions-row [role="combobox"] {
+    min-height: 1.75rem;
+    height: 1.75rem;
+  }
+
+  /* Compact input: matches Button/Select xs height (h-7) for consistent toolbar controls */
   .input-compact {
     background: hsl(var(--background));
     color: hsl(var(--foreground));
     border: 1px solid hsl(var(--input));
-    font-size: var(--text-content);
-    @apply h-9 rounded-lg px-3 py-2 font-mono placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-150;
+    @apply h-7 rounded-lg px-2.5 py-1.5 text-xs font-mono placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-150;
   }
 
   .tool-checkbox-label {

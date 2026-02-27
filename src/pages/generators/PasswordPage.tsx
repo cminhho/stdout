@@ -164,7 +164,7 @@ const PasswordPage = () => {
             : "Output",
         copyText: passwordText || undefined,
         toolbar: (
-          <div className="flex items-center gap-[var(--spacing-block-gap)] flex-wrap">
+          <div className="toolbar-actions-row">
             <Button
               type="button"
               size="xs"

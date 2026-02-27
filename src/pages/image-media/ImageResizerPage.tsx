@@ -89,10 +89,10 @@ const ImageResizerPage = () => {
       inputPane={{
         title: "Upload Image",
         toolbar: (
-          <>
+          <div className="toolbar-actions-row">
             <FileUploadButton accept="image/*" onSelect={loadImageFromFile} />
             {imageSrc && <ClearButton onClick={clearImage} />}
-          </>
+          </div>
         ),
         children: (
           <div className="flex flex-col gap-3 flex-1 min-h-0">
@@ -173,7 +173,7 @@ const ImageResizerPage = () => {
                   <Button size="xs" onClick={resize}>
                     Resize
                   </Button>
-                  <SaveButton label="Download" onClick={download} className="h-7 text-xs" />
+                  <SaveButton label="Download" onClick={download} />
                 </div>
               </div>
             )}

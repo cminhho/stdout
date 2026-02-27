@@ -122,7 +122,7 @@ const StringTransformerPage = () => {
                     type="button"
                     variant={selected ? "default" : "ghost"}
                     size="xs"
-                    className="min-w-0 font-mono cursor-pointer min-h-touch sm:min-h-0 transition-colors duration-150"
+                    className="min-w-0 font-mono cursor-pointer transition-colors duration-150"
                     aria-pressed={selected}
                     onClick={() => selectInGroup(groupIndex, name)}
                   >

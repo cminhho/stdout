@@ -6,6 +6,7 @@ import CodeEditor from "@/components/common/CodeEditor";
 import CopyButton from "@/components/common/CopyButton";
 import { SampleButton } from "@/components/common/SampleButton";
 import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
+import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const SAMPLE_EXPR = "sqrt(2) * pi + log10(100)";
@@ -155,25 +156,23 @@ const MathCalculatorPage = () => {
       inputPane={{
         title: "Expression",
         toolbar: (
-          <>
+          <div className="toolbar-actions-row">
             <SampleButton onClick={() => setExpr(SAMPLE_EXPR)} />
             <ClearButton onClick={() => setExpr("")} />
-            <button
-              type="button"
-              onClick={calc}
-              className="h-8 px-3 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 shrink-0"
-            >
+            <Button size="xs" onClick={calc} className="shrink-0">
               =
-            </button>
+            </Button>
             <Popover>
               <PopoverTrigger asChild>
-                <button
+                <Button
                   type="button"
-                  className="inline-flex h-7 w-7 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring"
+                  size="icon-sm"
+                  variant="ghost"
+                  className="shrink-0"
                   aria-label="Functions & constants help"
                 >
                   <HelpCircle className="h-3 w-3" />
-                </button>
+                </Button>
               </PopoverTrigger>
               <PopoverContent className="w-[380px] max-h-[70vh] overflow-y-auto p-3" align="start">
                 <div className="space-y-3 text-xs">
@@ -209,7 +208,7 @@ const MathCalculatorPage = () => {
                 </div>
               </PopoverContent>
             </Popover>
-          </>
+          </div>
         ),
         children: (
           <div className="flex flex-col gap-3 flex-1 min-h-0">
@@ -239,7 +238,11 @@ const MathCalculatorPage = () => {
       }}
       outputPane={{
         title: "History",
-        toolbar: history.length > 0 ? <ClearButton onClick={() => setHistory([])} className="h-6 text-[10px] px-2" /> : undefined,
+        toolbar: history.length > 0 ? (
+          <div className="toolbar-actions-row">
+            <ClearButton onClick={() => setHistory([])} />
+          </div>
+        ) : undefined,
         children: (
           <div className="flex flex-col flex-1 min-h-0 overflow-auto">
             {history.length === 0 ? (

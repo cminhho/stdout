@@ -188,7 +188,11 @@ const JsonPathPage = () => {
       outputPane={{
         title: "Result",
         copyText: result || undefined,
-        toolbar: <IndentSelect value={indent} onChange={setIndent} />,
+        toolbar: (
+        <div className="toolbar-actions-row">
+          <IndentSelect value={indent} onChange={setIndent} />
+        </div>
+      ),
         children: error ? (
           <ToolAlert variant="error" message={error} className="flex-1 min-h-0 overflow-auto" />
         ) : (

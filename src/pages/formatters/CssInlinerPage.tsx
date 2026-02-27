@@ -31,11 +31,11 @@ const CssInlinerPage = () => {
   const htmlPane: PaneProps = {
     title: "HTML",
     toolbar: (
-      <>
+      <div className="toolbar-actions-row">
         <SampleButton onClick={() => setHtml(CSS_INLINER_HTML_SAMPLE)} />
         <ClearButton onClick={() => setHtml("")} />
         <FileUploadButton accept={CSS_INLINER_HTML_ACCEPT} onText={setHtml} />
-      </>
+      </div>
     ),
     children: (
       <CodeEditor
@@ -51,11 +51,11 @@ const CssInlinerPage = () => {
   const cssPane: PaneProps = {
     title: "CSS",
     toolbar: (
-      <>
+      <div className="toolbar-actions-row">
         <SampleButton onClick={() => setCss(CSS_INLINER_CSS_SAMPLE)} />
         <ClearButton onClick={() => setCss("")} />
         <FileUploadButton accept={CSS_INLINER_CSS_ACCEPT} onText={setCss} />
-      </>
+      </div>
     ),
     children: (
       <CodeEditor
@@ -72,11 +72,13 @@ const CssInlinerPage = () => {
     title: "Inlined HTML",
     copyText: output,
     toolbar: (
-      <SaveButton
-        content={output}
-        filename={CSS_INLINER_OUTPUT_FILENAME}
-        mimeType={CSS_INLINER_OUTPUT_MIME_TYPE}
-      />
+      <div className="toolbar-actions-row">
+        <SaveButton
+          content={output}
+          filename={CSS_INLINER_OUTPUT_FILENAME}
+          mimeType={CSS_INLINER_OUTPUT_MIME_TYPE}
+        />
+      </div>
     ),
     children: (
       <CodeEditor value={output} readOnly language="html" placeholder="" fillHeight />

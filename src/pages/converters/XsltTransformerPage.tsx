@@ -78,7 +78,11 @@ const XsltTransformerPage = () => {
   const rightPane = {
     title: "Transformed Output",
     copyText: output,
-    toolbar: <IndentSelect value={indent} onChange={setIndent} />,
+    toolbar: (
+      <div className="toolbar-actions-row">
+        <IndentSelect value={indent} onChange={setIndent} />
+      </div>
+    ),
     children: (
       <div className="flex flex-col gap-2 flex-1 min-h-0 overflow-hidden">
         {error && (

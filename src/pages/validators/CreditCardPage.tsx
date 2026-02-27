@@ -33,10 +33,10 @@ const CreditCardPage = () => {
     title: "Credit Card Validator",
     copyText: generated ? generated.numbers.join("\n") : undefined,
     toolbar: (
-      <>
+      <div className="toolbar-actions-row">
         <SampleButton onClick={handleSample} />
         <ClearButton onClick={() => setInput("")} />
-      </>
+      </div>
     ),
     children: (
       <div className="flex flex-col gap-[var(--home-content-gap)] flex-1 min-h-0 overflow-auto">

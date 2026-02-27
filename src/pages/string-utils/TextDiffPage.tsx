@@ -61,11 +61,11 @@ const TextDiffPage = () => {
       outputPane={{
         title: "Modified",
         toolbar: (
-          <>
+          <div className="toolbar-actions-row">
             <SampleButton onClick={() => setTextB(SAMPLE_B)} />
             <ClearButton onClick={() => setTextB("")} />
             <FileUploadButton accept=".txt,text/plain" onText={setTextB} />
-          </>
+          </div>
         ),
         children: (
           <div className="flex flex-col flex-1 min-h-0 gap-4">

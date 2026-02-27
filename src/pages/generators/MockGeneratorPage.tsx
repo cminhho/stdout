@@ -138,7 +138,7 @@ const MockGeneratorPage = () => {
         title: "Output",
         copyText: output || undefined,
         toolbar: (
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="toolbar-actions-row">
             <IndentSelect value={indent} onChange={setIndent} />
             <label className="tool-field-label shrink-0">Count</label>
             <Input
@@ -147,7 +147,7 @@ const MockGeneratorPage = () => {
               max={100}
               value={count}
               onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
-              className="h-7 w-14 font-mono text-xs"
+              className="input-compact w-14"
             />
             <Button size="xs" onClick={generate}>
               Generate
