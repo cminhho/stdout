@@ -36,10 +36,10 @@ const ToolCardLink = ({
   return (
     <Link
       to={tool.path}
-      className="home-tool-card group relative rounded-[var(--radius)] border border-border bg-card text-left transition-[background-color,border-color,box-shadow] duration-[var(--transition-duration)] ease-[var(--transition-ease)] hover:border-border hover:bg-[hsl(var(--muted)/0.4)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:bg-[hsl(var(--muted)/0.5)] min-h-touch"
+      className="home-tool-card group relative rounded-[var(--radius)] border border-border bg-card text-left cursor-pointer transition-[background-color,border-color,box-shadow] duration-[var(--transition-duration)] ease-[var(--transition-ease)] hover:border-border hover:bg-[hsl(var(--muted)/0.4)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:bg-[hsl(var(--muted)/0.5)] min-h-touch"
       style={{ animationDelay: `${index * 20}ms` }}
     >
-      <span className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100 sm:h-6 sm:w-6" aria-hidden>
+      <span className="home-tool-card-arrow absolute flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100 sm:h-6 sm:w-6" aria-hidden>
         <ChevronRight className="h-4 w-4" />
       </span>
       <Icon className="home-tool-card-icon h-7 w-7 shrink-0 text-foreground opacity-90" aria-hidden />
@@ -85,8 +85,8 @@ const HomePage = () => {
     <div className="flex flex-1 flex-col min-h-0 overflow-auto home-main" role="main">
       <div className="flex flex-1 flex-col min-h-0 w-full home-page-pad">
         <div className="home-content flex flex-col">
-          {/* Hero + About: value prop and intro (glass on desktop) */}
-          <header className="home-hero">
+          {/* Hero + About: macOS-style large title + inset group (glass on desktop) */}
+          <header className="home-hero" aria-label="Welcome">
             <p className="home-hero-tagline">
               Your standard output for dev tools—format, convert, encode, generate. All run locally.
             </p>
@@ -94,10 +94,10 @@ const HomePage = () => {
               className="home-intro"
               aria-labelledby="home-about-heading"
             >
-              <h2 id="home-about-heading" className="panel-header-label">
+              <h2 id="home-about-heading" className="home-intro-heading">
                 About this toolkit
               </h2>
-              <div className="space-y-2">
+              <div className="home-intro-text">
                 <p>
                   Developer toolkit hub for everyday dev tasks. No backend, no data sent to any server.
                 </p>
@@ -138,20 +138,13 @@ const HomePage = () => {
             </section>
           )}
 
-          {/* Tools: search + grid (industry: filter on home) */}
+          {/* Tools: one bar = label + search + count (wraps on small screens) */}
           <section className="home-tools-section" aria-labelledby="home-tools-heading">
-            <div className="home-tools-header sticky top-0 z-10 home-tools-header-margin bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-              <div className="flex flex-col gap-3">
-                <div className="home-tools-header-row flex flex-wrap items-center justify-between gap-2">
-                  <h2 id="home-tools-heading" className="home-section-label shrink-0">
-                    All tools
-                  </h2>
-                  <p className="text-[var(--text-nav)] text-muted-foreground shrink-0" aria-live="polite">
-                    {filteredTools.length === visibleTools.length
-                      ? `${visibleTools.length} of ${tools.length} visible`
-                      : `${filteredTools.length} of ${visibleTools.length} match`}
-                  </p>
-                </div>
+            <div className="home-tools-header sticky top-0 z-10 home-tools-header-margin">
+              <div className="home-tools-header-inner">
+                <h2 id="home-tools-heading" className="home-section-label">
+                  All tools
+                </h2>
                 <div className="home-tools-search-wrap relative flex items-center">
                   <Search className="absolute left-3 h-4 w-4 shrink-0 text-muted-foreground pointer-events-none sm:left-2.5" aria-hidden />
                   <Input
@@ -177,6 +170,11 @@ const HomePage = () => {
                     </Button>
                   )}
                 </div>
+                <p className="home-tools-count text-[var(--text-nav)] text-muted-foreground shrink-0" aria-live="polite">
+                  {filteredTools.length === visibleTools.length
+                    ? `${visibleTools.length} of ${tools.length} visible`
+                    : `${filteredTools.length} of ${visibleTools.length} match`}
+                </p>
               </div>
             </div>
 
@@ -185,28 +183,31 @@ const HomePage = () => {
                 <p>
                   No tools visible. Enable tools in Settings to see them here.
                 </p>
-                <Link
-                  to="/settings"
-                  className="mt-4 inline-flex items-center gap-1.5 text-[var(--text-ui)] font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded px-2 py-1"
-                >
-                  Open Settings
-                  <ChevronRight className="h-4 w-4" />
-                </Link>
+                <div className="home-empty-actions">
+                  <Link
+                    to="/settings"
+                    className="home-empty-link text-[var(--text-ui)] font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded px-2 py-1"
+                  >
+                    Open Settings
+                    <ChevronRight className="h-4 w-4" />
+                  </Link>
+                </div>
               </div>
             ) : showNoResults ? (
               <div className="home-empty home-no-results border border-border bg-card text-center" role="status">
                 <p>
                   No tools match &ldquo;{searchQuery.trim()}&rdquo;. Clear search or enable more tools in Settings.
                 </p>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="mt-4"
-                  onClick={clearSearch}
-                >
-                  Clear search
-                </Button>
+                <div className="home-empty-actions">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={clearSearch}
+                  >
+                    Clear search
+                  </Button>
+                </div>
               </div>
             ) : (
               <ul className="grid grid-cols-1 tool-content-grid home-tools-grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 list-none p-0 m-0" role="list">

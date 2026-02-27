@@ -1,6 +1,12 @@
 /*
  * index.css – design tokens and shared components
- * TOC: Base/Theme · Components (tool-*, panel-*, sidebar-*, code-editor, tables) · Settings · Home · Utilities
+ *
+ * Structure (keep this order):
+ * 1. Imports – Tailwind layers first.
+ * 2. Base/Theme – @layer base: :root and theme tokens (spacing, radius, colors, typography).
+ * 3. Components – tool-*, panel-*, sidebar-*, segment-group, code-editor, tables, etc.
+ * 4. Settings / Home / Utilities – app-specific and overrides.
+ *
  * Fonts: system stack only so the app runs fully offline (no Google Fonts).
  */
 @tailwind base;
@@ -20,7 +26,7 @@
    * - Focus: --focus-ring, --focus-ring-sidebar (single box-shadow token for all focus-visible).
    * - Scrollbar: --scrollbar-thumb, --scrollbar-thumb-hover per theme (desktop thin scrollbars).
    * - Typography: --text-nav|ui|content|caption|title|hero (hero = 1.125rem for taglines/section titles).
-   * - Glass: --glass-edge, --glass-highlight-color; --glass-blur/--glass-saturate (title-bar/sidebar); --glass-blur-subtle/--glass-saturate-subtle (cards); --glass-blur-sidebar/--glass-saturate-sidebar (settings sidebar).
+   * - Glass: Liquid Glass (macOS 26): specular highlight, theme-adaptive tint (--glass-tint), layered edge; --glass-blur/--glass-saturate; --glass-edge-subtle/--glass-highlight-subtle for panels; consistent across surfaces (menus, windows, controls).
    * - Settings: --settings-sidebar-width, --settings-window-radius.
    * - Aliases (reuse, single source): --popover = --card; --accent = --primary; --segment-bg = --muted, --segment-border = --border; --sidebar-active-border = --sidebar-primary.
    * - Tables: cell padding = var(--home-space-sm) var(--home-space-md); thead/row hover semantic per context.
@@ -163,12 +169,13 @@
     --scrollbar-thumb-hover: hsl(0 0% 50% / 0.55);
     /* Typography: hero/section title (18px) */
     --text-hero: 1.125rem;
-    /* Softer glass for cards/panels (24px blur vs 44px for title-bar/sidebar) */
-    --glass-blur-subtle: 24px;
-    --glass-saturate-subtle: 160%;
+    /* Liquid Glass (macOS 26): translucent, specular highlight, adapts to theme (--glass-tint). */
+    /* Softer glass for cards/panels (28px blur vs 48px for title-bar/sidebar) */
+    --glass-blur-subtle: 28px;
+    --glass-saturate-subtle: 180%;
     /* Settings sidebar vibrancy (slightly softer than main glass) */
-    --glass-blur-sidebar: 20px;
-    --glass-saturate-sidebar: 130%;
+    --glass-blur-sidebar: 22px;
+    --glass-saturate-sidebar: 150%;
     /* Extra-tight gap (2px) for list items */
     --home-space-2xs: 0.125rem;
     /* 12px / 6px – off 8px grid for tight panel/content spacing */
@@ -176,9 +183,9 @@
     --home-space-stack: 0.375rem;
     --settings-sidebar-width: 12rem;
     --settings-window-radius: 0.75rem;  /* mobile sheet + macOS window top corners */
-    /* Settings: macOS System Settings–style radius and spacing */
+    /* Settings: macOS System Settings–style radius and spacing (compact, 8px grid) */
     --settings-radius: var(--home-radius-card);
-    --settings-panel-gap: var(--home-space-md);
+    --settings-panel-gap: var(--home-space-sm);
     --spacing-tool-layout-y: var(--home-space-sm);  /* 8px vertical padding for tool layout */
     /* Workbench (VS Code): editor vs panel surfaces; sidebar/activity bar; list focus for nav */
     --workbench-editor-bg: var(--code-bg);
@@ -195,10 +202,12 @@
     --sidebar-width-collapsed: 48px;   /* activity bar width */
     --sidebar-width-expanded: 272px;   /* primary sidebar (slightly wider than VS Code default) */
     --title-bar-height: 40px;           /* macOS native title bar height (traffic lights + content) */
-    --title-bar-padding-x: var(--home-space-sm);   /* 8px horizontal (8px grid) */
-    --title-bar-gap: var(--home-space-xs);         /* 4px between chrome buttons */
-    --title-bar-font-size: var(--text-ui);   /* 13px – macOS/VS Code title */
-    --title-bar-traffic-light-width: 72px; /* macOS: reserve for system controls */
+    --title-bar-edge: var(--home-space-inner);    /* 12px – space from window edge to first/last control (macOS) */
+    --title-bar-padding-x: var(--title-bar-edge); /* alias for horizontal edge padding */
+    --title-bar-gap: var(--home-space-xs);        /* 4px between chrome buttons */
+    --title-bar-zone-gap: var(--home-space-sm);   /* 8px between left zone and center, center and right */
+    --title-bar-font-size: var(--text-ui);         /* 13px – macOS/VS Code title */
+    --title-bar-traffic-light-width: 72px;        /* macOS: reserve for system controls */
     --title-bar-end-spacer: var(--home-space-xl); /* 32px right drag region */
     --panel-resizer-width: 0;        /* visual width/height: 0, only border line; hit area via padding */
     --panel-min-width: 120px;        /* min width per pane when side-by-side */
@@ -215,13 +224,17 @@
     --radius-button: var(--home-radius-card);   /* macOS-style radius for buttons (toolbar, actions) */
     --spacing-sidebar-header-h: 1.75rem; /* 28px min height for panel header */
     --spacing-footer-min-h: 2.25rem;    /* 36px min height for sidebar footer */
-    /* Liquid Glass (desktop): blur + visible edge; edge/highlight colors for sidebar/title-bar */
-    --glass-blur: 44px;
+    /* Liquid Glass (desktop): specular + layered edge; --glass-tint = theme/wallpaper-style tint */
+    --glass-blur: 48px;
     --glass-saturate: 200%;
     --glass-border-opacity: 0.14;
-    --glass-highlight: 0.1;
+    --glass-highlight: 0.12;
     --glass-edge: 0 0% 100% / var(--glass-border-opacity);
     --glass-highlight-color: 0 0% 100% / var(--glass-highlight);
+    --glass-jelly-bottom: 0 0% 0% / 0.04;
+    --glass-edge-subtle: 0 0% 100% / 0.08;
+    --glass-highlight-subtle: 0 0% 100% / 0.07;
+    --glass-tint: 221 83% 53% / 0.04;
     /* Status (alerts, validation, badges) */
     --status-success: 142 69% 42%;
     --status-warning: 38 92% 50%;
@@ -312,13 +325,17 @@
     --settings-table-header-bg: 25 12% 94%;
     --settings-table-row-hover-bg: 25 15% 92%;
 
-    /* Liquid Glass – light: same blur, darker edge for contrast on light bg */
-    --glass-blur: 44px;
+    /* Liquid Glass – light: specular, darker edge; tint from primary (wallpaper-style) */
+    --glass-blur: 48px;
     --glass-saturate: 200%;
     --glass-border-opacity: 0.14;
-    --glass-highlight: 0.08;
+    --glass-highlight: 0.1;
     --glass-edge: 0 0% 0% / var(--glass-border-opacity);
     --glass-highlight-color: 0 0% 100% / 0.5;
+    --glass-jelly-bottom: 0 0% 0% / 0.06;
+    --glass-edge-subtle: 0 0% 0% / 0.1;
+    --glass-highlight-subtle: 0 0% 100% / 0.35;
+    --glass-tint: 221 83% 53% / 0.03;
 
     --status-success: 142 45% 32%;
     --status-warning: 38 92% 45%;
@@ -408,12 +425,16 @@
     --outline-button-border: 0 0% 22%;
     --outline-button-foreground: 0 0% 98%;
 
-    --glass-blur: 44px;
+    --glass-blur: 48px;
     --glass-saturate: 200%;
     --glass-border-opacity: 0.12;
     --glass-highlight: 0.08;
     --glass-edge: 0 0% 100% / var(--glass-border-opacity);
     --glass-highlight-color: 0 0% 100% / var(--glass-highlight);
+    --glass-jelly-bottom: 0 0% 0% / 0.03;
+    --glass-edge-subtle: 0 0% 100% / 0.06;
+    --glass-highlight-subtle: 0 0% 100% / 0.05;
+    --glass-tint: 221 83% 53% / 0.025;
 
     --status-success: 142 69% 42%;
     --status-warning: 38 92% 50%;
@@ -493,21 +514,44 @@
     background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(var(--desktop-layout-start)), hsl(var(--desktop-layout-end)));
   }
 
-  /* Title bar: Liquid Glass – token-based (--glass-edge, --glass-highlight-color per theme) */
+  /* Title bar: Liquid Glass – specular, theme tint, layered edge; macOS-style layout (left | center title | right) */
   .desktop-title-bar {
-    background: hsl(var(--header-bg) / 0.48);
+    background:
+      linear-gradient(180deg, hsl(var(--glass-tint)) 0%, transparent 55%),
+      hsl(var(--header-bg) / 0.4);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     border-bottom: 1px solid hsl(var(--glass-edge));
-    box-shadow: inset 0 1px 0 0 hsl(var(--glass-highlight-color));
-    padding-left: var(--title-bar-padding-x);
-    padding-right: var(--title-bar-padding-x);
+    box-shadow:
+      inset 0 1px 0 0 hsl(var(--glass-highlight-color)),
+      inset 0 -1px 0 0 hsl(var(--glass-jelly-bottom));
+    transition: background var(--transition-default), backdrop-filter var(--transition-default), border-color var(--transition-default), box-shadow var(--transition-default);
+    padding-left: max(var(--title-bar-edge), env(safe-area-inset-left));
+    padding-right: max(var(--title-bar-edge), env(safe-area-inset-right));
+    padding-top: env(safe-area-inset-top);
+    min-height: calc(var(--title-bar-height) + env(safe-area-inset-top, 0px));
+    gap: var(--title-bar-zone-gap);
+  }
+  .desktop-title-bar .title-bar-left {
+    padding-left: 0;
+    gap: var(--title-bar-gap);
+  }
+  .desktop-title-bar .title-bar-center {
+    padding-left: var(--title-bar-zone-gap);
+    padding-right: var(--title-bar-zone-gap);
+  }
+  .desktop-title-bar .title-bar-right {
+    padding-right: 0;
     gap: var(--title-bar-gap);
   }
   .desktop-title-bar .title-bar-title {
     font-size: var(--title-bar-font-size);
     font-weight: 500;
+    letter-spacing: -0.01em;
     color: hsl(var(--foreground) / 0.9);
+  }
+  html.desktop.mac .desktop-title-bar .desktop-title-plain {
+    letter-spacing: -0.02em;
   }
   .desktop-title-bar .title-tab {
     background: hsl(var(--header-tab-bg));
@@ -521,13 +565,26 @@
     justify-content: center;
   }
   .desktop-title-bar .desktop-title-plain {
-    padding: 0 var(--home-space-sm);
+    padding: 0;
   }
   .desktop-title-bar .title-bar-traffic-light-spacer {
     width: var(--title-bar-traffic-light-width);
   }
   .desktop-title-bar .title-bar-end-spacer {
     width: var(--title-bar-end-spacer);
+  }
+  .desktop-title-bar .btn-icon-chrome:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+  /* Non-macOS window controls: traffic-light style with subtle depth */
+  .desktop-title-bar .title-bar-win-btn {
+    border: 1px solid hsl(0 0% 0% / 0.12);
+    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.15);
+  }
+  .desktop-title-bar .title-bar-win-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
   }
 
   /* Thin scrollbars in desktop window (--scrollbar-thumb / --scrollbar-thumb-hover per theme). Skip on macOS so system overlay scrollbars apply (Intel + ARM). */
@@ -594,6 +651,9 @@
     padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
     background: transparent;
     border-color: hsl(var(--border));
+  }
+  .tool-card--spaced {
+    margin: var(--spacing-section-mb);
   }
 
   .tool-textarea {
@@ -689,7 +749,73 @@
     color: hsl(var(--status-success));
   }
 
-  /* Code editor: VS Code–style panel (workbench editor surface) */
+  /* Common components: macOS-style spacing (8px grid, --home-space-* / --spacing-*) */
+  /* Segment group: compact, same height as toolbar buttons (CopyButton, h-7), border matches outline button */
+  .segment-group {
+    display: inline-flex;
+    align-items: stretch;
+    gap: 0;
+    height: 1.75rem;
+    padding: 0;
+    border: 1px solid hsl(var(--outline-button-border));
+    border-radius: var(--radius-button);
+    background: hsl(var(--segment-bg));
+    box-sizing: border-box;
+  }
+  .segment-group button {
+    min-width: 0;
+    height: 100%;
+    min-height: 0;
+    padding-left: var(--home-space-sm);
+    padding-right: var(--home-space-sm);
+    border-radius: 0;
+  }
+  .segment-group button:first-child {
+    border-radius: var(--radius-button) 0 0 var(--radius-button);
+  }
+  .segment-group button:last-child {
+    border-radius: 0 var(--radius-button) var(--radius-button) 0;
+  }
+  .segment-group button:only-child {
+    border-radius: var(--radius-button);
+  }
+  .options-button-content {
+    padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
+  }
+  .validation-error-list {
+    gap: var(--spacing-block-gap);
+  }
+  .validation-error-list__item {
+    padding: var(--home-space-sm) var(--home-space-inner);
+    border-radius: var(--radius);
+    border: 1px solid hsl(var(--destructive) / 0.25);
+    border-left-width: 2px;
+    border-left-color: hsl(var(--destructive));
+    background: hsl(var(--destructive) / 0.05);
+  }
+  .validation-error-list__item .validation-error-list__meta {
+    gap: var(--home-space-xs) var(--home-space-sm);
+  }
+  .validation-error-list__item .validation-error-list__meta + pre {
+    margin-top: var(--home-space-xs);
+  }
+  .diff-line-list {
+    gap: var(--home-space-xs);
+  }
+  .diff-line-list__row {
+    gap: var(--home-space-xs) var(--home-space-sm);
+  }
+  .tool-result-list__header {
+    padding: var(--home-space-xs) var(--home-space-sm);
+  }
+  .tool-result-list__item {
+    padding: var(--home-space-sm);
+  }
+  .file-upload-button__inner {
+    gap: var(--home-space-sm);
+  }
+
+  /* Code editor: VS Code–style panel, macOS/Liquid Glass alignment (8px grid, --spacing-code-editor) */
   .code-editor-wrapper {
     background: hsl(var(--workbench-editor-bg));
     border: 1px solid hsl(var(--code-border));
@@ -697,9 +823,21 @@
     font-family: var(--font-mono);
     font-size: var(--code-font-size);
     line-height: var(--code-line-height);
+    transition: border-color var(--transition-default), background var(--transition-default);
   }
   .code-editor-wrapper .code-editor-pad {
     padding: var(--spacing-code-editor);
+  }
+  .code-editor-wrapper .code-editor-gutter {
+    padding-top: var(--spacing-code-editor);
+    padding-bottom: var(--spacing-code-editor);
+  }
+  .code-editor-wrapper .code-editor-gutter__cell {
+    padding-right: var(--home-space-sm);
+  }
+  /* Content area left = gutter width + this padding (matches --spacing-code-editor for alignment) */
+  .code-editor-wrapper .code-editor-content {
+    padding-left: var(--spacing-code-editor);
   }
 
   /* Use with grid/flex for consistent gap from --spacing-grid-gap */
@@ -772,6 +910,43 @@
     min-height: 0;
   }
 
+  /* Panel header: title + actions row; token spacing, compact on mobile */
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-block-gap);
+    min-height: var(--spacing-sidebar-header-h);
+    padding-top: var(--spacing-panel-inner-y);
+    padding-bottom: 0;
+  }
+  .panel-header .panel-header-label {
+    min-width: 0;
+    flex: 1 1 0%;
+  }
+  .panel-header-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--home-space-sm);
+    flex-shrink: 0;
+  }
+  @media (max-width: 639px) {
+    .panel-header {
+      gap: var(--home-space-sm);
+      min-height: 1.5rem;
+    }
+    .panel-header .panel-header-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .panel-header-actions {
+      gap: var(--home-space-xs);
+    }
+  }
+
   /* Panel header label: VS Code–style small, uppercase, letter-spacing */
   .panel-header-label {
     font-size: var(--text-nav);
@@ -792,6 +967,7 @@
     overflow: hidden;
     margin: 0;
     padding: 0;
+    transition: border-color var(--transition-default), background-color var(--transition-default);
   }
 
   /* Resize panels separator: width/height 0, only border line visible; hit area via padding. */
@@ -832,7 +1008,7 @@
     min-height: var(--panel-resizer-width);
   }
 
-  /* Two-panel top section (alerts, validation, options): panel-style border + bg (VS Code message area) */
+  /* Two-panel top section (alerts, validation, options): panel-style; transition for Liquid Glass consistency */
   .tool-layout-top-section {
     padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
     display: flex;
@@ -842,6 +1018,53 @@
     min-height: 0;
     overflow: auto;
     max-height: min(40vh, 20rem);
+    transition: border-color var(--transition-default), background-color var(--transition-default);
+  }
+  /* Top section form: macOS-style 8px grid (label+control rows, consistent gaps) */
+  .tool-top-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-section-mb);
+  }
+  .tool-top-form-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-block-gap);
+  }
+  .tool-top-form-field {
+    display: flex;
+    align-items: center;
+    gap: var(--home-space-sm);
+  }
+  /* Inline label in top form: no bottom margin, match control height for vertical center */
+  .tool-top-form-field .tool-field-label {
+    margin-bottom: 0;
+    line-height: 1.75rem;
+    display: inline-block;
+  }
+  /* Mobile: compact top section, label + control centered */
+  @media (max-width: 639px) {
+    .tool-top-form {
+      gap: var(--home-space-sm);
+    }
+    .tool-top-form-row {
+      flex-direction: column;
+      gap: var(--home-space-sm);
+      align-items: stretch;
+    }
+    .tool-top-form-field {
+      justify-content: center;
+      gap: var(--home-space-sm);
+    }
+  }
+  /* Output pane content: alert + editor stack with token gap */
+  .tool-output-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    gap: var(--spacing-block-gap);
   }
   .tool-layout-format-error {
     padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
@@ -856,6 +1079,9 @@
     gap: var(--spacing-block-gap);
     margin-bottom: var(--spacing-section-mb);
     border-bottom: 1px solid hsl(var(--border));
+  }
+  html.desktop .settings-tabs {
+    border-bottom-color: hsl(var(--glass-edge-subtle));
   }
   .settings-tab {
     display: flex;
@@ -914,6 +1140,9 @@
     background: hsl(var(--primary) / 0.12);
     box-shadow: 0 0 0 1px hsl(var(--primary));
   }
+  html.desktop .settings-option-card:not(.settings-option-card--selected) {
+    border-color: hsl(var(--glass-edge-subtle));
+  }
   .settings-section-heading {
     display: flex;
     align-items: center;
@@ -956,13 +1185,17 @@
     gap: var(--home-space-sm);
   }
   .settings-tools-count {
-    margin: var(--home-space-sm) 0 var(--home-space-sm);
+    margin: var(--home-space-xs) 0 var(--home-space-sm);
   }
   .settings-table-wrap {
     border: 1px solid hsl(var(--border));
     border-radius: var(--settings-radius);
     overflow: auto;
     max-height: min(22rem, 55vh);
+  }
+  html.desktop .settings-table-wrap {
+    border-color: hsl(var(--glass-edge-subtle));
+    transition: border-color var(--transition-default);
   }
   .settings-table th, .settings-table td { font-size: var(--text-nav); }
   .settings-table--compact th, .settings-table--compact td {
@@ -1033,6 +1266,11 @@
     background: hsl(0 0% 0% / 0.5);
     cursor: pointer;
   }
+  html.desktop .settings-backdrop {
+    background: hsl(0 0% 0% / 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
   .settings-dialog {
     position: relative;
     z-index: 1;
@@ -1051,15 +1289,22 @@
   }
   html.desktop .settings-dialog {
     border-radius: var(--settings-window-radius);
-    box-shadow: 0 25px 50px -12px hsl(0 0% 0% / 0.25), 0 0 0 1px hsl(var(--border) / 0.5);
-    background: hsl(var(--background) / 0.92);
-    backdrop-filter: blur(32px) saturate(150%);
-    -webkit-backdrop-filter: blur(32px) saturate(150%);
-    border-color: hsl(var(--border) / 0.6);
+    box-shadow:
+      0 25px 50px -12px hsl(0 0% 0% / 0.25),
+      0 0 0 1px hsl(var(--glass-edge-subtle)),
+      inset 0 1px 0 0 hsl(var(--glass-highlight-subtle));
+    background:
+      linear-gradient(180deg, hsl(var(--glass-tint)) 0%, transparent 40%),
+      hsl(var(--background) / 0.88);
+    backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
+    -webkit-backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
+    border: 1px solid hsl(var(--glass-edge-subtle));
+    transition: background var(--transition-default), backdrop-filter var(--transition-default), border-color var(--transition-default), box-shadow var(--transition-default);
   }
   .settings-dialog-close {
     color: hsl(var(--muted-foreground));
     flex-shrink: 0;
+    transition: color var(--transition-default);
   }
   .settings-dialog-close:hover {
     color: hsl(var(--foreground));
@@ -1104,24 +1349,44 @@
     min-height: 0;
     overflow: hidden;
   }
-  /* Sidebar: macOS System Settings–style list (vibrancy, pill selection) */
+  /* Sidebar: macOS System Settings–style list (vibrancy, pill selection); compact 8px grid */
   .settings-sidebar {
     flex-shrink: 0;
     width: var(--settings-sidebar-width);
-    padding: var(--home-space-md) var(--home-space-sm) var(--home-space-lg);
+    padding: var(--home-space-sm);
+    padding-bottom: var(--home-space-md);
     overflow-y: auto;
     background: hsl(var(--muted) / 0.4);
     border-right: 1px solid hsl(var(--border));
   }
   html.desktop .settings-sidebar {
-    background: hsl(var(--muted) / 0.3);
+    background:
+      linear-gradient(90deg, hsl(var(--glass-tint)) 0%, transparent 50%),
+      hsl(var(--muted) / 0.28);
     backdrop-filter: blur(var(--glass-blur-sidebar)) saturate(var(--glass-saturate-sidebar));
     -webkit-backdrop-filter: blur(var(--glass-blur-sidebar)) saturate(var(--glass-saturate-sidebar));
-    border-right-color: hsl(var(--border) / 0.6);
+    border-right: 1px solid hsl(var(--glass-edge-subtle));
+    box-shadow: inset 1px 0 0 0 hsl(var(--glass-highlight-subtle));
+    transition: background var(--transition-default), backdrop-filter var(--transition-default), border-color var(--transition-default), box-shadow var(--transition-default);
   }
+
+  /* Liquid Glass: overlays (Popover, Select, Tooltip) – specular, tint, consistent with menus */
+  html.desktop .glass-overlay {
+    border-color: hsl(var(--glass-edge-subtle));
+    box-shadow:
+      0 4px 16px hsl(0 0% 0% / 0.2),
+      inset 0 1px 0 0 hsl(var(--glass-highlight-subtle));
+    background:
+      linear-gradient(145deg, hsl(var(--glass-tint)) 0%, transparent 45%),
+      hsl(var(--popover));
+    backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
+    -webkit-backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
+    transition: background var(--transition-default), border-color var(--transition-default), box-shadow var(--transition-default), backdrop-filter var(--transition-default);
+  }
+
   .settings-sidebar-title {
-    margin: 0 0 var(--home-space-md);
-    padding: 0 var(--home-space-md);
+    margin: 0 0 var(--home-space-sm);
+    padding: 0 var(--home-space-sm);
     font-size: var(--text-ui);
     font-weight: 600;
     color: hsl(var(--muted-foreground));
@@ -1139,7 +1404,7 @@
     align-items: center;
     gap: var(--home-space-sm);
     width: 100%;
-    padding: var(--home-space-sm) var(--home-space-md);
+    padding: var(--home-space-xs) var(--home-space-sm);
     font-size: var(--text-ui);
     font-weight: 500;
     color: hsl(var(--muted-foreground));
@@ -1166,6 +1431,7 @@
   }
   html.desktop .settings-category-item--selected {
     border-radius: 9999px;
+    box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / 0.15);
   }
   .settings-category-item--selected:hover {
     background: hsl(var(--primary) / 0.9);
@@ -1204,8 +1470,11 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--home-space-sm);
-    padding: var(--home-space-sm) var(--home-space-xl) var(--home-space-sm) var(--home-space-xl);
+    padding: var(--home-space-sm) var(--home-space-lg);
     border-bottom: 1px solid hsl(var(--border) / 0.7);
+  }
+  html.desktop .settings-content-header {
+    border-bottom-color: hsl(var(--glass-edge-subtle));
   }
   .settings-panel-title {
     margin: 0;
@@ -1218,12 +1487,15 @@
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    padding: var(--home-space-xl) var(--home-space-xl) var(--home-space-2xl);
+    padding: var(--home-space-lg) var(--home-space-lg) var(--home-space-xl);
   }
   .settings-section {
     margin-bottom: 0;
     padding-top: var(--home-space-lg);
     border-top: 1px solid hsl(var(--border) / 0.6);
+  }
+  html.desktop .settings-section {
+    border-top-color: hsl(var(--glass-edge-subtle));
   }
   .settings-section:first-child {
     padding-top: 0;
@@ -1238,15 +1510,18 @@
   /* Checkbox in settings: visible border and background so it doesn’t blend with panel */
   /* Preferences components (generic, macOS-style): section, group, row, label, control, description */
   .pref-section {
-    padding-top: var(--home-space-xl);
+    padding-top: var(--home-space-lg);
     border-top: 1px solid hsl(var(--border) / 0.6);
+  }
+  html.desktop .pref-section {
+    border-top-color: hsl(var(--glass-edge-subtle));
   }
   .pref-section:first-child {
     padding-top: 0;
     border-top: none;
   }
   .pref-section__heading {
-    margin: 0 0 var(--home-space-sm);
+    margin: 0 0 var(--home-space-xs);
     font-size: var(--text-caption);
     font-weight: 600;
     letter-spacing: 0.06em;
@@ -1256,13 +1531,18 @@
   .pref-section__content {
     display: flex;
     flex-direction: column;
-    gap: var(--home-space-md);
+    gap: var(--home-space-sm);
   }
   .pref-group {
     border-radius: var(--radius);
     background: hsl(var(--muted) / 0.25);
     border: 1px solid hsl(var(--border) / 0.5);
     overflow: hidden;
+    transition: border-color var(--transition-default), background var(--transition-default);
+  }
+  html.desktop .pref-group {
+    border-color: hsl(var(--glass-edge-subtle));
+    box-shadow: inset 0 1px 0 0 hsl(var(--glass-highlight-subtle));
   }
   .pref-group .pref-row {
     border-bottom: 1px solid hsl(var(--border) / 0.4);
@@ -1274,13 +1554,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--home-space-md);
-    min-height: 2.75rem;
-    padding: 0 var(--home-space-lg);
+    gap: var(--home-space-sm);
+    min-height: var(--min-touch);
+    padding: var(--home-space-xs) var(--home-space-md);
   }
   .pref-group .pref-row {
-    padding: 0 var(--home-space-lg);
-    min-height: 2.75rem;
+    padding: var(--home-space-xs) var(--home-space-md);
+    min-height: var(--min-touch);
   }
   .pref-label {
     flex: 0 1 auto;
@@ -1344,7 +1624,7 @@
   /* Scoped override: larger heading inside settings content body */
   .settings-content-body .settings-section-heading {
     font-size: var(--text-nav);
-    margin-bottom: var(--home-space-sm);
+    margin-bottom: var(--home-space-xs);
   }
   .settings-content-body .settings-section-heading svg {
     width: var(--text-content);
@@ -1358,7 +1638,7 @@
       min-height: min(70dvh, 24rem);
     }
     .settings-content-body {
-      padding: var(--home-space-md) var(--home-space-lg) var(--home-space-md);
+      padding: var(--home-space-sm) var(--home-space-md) var(--home-space-lg);
     }
   }
 
@@ -1463,14 +1743,14 @@
       flex: 1;
       min-height: 0;
       overflow-y: auto;
-      padding: var(--home-space-md) var(--home-space-md);
+      padding: var(--home-space-sm) var(--home-space-md);
       padding-left: max(var(--home-space-md), env(safe-area-inset-left));
       padding-right: max(var(--home-space-md), env(safe-area-inset-right));
-      padding-bottom: max(var(--home-space-2xl), env(safe-area-inset-bottom));
+      padding-bottom: max(var(--home-space-xl), env(safe-area-inset-bottom));
       -webkit-overflow-scrolling: touch;
     }
     .settings-section {
-      padding-top: var(--home-space-md);
+      padding-top: var(--home-space-sm);
       margin-bottom: 0;
     }
     .settings-section:first-child {
@@ -1641,7 +1921,7 @@
     color: inherit;
   }
 
-  /* Sidebar search: macOS-style radius, 8px grid, glass-like input */
+  /* Sidebar search: macOS-style radius, 8px grid; Liquid Glass border on desktop */
   .sidebar-search {
     height: var(--sidebar-search-height);
     padding: 0 var(--home-space-sm) 0 1.75rem;
@@ -1650,7 +1930,11 @@
     border: 1px solid hsl(var(--sidebar-border));
     background: hsl(var(--sidebar-accent) / 0.5);
     color: hsl(var(--sidebar-foreground));
-    transition: border-color var(--transition-default), box-shadow var(--transition-default);
+    transition: border-color var(--transition-default), box-shadow var(--transition-default), background var(--transition-default);
+  }
+  html.desktop .sidebar-search {
+    border-color: hsl(var(--glass-edge-subtle));
+    background: hsl(var(--sidebar-accent) / 0.35);
   }
   .sidebar-search::placeholder {
     color: hsl(var(--muted-foreground));
@@ -1741,35 +2025,24 @@
     }
   }
 
-  /* macOS-style glass sidebar on desktop: one block using --glass-edge, --glass-highlight-color */
+  /* Sidebar: Liquid Glass – specular, theme tint, layered edge (consistent with title bar) */
   html.desktop .app-sidebar {
-    background: hsl(var(--sidebar-background) / 0.42);
+    background:
+      linear-gradient(90deg, hsl(var(--glass-tint)) 0%, transparent 45%),
+      hsl(var(--sidebar-background) / 0.38);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     border-right: 1px solid hsl(var(--glass-edge));
-    box-shadow: inset 1px 0 0 0 hsl(var(--glass-highlight-color));
+    box-shadow:
+      inset 1px 0 0 0 hsl(var(--glass-highlight-color)),
+      inset -1px 0 0 0 hsl(var(--glass-jelly-bottom));
+    transition: background var(--transition-default), backdrop-filter var(--transition-default), border-color var(--transition-default), box-shadow var(--transition-default);
   }
   html.desktop.light .app-sidebar {
-    background: hsl(var(--sidebar-background) / 0.5);
+    background: hsl(var(--sidebar-background) / 0.52);
   }
   html.desktop.deep-dark .app-sidebar {
-    background: hsl(var(--sidebar-background) / 0.5);
-  }
-
-  /* Reusable Liquid Glass surface (e.g. cards, panels in desktop app) */
-  .glass-surface {
-    background: hsl(var(--background) / 0.7);
-    backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
-    -webkit-backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
-    border: 1px solid hsl(var(--border) / 0.6);
-  }
-  .light .glass-surface {
-    background: hsl(var(--background) / 0.75);
-    border-color: hsl(var(--border) / 0.7);
-  }
-  .deep-dark .glass-surface {
-    background: hsl(var(--background) / 0.75);
-    border-color: hsl(var(--border) / 0.5);
+    background: hsl(var(--sidebar-background) / 0.48);
   }
 
   .prose-markdown {
@@ -1828,6 +2101,46 @@
     min-height: var(--min-touch);
   }
 
+  /* Page-level: 404 and standalone pages (macOS/Liquid Glass alignment) */
+  .page-not-found {
+    display: flex;
+    min-height: 100dvh;
+    align-items: center;
+    justify-content: center;
+    padding: var(--home-space-xl);
+    padding-left: max(var(--home-space-xl), env(safe-area-inset-left));
+    padding-right: max(var(--home-space-xl), env(safe-area-inset-right));
+  }
+  .page-not-found-inner {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-section-mb);
+  }
+  .page-not-found-title {
+    margin: 0;
+    font-size: var(--text-hero);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: hsl(var(--foreground));
+  }
+  .page-not-found-message {
+    margin: 0;
+    font-size: var(--text-content);
+    color: hsl(var(--muted-foreground));
+  }
+  .page-not-found-link {
+    font-size: var(--text-ui);
+    font-weight: 500;
+    color: hsl(var(--primary));
+    text-underline-offset: 0.2em;
+    transition: color var(--transition-default);
+  }
+  .page-not-found-link:hover {
+    color: hsl(var(--primary) / 0.9);
+  }
+
   /* Home hub: layout – max-width, center, 8px grid, safe-area (notched devices) */
   .home-main {
     padding-left: env(safe-area-inset-left);
@@ -1859,48 +2172,74 @@
     }
   }
 
-  /* Hero: section title typography (industry page/section title) */
+  /* Hero: macOS-style large title + grouped content */
   .home-hero {
     display: flex;
     flex-direction: column;
-    gap: var(--home-space-md);
+    gap: var(--home-space-lg);
   }
   .home-hero-tagline {
     font-size: var(--text-hero);
     font-weight: 600;
     letter-spacing: -0.01em;
-    line-height: 1.4;
+    line-height: 1.35;
     max-width: 42rem;
     margin: 0;
     color: hsl(var(--foreground));
   }
+  @media (min-width: 768px) {
+    .home-hero {
+      gap: var(--home-space-xl);
+    }
+    .home-hero-tagline {
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+  }
 
-  /* Intro card: glass on desktop (frontend-ui-dark-ts glass-card), macOS radius */
+  /* Intro card: macOS-style inset group; solid on mobile, Liquid Glass on desktop */
   .home-intro {
     margin: 0;
-    padding: var(--home-space-md) !important;
+    padding: var(--home-space-lg) var(--home-space-md) !important;
     border-radius: var(--home-radius-card);
     border: 1px solid hsl(var(--border));
     background: hsl(var(--card));
   }
+  @media (min-width: 768px) {
+    .home-intro {
+      padding: var(--home-space-xl) var(--home-space-lg) !important;
+    }
+  }
+  .home-intro-heading,
   .home-intro .panel-header-label {
     margin: 0 0 var(--home-space-sm);
-    font-size: var(--text-ui);
+    font-size: var(--text-caption);
     font-weight: 600;
-    letter-spacing: 0.02em;
-    color: hsl(var(--foreground));
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+  }
+  .home-intro-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--home-space-sm);
   }
   .home-intro p,
-  .home-intro .space-y-2 {
+  .home-intro .space-y-2,
+  .home-intro .home-intro-text {
     font-size: var(--text-content);
     color: hsl(var(--muted-foreground));
     line-height: 1.5;
   }
   html.desktop .home-intro {
-    background: hsl(var(--card) / 0.85);
+    background:
+      linear-gradient(145deg, hsl(var(--glass-tint)) 0%, transparent 55%),
+      hsl(var(--card) / 0.82);
     backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
     -webkit-backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
-    border-color: hsl(var(--border) / 0.8);
+    border-color: hsl(var(--glass-edge-subtle));
+    box-shadow: inset 0 1px 0 0 hsl(var(--glass-highlight-subtle));
+    transition: background var(--transition-default), backdrop-filter var(--transition-default), border-color var(--transition-default), box-shadow var(--transition-default);
   }
 
   /* Section labels: uppercase, muted (macOS-style group headers) */
@@ -1912,20 +2251,29 @@
     color: hsl(var(--muted-foreground));
     margin: 0 0 var(--home-space-sm);
   }
-  .home-tools-header-margin {
-    margin-left: calc(-1 * var(--home-space-lg));
-    margin-right: calc(-1 * var(--home-space-lg));
-    margin-bottom: var(--home-tools-header-gap);
-    padding-left: var(--home-space-lg);
-    padding-right: var(--home-space-lg);
-  }
   @media (min-width: 768px) {
-    .home-tools-header-margin {
-      margin-left: calc(-1 * var(--home-space-xl));
-      margin-right: calc(-1 * var(--home-space-xl));
-      padding-left: var(--home-space-xl);
-      padding-right: var(--home-space-xl);
+    .home-content .home-tools-grid,
+    .home-recent-section .home-tools-grid {
+      gap: var(--home-space-md);
     }
+  }
+  .home-tools-header-margin {
+    margin-bottom: var(--home-tools-header-gap);
+    /* No negative margin: header and search stay within content width (fit home-page-pad). */
+  }
+
+  /* Tools header: one bar = label | search | count; wraps on small screens */
+  .home-tools-header-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--home-space-md);
+  }
+  .home-tools-header-inner .home-section-label {
+    margin-bottom: 0;
+  }
+  .home-tools-count {
+    margin: 0;
   }
 
   /* Tool cards: fixed height, inner spacing from system scale */
@@ -2050,20 +2398,43 @@
     }
   }
 
-  /* Search: full width on mobile, max-width on sm+ */
+  /* Search: fills space between label and count on desktop; full width when wrapped (mobile) */
   .home-tools-search-wrap {
-    width: 100%;
+    flex: 1 1 auto;
+    min-width: 0;
     max-width: 28rem;
+  }
+  @media (min-width: 768px) {
+    .home-tools-search-wrap {
+      min-width: 12rem;
+    }
+  }
+  @media (max-width: 767px) {
+    .home-tools-search-wrap {
+      width: 100%;
+      flex-basis: 100%;
+      max-width: none;
+    }
   }
   .home-tools-search {
     transition: background-color var(--transition-default), border-color var(--transition-default);
   }
 
-  /* Sticky tools header: glass bar (macOS-style), below safe-area when sticky */
+  /* Sticky tools header: layout; Liquid Glass on desktop (no extra class) */
   .home-tools-header {
     top: env(safe-area-inset-top);
     padding-top: var(--home-space-md) !important;
     padding-bottom: var(--home-space-md) !important;
+  }
+  html.desktop .home-tools-header {
+    background:
+      linear-gradient(180deg, hsl(var(--glass-tint)) 0%, transparent 50%),
+      hsl(var(--background) / 0.85);
+    backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
+    -webkit-backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
+    border-bottom: 1px solid hsl(var(--glass-edge-subtle));
+    box-shadow: inset 0 1px 0 0 hsl(var(--glass-highlight-subtle));
+    transition: background var(--transition-default), backdrop-filter var(--transition-default), border-color var(--transition-default), box-shadow var(--transition-default);
   }
 
   /* Empty states: system padding, body text */
@@ -2077,8 +2448,23 @@
     color: hsl(var(--muted-foreground));
     line-height: 1.5;
   }
+  html.desktop .home-empty {
+    border-color: hsl(var(--glass-edge-subtle));
+  }
+  .home-empty-actions {
+    margin-top: var(--spacing-section-mb);
+  }
+  .home-empty-actions .home-empty-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--home-space-sm);
+  }
+  .home-tool-card-arrow {
+    right: var(--home-space-sm);
+    top: var(--home-space-sm);
+  }
 
-  /* Footer: caption typography, separator, safe-area bottom */
+  /* Footer: macOS-style caption, separator, safe-area bottom; glass edge on desktop */
   .home-footer {
     margin-top: var(--home-content-gap);
     padding-top: var(--home-footer-padding-y);
@@ -2089,6 +2475,7 @@
     .home-footer {
       padding-top: var(--home-footer-padding-y-md);
       padding-bottom: max(var(--home-footer-padding-y-md), env(safe-area-inset-bottom));
+      border-top-color: hsl(var(--glass-edge-subtle));
     }
   }
   .home-footer-text {
@@ -2099,7 +2486,17 @@
     color: hsl(var(--muted-foreground) / 0.9);
   }
 
-  /* Card stagger (short duration, macOS-like) */
+  /* Card: Liquid Glass on desktop, subtle hover lift (macOS-style) */
+  html.desktop .home-tool-card {
+    border-color: hsl(var(--glass-edge-subtle));
+    box-shadow: inset 0 1px 0 0 hsl(var(--glass-highlight-subtle));
+    transition: background-color var(--transition-default), border-color var(--transition-default), box-shadow var(--transition-default), transform var(--transition-default);
+  }
+  html.desktop .home-tool-card:hover {
+    box-shadow:
+      inset 0 1px 0 0 hsl(var(--glass-highlight-subtle)),
+      0 2px 8px hsl(0 0% 0% / 0.06);
+  }
   .home-content .home-tool-card {
     animation: home-card-in 0.22s var(--transition-ease) backwards;
   }

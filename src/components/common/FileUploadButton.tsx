@@ -88,7 +88,7 @@ const FileUploadButton = memo(function FileUploadButton({
             isLoading={loading}
             asChild
           >
-            <span className="inline-flex items-center justify-center gap-2">
+            <span className="file-upload-button__inner inline-flex items-center justify-center">
               <Upload className="h-3.5 w-3.5" />
               Upload
             </span>

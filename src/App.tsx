@@ -1,90 +1,21 @@
-import { Suspense, useEffect, useRef } from "react";
+import { useRef } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { BrowserRouter, HashRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { BrowserRouter, HashRouter } from "react-router-dom";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import { SIDEBAR_WIDTH_MIN, SIDEBAR_WIDTH_MAX } from "@/contexts/settingsStore";
 import TitleBar from "@/components/layout/TitleBar";
 import Sidebar from "@/components/layout/Sidebar";
 import PanelResizer from "@/components/layout/PanelResizer";
+import { ToolRoutes } from "@/routes/ToolRoutes";
 import { useSettings } from "@/hooks/useSettings";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useSidebarResize } from "@/hooks/useSidebarResize";
-import { useToolEngine } from "@/hooks/useToolEngine";
-import { useToolTracking } from "@/hooks/useToolTracking";
-import { getRecentPaths } from "@/tools/recentTools";
-import SettingsPage from "@/pages/settings";
-import NotFound from "@/pages/NotFound";
-import HomePage from "@/pages/HomePage";
 
 const useHashRouter =
   typeof window !== "undefined" &&
   (window.location?.protocol === "file:" || window.location?.protocol === "app:");
 const Router = useHashRouter ? HashRouter : BrowserRouter;
-
-const APP_TITLE = "stdout";
-
-const ToolRoutes = () => {
-  const location = useLocation();
-  const { tools, getToolByPath } = useToolEngine();
-  const navigate = useNavigate();
-
-  useToolTracking();
-
-  // Preload recent tools during idle so next navigation is faster
-  useEffect(() => {
-    if (typeof requestIdleCallback === "undefined") return;
-    const id = requestIdleCallback(() => {
-      getRecentPaths().forEach((path) => getToolByPath(path)?.preload?.());
-    }, { timeout: 2000 });
-    return () => cancelIdleCallback(id);
-  }, [getToolByPath]);
-
-  useEffect(() => {
-    const segment = location.pathname === "/" ? "Home" : location.pathname === "/settings" ? "Settings" : tools.find((t) => t.path === location.pathname)?.label;
-    document.title = segment ? `${segment} — ${APP_TITLE}` : APP_TITLE;
-  }, [location.pathname, tools]);
-
-  useEffect(() => {
-    const menu = window.electronAPI?.menu;
-    if (!menu) return;
-    const unsubSettings = menu.onOpenSettings(() => navigate("/settings"));
-    const unsubCheck = menu.onCheckUpdates(() => navigate("/settings?checkUpdates=1"));
-    return () => {
-      unsubSettings();
-      unsubCheck();
-    };
-  }, [navigate]);
-
-  return (
-    <Suspense
-      fallback={
-        <div
-          className="flex-1 flex flex-col items-center justify-center gap-3 text-muted-foreground min-h-0"
-          aria-live="polite"
-          aria-busy="true"
-        >
-          <span
-            className="inline-block h-5 w-5 rounded-full border-[1.5px] border-current border-t-transparent animate-spin"
-            aria-hidden
-          />
-          <span className="text-[13px] font-normal tracking-[0.01em] text-muted-foreground/90">
-            Loading…
-          </span>
-        </div>
-      }
-    >
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        {tools.map((tool) => (
-          <Route key={tool.id} path={tool.path} element={<tool.component />} />
-        ))}
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Suspense>
-  );
-};
 
 const DesktopLayout = () => {
   const layoutRef = useRef<HTMLDivElement>(null);

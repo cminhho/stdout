@@ -35,7 +35,7 @@ const DiffLineRow = memo(function DiffLineRow({ path, type, oldValue, newValue }
   return (
     <div
       className={cn(
-        "text-xs font-mono flex flex-wrap items-baseline gap-x-2 gap-y-0.5",
+        "diff-line-list__row text-xs font-mono flex flex-wrap items-baseline",
         typeClass
       )}
       role="listitem"
@@ -66,7 +66,7 @@ const DiffLineRow = memo(function DiffLineRow({ path, type, oldValue, newValue }
 export const DiffLineList = memo(function DiffLineList({ entries, className }: DiffLineListProps) {
   return (
     <div
-      className={cn("flex flex-col gap-1", className)}
+      className={cn("diff-line-list flex flex-col", className)}
       role="list"
       aria-label="Diff entries"
     >

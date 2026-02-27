@@ -443,7 +443,7 @@ const CodeEditor = memo(function CodeEditor({
   );
 
   const gutterWidth = showLineNumbers ? Math.max(String(lines.length).length * 10 + 16, 36) : 0;
-  const contentPaddingLeft = gutterWidth + 12;
+  /* Content padding left = gutter + --spacing-code-editor (via calc in style) */
 
   if (customContent != null) {
     return (
@@ -483,11 +483,11 @@ const CodeEditor = memo(function CodeEditor({
             background: "hsl(var(--code-bg))",
           }}
         >
-          <div className="pt-[var(--spacing-code-editor)] pb-[var(--spacing-code-editor)]">
+          <div className="code-editor-gutter">
             {lines.map((_, i) => (
               <div
                 key={`L${i}`}
-                className="text-right pr-2 flex items-center justify-end"
+                className="code-editor-gutter__cell text-right flex items-center justify-end"
                 style={{
                   height: "calc(var(--code-line-height) * 1em)",
                   lineHeight: "var(--code-line-height)",
@@ -543,10 +543,10 @@ const CodeEditor = memo(function CodeEditor({
         placeholder={placeholder}
         spellCheck={false}
         aria-label={textareaAriaLabel}
-        className="relative z-[3] w-full h-full bg-transparent border-none outline-none resize-y overflow-auto"
+        className="code-editor-content relative z-[3] w-full h-full bg-transparent border-none outline-none resize-y overflow-auto"
         style={{
           padding: "var(--spacing-code-editor)",
-          paddingLeft: contentPaddingLeft,
+          paddingLeft: gutterWidth > 0 ? `calc(${gutterWidth}px + var(--spacing-code-editor))` : "var(--spacing-code-editor)",
           lineHeight: "var(--code-line-height)",
           color: "transparent",
           caretColor: "hsl(var(--foreground))",

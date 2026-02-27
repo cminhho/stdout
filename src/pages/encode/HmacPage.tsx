@@ -37,30 +37,32 @@ const HmacPage = () => {
   return (
     <TwoPanelToolLayout
       topSection={
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2">
-            <Label className="tool-field-label shrink-0">Algorithm</Label>
-            <SegmentGroup<HmacAlgo>
-              value={algo}
-              onValueChange={setAlgo}
-              options={ALGO_OPTIONS}
-              ariaLabel="HMAC algorithm"
-              size="xs"
-            />
+        <div className="tool-top-form">
+          <div className="tool-top-form-row">
+            <div className="tool-top-form-field">
+              <Label className="tool-field-label shrink-0">Algorithm</Label>
+              <SegmentGroup<HmacAlgo>
+                value={algo}
+                onValueChange={setAlgo}
+                options={ALGO_OPTIONS}
+                ariaLabel="HMAC algorithm"
+                size="xs"
+              />
+            </div>
+            <div className="tool-top-form-field min-w-0 flex-1 max-w-xs">
+              <Label className="tool-field-label shrink-0">Secret</Label>
+              <Input
+                type="text"
+                className="h-7 flex-1 min-w-0 font-mono text-xs"
+                value={secret}
+                onChange={(e) => setSecret(e.target.value)}
+                placeholder="Secret key..."
+              />
+            </div>
+            <Button size="xs" onClick={generate} disabled={!message.trim() || !secret.trim()}>
+              Generate
+            </Button>
           </div>
-          <div className="flex items-center gap-2 min-w-0 flex-1 max-w-xs">
-            <Label className="tool-field-label shrink-0">Secret</Label>
-            <Input
-              type="text"
-              className="h-7 flex-1 min-w-0 font-mono text-xs"
-              value={secret}
-              onChange={(e) => setSecret(e.target.value)}
-              placeholder="Secret key..."
-            />
-          </div>
-          <Button size="xs" onClick={generate} disabled={!message.trim() || !secret.trim()}>
-            Generate
-          </Button>
         </div>
       }
       inputPane={{

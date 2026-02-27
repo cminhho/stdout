@@ -93,9 +93,9 @@ const FileEncodingPage = () => {
   }, [mode, bytesFormat]);
 
   const topSection = (
-    <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-center gap-[var(--spacing-block-gap)]">
-        <div className="flex items-center gap-2">
+    <div className="tool-top-form">
+      <div className="tool-top-form-row">
+        <div className="tool-top-form-field">
           <Label className="tool-field-label shrink-0">Mode</Label>
           <SegmentGroup<"decode" | "encode">
             value={mode}
@@ -106,7 +106,7 @@ const FileEncodingPage = () => {
           />
         </div>
         {mode === "decode" && (
-          <div className="flex items-center gap-2">
+          <div className="tool-top-form-field">
             <Label className="tool-field-label shrink-0">From encoding</Label>
             <SelectWithOptions
               value={decodeEncoding}
@@ -119,7 +119,7 @@ const FileEncodingPage = () => {
             />
           </div>
         )}
-        <div className="flex items-center gap-2">
+        <div className="tool-top-form-field">
           <Label className="tool-field-label shrink-0">Bytes as</Label>
           <SelectWithOptions<"hex" | "base64">
             value={bytesFormat}
@@ -167,7 +167,7 @@ const FileEncodingPage = () => {
         copyText: output || undefined,
         toolbar: <ClearButton onClick={() => setInput("")} />,
         children: (
-          <div className="flex flex-col flex-1 min-h-0 gap-2">
+          <div className="tool-output-content">
             {error && (
               <ToolAlert variant="error" message={error} prefix="⚠ " className="shrink-0" />
             )}

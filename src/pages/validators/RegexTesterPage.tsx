@@ -81,21 +81,21 @@ const RegexTesterPage = () => {
   const matchesText = result && !result.error ? result.matches.map((m) => m.match).join("\n") : "";
 
   const topSection = (
-    <div className="tool-card space-y-3">
-      <div className="flex gap-2 items-end">
-        <div className="flex-1">
-          <label className="tool-field-label">Pattern (use \\ for escapes, e.g. Java/JS)</label>
-          <div className="flex items-center rounded-md border bg-background border-border focus-within:ring-1 focus-within:ring-ring">
+    <div className="tool-top-form">
+      <div className="tool-top-form-row">
+        <div className="tool-top-form-field flex-1 min-w-0">
+          <label className="tool-field-label shrink-0">Pattern (use \\ for escapes, e.g. Java/JS)</label>
+          <div className="flex items-center rounded-md border bg-background border-border focus-within:ring-1 focus-within:ring-ring h-7 min-w-0">
             <span className="text-muted-foreground text-sm pl-3 select-none">/</span>
             <Input
-              className="flex-1 min-w-0 border-0 bg-transparent px-1 py-2 text-sm font-mono focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="flex-1 min-w-0 border-0 bg-transparent px-1 py-2 text-sm font-mono focus-visible:ring-0 focus-visible:ring-offset-0 h-7"
               placeholder="e.g. (\\d{4})-(\\d{2}) or \\d{4}-\\d{2}-\\d{2}"
               value={pattern}
               onChange={(e) => setPattern(e.target.value)}
             />
             <span className="text-muted-foreground text-sm pr-1 select-none">/</span>
             <Input
-              className="w-14 border-0 bg-transparent px-1 py-2 text-sm font-mono text-primary focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="w-14 border-0 bg-transparent px-1 py-2 text-sm font-mono text-primary focus-visible:ring-0 focus-visible:ring-offset-0 h-7"
               placeholder="flags"
               value={flags}
               onChange={(e) => setFlags(e.target.value)}

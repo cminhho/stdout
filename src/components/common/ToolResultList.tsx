@@ -35,7 +35,7 @@ export const ToolResultList = memo(function ToolResultList<T>({
       role="region"
       aria-label={title ? `${title} (${count} items)` : `${count} result(s)`}
     >
-      <div className="px-2 py-1.5 bg-muted/50 tool-caption font-medium">
+      <div className="tool-result-list__header bg-muted/50 tool-caption font-medium">
         {title ? `${title} — ` : ""}
         {count} result{count !== 1 ? "s" : ""}
       </div>
@@ -44,7 +44,7 @@ export const ToolResultList = memo(function ToolResultList<T>({
         style={{ maxHeight }}
       >
         {items.map((item, i) => (
-          <li key={i} className="p-2 text-xs">
+          <li key={i} className="tool-result-list__item text-xs">
             {renderItem(item, i)}
           </li>
         ))}

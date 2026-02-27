@@ -27,8 +27,7 @@ export interface SegmentGroupProps<T extends string> {
 
 /**
  * Segmented control: one-of-many selection with clear active state.
- * Compact layout aligned with toolbar buttons (e.g. SampleButton): h-7, px-2 per segment.
- * Container: border aligned with outline buttons (border-outlineButton-border), bg-segment-bg, p-0.5. Accessible (role="group", aria-pressed).
+ * Compact layout matching toolbar buttons (CopyButton, h-7); border and radius from design tokens. Accessible (role="group", aria-pressed).
  */
 function SegmentGroupInner<T extends string>(
   {
@@ -47,10 +46,7 @@ function SegmentGroupInner<T extends string>(
       ref={ref}
       role="group"
       aria-label={ariaLabel}
-      className={cn(
-        "inline-flex h-7 items-center rounded-md border border-outlineButton-border bg-segment-bg p-0.5",
-        className
-      )}
+      className={cn("segment-group", className)}
     >
       {options.map((option) => {
         const isActive = value === option.value;
@@ -60,7 +56,7 @@ function SegmentGroupInner<T extends string>(
             type="button"
             variant={isActive ? "default" : "ghost"}
             size={size}
-            className="min-w-0 !h-6 px-2 text-xs"
+            className="min-w-0 text-xs"
             aria-pressed={isActive}
             disabled={disabled}
             onClick={() => onValueChange(option.value)}
