@@ -1,6 +1,12 @@
 /*
  * index.css – design tokens and shared components
- * TOC: Base/Theme · Components (tool-*, panel-*, sidebar-*, code-editor, tables) · Settings · Home · Utilities
+ *
+ * Structure (keep this order):
+ * 1. Imports – Tailwind layers first.
+ * 2. Base/Theme – @layer base: :root and theme tokens (spacing, radius, colors, typography).
+ * 3. Components – tool-*, panel-*, sidebar-*, segment-group, code-editor, tables, etc.
+ * 4. Settings / Home / Utilities – app-specific and overrides.
+ *
  * Fonts: system stack only so the app runs fully offline (no Google Fonts).
  */
 @tailwind base;
