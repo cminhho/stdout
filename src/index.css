@@ -196,10 +196,12 @@
     --sidebar-width-collapsed: 48px;   /* activity bar width */
     --sidebar-width-expanded: 272px;   /* primary sidebar (slightly wider than VS Code default) */
     --title-bar-height: 40px;           /* macOS native title bar height (traffic lights + content) */
-    --title-bar-padding-x: var(--home-space-sm);   /* 8px horizontal (8px grid) */
-    --title-bar-gap: var(--home-space-xs);         /* 4px between chrome buttons */
-    --title-bar-font-size: var(--text-ui);   /* 13px – macOS/VS Code title */
-    --title-bar-traffic-light-width: 72px; /* macOS: reserve for system controls */
+    --title-bar-edge: var(--home-space-inner);    /* 12px – space from window edge to first/last control (macOS) */
+    --title-bar-padding-x: var(--title-bar-edge); /* alias for horizontal edge padding */
+    --title-bar-gap: var(--home-space-xs);        /* 4px between chrome buttons */
+    --title-bar-zone-gap: var(--home-space-sm);   /* 8px between left zone and center, center and right */
+    --title-bar-font-size: var(--text-ui);         /* 13px – macOS/VS Code title */
+    --title-bar-traffic-light-width: 72px;        /* macOS: reserve for system controls */
     --title-bar-end-spacer: var(--home-space-xl); /* 32px right drag region */
     --panel-resizer-width: 0;        /* visual width/height: 0, only border line; hit area via padding */
     --panel-min-width: 120px;        /* min width per pane when side-by-side */
@@ -506,7 +508,7 @@
     background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(var(--desktop-layout-start)), hsl(var(--desktop-layout-end)));
   }
 
-  /* Title bar: Liquid Glass – specular, theme tint (adapts to content/lighting), layered edge */
+  /* Title bar: Liquid Glass – specular, theme tint, layered edge; macOS-style layout (left | center title | right) */
   .desktop-title-bar {
     background:
       linear-gradient(180deg, hsl(var(--glass-tint)) 0%, transparent 55%),
@@ -518,14 +520,32 @@
       inset 0 1px 0 0 hsl(var(--glass-highlight-color)),
       inset 0 -1px 0 0 hsl(var(--glass-jelly-bottom));
     transition: background var(--transition-default), backdrop-filter var(--transition-default), border-color var(--transition-default), box-shadow var(--transition-default);
-    padding-left: var(--title-bar-padding-x);
-    padding-right: var(--title-bar-padding-x);
+    padding-left: max(var(--title-bar-edge), env(safe-area-inset-left));
+    padding-right: max(var(--title-bar-edge), env(safe-area-inset-right));
+    padding-top: env(safe-area-inset-top);
+    min-height: calc(var(--title-bar-height) + env(safe-area-inset-top, 0px));
+    gap: var(--title-bar-zone-gap);
+  }
+  .desktop-title-bar .title-bar-left {
+    padding-left: 0;
+    gap: var(--title-bar-gap);
+  }
+  .desktop-title-bar .title-bar-center {
+    padding-left: var(--title-bar-zone-gap);
+    padding-right: var(--title-bar-zone-gap);
+  }
+  .desktop-title-bar .title-bar-right {
+    padding-right: 0;
     gap: var(--title-bar-gap);
   }
   .desktop-title-bar .title-bar-title {
     font-size: var(--title-bar-font-size);
     font-weight: 500;
+    letter-spacing: -0.01em;
     color: hsl(var(--foreground) / 0.9);
+  }
+  html.desktop.mac .desktop-title-bar .desktop-title-plain {
+    letter-spacing: -0.02em;
   }
   .desktop-title-bar .title-tab {
     background: hsl(var(--header-tab-bg));
@@ -539,13 +559,26 @@
     justify-content: center;
   }
   .desktop-title-bar .desktop-title-plain {
-    padding: 0 var(--home-space-sm);
+    padding: 0;
   }
   .desktop-title-bar .title-bar-traffic-light-spacer {
     width: var(--title-bar-traffic-light-width);
   }
   .desktop-title-bar .title-bar-end-spacer {
     width: var(--title-bar-end-spacer);
+  }
+  .desktop-title-bar .btn-icon-chrome:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+  /* Non-macOS window controls: traffic-light style with subtle depth */
+  .desktop-title-bar .title-bar-win-btn {
+    border: 1px solid hsl(0 0% 0% / 0.12);
+    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.15);
+  }
+  .desktop-title-bar .title-bar-win-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
   }
 
   /* Thin scrollbars in desktop window (--scrollbar-thumb / --scrollbar-thumb-hover per theme). Skip on macOS so system overlay scrollbars apply (Intel + ARM). */
