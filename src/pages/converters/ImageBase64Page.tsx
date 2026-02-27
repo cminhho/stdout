@@ -58,38 +58,53 @@ const ImageBase64Page = () => {
 
   const inputPaneContent =
     mode === "toBase64" ? (
-      <div
-        className="flex-1 min-h-0 flex flex-col items-center justify-center border-2 border-dashed border-border rounded-md p-8 cursor-pointer hover:border-primary/50 transition-colors"
-        onClick={() => fileRef.current?.click()}
-      >
-        <input ref={fileRef} type="file" accept={IMAGE_BASE64_ACCEPT} onChange={handleFile} className="hidden" />
-        <Upload className="h-8 w-8 text-muted-foreground mb-2" />
-        <p className="text-sm text-muted-foreground">Click to upload an image</p>
-        {fileName && (
-          <div className="mt-3 text-xs text-foreground">
-            <span className="font-mono">{fileName}</span> · <span>{fileSize}</span>
-          </div>
-        )}
-      </div>
+      <section className="tool-section-card flex-1 min-h-0 flex flex-col overflow-hidden" aria-label="Upload image">
+        <div
+          role="button"
+          tabIndex={0}
+          className="flex-1 min-h-0 min-h-[12rem] flex flex-col items-center justify-center border-2 border-dashed border-border rounded-[var(--home-radius-card)] p-8 cursor-pointer hover:border-primary/50 transition-colors duration-150"
+          onClick={() => fileRef.current?.click()}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              fileRef.current?.click();
+            }
+          }}
+          aria-label="Upload image (click or press Enter)"
+        >
+          <input ref={fileRef} type="file" accept={IMAGE_BASE64_ACCEPT} onChange={handleFile} className="hidden" aria-label="Upload image file" />
+          <Upload className="h-8 w-8 text-muted-foreground mb-2 shrink-0" aria-hidden />
+          <p className="text-[length:var(--text-ui)] text-muted-foreground">Click to upload an image</p>
+          {fileName && (
+            <div className="mt-3 text-[length:var(--text-ui)] text-foreground">
+              <span className="font-mono">{fileName}</span> · <span>{fileSize}</span>
+            </div>
+          )}
+        </div>
+      </section>
     ) : (
-      <div className="flex-1 min-h-0 flex flex-col">
+      <section className="tool-section-card tool-section-card--fill flex-1 min-h-0 flex flex-col overflow-hidden" aria-label="Base64 input">
         <CodeEditor value={base64} onChange={handleBase64Input} language="text" placeholder={IMAGE_BASE64_PLACEHOLDER_INPUT} fillHeight />
-      </div>
+      </section>
     );
 
   const outputPaneContent =
     mode === "toBase64" ? (
-      <div className="flex-1 min-h-0 flex flex-col">
+      <section className="tool-section-card tool-section-card--fill flex-1 min-h-0 flex flex-col overflow-hidden" aria-label="Base64 output">
         <CodeEditor value={base64 || ""} readOnly language="text" placeholder={IMAGE_BASE64_PLACEHOLDER_OUTPUT} fillHeight />
-      </div>
+      </section>
     ) : (
-      <div className="code-block flex items-center justify-center min-h-[280px]">
+      <section className="tool-section-card flex-1 min-h-0 flex flex-col overflow-hidden items-center justify-center min-h-[280px] bg-muted/20 dark:bg-muted/10 rounded-[var(--home-radius-card)] border border-border" aria-label="Image preview">
         {imageUrl ? (
-          <img src={imageUrl} alt="Preview" className="max-w-full max-h-[60vh] object-contain rounded" />
+          <img
+            src={imageUrl}
+            alt="Decoded image preview"
+            className="max-w-full max-h-[60vh] object-contain rounded-[var(--home-radius-card)] transition-opacity duration-150"
+          />
         ) : (
-          <span className="text-muted-foreground text-sm">{IMAGE_BASE64_PREVIEW_PLACEHOLDER}</span>
+          <span className="text-muted-foreground text-[length:var(--text-ui)]">{IMAGE_BASE64_PREVIEW_PLACEHOLDER}</span>
         )}
-      </div>
+      </section>
     );
 
   return (
@@ -114,7 +129,18 @@ const ImageBase64Page = () => {
       outputPane={{
         title: "Output",
         copyText: mode === "toBase64" ? base64 : undefined,
-        toolbar: mode === "toImage" && imageUrl ? <Button size="xs" variant="outline" onClick={downloadImage}>Download</Button> : undefined,
+        toolbar:
+          mode === "toImage" && imageUrl ? (
+            <Button
+              size="xs"
+              variant="outline"
+              onClick={downloadImage}
+              className="cursor-pointer transition-colors duration-150 min-h-touch sm:min-h-0"
+              aria-label="Download decoded image"
+            >
+              Download
+            </Button>
+          ) : undefined,
         children: outputPaneContent,
       }}
     />

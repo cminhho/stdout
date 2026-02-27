@@ -120,7 +120,10 @@ const CronBuilderPage = () => {
     ),
     children: (
       <div className="flex flex-col gap-[var(--home-content-gap)] flex-1 min-h-0 overflow-hidden">
-        <section className="space-y-3 shrink-0" aria-label="Builder">
+        <section className="tool-section-card shrink-0 space-y-3" aria-label="Builder">
+          <h2 className="home-section-label mb-0">
+            Builder
+          </h2>
           <p className="tool-caption">
             Set each cron field (minute, hour, day, month, weekday). Use presets or pick an example below.
           </p>
@@ -134,7 +137,7 @@ const CronBuilderPage = () => {
                   id={`cron-${field}`}
                   value={fields[field]}
                   onChange={(e) => setFields((f) => ({ ...f, [field]: e.target.value }))}
-                  className="h-7 font-mono text-xs text-center"
+                  className="h-9 font-mono text-xs text-center rounded-[var(--radius-button)] transition-colors duration-150"
                   aria-label={LABELS[field]}
                 />
               </div>
@@ -142,92 +145,91 @@ const CronBuilderPage = () => {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <span className="tool-caption shrink-0">Preset</span>
-            {PRESETS.map((preset) => (
-              <Button
-                key={preset.value}
-                type="button"
-                size="xs"
-                variant={expression === preset.value ? "default" : "outline"}
-                onClick={() => applyPreset(preset.value)}
-                className="min-h-touch font-mono"
-                aria-label={`Apply preset: ${preset.label}`}
-                aria-pressed={expression === preset.value}
-              >
-                {preset.value}
-              </Button>
-            ))}
+            <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Cron presets">
+              {PRESETS.map((preset) => (
+                <Button
+                  key={preset.value}
+                  type="button"
+                  size="xs"
+                  variant={expression === preset.value ? "default" : "outline"}
+                  onClick={() => applyPreset(preset.value)}
+                  className="min-h-touch sm:min-h-0 font-mono cursor-pointer transition-colors duration-150"
+                  aria-label={`Apply preset: ${preset.label}`}
+                  aria-pressed={expression === preset.value}
+                >
+                  {preset.value}
+                </Button>
+              ))}
+            </div>
           </div>
         </section>
 
-        <section
-          className="shrink-0 space-y-2 rounded-card border border-border/60 bg-muted/25 px-4 py-3 shadow-sm"
-          aria-label="Result"
-        >
-          <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+        <section className="tool-section-card shrink-0 space-y-3" aria-label="Result">
+          <h2 className="home-section-label mb-0">
             Expression
           </h2>
-          <div className="flex items-center gap-2 rounded-card border border-border bg-background/80 px-3 py-2">
+          <div className="flex items-center gap-2 rounded-[var(--home-radius-card)] border border-border bg-background/80 dark:bg-input/50 px-3 py-2.5 min-h-touch">
             <code className="flex-1 text-sm font-mono text-foreground min-w-0 truncate">
               {expression}
             </code>
-            <CopyButton text={expression} />
+            <CopyButton text={expression} className="shrink-0" />
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
         </section>
 
         <section
-          className="flex-1 min-h-0 flex flex-col rounded-card border border-border/60 bg-muted/25 overflow-hidden shadow-sm"
+          className="tool-section-card tool-section-card--fill flex-1 min-h-0 flex flex-col overflow-hidden"
           aria-label="Examples"
         >
-          <div className="shrink-0 px-4 pt-3 pb-2">
-            <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+          <div className="shrink-0 px-[var(--spacing-panel-inner-x)] pt-3 pb-2">
+            <h2 className="home-section-label mb-0">
               Examples
             </h2>
             <p className="tool-caption mt-1">
               Click a row to apply that expression.
             </p>
           </div>
-          <div className="flex-1 min-h-0 overflow-auto border-t border-border/60">
+          <div className="flex-1 min-h-0 overflow-auto border-t border-border">
             <div className="tool-reference-table-wrap">
-            <table className="tool-reference-table border-collapse" aria-label="Cron expression examples">
-              <thead className="sticky top-0 bg-muted/60 backdrop-blur-sm z-10 border-b border-border/60">
-                <tr>
-                  <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">
-                    Cron expression
-                  </th>
-                  <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">
-                    Schedule
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {CRON_EXAMPLES.map(({ expression: expr, schedule }) => (
-                  <tr
-                    key={expr}
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => applyExample(expr)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        applyExample(expr);
-                      }
-                    }}
-                    className={cn(
-                      "border-b border-border/50 transition-colors duration-150 min-h-touch",
-                      expression === expr
-                        ? "bg-primary/10 ring-inset ring-1 ring-primary/30"
-                        : "hover:bg-muted/50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
-                    )}
-                    aria-label={`Apply: ${expr} — ${schedule}`}
-                    aria-pressed={expression === expr}
-                  >
-                    <td className="py-2.5 px-3 font-mono text-foreground">{expr}</td>
-                    <td className="py-2.5 px-3 text-muted-foreground">{schedule}</td>
+              <table className="tool-reference-table border-collapse" aria-label="Cron expression examples">
+                <thead className="sticky top-0 z-10 border-b border-border bg-muted/60 backdrop-blur-[var(--glass-blur-subtle)]">
+                  <tr>
+                    <th className="text-left py-2.5 px-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">
+                      Cron expression
+                    </th>
+                    <th className="text-left py-2.5 px-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">
+                      Schedule
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {CRON_EXAMPLES.map(({ expression: expr, schedule }) => (
+                    <tr
+                      key={expr}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => applyExample(expr)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          applyExample(expr);
+                        }
+                      }}
+                      className={cn(
+                        "border-b border-border/50 transition-colors duration-150 min-h-touch cursor-pointer",
+                        expression === expr
+                          ? "bg-primary/10 ring-inset ring-1 ring-primary/30"
+                          : "hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+                      )}
+                      aria-label={`Apply: ${expr} — ${schedule}`}
+                      aria-pressed={expression === expr}
+                    >
+                      <td className="py-2.5 px-3 font-mono text-foreground text-[length:var(--text-ui)]">{expr}</td>
+                      <td className="py-2.5 px-3 text-muted-foreground text-[length:var(--text-ui)]">{schedule}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </section>

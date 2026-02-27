@@ -2,6 +2,7 @@ import { useRef, useState, useMemo, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const SAMPLE_TEXT = `This is a special emoji 👨‍👩‍👧‍👦.
 It is actually made of four different emojis: 👨👩👧👦.
@@ -89,7 +90,7 @@ const TextAnalyzerPage = () => {
     <div className="flex-1 min-h-0 flex flex-col p-2">
       <textarea
         ref={textareaRef}
-        className="w-full flex-1 min-h-0 rounded-lg border border-border bg-muted/20 px-3 py-2.5 text-sm font-mono leading-relaxed placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:border-transparent resize-none shadow-inner"
+        className="w-full flex-1 min-h-0 rounded-[var(--home-radius-card)] border border-border bg-muted/30 dark:bg-muted/20 px-3 py-2.5 text-[length:var(--text-ui)] font-mono leading-relaxed placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 resize-none transition-colors duration-150"
         value={text}
         onChange={(e) => setText(e.target.value)}
         onSelect={updateCursor}

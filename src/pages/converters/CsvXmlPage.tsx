@@ -29,6 +29,7 @@ const CsvXmlPage = () => {
   return (
     <TwoPanelToolLayout
       inputPane={{
+        title: "CSV",
         inputToolbar: {
           onSample: () => setInput(CSV_XML_SAMPLE_CSV),
           setInput,
@@ -37,30 +38,42 @@ const CsvXmlPage = () => {
         },
         inputToolbarExtra: (
           <OptionsButton ariaLabel="CSV to XML options">
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div className="space-y-1.5">
-                <Label variant="muted" className="text-xs">Root tag</Label>
+                <Label htmlFor="csv-xml-root-tag" className="tool-field-label">
+                  Root tag
+                </Label>
                 <Input
+                  id="csv-xml-root-tag"
                   value={rootTag}
                   onChange={(e) => setRootTag(e.target.value)}
-                  className="h-7 font-mono text-xs"
+                  className="h-9 font-mono text-[length:var(--text-ui)] rounded-[var(--radius-button)] transition-colors duration-150"
+                  aria-label="XML root element name"
                 />
               </div>
               <div className="space-y-1.5">
-                <Label variant="muted" className="text-xs">Row tag</Label>
+                <Label htmlFor="csv-xml-row-tag" className="tool-field-label">
+                  Row tag
+                </Label>
                 <Input
+                  id="csv-xml-row-tag"
                   value={rowTag}
                   onChange={(e) => setRowTag(e.target.value)}
-                  className="h-7 font-mono text-xs"
+                  className="h-9 font-mono text-[length:var(--text-ui)] rounded-[var(--radius-button)] transition-colors duration-150"
+                  aria-label="XML row element name"
                 />
               </div>
               <div className="space-y-1.5">
-                <Label variant="muted" className="text-xs">Delimiter</Label>
+                <Label htmlFor="csv-xml-delimiter" className="tool-field-label">
+                  Delimiter
+                </Label>
                 <Input
+                  id="csv-xml-delimiter"
                   value={delimiter}
                   onChange={(e) => setDelimiter(e.target.value)}
-                  className="h-7 w-12 font-mono text-xs text-center"
+                  className="h-9 w-12 font-mono text-[length:var(--text-ui)] text-center rounded-[var(--radius-button)] transition-colors duration-150"
                   maxLength={1}
+                  aria-label="CSV field delimiter"
                 />
               </div>
             </div>
@@ -74,6 +87,7 @@ const CsvXmlPage = () => {
         },
       }}
       outputPane={{
+        title: "XML",
         outputToolbar: {
           format,
           outputFilename: CSV_XML_OUTPUT_FILENAME,
