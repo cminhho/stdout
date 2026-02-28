@@ -30,12 +30,18 @@ export interface ElectronUpdaterAPI {
   onStatus: (cb: (payload: UpdaterStatusPayload) => void) => () => void;
 }
 
+/** Deep link API (stdout://...). */
+export interface ElectronDeepLinkAPI {
+  onOpenUrl: (cb: (url: string) => void) => () => void;
+}
+
 /** Renderer-facing Electron API (exposed as window.electronAPI). */
 export interface ElectronAPI {
   platform: "darwin" | "win32" | "linux";
   window?: ElectronWindowAPI;
   menu?: ElectronMenuAPI;
   updater?: ElectronUpdaterAPI;
+  deepLink?: ElectronDeepLinkAPI;
 }
 
 declare global {

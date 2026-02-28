@@ -32,4 +32,11 @@ contextBridge.exposeInMainWorld("electronAPI", {
       return () => ipcRenderer.removeListener("updater:status", handler);
     },
   },
+  deepLink: {
+    onOpenUrl: (cb) => {
+      const handler = (_ev, url) => cb(url);
+      ipcRenderer.on("open-url", handler);
+      return () => ipcRenderer.removeListener("open-url", handler);
+    },
+  },
 });

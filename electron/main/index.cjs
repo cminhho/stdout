@@ -43,6 +43,9 @@ process.on("unhandledRejection", (reason, promise) => {
 /** @type {import("electron").BrowserWindow | null} */
 let mainWindow = null;
 
+/** Pending stdout:// URL when open-url fires before window is ready (e.g. macOS cold start). */
+let pendingDeepLinkUrl = null;
+
 function getMainWindow() {
   return mainWindow;
 }
@@ -65,6 +68,22 @@ if (!isDev) {
       privileges: { standard: true, secure: true, supportFetchAPI: true },
     },
   ]);
+  app.setAsDefaultProtocolClient("stdout");
+}
+
+// Deep link stdout:// – register early so macOS open-url is not missed
+if (!isDev) {
+  app.on("open-url", (event, url) => {
+    event.preventDefault();
+    if (url && url.startsWith("stdout://")) {
+      const win = getMainWindow();
+      if (win && !win.isDestroyed() && win.webContents) {
+        win.webContents.send("open-url", url);
+      } else {
+        pendingDeepLinkUrl = url;
+      }
+    }
+  });
 }
 
 function registerAppProtocol() {
@@ -159,6 +178,16 @@ function createWindow() {
     }
   });
 
+  // Deep link: send pending stdout:// URL (macOS open-url before window ready) or argv (Windows/Linux cold start)
+  mainWindow.webContents.once("did-finish-load", () => {
+    if (pendingDeepLinkUrl) {
+      mainWindow.webContents.send("open-url", pendingDeepLinkUrl);
+      pendingDeepLinkUrl = null;
+    }
+    const argvUrl = process.argv.find((a) => typeof a === "string" && a.startsWith("stdout://"));
+    if (argvUrl) mainWindow.webContents.send("open-url", argvUrl);
+  });
+
   // Auto-update: silent background check + download (no native notification; in-app toast when ready)
   if (!isDev && getAutoUpdater()) {
     mainWindow.webContents.once("did-finish-load", () => {
@@ -194,9 +223,11 @@ if (!gotLock) {
   app.quit();
   process.exit(0);
 }
-app.on("second-instance", () => {
+app.on("second-instance", (_event, commandLine) => {
   const win = getMainWindow();
-  if (win) {
+  if (win && !win.isDestroyed() && win.webContents) {
+    const url = commandLine.find((arg) => typeof arg === "string" && arg.startsWith("stdout://"));
+    if (url) win.webContents.send("open-url", url);
     if (win.isMinimized()) win.restore();
     win.focus();
   }

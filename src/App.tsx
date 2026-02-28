@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { Toaster } from "@/components/ui/sonner";
+import { DeepLinkHandler } from "@/components/DeepLinkHandler";
 import { ElectronUpdateToast } from "@/components/ElectronUpdateToast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, HashRouter } from "react-router-dom";
@@ -83,6 +84,7 @@ const App = () => {
           <SettingsProvider>
             <CommandPaletteProvider>
               <GlobalShortcuts />
+              <DeepLinkHandler />
               <ElectronUpdateToast />
               <Toaster />
               <div className="flex flex-col h-screen overflow-hidden min-w-0">

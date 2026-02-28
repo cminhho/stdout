@@ -12,6 +12,7 @@ import SettingsPage from "@/pages/settings";
 const CRITICAL_TOOL_PATHS = ["/formatters/json", "/encode/base64", "/encode/jwt"];
 import NotFound from "@/pages/NotFound";
 import HomePage from "@/pages/HomePage";
+import OpenRoutePage from "@/pages/OpenRoutePage";
 
 const APP_TITLE = "stdout";
 
@@ -58,10 +59,10 @@ export function ToolRoutes() {
     }
   }, [lastPath, location.pathname, navigate, getToolByPath]);
 
-  // Persist current path as lastPath (skip /settings so next open goes to last tool)
+  // Persist current path as lastPath (skip /settings and /open so next open goes to last tool)
   useEffect(() => {
     const path = location.pathname;
-    if (path === "/settings") return;
+    if (path === "/settings" || path === "/open") return;
     setLastPath(path);
   }, [location.pathname, setLastPath]);
 
@@ -116,6 +117,7 @@ export function ToolRoutes() {
               }
             />
           ))}
+          <Route path="/open" element={<OpenRoutePage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
