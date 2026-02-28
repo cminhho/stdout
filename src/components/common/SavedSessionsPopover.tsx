@@ -1,26 +1,11 @@
-import { memo, useCallback, useState } from "react";
-import { FolderOpen, Trash2 } from "lucide-react";
+import { memo } from "react";
+import { FolderOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogClose,
-} from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import type { PerToolState } from "@/types/workspace";
-import type { SessionEntry } from "@/types/session";
+import SessionListContent from "@/components/common/SessionListContent";
 import { cn } from "@/utils/cn";
-
-function formatSessionDate(createdAt: number): string {
-  const d = new Date(createdAt);
-  return d.toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
 
 export interface SavedSessionsPopoverProps {
   toolId: string;
@@ -28,160 +13,35 @@ export interface SavedSessionsPopoverProps {
   className?: string;
 }
 
-type ConfirmMode = "load" | "delete" | null;
-
 const SavedSessionsPopover = memo(function SavedSessionsPopover({
   toolId,
   onLoad,
   className,
 }: SavedSessionsPopoverProps) {
-  const { sessions, getSessionById, deleteSession } = useSessionManager(toolId);
-  const [confirmMode, setConfirmMode] = useState<ConfirmMode>(null);
-  const [confirmSession, setConfirmSession] = useState<SessionEntry | null>(null);
-
-  const handleLoadClick = useCallback((session: SessionEntry) => {
-    setConfirmSession(session);
-    setConfirmMode("load");
-  }, []);
-
-  const handleDeleteClick = useCallback((session: SessionEntry) => {
-    setConfirmSession(session);
-    setConfirmMode("delete");
-  }, []);
-
-  const handleConfirmLoad = useCallback(() => {
-    if (confirmSession && confirmMode === "load") {
-      onLoad(confirmSession.state);
-      setConfirmMode(null);
-      setConfirmSession(null);
-    }
-  }, [confirmSession, confirmMode, onLoad]);
-
-  const handleConfirmDelete = useCallback(() => {
-    if (confirmSession && confirmMode === "delete") {
-      deleteSession(confirmSession.id);
-      setConfirmMode(null);
-      setConfirmSession(null);
-    }
-  }, [confirmSession, confirmMode, deleteSession]);
-
-  const handleCancelConfirm = useCallback(() => {
-    setConfirmMode(null);
-    setConfirmSession(null);
-  }, []);
+  const { sessions } = useSessionManager(toolId);
 
   return (
-    <>
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            type="button"
-            size="xs"
-            variant="outline"
-            className={cn(className)}
-            aria-label="Saved sessions"
-            disabled={sessions.length === 0}
-          >
-            <FolderOpen className="h-3.5 w-3.5" />
-            {sessions.length > 0 && (
-              <span className="ml-1 text-xs tabular-nums">{sessions.length}</span>
-            )}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent align="end" className="w-64 p-0">
-          <div className="border-b border-border px-3 py-2 text-xs font-medium text-muted-foreground">
-            Saved sessions
-          </div>
-          <ul className="max-h-64 overflow-auto py-1">
-            {sessions.length === 0 ? (
-              <li className="px-3 py-4 text-center text-xs text-muted-foreground">
-                No sessions saved yet.
-              </li>
-            ) : (
-              sessions.map((session) => (
-                <li
-                  key={session.id}
-                  className="flex items-center justify-between gap-2 px-3 py-2 hover:bg-muted/50"
-                >
-                  <div className="min-w-0 flex-1">
-                    <div className="truncate text-sm font-medium">{session.name}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {formatSessionDate(session.createdAt)}
-                    </div>
-                  </div>
-                  <div className="flex shrink-0 gap-1">
-                    <Button
-                      type="button"
-                      size="icon-xs"
-                      variant="ghost"
-                      aria-label={`Load ${session.name}`}
-                      onClick={() => handleLoadClick(session)}
-                    >
-                      <FolderOpen className="h-3 w-3" />
-                    </Button>
-                    <Button
-                      type="button"
-                      size="icon-xs"
-                      variant="ghost"
-                      aria-label={`Delete ${session.name}`}
-                      onClick={() => handleDeleteClick(session)}
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </li>
-              ))
-            )}
-          </ul>
-        </PopoverContent>
-      </Popover>
-
-      <Dialog open={confirmMode !== null} onOpenChange={(open) => !open && handleCancelConfirm()}>
-        <DialogContent className="gap-4 p-4 sm:max-w-sm">
-          {confirmMode === "load" && confirmSession && (
-            <>
-              <DialogTitle className="sr-only">Load session</DialogTitle>
-              <p className="text-sm text-foreground">
-                Load &quot;{confirmSession.name}&quot;? Current state will be replaced.
-              </p>
-              <div className="flex justify-end gap-2">
-                <DialogClose asChild>
-                  <Button type="button" size="sm" variant="outline">
-                    Cancel
-                  </Button>
-                </DialogClose>
-                <Button type="button" size="sm" onClick={handleConfirmLoad}>
-                  Load session
-                </Button>
-              </div>
-            </>
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          type="button"
+          size="xs"
+          variant="outline"
+          className={cn(className)}
+          aria-label="Saved sessions"
+          title="Saved sessions"
+          disabled={sessions.length === 0}
+        >
+          <FolderOpen className="h-3.5 w-3.5" />
+          {sessions.length > 0 && (
+            <span className="ml-1 text-xs tabular-nums">{sessions.length}</span>
           )}
-          {confirmMode === "delete" && confirmSession && (
-            <>
-              <DialogTitle className="sr-only">Delete session</DialogTitle>
-              <p className="text-sm text-foreground">
-                Delete session &quot;{confirmSession.name}&quot;? This cannot be undone.
-              </p>
-              <div className="flex justify-end gap-2">
-                <DialogClose asChild>
-                  <Button type="button" size="sm" variant="outline">
-                    Cancel
-                  </Button>
-                </DialogClose>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="destructive"
-                  onClick={handleConfirmDelete}
-                >
-                  Delete session
-                </Button>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
-    </>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-64 p-0">
+        <SessionListContent toolId={toolId} onLoad={onLoad} />
+      </PopoverContent>
+    </Popover>
   );
 });
 

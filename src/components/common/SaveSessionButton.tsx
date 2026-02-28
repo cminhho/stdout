@@ -65,6 +65,7 @@ const SaveSessionButton = memo(function SaveSessionButton({
         variant="outline"
         className={cn(className)}
         aria-label="Save session"
+        title="Save session"
         onClick={handleOpen}
       >
         <Save className="h-3.5 w-3.5" />

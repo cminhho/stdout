@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
+import ToolPageLayout from "@/components/layout/ToolPageLayout";
+import Toolbar from "@/components/layout/Toolbar";
 import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
-import SaveSessionButton from "@/components/common/SaveSessionButton";
-import SavedSessionsPopover from "@/components/common/SavedSessionsPopover";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import {
@@ -41,43 +41,51 @@ const JsonFormatterPage = () => {
   );
 
   return (
-    <TwoPanelToolLayout
-      persistToolId={tool?.id}
-      shareState={{ input }}
-      inputPane={{
-        inputToolbar: {
-          onSample: (value) => setInput(value ?? JSON_FORMATTER_SAMPLE),
-          samples: INPUT_SAMPLES,
-          setInput,
-          fileAccept: JSON_FILE_ACCEPT,
-          onFileText: setInput,
-        },
-        inputToolbarExtra: tool?.id ? (
-          <>
-            <SaveSessionButton toolId={tool.id} currentState={{ input }} />
-            <SavedSessionsPopover toolId={tool.id} onLoad={handleLoadSession} />
-          </>
-        ) : undefined,
-        inputEditor: {
-          value: input,
-          onChange: setInput,
-          language: JSON_LANGUAGE,
-          placeholder: JSON_INPUT_PLACEHOLDER,
-        },
-      }}
-      outputPane={{
-        outputToolbar: {
-          format: (input, indent) => processJsonInput(input, indent),
-          outputFilename: JSON_OUTPUT_FILENAME,
-          outputMimeType: JSON_MIME_TYPE,
-        },
-        outputEditor: {
-          value: "",
-          language: JSON_LANGUAGE,
-          placeholder: JSON_OUTPUT_PLACEHOLDER,
-        },
-      }}
-    />
+    <ToolPageLayout
+      toolbar={
+        tool?.id ? (
+          <Toolbar
+            toolName={tool.label}
+            toolId={tool.id}
+            shareState={{ input }}
+            onLoadSession={handleLoadSession}
+          />
+        ) : undefined
+      }
+    >
+      <TwoPanelToolLayout
+        persistToolId={tool?.id}
+        shareState={{ input }}
+        sessionShareInPageToolbar
+        inputPane={{
+          inputToolbar: {
+            onSample: (value) => setInput(value ?? JSON_FORMATTER_SAMPLE),
+            samples: INPUT_SAMPLES,
+            setInput,
+            fileAccept: JSON_FILE_ACCEPT,
+            onFileText: setInput,
+          },
+          inputEditor: {
+            value: input,
+            onChange: setInput,
+            language: JSON_LANGUAGE,
+            placeholder: JSON_INPUT_PLACEHOLDER,
+          },
+        }}
+        outputPane={{
+          outputToolbar: {
+            format: (input, indent) => processJsonInput(input, indent),
+            outputFilename: JSON_OUTPUT_FILENAME,
+            outputMimeType: JSON_MIME_TYPE,
+          },
+          outputEditor: {
+            value: "",
+            language: JSON_LANGUAGE,
+            placeholder: JSON_OUTPUT_PLACEHOLDER,
+          },
+        }}
+      />
+    </ToolPageLayout>
   );
 };
 

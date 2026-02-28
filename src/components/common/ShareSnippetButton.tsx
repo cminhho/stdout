@@ -37,6 +37,7 @@ const ShareSnippetButton = memo(function ShareSnippetButton({
           variant="outline"
           className={cn(className)}
           aria-label="Share snippet"
+          title="Share snippet"
         >
           <Share2 className="h-3.5 w-3.5" />
         </Button>

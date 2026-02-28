@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
+import ToolPageLayout from "@/components/layout/ToolPageLayout";
+import Toolbar from "@/components/layout/Toolbar";
 import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
-import SaveSessionButton from "@/components/common/SaveSessionButton";
-import SavedSessionsPopover from "@/components/common/SavedSessionsPopover";
 import { SegmentGroup } from "@/components/common/SegmentGroup";
 import type { IndentOption } from "@/components/common/IndentSelect";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
@@ -48,51 +48,61 @@ const Base64Page = () => {
   );
 
   return (
-    <TwoPanelToolLayout
-      persistToolId={tool?.id}
-      shareState={{ input }}
-      inputPane={{
-        inputToolbar: {
-          onSample: () => setInput(mode === "encode" ? BASE64_SAMPLE : BASE64_SAMPLE_DECODE),
-          setInput,
-          fileAccept: BASE64_FILE_ACCEPT,
-          onFileText: setInput,
-        },
-        inputToolbarExtra: tool?.id ? (
-          <>
+    <ToolPageLayout
+      toolbar={
+        tool?.id ? (
+          <Toolbar
+            toolName={tool.label}
+            toolId={tool.id}
+            shareState={{ input }}
+            onLoadSession={handleLoadSession}
+          />
+        ) : undefined
+      }
+    >
+      <TwoPanelToolLayout
+        persistToolId={tool?.id}
+        shareState={{ input }}
+        sessionShareInPageToolbar
+        inputPane={{
+          inputToolbar: {
+            onSample: () => setInput(mode === "encode" ? BASE64_SAMPLE : BASE64_SAMPLE_DECODE),
+            setInput,
+            fileAccept: BASE64_FILE_ACCEPT,
+            onFileText: setInput,
+          },
+          inputToolbarExtra: (
             <SegmentGroup<Base64Mode>
               value={mode}
               onValueChange={setModeWithCleanup}
               options={MODE_OPTIONS}
               ariaLabel="Mode"
             />
-            <SaveSessionButton toolId={tool.id} currentState={{ input }} />
-            <SavedSessionsPopover toolId={tool.id} onLoad={handleLoadSession} />
-          </>
-        ) : undefined,
-        inputEditor: {
-          value: input,
-          onChange: setInput,
-          language: "text",
-          placeholder: BASE64_PLACEHOLDER_INPUT,
-        },
-      }}
-      outputPane={{
-        outputToolbar: {
-          format,
-          outputFilename: BASE64_OUTPUT_FILENAME,
-          outputMimeType: BASE64_MIME_TYPE,
-          defaultIndent: 2,
-          indentSpaceOptions: [2, 4],
-          indentIncludeTab: false,
-        },
-        outputEditor: {
-          value: "",
-          language: "text",
-          placeholder: BASE64_PLACEHOLDER_OUTPUT,
-        },
-      }}
-    />
+          ),
+          inputEditor: {
+            value: input,
+            onChange: setInput,
+            language: "text",
+            placeholder: BASE64_PLACEHOLDER_INPUT,
+          },
+        }}
+        outputPane={{
+          outputToolbar: {
+            format,
+            outputFilename: BASE64_OUTPUT_FILENAME,
+            outputMimeType: BASE64_MIME_TYPE,
+            defaultIndent: 2,
+            indentSpaceOptions: [2, 4],
+            indentIncludeTab: false,
+          },
+          outputEditor: {
+            value: "",
+            language: "text",
+            placeholder: BASE64_PLACEHOLDER_OUTPUT,
+          },
+        }}
+      />
+    </ToolPageLayout>
   );
 };
 

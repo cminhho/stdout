@@ -5,7 +5,7 @@
 <h1 align="center">Stdout</h1>
 
 <p align="center">
-  <strong>Developer tools for format, convert, encode, and generate — all in one place.</strong>
+  <strong>Developer Tools, Local-First.</strong>
 </p>
 
 <p align="center">

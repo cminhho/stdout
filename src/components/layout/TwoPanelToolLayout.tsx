@@ -126,6 +126,8 @@ export interface TwoPanelToolLayoutProps {
   persistToolId?: string;
   /** When set with persistToolId, shows Share snippet (copy link / download .stdout.json) in input toolbar. */
   shareState?: PerToolState;
+  /** When true, Save/Share/Sessions are in the page toolbar; do not render Share in input pane. */
+  sessionShareInPageToolbar?: boolean;
   className?: string;
   inputPane: TwoPanelInputPaneConfig;
   outputPane: TwoPanelOutputPaneConfig;
@@ -145,11 +147,12 @@ function errorLinesFromParseErrors(errors: ParseError[]): Set<number> {
 function buildInputPaneProps(
   config: TwoPanelInputPaneConfig,
   validationErrors?: ParseError[],
-  options?: { persistToolId?: string; shareState?: PerToolState }
+  options?: { persistToolId?: string; shareState?: PerToolState; sessionShareInPageToolbar?: boolean }
 ): PaneProps {
   const clearHandler = resolveInputClear(config);
   const hasSamples = (config.inputToolbar?.samples?.length ?? 0) > 0;
   const showShare =
+    !options?.sessionShareInPageToolbar &&
     options?.persistToolId != null &&
     options?.persistToolId !== "" &&
     options?.shareState != null;
@@ -250,6 +253,8 @@ function buildOutputPaneProps(
             content={content!}
             filename={ot!.outputFilename!}
             mimeType={ot!.outputMimeType}
+            label="Download"
+            title="Download as file"
           />
         ) : null}
       </>
@@ -295,6 +300,7 @@ const TwoPanelToolLayout = ({
   resizerWidth,
   persistToolId,
   shareState,
+  sessionShareInPageToolbar = false,
   className,
   inputPane,
   outputPane,
@@ -376,6 +382,7 @@ const TwoPanelToolLayout = ({
         input={buildInputPaneProps(inputPane, effectiveValidationErrors, {
           persistToolId,
           shareState,
+          sessionShareInPageToolbar,
         })}
         output={buildOutputPaneProps(outputPane, indentControl, derived)}
       />
