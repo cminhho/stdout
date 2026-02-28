@@ -1,6 +1,8 @@
 /**
  * Auto-Updater
  * Handles update check and install (packaged app only). No custom feed URL.
+ * Uses silent background download (autoDownload) and install on quit (autoInstallOnAppQuit).
+ * checkForUpdatesAndNotify() shows a native notification when an update is downloaded.
  */
 const { ipcMain } = require("electron");
 
