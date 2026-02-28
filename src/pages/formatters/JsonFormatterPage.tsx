@@ -34,6 +34,7 @@ const JsonFormatterPage = () => {
   return (
     <TwoPanelToolLayout
       persistToolId={tool?.id}
+      shareState={{ input }}
       inputPane={{
         inputToolbar: {
           onSample: (value) => setInput(value ?? JSON_FORMATTER_SAMPLE),

@@ -41,6 +41,7 @@ const Base64Page = () => {
   return (
     <TwoPanelToolLayout
       persistToolId={tool?.id}
+      shareState={{ input }}
       inputPane={{
         inputToolbar: {
           onSample: () => setInput(mode === "encode" ? BASE64_SAMPLE : BASE64_SAMPLE_DECODE),

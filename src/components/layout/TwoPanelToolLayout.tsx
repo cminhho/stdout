@@ -11,7 +11,9 @@ import { ClearButton } from "@/components/common/ClearButton";
 import SampleDataDropdown from "@/components/common/SampleDataDropdown";
 import { SampleButton } from "@/components/common/SampleButton";
 import { SaveButton } from "@/components/common/SaveButton";
+import ShareSnippetButton from "@/components/common/ShareSnippetButton";
 import ToolLayout from "@/components/layout/ToolLayout";
+import type { PerToolState } from "@/types/workspace";
 import { useFormatOutput } from "@/hooks/useFormatOutput";
 import { cn } from "@/utils/cn";
 import type { ParseError } from "@/utils/validationTypes";
@@ -122,6 +124,8 @@ export interface TwoPanelToolLayoutProps {
   resizerWidth?: number;
   /** When set, split percent is restored from and saved to workspace. */
   persistToolId?: string;
+  /** When set with persistToolId, shows Share snippet (copy link / download .stdout.json) in input toolbar. */
+  shareState?: PerToolState;
   className?: string;
   inputPane: TwoPanelInputPaneConfig;
   outputPane: TwoPanelOutputPaneConfig;
@@ -140,15 +144,26 @@ function errorLinesFromParseErrors(errors: ParseError[]): Set<number> {
 
 function buildInputPaneProps(
   config: TwoPanelInputPaneConfig,
-  validationErrors?: ParseError[]
+  validationErrors?: ParseError[],
+  options?: { persistToolId?: string; shareState?: PerToolState }
 ): PaneProps {
   const clearHandler = resolveInputClear(config);
   const hasSamples = (config.inputToolbar?.samples?.length ?? 0) > 0;
+  const showShare =
+    options?.persistToolId != null &&
+    options?.persistToolId !== "" &&
+    options?.shareState != null;
   const toolbar =
     config.toolbar ??
     (config.inputToolbar ? (
       <>
         {config.inputToolbarExtra ?? null}
+        {showShare ? (
+          <ShareSnippetButton
+            toolId={options!.persistToolId!}
+            state={options!.shareState!}
+          />
+        ) : null}
         {hasSamples ? (
           <SampleDataDropdown
             items={config.inputToolbar.samples!}
@@ -279,6 +294,7 @@ const TwoPanelToolLayout = ({
   maxInputPercent,
   resizerWidth,
   persistToolId,
+  shareState,
   className,
   inputPane,
   outputPane,
@@ -357,7 +373,10 @@ const TwoPanelToolLayout = ({
         resizerWidth={resizerWidth}
         onPercentChange={persistToolId ? onPercentChange : undefined}
         className={cn(hasChromeAbove && "min-h-0", className)}
-        input={buildInputPaneProps(inputPane, effectiveValidationErrors)}
+        input={buildInputPaneProps(inputPane, effectiveValidationErrors, {
+          persistToolId,
+          shareState,
+        })}
         output={buildOutputPaneProps(outputPane, indentControl, derived)}
       />
     </ToolLayout>

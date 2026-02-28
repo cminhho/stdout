@@ -2,13 +2,13 @@ import { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { useToolEngine } from "@/hooks/useToolEngine";
-import { getDeepLinkInput, parseDeepLinkUrl } from "@/utils/deepLink";
+import { getDeepLinkInput, getDeepLinkSnippet, parseDeepLinkUrl } from "@/utils/deepLink";
 
 const electronAPI = typeof window !== "undefined" ? window.electronAPI : undefined;
 
 /**
  * Subscribes to Electron open-url (stdout://...) and applies deep link:
- * parses URL, sets workspace input for the tool, navigates to tool path.
+ * parses URL, sets workspace state (snippet or input/token), navigates to tool path.
  * Renders nothing.
  */
 export function DeepLinkHandler() {
@@ -23,6 +23,12 @@ export function DeepLinkHandler() {
       const { toolId, params } = parsed;
       const tool = getToolById(toolId);
       if (!tool) return;
+      const snippet = getDeepLinkSnippet(params);
+      if (snippet) {
+        setToolState(toolId, snippet.state);
+        navigate(tool.path);
+        return;
+      }
       const input = getDeepLinkInput(params);
       if (input) setToolState(toolId, { input });
       navigate(tool.path);
