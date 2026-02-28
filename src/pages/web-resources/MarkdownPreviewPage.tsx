@@ -82,11 +82,10 @@ const MarkdownPreviewPage = () => {
         title: showHtml ? "HTML Output" : "Preview",
         copyText: showHtml ? (beautifiedHtml || getHtml()) : markdown,
         toolbar: (
-          <div className="flex items-center gap-2">
+          <>
             <Button
               size="xs"
               variant={showHtml ? "outline" : "default"}
-              className="h-7 text-xs"
               onClick={() => setShowHtml(false)}
             >
               Preview
@@ -94,12 +93,11 @@ const MarkdownPreviewPage = () => {
             <Button
               size="xs"
               variant={showHtml ? "default" : "outline"}
-              className="h-7 text-xs"
               onClick={() => setShowHtml(true)}
             >
               HTML
             </Button>
-          </div>
+          </>
         ),
         children: (
           <div className="flex-1 min-h-0 flex flex-col overflow-hidden">

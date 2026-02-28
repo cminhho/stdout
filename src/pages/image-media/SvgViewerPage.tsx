@@ -59,7 +59,7 @@ const SvgViewerPage = () => {
                 className="w-6 h-6 rounded border-0 cursor-pointer"
               />
             </label>
-            <SaveButton label="Export PNG" onClick={downloadPng} className="h-7 text-xs" />
+            <SaveButton label="Export PNG" onClick={downloadPng} />
           </>
         ),
         children: (

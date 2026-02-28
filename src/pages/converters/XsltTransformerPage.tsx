@@ -44,33 +44,33 @@ const XsltTransformerPage = () => {
   const leftPane = {
     title: "XML & XSLT",
     children: (
-      <div className="flex flex-col gap-3 flex-1 min-h-0 overflow-hidden">
-        <div className="flex flex-col flex-1 min-h-0 min-h-[120px]">
-          <div className="flex items-center justify-between gap-2 shrink-0 mb-1">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">XML Input</span>
+      <div className="flex flex-col gap-[var(--home-content-gap)] flex-1 min-h-0 overflow-hidden">
+        <section className="tool-section-card tool-section-card--fill flex-1 min-h-0 flex flex-col overflow-hidden min-h-[120px]" aria-label="XML Input">
+          <div className="shrink-0 flex items-center justify-between gap-2 px-[var(--spacing-panel-inner-x)] pt-[var(--spacing-panel-inner-y)] pb-2">
+            <h2 className="home-section-label mb-0">XML Input</h2>
             <div className="flex items-center gap-2 flex-wrap">
               <SampleButton onClick={() => setXml(XSLT_DEFAULT_XML)} />
               <ClearButton onClick={() => setXml("")} />
               <FileUploadButton accept={XSLT_XML_FILE_ACCEPT} onText={setXml} />
             </div>
           </div>
-          <div className="flex-1 min-h-0 flex flex-col">
+          <div className="flex-1 min-h-0 flex flex-col border-t border-border">
             <CodeEditor value={xml} onChange={setXml} language="xml" placeholder={XSLT_PLACEHOLDER_XML} fillHeight />
           </div>
-        </div>
-        <div className="flex flex-col flex-1 min-h-0 min-h-[120px]">
-          <div className="flex items-center justify-between gap-2 shrink-0 mb-1">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">XSLT Stylesheet</span>
+        </section>
+        <section className="tool-section-card tool-section-card--fill flex-1 min-h-0 flex flex-col overflow-hidden min-h-[120px]" aria-label="XSLT Stylesheet">
+          <div className="shrink-0 flex items-center justify-between gap-2 px-[var(--spacing-panel-inner-x)] pt-[var(--spacing-panel-inner-y)] pb-2">
+            <h2 className="home-section-label mb-0">XSLT Stylesheet</h2>
             <div className="flex items-center gap-2 flex-wrap">
               <SampleButton onClick={() => setXslt(XSLT_DEFAULT_XSLT)} />
               <ClearButton onClick={() => setXslt("")} />
               <FileUploadButton accept={XSLT_XSLT_FILE_ACCEPT} onText={setXslt} />
             </div>
           </div>
-          <div className="flex-1 min-h-0 flex flex-col">
+          <div className="flex-1 min-h-0 flex flex-col border-t border-border">
             <CodeEditor value={xslt} onChange={setXslt} language="xml" placeholder={XSLT_PLACEHOLDER_XSLT} fillHeight />
           </div>
-        </div>
+        </section>
       </div>
     ),
   };
@@ -80,18 +80,22 @@ const XsltTransformerPage = () => {
     copyText: output,
     toolbar: <IndentSelect value={indent} onChange={setIndent} />,
     children: (
-      <div className="flex flex-col flex-1 min-h-0">
-        {error && <div className="text-sm text-destructive mb-2 shrink-0">Error: {error}</div>}
-        <div className="flex-1 min-h-0 flex flex-col">
+      <div className="flex flex-col gap-2 flex-1 min-h-0 overflow-hidden">
+        {error && (
+          <div className="text-[length:var(--text-ui)] text-destructive shrink-0" role="alert">
+            Error: {error}
+          </div>
+        )}
+        <section className="tool-section-card tool-section-card--fill flex-1 min-h-0 flex flex-col overflow-hidden" aria-label="Output">
           <CodeEditor value={output} readOnly language="xml" placeholder={XSLT_PLACEHOLDER_OUTPUT} fillHeight />
-        </div>
+        </section>
       </div>
     ),
   };
 
   return (
     <ToolLayout>
-      <div className="flex flex-col flex-1 min-h-0 w-full">
+      <div className="flex flex-col flex-1 min-h-0 w-full gap-[var(--home-content-gap)]">
         <TwoPanelTopSection formatError={error ? new Error(error) : undefined} />
         <ResizableTwoPanel input={leftPane} output={rightPane} className="flex-1 min-h-0" defaultInputPercent={50} />
       </div>

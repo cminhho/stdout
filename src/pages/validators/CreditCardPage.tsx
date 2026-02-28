@@ -39,16 +39,16 @@ const CreditCardPage = () => {
       </>
     ),
     children: (
-      <div className="flex flex-col gap-6 flex-1 min-h-0 overflow-auto">
-        <section className="space-y-2" aria-label="Validate">
-          <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+      <div className="flex flex-col gap-[var(--home-content-gap)] flex-1 min-h-0 overflow-auto">
+        <section className="tool-section-card shrink-0 space-y-3" aria-label="Validate">
+          <h2 className="home-section-label mb-0">
             Validate (Luhn)
           </h2>
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Card number (digits only or with spaces/dashes)"
-            className="font-mono h-8"
+            className="font-mono h-9 rounded-[var(--radius-button)] transition-colors duration-150"
             aria-label="Card number"
           />
           {input.trim() &&
@@ -61,23 +61,23 @@ const CreditCardPage = () => {
         </section>
 
         <section
-          className="space-y-3 rounded-xl border border-border/60 bg-muted/25 px-4 py-3 shadow-sm"
+          className="tool-section-card shrink-0 space-y-3"
           aria-label="Generate test numbers"
         >
-          <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+          <h2 className="home-section-label mb-0">
             Generate test numbers
           </h2>
           <p className="tool-caption leading-relaxed">
             For testing only. Do not use for real transactions.
           </p>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Card brand generators">
             {CARD_BRANDS.map((brand) => (
               <Button
                 key={brand}
                 size="xs"
                 variant="outline"
                 onClick={() => handleGenerate(brand)}
-                className="gap-1.5 min-h-touch"
+                className="gap-1.5 min-h-touch sm:min-h-0 cursor-pointer transition-colors duration-150"
                 aria-label={`Generate ${brand} test numbers`}
               >
                 <RefreshCw className="h-3.5 w-3.5 shrink-0" aria-hidden />
@@ -86,25 +86,25 @@ const CreditCardPage = () => {
             ))}
           </div>
           {generated && (
-            <div className="rounded-lg border border-border bg-background/80 overflow-hidden shadow-sm">
-              <div className="px-3 py-2 border-b border-border/60">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            <div className="rounded-[var(--home-radius-card)] border border-border bg-background/80 dark:bg-input/50 overflow-hidden transition-colors duration-150">
+              <div className="px-3 py-2.5 border-b border-border min-h-touch flex items-center">
+                <span className="home-section-label mb-0">
                   {generated.brand}
                 </span>
               </div>
               <ul
-                className="divide-y divide-border/60"
+                className="divide-y divide-border"
                 aria-label={`${generated.brand} test numbers`}
               >
                 {generated.numbers.map((number, i) => (
                   <li
                     key={`${number}-${i}`}
-                    className="flex items-center gap-2 px-3 py-2 min-h-touch"
+                    className="flex items-center gap-2 px-3 py-2.5 min-h-touch"
                   >
-                    <code className="text-sm font-mono flex-1 min-w-0 truncate">
+                    <code className="text-[length:var(--text-ui)] font-mono flex-1 min-w-0 truncate text-foreground">
                       {number}
                     </code>
-                    <CopyButton text={number} />
+                    <CopyButton text={number} className="shrink-0" />
                   </li>
                 ))}
               </ul>

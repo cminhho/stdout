@@ -35,7 +35,7 @@ const DiffLineRow = memo(function DiffLineRow({ path, type, oldValue, newValue }
   return (
     <div
       className={cn(
-        "diff-line-list__row text-xs font-mono flex flex-wrap items-baseline",
+        "diff-line-list__row text-[length:var(--text-ui)] font-mono flex flex-wrap items-baseline min-h-touch sm:min-h-0 py-1",
         typeClass
       )}
       role="listitem"

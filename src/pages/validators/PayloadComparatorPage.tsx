@@ -83,23 +83,29 @@ const PayloadComparatorPage = () => {
 
   return (
     <ToolLayout>
-      <TwoPanelTopSection formatError={result?.error ? new Error(result.error) : undefined} />
-      <ResizableTwoPanel input={leftPane} output={rightPane} className="flex-1 min-h-0" />
+      <div className="flex flex-col flex-1 min-h-0 w-full gap-[var(--home-content-gap)]">
+        <TwoPanelTopSection formatError={result?.error ? new Error(result.error) : undefined} />
+        <ResizableTwoPanel input={leftPane} output={rightPane} className="flex-1 min-h-0" />
 
-      {result && !result.error && (
-        <ToolResultCard
-          summary={formatDiffSummary(result.diffs.length)}
-          copyText={result.diffs.length > 0 ? diffText : undefined}
-        >
-          {result.diffs.length === 0 ? (
-            <p className={IDENTICAL_MESSAGE_CLASS}>✓ Payloads are identical</p>
-          ) : (
-            <div className="min-h-0 flex flex-col max-h-[50vh] rounded border overflow-hidden border-[hsl(var(--code-border))] bg-[hsl(var(--code-bg))]">
-              <CodeEditor value={diffText} readOnly language="text" fillHeight />
-            </div>
-          )}
-        </ToolResultCard>
-      )}
+        {result && !result.error && (
+          <section className="tool-section-card shrink-0" aria-label="Result">
+            <h2 className="home-section-label mb-0">Result</h2>
+            <ToolResultCard
+              summary={formatDiffSummary(result.diffs.length)}
+              copyText={result.diffs.length > 0 ? diffText : undefined}
+              className="mt-2"
+            >
+              {result.diffs.length === 0 ? (
+                <p className={IDENTICAL_MESSAGE_CLASS}>✓ Payloads are identical</p>
+              ) : (
+                <div className="min-h-0 flex flex-col max-h-[50vh] rounded-[var(--home-radius-card)] border border-border overflow-hidden bg-[hsl(var(--code-bg))] transition-colors duration-150">
+                  <CodeEditor value={diffText} readOnly language="text" fillHeight />
+                </div>
+              )}
+            </ToolResultCard>
+          </section>
+        )}
+      </div>
     </ToolLayout>
   );
 };

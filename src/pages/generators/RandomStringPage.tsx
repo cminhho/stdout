@@ -258,168 +258,200 @@ const RandomStringPage = () => {
   const useCountsMode =
     presetConfig?.charset == null || presetId === "custom";
 
-  const field = (label: string, child: ReactNode) => (
+  const field = (label: string, child: ReactNode, id?: string) => (
     <div className="flex flex-col min-w-0">
-      <Label className="tool-field-label block">{label}</Label>
+      <Label className="tool-field-label block" htmlFor={id}>
+        {label}
+      </Label>
       {child}
     </div>
   );
 
   const inputPaneContent = (
-    <div className="flex flex-col gap-[var(--spacing-section-mb)] overflow-auto">
-      <section className="flex flex-col gap-[var(--spacing-block-gap)]" aria-label="Preset">
-        {field(
-          "Preset",
+    <div className="flex flex-col gap-[var(--home-content-gap)] overflow-auto">
+      <section className="tool-section-card shrink-0" aria-label="Preset">
+        <h2 className="home-section-label mb-0">Preset</h2>
+        <div className="mt-2">
           <SelectWithOptions<PresetId>
             value={presetId}
             onValueChange={handlePresetChange}
             options={PRESETS.map((p) => ({ value: p.id, label: p.label }))}
             variant="secondary"
-            triggerClassName="w-full min-w-0"
+            triggerClassName="w-full min-w-0 cursor-pointer transition-colors duration-150"
             aria-label="Preset"
           />
-        )}
+        </div>
       </section>
 
       {useCountsMode && presetId !== "custom" && (
-        <section className="flex flex-col gap-[var(--spacing-block-gap)]" aria-label="Character counts">
-          {field(
-            "Uppercase",
-            <Input
-              type="number"
-              min={0}
-              max={64}
-              value={upper}
-              onChange={(e) =>
-                setUpper(Math.max(0, Math.min(64, Number(e.target.value) || 0)))
-              }
-              className="input-compact"
-            />
-          )}
-          {field(
-            "Lowercase",
-            <Input
-              type="number"
-              min={0}
-              max={64}
-              value={lower}
-              onChange={(e) =>
-                setLower(Math.max(0, Math.min(64, Number(e.target.value) || 0)))
-              }
-              className="input-compact"
-            />
-          )}
-          {field(
-            "Digits",
-            <Input
-              type="number"
-              min={0}
-              max={64}
-              value={digits}
-              onChange={(e) =>
-                setDigits(Math.max(0, Math.min(64, Number(e.target.value) || 0)))
-              }
-              className="input-compact"
-            />
-          )}
-          {field(
-            "Symbols",
-            <Input
-              type="number"
-              min={0}
-              max={64}
-              value={symbols}
-              onChange={(e) =>
-                setSymbols(Math.max(0, Math.min(64, Number(e.target.value) || 0)))
-              }
-              className="input-compact"
-            />
-          )}
+        <section className="tool-section-card shrink-0" aria-label="Character counts">
+          <h2 className="home-section-label mb-0">Character counts</h2>
+          <div className="mt-2 flex flex-col gap-[var(--spacing-block-gap)]">
+            {field(
+              "Uppercase",
+              <Input
+                id="random-upper"
+                type="number"
+                min={0}
+                max={64}
+                value={upper}
+                onChange={(e) =>
+                  setUpper(Math.max(0, Math.min(64, Number(e.target.value) || 0)))
+                }
+                className="input-compact"
+              />,
+              "random-upper"
+            )}
+            {field(
+              "Lowercase",
+              <Input
+                id="random-lower"
+                type="number"
+                min={0}
+                max={64}
+                value={lower}
+                onChange={(e) =>
+                  setLower(Math.max(0, Math.min(64, Number(e.target.value) || 0)))
+                }
+                className="input-compact"
+              />,
+              "random-lower"
+            )}
+            {field(
+              "Digits",
+              <Input
+                id="random-digits"
+                type="number"
+                min={0}
+                max={64}
+                value={digits}
+                onChange={(e) =>
+                  setDigits(Math.max(0, Math.min(64, Number(e.target.value) || 0)))
+                }
+                className="input-compact"
+              />,
+              "random-digits"
+            )}
+            {field(
+              "Symbols",
+              <Input
+                id="random-symbols"
+                type="number"
+                min={0}
+                max={64}
+                value={symbols}
+                onChange={(e) =>
+                  setSymbols(Math.max(0, Math.min(64, Number(e.target.value) || 0)))
+                }
+                className="input-compact"
+              />,
+              "random-symbols"
+            )}
+          </div>
         </section>
       )}
 
       {(presetConfig?.charset != null || presetId === "custom") && (
-        <section className="flex flex-col gap-[var(--spacing-block-gap)]" aria-label="Length">
-          {field(
-            "Length",
-            <Input
-              type="number"
-              min={1}
-              max={512}
-              value={length}
-              onChange={(e) =>
-                setLength(Math.max(1, Math.min(512, Number(e.target.value) || 1)))
-              }
-              className="input-compact"
-            />
-          )}
+        <section className="tool-section-card shrink-0" aria-label="Length">
+          <h2 className="home-section-label mb-0">Length</h2>
+          <div className="mt-2">
+            {field(
+              "Length",
+              <Input
+                id="random-length"
+                type="number"
+                min={1}
+                max={512}
+                value={length}
+                onChange={(e) =>
+                  setLength(Math.max(1, Math.min(512, Number(e.target.value) || 1)))
+                }
+                className="input-compact"
+              />,
+              "random-length"
+            )}
+          </div>
         </section>
       )}
 
       {(presetId === "license-key" || separator) && (
-        <section className="flex flex-col gap-[var(--spacing-block-gap)]" aria-label="Separator and grouping">
-          {field(
-            "Separator",
-            <SelectWithOptions
-              value={separator || "(None)"}
-              onValueChange={(v) => setSeparator(v === "(None)" ? "" : v)}
-              options={[
-                { value: "(None)", label: "(None)" },
-                { value: "-", label: "Dash (-)" },
-                { value: " ", label: "Space" },
-                { value: "_", label: "Underscore (_)" },
-              ]}
-              variant="secondary"
-              triggerClassName="w-full min-w-0"
-            />
-          )}
-          {field(
-            "Group size",
-            <Input
-              type="number"
-              min={0}
-              max={32}
-              value={groupSize}
-              onChange={(e) =>
-                setGroupSize(
-                  Math.max(0, Math.min(32, Number(e.target.value) || 0))
-                )
-              }
-              className="input-compact"
-            />
-          )}
+        <section className="tool-section-card shrink-0" aria-label="Separator and grouping">
+          <h2 className="home-section-label mb-0">Separator & grouping</h2>
+          <div className="mt-2 flex flex-col gap-[var(--spacing-block-gap)]">
+            {field(
+              "Separator",
+              <SelectWithOptions
+                value={separator || "(None)"}
+                onValueChange={(v) => setSeparator(v === "(None)" ? "" : v)}
+                options={[
+                  { value: "(None)", label: "(None)" },
+                  { value: "-", label: "Dash (-)" },
+                  { value: " ", label: "Space" },
+                  { value: "_", label: "Underscore (_)" },
+                ]}
+                variant="secondary"
+                triggerClassName="w-full min-w-0 cursor-pointer transition-colors duration-150"
+              />
+            )}
+            {field(
+              "Group size",
+              <Input
+                id="random-group-size"
+                type="number"
+                min={0}
+                max={32}
+                value={groupSize}
+                onChange={(e) =>
+                  setGroupSize(
+                    Math.max(0, Math.min(32, Number(e.target.value) || 0))
+                  )
+                }
+                className="input-compact"
+              />,
+              "random-group-size"
+            )}
+          </div>
         </section>
       )}
 
-      <section className="flex flex-col gap-[var(--spacing-block-gap)]" aria-label="Custom and options">
-        {presetId === "custom" &&
-          field(
-            "Custom charset",
+      <section className="tool-section-card shrink-0" aria-label="Custom charset and options">
+        <h2 className="home-section-label mb-0">Options</h2>
+        <div className="mt-2 flex flex-col gap-[var(--spacing-block-gap)]">
+          {presetId === "custom" &&
+            field(
+              "Custom charset",
+              <Input
+                id="random-custom-chars"
+                value={customChars}
+                onChange={(e) => setCustomChars(e.target.value)}
+                placeholder="e.g. abc123"
+                className="input-compact"
+              />,
+              "random-custom-chars"
+            )}
+          {field(
+            "Prefix",
             <Input
-              value={customChars}
-              onChange={(e) => setCustomChars(e.target.value)}
-              placeholder="e.g. abc123"
+              id="random-prefix"
+              value={prefix}
+              onChange={(e) => setPrefix(e.target.value)}
               className="input-compact"
-            />
+              placeholder="Optional"
+            />,
+            "random-prefix"
           )}
-        {field(
-          "Prefix",
-          <Input
-            value={prefix}
-            onChange={(e) => setPrefix(e.target.value)}
-            className="input-compact"
-            placeholder="Optional"
-          />
-        )}
-        {field(
-          "Suffix",
-          <Input
-            value={suffix}
-            onChange={(e) => setSuffix(e.target.value)}
-            className="input-compact"
-            placeholder="Optional"
-          />
-        )}
+          {field(
+            "Suffix",
+            <Input
+              id="random-suffix"
+              value={suffix}
+              onChange={(e) => setSuffix(e.target.value)}
+              className="input-compact"
+              placeholder="Optional"
+            />,
+            "random-suffix"
+          )}
+        </div>
       </section>
     </div>
   );
@@ -438,7 +470,7 @@ const RandomStringPage = () => {
             : "Output",
         copyText: outputText || undefined,
         toolbar: (
-          <div className="flex items-center gap-[var(--spacing-block-gap)] flex-wrap">
+          <>
             <Button
               type="button"
               size="xs"
@@ -446,13 +478,20 @@ const RandomStringPage = () => {
               onClick={() => setRegenerateKey((k) => k + 1)}
               title="Generate with current options"
               aria-label="Generate"
+              className="cursor-pointer transition-colors duration-150"
             >
               <RefreshCw className="h-3 w-3" aria-hidden />
               Generate
             </Button>
             <div className="flex items-center gap-[var(--home-space-xs)]">
-              <Label className="text-[length:var(--text-caption)] font-medium text-muted-foreground shrink-0">Count</Label>
+              <Label
+                htmlFor="random-count"
+                className="tool-caption shrink-0"
+              >
+                Count
+              </Label>
               <Input
+                id="random-count"
                 type="number"
                 min={1}
                 max={100}
@@ -464,8 +503,11 @@ const RandomStringPage = () => {
                 aria-label="Number of strings"
               />
             </div>
-            <ClearButton onClick={() => setStrings([])} />
-          </div>
+            <ClearButton
+              onClick={() => setStrings([])}
+              className="cursor-pointer transition-colors duration-150"
+            />
+          </>
         ),
         children: (
           <div className="flex-1 min-h-0 flex flex-col overflow-hidden">

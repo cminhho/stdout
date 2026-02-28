@@ -85,7 +85,7 @@ const HarViewerPage = () => {
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
                 placeholder="Filter..."
-                className="input-compact flex-1 min-w-0 max-w-[140px] font-mono h-7"
+                className="input-compact flex-1 min-w-0 max-w-[140px] font-mono"
               />
               <span className="tool-caption shrink-0">{filtered.length}/{entries.length}</span>
             </>

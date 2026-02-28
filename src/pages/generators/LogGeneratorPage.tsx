@@ -2,12 +2,15 @@ import { useState } from "react";
 import ToolLayout from "@/components/layout/ToolLayout";
 import ToolPane from "@/components/layout/ToolPane";
 import CodeEditor from "@/components/common/CodeEditor";
+import FileUploadButton from "@/components/common/FileUploadButton";
 import { SelectWithOptions } from "@/components/ui/select";
 import IndentSelect, { type IndentOption } from "@/components/common/IndentSelect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SaveButton } from "@/components/common/SaveButton";
+
+const LOG_FILE_ACCEPT = ".log,.txt,text/plain";
 
 const LOG_FORMATS = [
   {
@@ -121,9 +124,9 @@ const LogGeneratorPage = () => {
     copyText: output || undefined,
     onClear: () => setOutput(""),
     toolbar: (
-      <div className="flex items-center gap-2 flex-wrap">
-        <div className="flex items-center gap-1.5">
-          <Label className="tool-field-label shrink-0">Format</Label>
+      <>
+        <div className="flex items-center gap-2">
+          <span className="tool-caption shrink-0">Format</span>
           <SelectWithOptions
             size="xs"
             variant="secondary"
@@ -132,39 +135,58 @@ const LogGeneratorPage = () => {
             options={LOG_FORMATS.map((f) => ({ value: f.id, label: f.name }))}
             title="Log format"
             aria-label="Log format"
+            triggerClassName="cursor-pointer transition-colors duration-150"
           />
         </div>
         {format === "json" && (
-          <div className="flex items-center gap-1.5">
-            <Label className="tool-field-label shrink-0">Indent</Label>
+          <div className="flex items-center gap-2">
+            <span className="tool-caption shrink-0">Indent</span>
             <IndentSelect value={indent} onChange={setIndent} />
           </div>
         )}
-        <div className="flex items-center gap-1.5">
-          <Label className="tool-field-label shrink-0">Lines</Label>
+        <div className="flex items-center gap-2">
+          <Label htmlFor="log-lines" className="tool-caption shrink-0">
+            Lines
+          </Label>
           <Input
+            id="log-lines"
             type="number"
             min={1}
             max={10000}
             value={count}
             onChange={(e) => setCount(Math.max(1, Math.min(10000, Number(e.target.value) || 1)))}
-            className="h-7 w-20 font-mono text-xs"
+            className="input-compact w-20"
+            aria-label="Number of log lines"
           />
         </div>
-        <Button size="xs" className="h-7 text-xs" onClick={generate}>
+        <Button
+          size="xs"
+          onClick={generate}
+          className="cursor-pointer transition-colors duration-150"
+        >
           Generate
         </Button>
+        <FileUploadButton
+          accept={LOG_FILE_ACCEPT}
+          onText={setOutput}
+          variant="outline"
+          buttonClassName="cursor-pointer transition-colors duration-150"
+        />
         {output ? (
-          <SaveButton label="Save .log" onClick={download} className="h-7 text-xs" />
+          <SaveButton
+            label="Save .log"
+            onClick={download}
+            className="cursor-pointer transition-colors duration-150"
+          />
         ) : null}
-      </div>
+      </>
     ),
     children: (
       <div className="flex-1 min-h-0 overflow-hidden">
         <CodeEditor
           value={output}
           readOnly
-          language="text"
+          language="log"
           placeholder="Click Generate to create log data..."
           fillHeight
           showLineNumbers={false}

@@ -45,30 +45,29 @@ const NumberBasePage = () => {
     ),
     children: (
       <div className="flex flex-col gap-[var(--home-content-gap)] flex-1 min-h-0 overflow-hidden">
-        <section
-          className="space-y-3 rounded-card border border-border/60 bg-muted/25 px-4 py-3 shadow-sm shrink-0"
-          aria-label="Input"
-        >
-          <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            Convert
-          </h2>
-          <p className="tool-caption leading-relaxed">
+        <section className="tool-section-card shrink-0 space-y-4" aria-label="Convert">
+          <h2 className="home-section-label mb-0">Convert</h2>
+          <p className="tool-caption leading-relaxed text-muted-foreground">
             Enter a number and select source base. All conversions appear below.
           </p>
           <div className="space-y-1.5">
-            <Label htmlFor="number-base-input" variant="muted" className="text-xs">
+            <Label htmlFor="number-base-input" className="tool-field-label">
               Number
             </Label>
             <Input
               id="number-base-input"
-              className="input-compact w-full font-mono h-8"
+              className="w-full font-mono h-9 rounded-[var(--radius-button)] text-[length:var(--text-ui)] transition-colors duration-150"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={NUMBER_BASE_PLACEHOLDER}
               aria-label="Number to convert"
             />
           </div>
-          <div className="flex flex-wrap items-center gap-2">
+          <div
+            className="flex flex-wrap items-center gap-2"
+            role="group"
+            aria-label="Source base"
+          >
             <span className="tool-caption shrink-0">Source base</span>
             {NUMBER_BASE_OPTIONS.map((b) => (
               <Button
@@ -77,7 +76,7 @@ const NumberBasePage = () => {
                 size="xs"
                 variant={fromBase === b.radix ? "default" : "outline"}
                 onClick={() => setFromBase(b.radix)}
-                className="min-h-touch font-mono"
+                className="min-h-touch sm:min-h-0 font-mono cursor-pointer transition-colors duration-150"
                 aria-label={b.label}
                 aria-pressed={fromBase === b.radix}
               >
@@ -88,30 +87,32 @@ const NumberBasePage = () => {
         </section>
 
         <section
-          className="flex-1 min-h-0 flex flex-col rounded-card border border-border/60 bg-muted/25 overflow-hidden shadow-sm"
-          aria-label="Results"
+          className="tool-section-card tool-section-card--fill flex-1 min-h-0 flex flex-col overflow-hidden"
+          aria-label="Conversions"
         >
-          <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider shrink-0 px-4 pt-3 pb-2">
+          <h2 className="home-section-label mb-0 px-[var(--spacing-panel-inner-x)] pt-[var(--spacing-panel-inner-y)] pb-2">
             Conversions
           </h2>
-          <div className="flex-1 min-h-0 overflow-auto px-4 pb-4 space-y-0 border-t border-border/60">
+          <div className="flex-1 min-h-0 overflow-auto px-[var(--spacing-panel-inner-x)] pb-[var(--spacing-panel-inner-y)] border-t border-border">
             {results ? (
               <ul className="divide-y divide-border/50 pt-2" aria-label="Converted values by base">
                 {results.map((r) => (
                   <li
                     key={r.radix}
-                    className="flex items-center justify-between gap-2 py-2 min-h-touch first:pt-0"
+                    className="flex items-center justify-between gap-2 py-2 min-h-touch sm:min-h-0 first:pt-0"
                   >
                     <div className="min-w-0 flex-1">
-                      <div className="text-[10px] text-muted-foreground">{r.label}</div>
-                      <div className="text-xs font-mono text-foreground truncate">{r.value}</div>
+                      <div className="text-[length:var(--text-ui)] text-muted-foreground">{r.label}</div>
+                      <div className="font-mono text-foreground text-[length:var(--text-ui)] truncate" title={r.value}>
+                        {r.value}
+                      </div>
                     </div>
-                    <CopyButton text={r.value} />
+                    <CopyButton text={r.value} className="shrink-0" />
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="tool-caption py-4 leading-relaxed" role="status">
+              <p className="tool-caption py-4 leading-relaxed text-muted-foreground" role="status">
                 {EMPTY_MESSAGE}
               </p>
             )}

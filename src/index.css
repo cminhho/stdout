@@ -95,11 +95,15 @@
     --code-punctuation: 215 9% 62%;
     --code-comment: 215 9% 48%;
     --code-tag: 0 70% 65%;           /* HTML/XML tag name (VS Code–style) */
-    /* Random string view: digit / upper / lower / symbol (industry practice: distinct, scannable) */
-    --code-rs-digit: 38 92% 55%;     /* amber – digits */
-    --code-rs-upper: 199 89% 48%;   /* cyan – uppercase */
-    --code-rs-lower: 142 69% 58%;   /* green – lowercase */
-    --code-rs-symbol: 215 9% 58%;   /* muted – symbols */
+    /* Random string: digit / upper / lower / symbol (macOS + Liquid Glass–friendly, WCAG AA) */
+    --code-rs-digit: 36 85% 52%;    /* warm amber – digits */
+    --code-rs-upper: 197 72% 52%;  /* cyan – uppercase */
+    --code-rs-lower: 145 52% 58%;  /* green – lowercase */
+    --code-rs-symbol: 220 12% 58%; /* muted slate – symbols */
+    /* Log view: timestamp, level/method, app name (macOS + Liquid Glass–friendly) */
+    --code-log-timestamp: 197 72% 52%;  /* cyan – timestamp */
+    --code-log-level: 258 90% 66%;       /* purple – level / HTTP method */
+    --code-log-app: 31 92% 50%;         /* amber – app/container name */
     --code-gutter-foreground: 215 9% 48%; /* line number gutter (muted) */
     --code-line-height: 1.5;         /* unitless, editor line height */
     --code-font-size: var(--text-content);      /* 14px */
@@ -305,11 +309,15 @@
     --code-punctuation: 25 15% 42%;
     --code-comment: 25 10% 52%;
     --code-tag: 0 60% 42%;
-    /* Random string view (light): darker shades for contrast on white */
-    --code-rs-digit: 32 85% 42%;
-    --code-rs-upper: 199 70% 36%;
-    --code-rs-lower: 142 45% 32%;
-    --code-rs-symbol: 25 15% 42%;
+    /* Random string (light): darker shades for contrast on white, macOS-style */
+    --code-rs-digit: 32 78% 38%;
+    --code-rs-upper: 197 65% 32%;
+    --code-rs-lower: 145 40% 28%;
+    --code-rs-symbol: 25 12% 42%;
+    /* Log view (light) */
+    --code-log-timestamp: 197 65% 32%;
+    --code-log-level: 258 55% 38%;
+    --code-log-app: 32 78% 38%;
     --code-gutter-foreground: 25 10% 52%;
 
     --outline-button-bg: 0 0% 100%;
@@ -414,11 +422,15 @@
     --code-punctuation: 0 0% 58%;
     --code-comment: 0 0% 48%;
     --code-tag: 0 70% 65%;
-    /* Random string view (deep dark): same semantics, OLED-safe */
-    --code-rs-digit: 38 92% 55%;
-    --code-rs-upper: 199 89% 48%;
-    --code-rs-lower: 142 69% 58%;
-    --code-rs-symbol: 0 0% 58%;
+    /* Random string (deep dark): same semantics, OLED-safe, refined */
+    --code-rs-digit: 36 85% 52%;
+    --code-rs-upper: 197 72% 52%;
+    --code-rs-lower: 145 52% 58%;
+    --code-rs-symbol: 0 0% 56%;
+    /* Log view (deep dark) */
+    --code-log-timestamp: 197 72% 52%;
+    --code-log-level: 258 90% 66%;
+    --code-log-app: 31 92% 50%;
     --code-gutter-foreground: 0 0% 48%;
 
     --outline-button-bg: 0 0% 14%;
@@ -654,6 +666,27 @@
   }
   .tool-card--spaced {
     margin: var(--spacing-section-mb);
+  }
+
+  /* Tool section card: solid on mobile, Liquid Glass on desktop (macOS 26–style panels) */
+  .tool-section-card {
+    border-radius: var(--home-radius-card);
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--muted) / 0.25);
+    padding: var(--spacing-panel-inner-y) var(--spacing-panel-inner-x);
+    transition: border-color var(--transition-default), background-color var(--transition-default), box-shadow var(--transition-default);
+  }
+  html.desktop .tool-section-card {
+    background:
+      linear-gradient(145deg, hsl(var(--glass-tint)) 0%, transparent 55%),
+      hsl(var(--card) / 0.82);
+    backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
+    -webkit-backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
+    border-color: hsl(var(--glass-edge-subtle));
+    box-shadow: inset 0 1px 0 0 hsl(var(--glass-highlight-subtle));
+  }
+  .tool-section-card--fill {
+    padding: 0;
   }
 
   .tool-textarea {
@@ -1823,13 +1856,31 @@
     margin-bottom: var(--spacing-toolbar-mb);
   }
 
-  /* Compact input: token-based control surface (reusable for tool forms) */
+  /* Toolbar actions row: same height controls (h-7), vertically centered. Stays compact on mobile. */
+  .toolbar-actions-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-block-gap);
+  }
+
+  /* Force toolbar controls to stay h-7 on all viewports (no min-h-touch growth on mobile) */
+  .toolbar-actions-row button,
+  .toolbar-actions-row input:not([type="color"]):not([type="checkbox"]):not([type="radio"]) {
+    min-height: 1.75rem;
+    height: 1.75rem;
+  }
+  .toolbar-actions-row [role="combobox"] {
+    min-height: 1.75rem;
+    height: 1.75rem;
+  }
+
+  /* Compact input: matches Button/Select xs height (h-7) for consistent toolbar controls */
   .input-compact {
     background: hsl(var(--background));
     color: hsl(var(--foreground));
     border: 1px solid hsl(var(--input));
-    font-size: var(--text-content);
-    @apply h-9 rounded-lg px-3 py-2 font-mono placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-150;
+    @apply h-7 rounded-lg px-2.5 py-1.5 text-xs font-mono placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-150;
   }
 
   .tool-checkbox-label {

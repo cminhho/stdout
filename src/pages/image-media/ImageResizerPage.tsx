@@ -173,7 +173,7 @@ const ImageResizerPage = () => {
                   <Button size="xs" onClick={resize}>
                     Resize
                   </Button>
-                  <SaveButton label="Download" onClick={download} className="h-7 text-xs" />
+                  <SaveButton label="Download" onClick={download} />
                 </div>
               </div>
             )}

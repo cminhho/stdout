@@ -103,43 +103,45 @@ const StringTransformerPage = () => {
     pipeline.length === 0 ? "Result" : pipeline.length === 1 ? `Result (${pipeline[0]})` : `Result (${pipeline.join(" → ")})`;
 
   const transformToolbar = (
-    <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
-      {TRANSFORM_GROUPS.map((group, groupIndex) => (
-        <div key={group.label} className="flex flex-wrap items-center gap-1.5">
-          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider shrink-0">
-            {group.label}
-          </span>
-          <div
-            role="group"
-            aria-label={group.label}
-            className="flex flex-wrap gap-1.5 rounded-lg border border-input bg-muted/50 p-1"
-          >
-            {group.names.map((name) => {
-              const selected = selectedByGroup[groupIndex] === name;
-              return (
-                <Button
-                  key={name}
-                  type="button"
-                  variant={selected ? "default" : "ghost"}
-                  size="xs"
-                  className="min-w-0 font-mono"
-                  aria-pressed={selected}
-                  onClick={() => selectInGroup(groupIndex, name)}
-                >
-                  {name}
-                </Button>
-              );
-            })}
+    <section className="tool-section-card shrink-0" aria-label="Transforms">
+      <h2 className="home-section-label mb-0">Transforms</h2>
+      <div className="flex flex-wrap items-baseline gap-x-6 gap-y-3 mt-2">
+        {TRANSFORM_GROUPS.map((group, groupIndex) => (
+          <div key={group.label} className="flex flex-wrap items-center gap-2">
+            <span className="tool-caption shrink-0">{group.label}</span>
+            <div
+              role="group"
+              aria-label={group.label}
+              className="flex flex-wrap gap-1.5 rounded-[var(--home-radius-card)] border border-border bg-muted/30 dark:bg-muted/20 p-1.5"
+            >
+              {group.names.map((name) => {
+                const selected = selectedByGroup[groupIndex] === name;
+                return (
+                  <Button
+                    key={name}
+                    type="button"
+                    variant={selected ? "default" : "ghost"}
+                    size="xs"
+                    className="min-w-0 font-mono cursor-pointer transition-colors duration-150"
+                    aria-pressed={selected}
+                    onClick={() => selectInGroup(groupIndex, name)}
+                  >
+                    {name}
+                  </Button>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </section>
   );
 
   return (
     <TwoPanelToolLayout
       topSection={transformToolbar}
       inputPane={{
+        title: "Input",
         inputToolbar: {
           onSample: () => setInput(getSampleInput()),
           setInput,
@@ -154,7 +156,7 @@ const StringTransformerPage = () => {
         },
       }}
       outputPane={{
-        title,
+        title: title || "Output",
         copyText: output || undefined,
         outputEditor: {
           value: output,

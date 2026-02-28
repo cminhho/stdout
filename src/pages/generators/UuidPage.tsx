@@ -67,7 +67,7 @@ const UuidPage = () => {
     title: "Output",
     copyText: outputText,
     toolbar: (
-      <div className="flex items-center gap-2 flex-wrap">
+      <>
         <div className="flex items-center gap-1.5">
           <Label className="tool-field-label shrink-0">Count</Label>
           <Input
@@ -76,7 +76,7 @@ const UuidPage = () => {
             max={100}
             value={count}
             onChange={(e) => setCount(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
-            className="h-7 w-14 font-mono text-xs"
+            className="input-compact w-14"
           />
         </div>
         <div className="flex items-center gap-1.5">
@@ -99,11 +99,11 @@ const UuidPage = () => {
           <input type="checkbox" checked={hyphens} onChange={(e) => setHyphens(e.target.checked)} className="accent-primary rounded border-input" />
           Hyphens
         </label>
-        <Button size="xs" className="h-7 text-xs" onClick={generate}>
+        <Button size="xs" onClick={generate}>
           Generate
         </Button>
         <ClearButton onClick={() => setUuids([])} />
-      </div>
+      </>
     ),
     children: (
       <div className="flex-1 min-h-0 overflow-hidden">

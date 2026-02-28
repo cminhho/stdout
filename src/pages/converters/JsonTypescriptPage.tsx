@@ -28,6 +28,7 @@ const JsonTypescriptPage = () => {
   return (
     <TwoPanelToolLayout
       inputPane={{
+        title: "JSON",
         inputToolbar: {
           onSample: () => setInput(JSON_TYPESCRIPT_SAMPLE),
           setInput,
@@ -43,6 +44,7 @@ const JsonTypescriptPage = () => {
             options={JSON_TYPESCRIPT_LANGS.map((l) => ({ value: l.value, label: l.label }))}
             title="Output language"
             aria-label="Output language"
+            triggerClassName="cursor-pointer transition-colors duration-150"
           />
         ),
         inputEditor: {
@@ -53,6 +55,7 @@ const JsonTypescriptPage = () => {
         },
       }}
       outputPane={{
+        title: "Output",
         outputToolbar: {
           format,
           outputFilename: JSON_TYPESCRIPT_OUTPUT_FILENAME,

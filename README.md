@@ -14,7 +14,7 @@
   <a href="#why-stdout">Why Stdout</a> •
   <a href="#philosophy">Philosophy</a> •
   <a href="#installation">Installation</a> •
-  <a href="#development">Development</a> •
+  <a href="docs/development.md">Development</a> •
   <a href="#faq">FAQ</a> •
   <a href="#contributing">Contributing</a> •
   <a href="#license">License</a>
@@ -32,7 +32,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/Screenshot 2026-02-25 at 17.28.39.png" width="720" alt="Stdout app overview — developer toolkit hub with sidebar and tools grid" />
+  <img src="docs/images/Screenshot 2026-02-25 at 17.28.39.png" width="720" alt="Stdout app overview — developer toolkit hub with sidebar and tools grid" />
 </p>
 
 **Try it:** [Web](https://stdout-tools.web.app/) · **macOS:** `brew install --cask cminhho/tap/stdout`
@@ -48,11 +48,11 @@
 ## Screenshots
 
 <p align="center">
-  <img src="docs/stdout-json-format.png" style="width: 100%; height: auto;" alt="JSON Format/Validate — input and pretty-printed output" />
+  <img src="docs/images/stdout-json-format.png" style="width: 100%; height: auto;" alt="JSON Format/Validate — input and pretty-printed output" />
 </p>
 
 <p align="center">
-  <img src="docs/stdout-random-string-generator.png" style="width: 100%; height: auto;" alt="Random String Generator — options and generated strings" />
+  <img src="docs/images/stdout-random-string-generator.png" style="width: 100%; height: auto;" alt="Random String Generator — options and generated strings" />
 </p>
 
 ---
@@ -167,84 +167,11 @@ xattr -cr /Applications/stdout.app
 
 ### Web
 
-Use the live app at **[https://stdout-tools.web.app/](https://stdout-tools.web.app/)**, or run locally (see [Development](#development)) and deploy the built `dist/` to any static host.
+Use the live app at **[https://stdout-tools.web.app/](https://stdout-tools.web.app/)**, or run locally (see [Development](docs/development.md)) and deploy the built `dist/` to any static host.
 
 ---
 
-## Development
-
-### Prerequisites
-
-- **Node.js** 20+ (LTS recommended)
-- **npm** (or compatible package manager)
-
-### Setup
-
-```bash
-git clone https://github.com/cminhho/stdout.git
-cd stdout
-npm install
-```
-
-### Commands
-
-**Web (Vite)**
-
-```bash
-npm run dev      # Dev server
-npm run build    # Production build → dist/
-```
-
-**Desktop (Electron)**
-
-```bash
-npm run electron:dev           # Dev with hot reload
-npm run electron:build:mac     # Build macOS (arm64 + x64) → release/
-npm run electron:build:win     # Build Windows
-npm run electron:build:linux   # Build Linux
-```
-
-**Deploy web to Firebase**
-
-```bash
-npm run deploy   # build + compress + firebase deploy
-```
-
-**Release (bump version + tag → GitHub Release)**
-
-```bash
-npm run release        # patch (e.g. 1.1.0 → 1.1.1)
-npm run release:minor  # minor; npm run release:major for major
-# Then push: git push origin <branch> && git push origin v<version>
-```
-
-See [docs/release.md](docs/release.md) for the full flow.
-
-### Tech stack
-
-| Layer | Technology |
-|-------|------------|
-| Desktop | Electron 33+ |
-| UI | React 19 + TypeScript |
-| Build | Vite 5 |
-| Styling | Tailwind CSS, Radix UI |
-| Package | electron-builder |
-
----
-
-## Project structure
-
-```
-src/
-  components/   # App + UI primitives (ToolLayout, CodeEditor, ui/)
-  contexts/     # React context (Settings)
-  hooks/        # useToolEngine, useCurrentTool, useToolTracking
-  pages/        # Tool pages by domain (converters, encode, formatters, …)
-  tools/        # Tool registry (registry.ts), routing, types, tracking
-  utils/        # Domain logic (encode, validators, cn, …)
-```
-
-Tools are registered in `src/tools/registry.ts`; each page is self-contained and lazy-loaded.
+For setup, commands, tech stack, and project structure, see **[Development](docs/development.md)**.
 
 ---
 

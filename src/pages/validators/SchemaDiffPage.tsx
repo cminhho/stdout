@@ -77,21 +77,27 @@ const SchemaDiffPage = () => {
 
   return (
     <ToolLayout>
-      <TwoPanelTopSection formatError={result?.error ? new Error(result.error) : undefined} />
-      <ResizableTwoPanel input={leftPane} output={rightPane} className="flex-1 min-h-0" />
+      <div className="flex flex-col flex-1 min-h-0 w-full gap-[var(--home-content-gap)]">
+        <TwoPanelTopSection formatError={result?.error ? new Error(result.error) : undefined} />
+        <ResizableTwoPanel input={leftPane} output={rightPane} className="flex-1 min-h-0" />
 
-      {result && !result.error && (
-        <ToolResultCard
-          summary={formatDiffSummary(result.diff.length)}
-          copyText={result.diff.length > 0 ? formatDiffEntriesForCopy(result.diff) : undefined}
-        >
-          {result.diff.length === 0 ? (
-            <p className={IDENTICAL_MESSAGE_CLASS}>✓ Schemas are identical</p>
-          ) : (
-            <DiffLineList entries={result.diff} />
-          )}
-        </ToolResultCard>
-      )}
+        {result && !result.error && (
+          <section className="tool-section-card shrink-0" aria-label="Result">
+            <h2 className="home-section-label mb-0">Result</h2>
+            <ToolResultCard
+              summary={formatDiffSummary(result.diff.length)}
+              copyText={result.diff.length > 0 ? formatDiffEntriesForCopy(result.diff) : undefined}
+              className="mt-2"
+            >
+              {result.diff.length === 0 ? (
+                <p className={IDENTICAL_MESSAGE_CLASS}>✓ Schemas are identical</p>
+              ) : (
+                <DiffLineList entries={result.diff} />
+              )}
+            </ToolResultCard>
+          </section>
+        )}
+      </div>
     </ToolLayout>
   );
 };

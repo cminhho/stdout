@@ -87,7 +87,7 @@ const CsvViewerPage = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search..."
-              className="input-compact flex-1 min-w-[160px] max-w-xs h-7"
+              className="input-compact flex-1 min-w-[160px] max-w-xs"
             />
             <span className="tool-caption shrink-0">{filtered?.rows.length ?? 0}/{parsed.rows.length} rows</span>
           </>

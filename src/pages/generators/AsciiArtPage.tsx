@@ -28,6 +28,7 @@ const AsciiArtPage = () => {
   return (
     <TwoPanelToolLayout
       inputPane={{
+        title: "Input",
         inputToolbar: {
           onSample: () => setInput(ASCII_ART_SAMPLE),
           setInput,
@@ -36,14 +37,15 @@ const AsciiArtPage = () => {
         },
         inputToolbarExtra: (
           <>
-            <SelectWithOptions
+            <SelectWithOptions<AsciiArtCharStyle>
               size="xs"
               variant="secondary"
               value={charStyle}
-              onValueChange={setCharStyle}
+              onValueChange={(v) => setCharStyle(v)}
               options={ASCII_ART_CHAR_STYLES}
               title="Character style"
               aria-label="Character style"
+              triggerClassName="cursor-pointer transition-colors duration-150"
             />
             <SelectWithOptions
               size="xs"
@@ -53,6 +55,7 @@ const AsciiArtPage = () => {
               options={ASCII_ART_SPACING_OPTIONS.map((o) => ({ value: String(o.value), label: o.label }))}
               title="Spacing"
               aria-label="Spacing"
+              triggerClassName="cursor-pointer transition-colors duration-150"
             />
           </>
         ),
@@ -64,6 +67,7 @@ const AsciiArtPage = () => {
         },
       }}
       outputPane={{
+        title: "Output",
         outputToolbar: {
           format,
           outputFilename: ASCII_ART_OUTPUT_FILENAME,
