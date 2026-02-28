@@ -159,12 +159,12 @@ function createWindow() {
     }
   });
 
-  // Auto-update: silent background download + notify when ready (packaged app only)
+  // Auto-update: silent background check + download (no native notification; in-app toast when ready)
   if (!isDev && getAutoUpdater()) {
     mainWindow.webContents.once("did-finish-load", () => {
-      const delayMs = 2000;
+      const delayMs = 5000;
       setTimeout(() => {
-        getAutoUpdater()?.checkForUpdatesAndNotify?.();
+        getAutoUpdater()?.checkForUpdates?.();
       }, delayMs);
     });
   }
