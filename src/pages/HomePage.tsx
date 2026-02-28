@@ -8,19 +8,10 @@ import { Input } from "@/components/ui/input";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import { useSettings } from "@/hooks/useSettings";
 import { useRecentTools } from "@/hooks/useRecentTools";
+import { matchTool } from "@/tools/matchTool";
 import type { ToolDefinition } from "@/tools/types";
 
 const SEARCH_PLACEHOLDER = "Search tools by name, description, or category…";
-
-function matchTool(query: string, tool: ToolDefinition): boolean {
-  if (!query.trim()) return true;
-  const q = query.trim().toLowerCase();
-  return (
-    tool.label.toLowerCase().includes(q) ||
-    tool.description.toLowerCase().includes(q) ||
-    tool.group.toLowerCase().includes(q)
-  );
-}
 
 /** Shared card link: same style for All tools and Recently visited. */
 const ToolCardLink = ({

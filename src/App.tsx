@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, HashRouter } from "react-router-dom";
 import { SettingsProvider } from "@/contexts/SettingsContext";
+import { CommandPaletteProvider } from "@/contexts/CommandPaletteContext";
 import { SIDEBAR_WIDTH_MIN, SIDEBAR_WIDTH_MAX } from "@/contexts/settingsStore";
 import TitleBar from "@/components/layout/TitleBar";
 import Sidebar from "@/components/layout/Sidebar";
@@ -11,6 +12,7 @@ import { ToolRoutes } from "@/routes/ToolRoutes";
 import { useSettings } from "@/hooks/useSettings";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useSidebarResize } from "@/hooks/useSidebarResize";
+import { useGlobalShortcuts } from "@/hooks/useGlobalShortcuts";
 
 const useHashRouter =
   typeof window !== "undefined" &&
@@ -18,6 +20,11 @@ const useHashRouter =
 const Router = useHashRouter ? HashRouter : BrowserRouter;
 
 const ROUTER_FUTURE = { v7_startTransition: true, v7_relativeSplatPath: true } as const;
+
+function GlobalShortcuts() {
+  useGlobalShortcuts();
+  return null;
+}
 
 const DesktopLayout = () => {
   const layoutRef = useRef<HTMLDivElement>(null);
@@ -71,11 +78,14 @@ const App = () => {
     <TooltipProvider>
       <Router future={ROUTER_FUTURE}>
         <SettingsProvider>
-          <Toaster />
-          <div className="flex flex-col h-screen overflow-hidden min-w-0">
-            <TitleBar />
-            <DesktopLayout />
-          </div>
+          <CommandPaletteProvider>
+            <GlobalShortcuts />
+            <Toaster />
+            <div className="flex flex-col h-screen overflow-hidden min-w-0">
+              <TitleBar />
+              <DesktopLayout />
+            </div>
+          </CommandPaletteProvider>
         </SettingsProvider>
       </Router>
     </TooltipProvider>
