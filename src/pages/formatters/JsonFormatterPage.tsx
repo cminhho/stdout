@@ -1,5 +1,7 @@
 import { useState } from "react";
 import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
+import { useCurrentTool } from "@/hooks/useCurrentTool";
+import { useWorkspacePersist, useWorkspaceRestore } from "@/contexts/WorkspaceContext";
 import {
   JSON_FILE_ACCEPT,
   JSON_FORMATTER_SAMPLE,
@@ -24,10 +26,14 @@ const INPUT_SAMPLES = [
 ];
 
 const JsonFormatterPage = () => {
-  const [input, setInput] = useState("");
+  const tool = useCurrentTool();
+  const { input: initialInput } = useWorkspaceRestore(tool?.id ?? "");
+  const [input, setInput] = useState(initialInput ?? "");
+  useWorkspacePersist(tool?.id ?? "", { input });
 
   return (
     <TwoPanelToolLayout
+      persistToolId={tool?.id}
       inputPane={{
         inputToolbar: {
           onSample: (value) => setInput(value ?? JSON_FORMATTER_SAMPLE),

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
 import CopyButton from "@/components/common/CopyButton";
+import { useCurrentTool } from "@/hooks/useCurrentTool";
+import { useWorkspacePersist, useWorkspaceRestore } from "@/contexts/WorkspaceContext";
 import {
   processJwtDecodeForLayout,
   JWT_DECODE_FILE_ACCEPT,
@@ -12,10 +14,14 @@ import {
 } from "@/utils/jwtDecode";
 
 const JwtDecodePage = () => {
-  const [input, setInput] = useState("");
+  const tool = useCurrentTool();
+  const { input: initialInput } = useWorkspaceRestore(tool?.id ?? "");
+  const [input, setInput] = useState(initialInput ?? "");
+  useWorkspacePersist(tool?.id ?? "", { input });
 
   return (
     <TwoPanelToolLayout
+      persistToolId={tool?.id}
       inputPane={{
         inputToolbar: {
           onSample: () => setInput(JWT_DECODE_SAMPLE),

@@ -1,7 +1,8 @@
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ToolErrorBoundary } from "@/components/tools/ToolErrorBoundary";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import { useToolTracking } from "@/hooks/useToolTracking";
 import { getRecentPaths } from "@/tools/recentTools";
@@ -38,8 +39,31 @@ export function ToolRoutes() {
   const location = useLocation();
   const { tools, getToolByPath } = useToolEngine();
   const navigate = useNavigate();
+  const { lastPath, setLastPath } = useWorkspace();
+  const hasRestored = useRef(false);
 
   useToolTracking();
+
+  // Restore last path on initial load when user lands on "/"
+  useEffect(() => {
+    if (hasRestored.current) return;
+    if (location.pathname !== "/") return;
+    if (!lastPath || lastPath === "/") return;
+    const valid =
+      lastPath === "/" ||
+      getToolByPath(lastPath) !== undefined;
+    if (valid && lastPath !== "/") {
+      hasRestored.current = true;
+      navigate(lastPath, { replace: true });
+    }
+  }, [lastPath, location.pathname, navigate, getToolByPath]);
+
+  // Persist current path as lastPath (skip /settings so next open goes to last tool)
+  useEffect(() => {
+    const path = location.pathname;
+    if (path === "/settings") return;
+    setLastPath(path);
+  }, [location.pathname, setLastPath]);
 
   // Preload critical tool chunks immediately for faster startup / first tool open
   useEffect(() => {

@@ -1,5 +1,6 @@
 /** Two-panel tool layout with resizable input/output panes, top section (errors/options), and default toolbar. */
-import { useMemo, useState, type ReactNode } from "react";
+import { useCallback, useMemo, useState, type ReactNode } from "react";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import CodeEditor from "@/components/common/CodeEditor";
 import FileUploadButton from "@/components/common/FileUploadButton";
 import IndentSelect, { DEFAULT_INDENT, type IndentOption } from "@/components/common/IndentSelect";
@@ -119,6 +120,8 @@ export interface TwoPanelToolLayoutProps {
   minInputPercent?: number;
   maxInputPercent?: number;
   resizerWidth?: number;
+  /** When set, split percent is restored from and saved to workspace. */
+  persistToolId?: string;
   className?: string;
   inputPane: TwoPanelInputPaneConfig;
   outputPane: TwoPanelOutputPaneConfig;
@@ -275,10 +278,24 @@ const TwoPanelToolLayout = ({
   minInputPercent,
   maxInputPercent,
   resizerWidth,
+  persistToolId,
   className,
   inputPane,
   outputPane,
 }: TwoPanelToolLayoutProps) => {
+  const { getToolState, setToolState } = useWorkspace();
+  const restoredSplit = persistToolId ? getToolState(persistToolId).splitPercent : undefined;
+  const initialSplitPercent =
+    restoredSplit !== undefined && restoredSplit >= (minInputPercent ?? 20) && restoredSplit <= (maxInputPercent ?? 80)
+      ? restoredSplit
+      : defaultInputPercent ?? 40;
+  const onPercentChange = useCallback(
+    (percent: number) => {
+      if (persistToolId) setToolState(persistToolId, { splitPercent: percent });
+    },
+    [persistToolId, setToolState]
+  );
+
   const ot = outputPane.outputToolbar;
   const [internalIndent, setInternalIndent] = useState<IndentOption>(
     () => ot?.defaultIndent ?? DEFAULT_INDENT
@@ -334,10 +351,11 @@ const TwoPanelToolLayout = ({
         topSection={mergedTopSection}
       />
       <ResizableTwoPanel
-        defaultInputPercent={defaultInputPercent ?? 40}
+        defaultInputPercent={initialSplitPercent}
         minInputPercent={minInputPercent}
         maxInputPercent={maxInputPercent}
         resizerWidth={resizerWidth}
+        onPercentChange={persistToolId ? onPercentChange : undefined}
         className={cn(hasChromeAbove && "min-h-0", className)}
         input={buildInputPaneProps(inputPane, effectiveValidationErrors)}
         output={buildOutputPaneProps(outputPane, indentControl, derived)}

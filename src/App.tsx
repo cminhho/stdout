@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, HashRouter } from "react-router-dom";
 import { SettingsProvider } from "@/contexts/SettingsContext";
+import { WorkspaceProvider } from "@/contexts/WorkspaceContext";
 import { CommandPaletteProvider } from "@/contexts/CommandPaletteContext";
 import { SIDEBAR_WIDTH_MIN, SIDEBAR_WIDTH_MAX } from "@/contexts/settingsStore";
 import TitleBar from "@/components/layout/TitleBar";
@@ -77,16 +78,18 @@ const App = () => {
   return (
     <TooltipProvider>
       <Router future={ROUTER_FUTURE}>
-        <SettingsProvider>
-          <CommandPaletteProvider>
-            <GlobalShortcuts />
-            <Toaster />
-            <div className="flex flex-col h-screen overflow-hidden min-w-0">
-              <TitleBar />
-              <DesktopLayout />
-            </div>
-          </CommandPaletteProvider>
-        </SettingsProvider>
+        <WorkspaceProvider>
+          <SettingsProvider>
+            <CommandPaletteProvider>
+              <GlobalShortcuts />
+              <Toaster />
+              <div className="flex flex-col h-screen overflow-hidden min-w-0">
+                <TitleBar />
+                <DesktopLayout />
+              </div>
+            </CommandPaletteProvider>
+          </SettingsProvider>
+        </WorkspaceProvider>
       </Router>
     </TooltipProvider>
   );
