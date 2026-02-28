@@ -3,6 +3,7 @@ import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
 import {
   JSON_FILE_ACCEPT,
   JSON_FORMATTER_SAMPLE,
+  JSON_FORMATTER_SAMPLE_INVALID,
   JSON_INPUT_PLACEHOLDER,
   JSON_LANGUAGE,
   JSON_MIME_TYPE,
@@ -11,6 +12,11 @@ import {
   processJsonInput,
 } from "@/utils/jsonFormat";
 
+const INPUT_SAMPLES = [
+  { id: "valid", label: "Valid (minified)", value: JSON_FORMATTER_SAMPLE },
+  { id: "invalid", label: "Invalid (trailing comma)", value: JSON_FORMATTER_SAMPLE_INVALID },
+];
+
 const JsonFormatterPage = () => {
   const [input, setInput] = useState("");
 
@@ -18,7 +24,8 @@ const JsonFormatterPage = () => {
     <TwoPanelToolLayout
       inputPane={{
         inputToolbar: {
-          onSample: () => setInput(JSON_FORMATTER_SAMPLE),
+          onSample: (value) => setInput(value ?? JSON_FORMATTER_SAMPLE),
+          samples: INPUT_SAMPLES,
           setInput,
           fileAccept: JSON_FILE_ACCEPT,
           onFileText: setInput,

@@ -207,4 +207,4 @@ export function processJsonInput(input: string, indent: JsonIndentOption): JsonP
   };
 }
 
-export { JSON_FORMATTER_SAMPLE } from "./samples/jsonFormatter";
+export { JSON_FORMATTER_SAMPLE, JSON_FORMATTER_SAMPLE_INVALID } from "./samples/jsonFormatter";

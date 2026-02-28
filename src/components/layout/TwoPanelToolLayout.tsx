@@ -7,6 +7,7 @@ import ResizableTwoPanel from "@/components/layout/ResizableTwoPanel";
 import type { PaneProps } from "@/components/layout/ToolPane";
 import TwoPanelTopSection from "@/components/layout/TwoPanelTopSection";
 import { ClearButton } from "@/components/common/ClearButton";
+import SampleDataDropdown from "@/components/common/SampleDataDropdown";
 import { SampleButton } from "@/components/common/SampleButton";
 import { SaveButton } from "@/components/common/SaveButton";
 import ToolLayout from "@/components/layout/ToolLayout";
@@ -16,7 +17,10 @@ import type { ParseError } from "@/utils/validationTypes";
 
 /** Config for default input toolbar: Sample + Clear + File upload. */
 export interface DefaultInputToolbarConfig {
-  onSample: () => void;
+  /** When dropdown is used (samples provided), called with selected value; otherwise called with no args. */
+  onSample: (value?: string) => void;
+  /** When provided and non-empty, renders SampleDataDropdown instead of SampleButton. */
+  samples?: { id: string; label: string; value: string }[];
   /** Clear handler; when omitted, derived from setInput (clear = setInput("")). */
   onClear?: () => void;
   /** When set, Clear uses () => setInput("") internally. Ignored if onClear is provided. */
@@ -136,12 +140,20 @@ function buildInputPaneProps(
   validationErrors?: ParseError[]
 ): PaneProps {
   const clearHandler = resolveInputClear(config);
+  const hasSamples = (config.inputToolbar?.samples?.length ?? 0) > 0;
   const toolbar =
     config.toolbar ??
     (config.inputToolbar ? (
       <>
         {config.inputToolbarExtra ?? null}
-        <SampleButton onClick={config.inputToolbar.onSample} />
+        {hasSamples ? (
+          <SampleDataDropdown
+            items={config.inputToolbar.samples!}
+            onSelect={(value) => config.inputToolbar!.onSample(value)}
+          />
+        ) : (
+          <SampleButton onClick={() => config.inputToolbar!.onSample()} />
+        )}
         {clearHandler ? <ClearButton onClick={clearHandler} /> : null}
         <FileUploadButton
           accept={config.inputToolbar.fileAccept}
