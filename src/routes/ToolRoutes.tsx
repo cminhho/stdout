@@ -1,6 +1,7 @@
 import { Suspense, useEffect } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { ToolErrorBoundary } from "@/components/tools/ToolErrorBoundary";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import { useToolTracking } from "@/hooks/useToolTracking";
 import { getRecentPaths } from "@/tools/recentTools";
@@ -72,7 +73,15 @@ export function ToolRoutes() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           {tools.map((tool) => (
-            <Route key={tool.id} path={tool.path} element={<tool.component />} />
+            <Route
+              key={tool.id}
+              path={tool.path}
+              element={
+                <ToolErrorBoundary toolId={tool.id} toolLabel={tool.label}>
+                  <tool.component />
+                </ToolErrorBoundary>
+              }
+            />
           ))}
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<NotFound />} />
