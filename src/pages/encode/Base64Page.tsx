@@ -1,9 +1,11 @@
 import { useState, useCallback } from "react";
 import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
+import SaveSessionButton from "@/components/common/SaveSessionButton";
+import SavedSessionsPopover from "@/components/common/SavedSessionsPopover";
 import { SegmentGroup } from "@/components/common/SegmentGroup";
 import type { IndentOption } from "@/components/common/IndentSelect";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import { useWorkspacePersist, useWorkspaceRestore } from "@/contexts/WorkspaceContext";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import {
   processBase64ForLayout,
   type Base64Mode,
@@ -23,15 +25,22 @@ const MODE_OPTIONS: { value: Base64Mode; label: string }[] = [
 
 const Base64Page = () => {
   const tool = useCurrentTool();
-  const { input: initialInput } = useWorkspaceRestore(tool?.id ?? "");
-  const [input, setInput] = useState(initialInput ?? "");
+  const { setToolState } = useWorkspace();
+  const [input, setInput] = useState("");
   const [mode, setMode] = useState<Base64Mode>("encode");
-  useWorkspacePersist(tool?.id ?? "", { input });
 
   const setModeWithCleanup = useCallback((next: Base64Mode) => {
     setMode(next);
     setInput("");
   }, []);
+
+  const handleLoadSession = useCallback(
+    (state: { input?: string; scrollPosition?: number; splitPercent?: number }) => {
+      if (state.input !== undefined) setInput(state.input);
+      if (tool?.id) setToolState(tool.id, state);
+    },
+    [tool?.id, setToolState]
+  );
 
   const format = useCallback(
     (inputValue: string, _indent: IndentOption) => processBase64ForLayout(inputValue, mode),
@@ -49,14 +58,18 @@ const Base64Page = () => {
           fileAccept: BASE64_FILE_ACCEPT,
           onFileText: setInput,
         },
-        inputToolbarExtra: (
-          <SegmentGroup<Base64Mode>
-            value={mode}
-            onValueChange={setModeWithCleanup}
-            options={MODE_OPTIONS}
-            ariaLabel="Mode"
-          />
-        ),
+        inputToolbarExtra: tool?.id ? (
+          <>
+            <SegmentGroup<Base64Mode>
+              value={mode}
+              onValueChange={setModeWithCleanup}
+              options={MODE_OPTIONS}
+              ariaLabel="Mode"
+            />
+            <SaveSessionButton toolId={tool.id} currentState={{ input }} />
+            <SavedSessionsPopover toolId={tool.id} onLoad={handleLoadSession} />
+          </>
+        ) : undefined,
         inputEditor: {
           value: input,
           onChange: setInput,

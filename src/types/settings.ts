@@ -3,7 +3,7 @@
  */
 
 /** Settings modal tab id. */
-export type SettingsTabId = "general" | "appearance" | "tools";
+export type SettingsTabId = "general" | "appearance" | "tools" | "sessions";
 
 /** Web update check state (idle → loading → current | available | error). */
 export type UpdateCheckState = "idle" | "loading" | "current" | "available" | "error";

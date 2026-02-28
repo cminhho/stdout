@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { DeepLinkHandler } from "@/components/DeepLinkHandler";
 import { ElectronUpdateToast } from "@/components/ElectronUpdateToast";
@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, HashRouter } from "react-router-dom";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import { WorkspaceProvider } from "@/contexts/WorkspaceContext";
+import { runWorkspaceToSessionsMigration } from "@/contexts/sessionMigration";
 import { CommandPaletteProvider } from "@/contexts/CommandPaletteContext";
 import { SIDEBAR_WIDTH_MIN, SIDEBAR_WIDTH_MAX } from "@/contexts/settingsStore";
 import TitleBar from "@/components/layout/TitleBar";
@@ -76,11 +77,19 @@ const DesktopLayout = () => {
   );
 };
 
+function SessionMigrationRunner() {
+  useEffect(() => {
+    runWorkspaceToSessionsMigration();
+  }, []);
+  return null;
+}
+
 const App = () => {
   return (
     <TooltipProvider>
       <Router future={ROUTER_FUTURE}>
         <WorkspaceProvider>
+          <SessionMigrationRunner />
           <SettingsProvider>
             <CommandPaletteProvider>
               <GlobalShortcuts />

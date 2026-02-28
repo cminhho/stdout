@@ -18,7 +18,7 @@ const APP_NAME = "stdout";
 const isDev = process.env.NODE_ENV === "development" || !app.isPackaged;
 const isMac = process.platform === "darwin";
 
-// ─── Global error handling (avoid silent crash / "lâu lâu bị lỗi") ─────
+// ─── Global error handling (avoid silent crash on occasional errors) ─────
 function logError(prefix, err) {
   const msg = err?.message ?? String(err);
   const stack = err?.stack;

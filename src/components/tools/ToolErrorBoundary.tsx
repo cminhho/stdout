@@ -79,7 +79,7 @@ function ToolErrorFallback({
           <AlertCircle className="h-8 w-8 text-destructive" aria-hidden />
         </div>
         <h2 className="text-xl font-semibold">
-          Tool &quot;{toolLabel}&quot; gặp lỗi
+          Tool &quot;{toolLabel}&quot; encountered an error
         </h2>
         <p className="text-muted-foreground text-sm">
           {error.message || "An unexpected error occurred."}

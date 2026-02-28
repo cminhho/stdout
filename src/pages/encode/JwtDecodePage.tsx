@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
 import CopyButton from "@/components/common/CopyButton";
+import SaveSessionButton from "@/components/common/SaveSessionButton";
+import SavedSessionsPopover from "@/components/common/SavedSessionsPopover";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
-import { useWorkspacePersist, useWorkspaceRestore } from "@/contexts/WorkspaceContext";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import {
   processJwtDecodeForLayout,
   JWT_DECODE_FILE_ACCEPT,
@@ -15,9 +17,16 @@ import {
 
 const JwtDecodePage = () => {
   const tool = useCurrentTool();
-  const { input: initialInput } = useWorkspaceRestore(tool?.id ?? "");
-  const [input, setInput] = useState(initialInput ?? "");
-  useWorkspacePersist(tool?.id ?? "", { input });
+  const { setToolState } = useWorkspace();
+  const [input, setInput] = useState("");
+
+  const handleLoadSession = useCallback(
+    (state: { input?: string; scrollPosition?: number; splitPercent?: number }) => {
+      if (state.input !== undefined) setInput(state.input);
+      if (tool?.id) setToolState(tool.id, state);
+    },
+    [tool?.id, setToolState]
+  );
 
   return (
     <TwoPanelToolLayout
@@ -30,6 +39,12 @@ const JwtDecodePage = () => {
           fileAccept: JWT_DECODE_FILE_ACCEPT,
           onFileText: setInput,
         },
+        inputToolbarExtra: tool?.id ? (
+          <>
+            <SaveSessionButton toolId={tool.id} currentState={{ input }} />
+            <SavedSessionsPopover toolId={tool.id} onLoad={handleLoadSession} />
+          </>
+        ) : undefined,
         inputEditor: {
           value: input,
           onChange: setInput,
