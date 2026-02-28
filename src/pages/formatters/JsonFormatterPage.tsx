@@ -3,7 +3,10 @@ import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
 import {
   JSON_FILE_ACCEPT,
   JSON_FORMATTER_SAMPLE,
-  JSON_FORMATTER_SAMPLE_INVALID,
+  JSON_FORMATTER_SAMPLE_API,
+  JSON_FORMATTER_SAMPLE_CONFIG,
+  JSON_FORMATTER_SAMPLE_PACKAGE,
+  JSON_FORMATTER_SAMPLE_TABLE,
   JSON_INPUT_PLACEHOLDER,
   JSON_LANGUAGE,
   JSON_MIME_TYPE,
@@ -13,8 +16,11 @@ import {
 } from "@/utils/jsonFormat";
 
 const INPUT_SAMPLES = [
-  { id: "valid", label: "Valid (minified)", value: JSON_FORMATTER_SAMPLE },
-  { id: "invalid", label: "Invalid (trailing comma)", value: JSON_FORMATTER_SAMPLE_INVALID },
+  { id: "generic", label: "Generic (nested)", value: JSON_FORMATTER_SAMPLE },
+  { id: "api", label: "API response", value: JSON_FORMATTER_SAMPLE_API },
+  { id: "config", label: "App config", value: JSON_FORMATTER_SAMPLE_CONFIG },
+  { id: "package", label: "package.json-like", value: JSON_FORMATTER_SAMPLE_PACKAGE },
+  { id: "table", label: "Array of records", value: JSON_FORMATTER_SAMPLE_TABLE },
 ];
 
 const JsonFormatterPage = () => {
