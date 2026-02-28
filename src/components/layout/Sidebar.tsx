@@ -15,6 +15,7 @@ import { useSettings } from "@/hooks/useSettings";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import type { ToolDefinition, ToolGroup } from "@/tools/types";
 import { getToolIcon } from "@/components/common/ToolIcons";
+import { SIDEBAR_SEARCH_PLACEHOLDER, SHORTCUT_COMMAND_PALETTE } from "@/constants/shortcuts";
 
 // Group icon mapping (order in sidebar follows first occurrence in tool packs)
 const groupIconMap: Record<string, React.ElementType> = {
@@ -206,7 +207,7 @@ export const Sidebar = memo(function Sidebar({ sidebarWidthPx, isOverlay = false
               role="searchbox"
               aria-label="Search tools"
               className="sidebar-search w-full"
-              placeholder="Search..."
+              placeholder={SIDEBAR_SEARCH_PLACEHOLDER}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={(e) => {
@@ -232,7 +233,7 @@ export const Sidebar = memo(function Sidebar({ sidebarWidthPx, isOverlay = false
                 {!isCollapsed && <span className="min-w-0 truncate">Home</span>}
               </NavLink>
             </TooltipTrigger>
-            <TooltipContent side="right">Tool overview and search</TooltipContent>
+            <TooltipContent side="right">Tool overview and search ({SHORTCUT_COMMAND_PALETTE})</TooltipContent>
           </Tooltip>
         </div>
         {!isCollapsed && !search && (pinnedToolsList.length > 0 || recentToolsList.length > 0) && (

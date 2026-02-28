@@ -8,6 +8,7 @@ import { useToolEngine } from "@/hooks/useToolEngine";
 import { useSettings } from "@/hooks/useSettings";
 import { matchTool } from "@/tools/matchTool";
 import { cn } from "@/utils/cn";
+import { COMMAND_PALETTE_HINT_NAV, COMMAND_PALETTE_HINT_REOPEN } from "@/constants/shortcuts";
 
 const SEARCH_PLACEHOLDER = "Search tools by name, description, or category…";
 
@@ -143,6 +144,11 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
             })
           )}
         </ul>
+        <footer className="border-t border-border px-3 py-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+          <span>{COMMAND_PALETTE_HINT_NAV}</span>
+          <span aria-hidden>·</span>
+          <span>{COMMAND_PALETTE_HINT_REOPEN}</span>
+        </footer>
       </DialogContent>
     </Dialog>
   );
