@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, ReactNode } from "react";
 import { SettingsContext, loadSettings, saveSettings, clampSidebarWidth, SIDEBAR_MOBILE_BREAKPOINT_PX, type Theme, type SidebarMode } from "./settingsStore";
+import { useThemeSync } from "@/hooks/useThemeSync";
 
 export type { Theme, SidebarMode } from "./settingsStore";
 
@@ -21,26 +22,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     saveSettings(state);
   }, [state]);
 
-  useEffect(() => {
-    if (state.theme === "dark") {
-      applyResolvedTheme("dark");
-      return;
-    }
-    if (state.theme === "light") {
-      applyResolvedTheme("light");
-      return;
-    }
-    if (state.theme === "deep-dark") {
-      applyResolvedTheme("deep-dark");
-      return;
-    }
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const resolve = () => (mq.matches ? "dark" : "light");
-    applyResolvedTheme(resolve());
-    const handler = () => applyResolvedTheme(resolve());
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, [state.theme]);
+  useThemeSync(state.theme, applyResolvedTheme);
 
   useEffect(() => {
     const root = document.documentElement;
