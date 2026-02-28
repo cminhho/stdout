@@ -10,6 +10,12 @@ import { SampleButton } from "@/components/common/SampleButton";
 
 const SAMPLE_URL = "https://example.com:8080/api/users?page=1&limit=10&sort=name#section-2";
 
+/** Build a fetch() snippet with the URL safely escaped for single-quoted JS string. */
+function buildFetchSnippet(url: string): string {
+  const escaped = url.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/\n/g, "\\n").replace(/\r/g, "\\r");
+  return `fetch('${escaped}')\n  .then(res => res.json())\n  .then(data => console.log(data));`;
+}
+
 const UrlParserPage = () => {
   const [input, setInput] = useState(SAMPLE_URL);
 
@@ -54,6 +60,12 @@ const UrlParserPage = () => {
         <SampleButton onClick={() => setInput(SAMPLE_URL)} />
         <ClearButton onClick={() => setInput("")} />
         <FileUploadButton accept=".txt,text/plain" onText={setInput} />
+        {parsed && !parsed.error && input.trim() && (
+          <CopyButton
+            text={buildFetchSnippet(input.trim())}
+            label="Copy as fetch"
+          />
+        )}
       </>
     ),
     children: (

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
+import CopyButton from "@/components/common/CopyButton";
 import {
   processJwtDecodeForLayout,
   JWT_DECODE_FILE_ACCEPT,
@@ -38,6 +39,13 @@ const JwtDecodePage = () => {
           indentSpaceOptions: [2, 4],
           indentIncludeTab: false,
         },
+        outputToolbarExtra:
+          input.trim() ? (
+            <CopyButton
+              text={`Authorization: Bearer ${input.trim()}`}
+              label="Copy as Auth header"
+            />
+          ) : null,
         outputEditor: {
           value: "",
           language: "json",
