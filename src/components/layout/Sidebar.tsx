@@ -2,7 +2,7 @@ import { memo, useState, useMemo } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   ArrowLeftRight, Braces, CheckCircle2, ChevronRight, Code2, FileCode, Globe, Home, Image, Lock,
-  Search, Shuffle, TerminalSquare, Type, Coffee,
+  Pin, PinOff, Search, Shuffle, TerminalSquare, Type, Coffee,
 } from "lucide-react";
 
 import {
@@ -13,7 +13,7 @@ import {
 import { cn } from "@/utils/cn";
 import { useSettings } from "@/hooks/useSettings";
 import { useToolEngine } from "@/hooks/useToolEngine";
-import type { ToolGroup } from "@/tools/types";
+import type { ToolDefinition, ToolGroup } from "@/tools/types";
 import { getToolIcon } from "@/components/common/ToolIcons";
 
 // Group icon mapping (order in sidebar follows first occurrence in tool packs)
@@ -149,13 +149,33 @@ export const Sidebar = memo(function Sidebar({ sidebarWidthPx, isOverlay = false
   const location = useLocation();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const { sidebarMode, sidebarCollapsed, setSidebarCollapsed, isToolVisible } = useSettings();
-  const { tools, groups } = useToolEngine();
+  const { sidebarMode, sidebarCollapsed, setSidebarCollapsed, isToolVisible, recentTools, pinnedTools, togglePin } = useSettings();
+  const { tools, groups, getToolById } = useToolEngine();
   const closeOnNavigate = isOverlay ? () => setSidebarCollapsed(true) : undefined;
 
   const visibleItems = useMemo(
     () => tools.filter((item) => isToolVisible(item.path)),
     [tools, isToolVisible]
+  );
+
+  const pinnedToolsList = useMemo(() => {
+    return pinnedTools
+      .map((id) => getToolById(id))
+      .filter((t): t is ToolDefinition => t != null && isToolVisible(t.path));
+  }, [pinnedTools, getToolById, isToolVisible]);
+
+  const pinnedIds = useMemo(() => new Set(pinnedToolsList.map((t) => t.id)), [pinnedToolsList]);
+
+  const recentToolsList = useMemo(() => {
+    return recentTools
+      .map(({ id }) => getToolById(id))
+      .filter((t): t is ToolDefinition => t != null && isToolVisible(t.path) && !pinnedIds.has(t.id));
+  }, [recentTools, getToolById, isToolVisible, pinnedIds]);
+
+  const recentIds = useMemo(() => new Set(recentToolsList.map((t) => t.id)), [recentToolsList]);
+  const visibleItemsWithoutPinnedRecent = useMemo(
+    () => visibleItems.filter((v) => !pinnedIds.has(v.id) && !recentIds.has(v.id)),
+    [visibleItems, pinnedIds, recentIds]
   );
 
   const searchResults = useMemo(() => {
@@ -215,9 +235,109 @@ export const Sidebar = memo(function Sidebar({ sidebarWidthPx, isOverlay = false
             <TooltipContent side="right">Tool overview and search</TooltipContent>
           </Tooltip>
         </div>
+        {!isCollapsed && !search && (pinnedToolsList.length > 0 || recentToolsList.length > 0) && (
+          <div className={cn("border-b border-sidebar-border", "mb-1.5 pb-1.5 space-y-1.5")}>
+            {pinnedToolsList.length > 0 && (
+              <section role="group" aria-label="Pinned tools" className="space-y-0.5">
+                <p className="sidebar-results-label">Pinned</p>
+                <ul role="list" className="space-y-0.5 list-none">
+                  {pinnedToolsList.map((tool) => (
+                    <li key={tool.path} className="flex items-center gap-0 w-full group">
+                      <span className="flex-1 min-w-0">
+                        <SidebarNavItem
+                          item={tool}
+                          isActive={location.pathname === tool.path}
+                          onNavigate={closeOnNavigate}
+                          onPrefetch={tool.preload ? () => tool.preload!() : undefined}
+                        />
+                      </span>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              togglePin(tool.id);
+                            }}
+                            className="shrink-0 p-1.5 rounded text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            aria-label="Unpin"
+                          >
+                            <PinOff className="h-4 w-4" aria-hidden />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">Unpin</TooltipContent>
+                      </Tooltip>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+            {recentToolsList.length > 0 && (
+              <section role="group" aria-label="Recent tools" className="space-y-0.5">
+                <p className="sidebar-results-label">Recent</p>
+                <ul role="list" className="space-y-0.5 list-none">
+                  {recentToolsList.map((tool) => (
+                    <li key={tool.path} className="flex items-center gap-0 w-full group">
+                      <span className="flex-1 min-w-0">
+                        <SidebarNavItem
+                          item={tool}
+                          isActive={location.pathname === tool.path}
+                          onNavigate={closeOnNavigate}
+                          onPrefetch={tool.preload ? () => tool.preload!() : undefined}
+                        />
+                      </span>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              togglePin(tool.id);
+                            }}
+                            className="shrink-0 p-1.5 rounded text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            aria-label="Pin"
+                          >
+                            <Pin className="h-4 w-4" aria-hidden />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">Pin to sidebar</TooltipContent>
+                      </Tooltip>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+          </div>
+        )}
         {isCollapsed ? (
           <ul role="list" className="space-y-0.5 list-none">
-            {visibleItems.map((item) => (
+            {pinnedToolsList.map((item) => (
+              <li key={item.path}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div>
+                      <SidebarNavItem item={item} isActive={location.pathname === item.path} onNavigate={closeOnNavigate} onPrefetch={item.preload ? () => item.preload!() : undefined} iconOnly />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">{item.label}</TooltipContent>
+                </Tooltip>
+              </li>
+            ))}
+            {recentToolsList.map((item) => (
+              <li key={item.path}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div>
+                      <SidebarNavItem item={item} isActive={location.pathname === item.path} onNavigate={closeOnNavigate} onPrefetch={item.preload ? () => item.preload!() : undefined} iconOnly />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">{item.label}</TooltipContent>
+                </Tooltip>
+              </li>
+            ))}
+            {visibleItemsWithoutPinnedRecent.map((item) => (
               <li key={item.path}>
                 <Tooltip>
                   <TooltipTrigger asChild>

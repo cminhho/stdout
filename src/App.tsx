@@ -17,6 +17,8 @@ const useHashRouter =
   (window.location?.protocol === "file:" || window.location?.protocol === "app:");
 const Router = useHashRouter ? HashRouter : BrowserRouter;
 
+const ROUTER_FUTURE = { v7_startTransition: true, v7_relativeSplatPath: true } as const;
+
 const DesktopLayout = () => {
   const layoutRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
@@ -67,7 +69,7 @@ const DesktopLayout = () => {
 const App = () => {
   return (
     <TooltipProvider>
-      <Router>
+      <Router future={ROUTER_FUTURE}>
         <SettingsProvider>
           <Toaster />
           <div className="flex flex-col h-screen overflow-hidden min-w-0">
