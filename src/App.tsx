@@ -8,6 +8,7 @@ import { SettingsProvider } from "@/contexts/SettingsContext";
 import { WorkspaceProvider } from "@/contexts/WorkspaceContext";
 import { runWorkspaceToSessionsMigration } from "@/contexts/sessionMigration";
 import { CommandPaletteProvider } from "@/contexts/CommandPaletteContext";
+import { TitleBarActionsProvider } from "@/contexts/TitleBarActionsContext";
 import { SIDEBAR_WIDTH_MIN, SIDEBAR_WIDTH_MAX } from "@/contexts/settingsStore";
 import TitleBar from "@/components/layout/TitleBar";
 import Sidebar from "@/components/layout/Sidebar";
@@ -96,10 +97,12 @@ const App = () => {
               <DeepLinkHandler />
               <ElectronUpdateToast />
               <Toaster />
-              <div className="flex flex-col h-screen overflow-hidden min-w-0">
-                <TitleBar />
-                <DesktopLayout />
-              </div>
+              <TitleBarActionsProvider>
+                <div className="flex flex-col h-screen overflow-hidden min-w-0">
+                  <TitleBar />
+                  <DesktopLayout />
+                </div>
+              </TitleBarActionsProvider>
             </CommandPaletteProvider>
           </SettingsProvider>
         </WorkspaceProvider>

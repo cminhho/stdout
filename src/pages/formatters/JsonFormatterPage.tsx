@@ -1,9 +1,9 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import ToolPageLayout from "@/components/layout/ToolPageLayout";
-import Toolbar from "@/components/layout/Toolbar";
 import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
 import { useCurrentTool } from "@/hooks/useCurrentTool";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { useTitleBarActions } from "@/contexts/TitleBarActionsContext";
 import {
   JSON_FILE_ACCEPT,
   JSON_FORMATTER_SAMPLE,
@@ -30,6 +30,7 @@ const INPUT_SAMPLES = [
 const JsonFormatterPage = () => {
   const tool = useCurrentTool();
   const { setToolState } = useWorkspace();
+  const { setTitleBarActions, clearTitleBarActions } = useTitleBarActions();
   const [input, setInput] = useState("");
 
   const handleLoadSession = useCallback(
@@ -40,19 +41,22 @@ const JsonFormatterPage = () => {
     [tool?.id, setToolState]
   );
 
+  useEffect(() => {
+    if (tool?.id) {
+      setTitleBarActions({
+        toolId: tool.id,
+        toolName: tool.label,
+        shareState: { input },
+        onLoadSession: handleLoadSession,
+      });
+    } else {
+      clearTitleBarActions();
+    }
+    return () => clearTitleBarActions();
+  }, [tool?.id, tool?.label, input, handleLoadSession, setTitleBarActions, clearTitleBarActions]);
+
   return (
-    <ToolPageLayout
-      toolbar={
-        tool?.id ? (
-          <Toolbar
-            toolName={tool.label}
-            toolId={tool.id}
-            shareState={{ input }}
-            onLoadSession={handleLoadSession}
-          />
-        ) : undefined
-      }
-    >
+    <ToolPageLayout>
       <TwoPanelToolLayout
         persistToolId={tool?.id}
         shareState={{ input }}

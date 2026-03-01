@@ -20,6 +20,7 @@ function registerIpcHandlers(getMainWindow) {
     const w = getFocusedWindow();
     if (w) (w.isMaximized() ? w.unmaximize() : w.maximize());
   });
+  ipcMain.handle("window:isMaximized", () => getFocusedWindow()?.isMaximized() ?? false);
 }
 
 module.exports = { registerIpcHandlers };

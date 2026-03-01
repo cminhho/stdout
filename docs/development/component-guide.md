@@ -11,21 +11,25 @@ Main UI components used when building tool pages and the app shell.
 Wraps a tool page and provides an optional **header** slot for the page toolbar.
 
 - **Props**: `toolbar` (ReactNode), `children`, `className`.
-- **Usage**: Wrap the main content; pass a `Toolbar` as `toolbar` for tools that have session/share so the toolbar appears at the top with consistent styling.
+- **Usage**: Wrap the main content. For tools with session/share, do not pass a Toolbar; instead register title bar actions via TitleBarActionsContext so Save, Share, and Sessions appear in the unified TitleBar.
 
-### Toolbar
+### TitleBarActionsContext
 
-Page-level toolbar: tool name, Save Session, Share Snippet, Sessions (popover or dialog), and Settings link.
+Lets tool pages register actions (Save session, Share snippet, Sessions) for the unified TitleBar.
 
-- **Props**: `toolName`, `toolId`, `shareState`, `onLoadSession`, `settingsHref`, `className`.
-- **Usage**: Used inside `ToolPageLayout` for pilot tools (JSON Formatter, Base64, JWT Debugger). Renders session/share buttons only when `toolId` and `shareState` are provided.
+- **API**: `useTitleBarActions()` returns `{ actions, setTitleBarActions, clearTitleBarActions }`. In a tool page, use `useEffect` to call `setTitleBarActions({ toolId, toolName, shareState, onLoadSession })` when the tool is active and `clearTitleBarActions()` on unmount.
+- **Usage**: JSON Formatter, Base64, JWT Debugger register via this context so the TitleBar shows Save/Share/Sessions once, without a duplicate toolbar row.
+
+### Toolbar (legacy)
+
+Page-level toolbar component: tool name, Save Session, Share, Sessions, Settings. **Deprecated for new tools**: use TitleBarActionsContext instead so actions appear in the unified TitleBar. The Toolbar component is still present for backwards compatibility but is no longer used by the main session/share tools.
 
 ### TwoPanelToolLayout
 
 Two-pane layout (input left, output right) with resizable split, optional toolbars per pane, and output actions (Copy, Download).
 
 - **Props**: Input/output pane config (title, toolbar extra, content, options like `outputFilename`, `showCopy`, `sessionShareInPageToolbar`).
-- **Usage**: Most formatters, converters, and encode tools. When `sessionShareInPageToolbar` is true, the layout does not show the Share button in the input pane (handled by the page Toolbar instead).
+- **Usage**: Most formatters, converters, and encode tools. When `sessionShareInPageToolbar` is true, the layout does not show the Share button in the input pane (handled by the TitleBar instead).
 
 ---
 

@@ -15,6 +15,7 @@ export interface ElectronWindowAPI {
   close: () => Promise<void>;
   minimize: () => Promise<void>;
   maximize: () => Promise<void>;
+  isMaximized: () => Promise<boolean>;
 }
 
 /** Menu event subscriptions. */

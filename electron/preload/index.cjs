@@ -10,6 +10,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
     close: () => ipcRenderer.invoke("window:close"),
     minimize: () => ipcRenderer.invoke("window:minimize"),
     maximize: () => ipcRenderer.invoke("window:maximize"),
+    isMaximized: () => ipcRenderer.invoke("window:isMaximized"),
   },
   menu: {
     onOpenSettings: (cb) => {

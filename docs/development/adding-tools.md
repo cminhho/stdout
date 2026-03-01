@@ -40,7 +40,7 @@ Routes are usually generated from the registry. If the app uses a catch-all and 
 If the tool should support sessions and shareable snippets:
 
 - Use `useSessionManager(toolId)` and pass state to SaveSessionButton and ShareSnippetButton.
-- Wrap the page with ToolPageLayout and a Toolbar that receives toolId, shareState, and onLoadSession. See JsonFormatterPage, Base64Page, or JwtDecodePage for reference.
+- Register title bar actions via `useTitleBarActions()` so Save, Share, and Sessions appear in the unified TitleBar: in a `useEffect`, call `setTitleBarActions({ toolId, toolName, shareState, onLoadSession })` when the tool is active, and `clearTitleBarActions()` on unmount or when the tool is not active. See JsonFormatterPage, Base64Page, or JwtDecodePage for reference.
 
 ---
 
@@ -55,6 +55,6 @@ If the tool should support sessions and shareable snippets:
 
 ## Related
 
-- [Component Guide](component-guide.md) - ToolPageLayout, TwoPanelToolLayout, Toolbar
+- [Component Guide](component-guide.md) - ToolPageLayout, TwoPanelToolLayout, TitleBarActionsContext
 - [State Management](state-management.md) - useSessionManager, useSnippetShare
 - [Architecture](architecture.md) - Registry and routing

@@ -598,6 +598,13 @@
     outline: none;
     box-shadow: var(--focus-ring);
   }
+  /* Title bar action group (Save, Share, Sessions) – compact, no wrap */
+  .desktop-title-bar .title-bar-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--title-bar-gap);
+    flex-shrink: 0;
+  }
 
   /* Thin scrollbars in desktop window (--scrollbar-thumb / --scrollbar-thumb-hover per theme). Skip on macOS so system overlay scrollbars apply (Intel + ARM). */
   html.desktop:not(.mac) {
