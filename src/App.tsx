@@ -1,8 +1,14 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Toaster } from "@/components/ui/sonner";
+import { DeepLinkHandler } from "@/components/DeepLinkHandler";
+import { ElectronUpdateToast } from "@/components/ElectronUpdateToast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, HashRouter } from "react-router-dom";
 import { SettingsProvider } from "@/contexts/SettingsContext";
+import { WorkspaceProvider } from "@/contexts/WorkspaceContext";
+import { runWorkspaceToSessionsMigration } from "@/contexts/sessionMigration";
+import { CommandPaletteProvider } from "@/contexts/CommandPaletteContext";
+import { TitleBarActionsProvider } from "@/contexts/TitleBarActionsContext";
 import { SIDEBAR_WIDTH_MIN, SIDEBAR_WIDTH_MAX } from "@/contexts/settingsStore";
 import TitleBar from "@/components/layout/TitleBar";
 import Sidebar from "@/components/layout/Sidebar";
@@ -11,11 +17,19 @@ import { ToolRoutes } from "@/routes/ToolRoutes";
 import { useSettings } from "@/hooks/useSettings";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useSidebarResize } from "@/hooks/useSidebarResize";
+import { useGlobalShortcuts } from "@/hooks/useGlobalShortcuts";
 
 const useHashRouter =
   typeof window !== "undefined" &&
   (window.location?.protocol === "file:" || window.location?.protocol === "app:");
 const Router = useHashRouter ? HashRouter : BrowserRouter;
+
+const ROUTER_FUTURE = { v7_startTransition: true, v7_relativeSplatPath: true } as const;
+
+function GlobalShortcuts() {
+  useGlobalShortcuts();
+  return null;
+}
 
 const DesktopLayout = () => {
   const layoutRef = useRef<HTMLDivElement>(null);
@@ -57,24 +71,41 @@ const DesktopLayout = () => {
           onKeyDown={onKeyDown}
         />
       )}
-      <main className="flex-1 min-h-0 min-w-0 overflow-auto flex flex-col">
+      <main className="flex-1 min-h-0 min-w-0 overflow-hidden flex flex-col">
         <ToolRoutes />
       </main>
     </div>
   );
 };
 
+function SessionMigrationRunner() {
+  useEffect(() => {
+    runWorkspaceToSessionsMigration();
+  }, []);
+  return null;
+}
+
 const App = () => {
   return (
     <TooltipProvider>
-      <Router>
-        <SettingsProvider>
-          <Toaster />
-          <div className="flex flex-col h-screen overflow-hidden min-w-0">
-            <TitleBar />
-            <DesktopLayout />
-          </div>
-        </SettingsProvider>
+      <Router future={ROUTER_FUTURE}>
+        <WorkspaceProvider>
+          <SessionMigrationRunner />
+          <SettingsProvider>
+            <CommandPaletteProvider>
+              <GlobalShortcuts />
+              <DeepLinkHandler />
+              <ElectronUpdateToast />
+              <Toaster />
+              <TitleBarActionsProvider>
+                <div className="flex flex-col h-screen overflow-hidden min-w-0">
+                  <TitleBar />
+                  <DesktopLayout />
+                </div>
+              </TitleBarActionsProvider>
+            </CommandPaletteProvider>
+          </SettingsProvider>
+        </WorkspaceProvider>
       </Router>
     </TooltipProvider>
   );

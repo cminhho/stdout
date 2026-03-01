@@ -10,6 +10,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
     close: () => ipcRenderer.invoke("window:close"),
     minimize: () => ipcRenderer.invoke("window:minimize"),
     maximize: () => ipcRenderer.invoke("window:maximize"),
+    isMaximized: () => ipcRenderer.invoke("window:isMaximized"),
   },
   menu: {
     onOpenSettings: (cb) => {
@@ -30,6 +31,13 @@ contextBridge.exposeInMainWorld("electronAPI", {
       const handler = (_ev, payload) => cb(payload);
       ipcRenderer.on("updater:status", handler);
       return () => ipcRenderer.removeListener("updater:status", handler);
+    },
+  },
+  deepLink: {
+    onOpenUrl: (cb) => {
+      const handler = (_ev, url) => cb(url);
+      ipcRenderer.on("open-url", handler);
+      return () => ipcRenderer.removeListener("open-url", handler);
     },
   },
 });

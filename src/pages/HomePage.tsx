@@ -8,19 +8,9 @@ import { Input } from "@/components/ui/input";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import { useSettings } from "@/hooks/useSettings";
 import { useRecentTools } from "@/hooks/useRecentTools";
+import { matchTool } from "@/tools/matchTool";
 import type { ToolDefinition } from "@/tools/types";
-
-const SEARCH_PLACEHOLDER = "Search tools by name, description, or category…";
-
-function matchTool(query: string, tool: ToolDefinition): boolean {
-  if (!query.trim()) return true;
-  const q = query.trim().toLowerCase();
-  return (
-    tool.label.toLowerCase().includes(q) ||
-    tool.description.toLowerCase().includes(q) ||
-    tool.group.toLowerCase().includes(q)
-  );
-}
+import { SEARCH_TOOLS_PLACEHOLDER } from "@/constants/shortcuts";
 
 /** Shared card link: same style for All tools and Recently visited. */
 const ToolCardLink = ({
@@ -150,11 +140,11 @@ const HomePage = () => {
                   <Input
                     type="search"
                     size="sm"
-                    placeholder={SEARCH_PLACEHOLDER}
+                    placeholder={SEARCH_TOOLS_PLACEHOLDER}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="home-tools-search pl-10 pr-11 min-h-touch sm:pl-8 sm:pr-8"
-                    aria-label="Search tools by name, description, or category"
+                    aria-label="Search tools by name, description, or category; press Ctrl+K or Command+K to open command palette from anywhere"
                     autoComplete="off"
                   />
                   {hasSearch && (

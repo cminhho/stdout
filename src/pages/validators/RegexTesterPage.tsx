@@ -5,6 +5,14 @@ import ToolAlert from "@/components/common/ToolAlert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import CopyButton from "@/components/common/CopyButton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { REGEX_PRESETS } from "@/utils/samples/regexTester";
 
 const SAMPLE_TEST_STRING = "Order placed on 2024-01-15\nShipped on 2024-02-20\nDelivered 2024-03-01\nNo date here";
 
@@ -35,6 +43,7 @@ const RegexTesterPage = () => {
   const [pattern, setPattern] = useState("(\\d{4})-(\\d{2})-(\\d{2})");
   const [flags, setFlags] = useState("gm");
   const [testString, setTestString] = useState(SAMPLE_TEST_STRING);
+  const [presetValue, setPresetValue] = useState("");
 
   const sanitizedFlags = useMemo(() => sanitizeFlags(flags), [flags]);
 
@@ -110,6 +119,31 @@ const RegexTesterPage = () => {
     <section className="tool-section-card shrink-0" aria-label="Pattern and flags">
       <h2 className="home-section-label mb-0">Pattern & flags</h2>
       <div className="tool-top-form">
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          <span className="tool-field-label shrink-0">Sample patterns</span>
+          <Select
+            value={presetValue || undefined}
+            onValueChange={(id) => {
+              const preset = REGEX_PRESETS.find((p) => p.id === id);
+              if (preset) {
+                setPattern(preset.pattern);
+                setTestString(preset.testString);
+                setPresetValue("");
+              }
+            }}
+          >
+            <SelectTrigger size="xs" variant="default" className="w-auto min-w-[8rem]" aria-label="Load sample pattern">
+              <SelectValue placeholder="Sample patterns" />
+            </SelectTrigger>
+            <SelectContent>
+              {REGEX_PRESETS.map((p) => (
+                <SelectItem key={p.id} value={p.id}>
+                  {p.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className="tool-top-form-row">
           <div className="tool-top-form-field flex-1 min-w-0">
             <label className="tool-field-label shrink-0" htmlFor="regex-pattern-input">

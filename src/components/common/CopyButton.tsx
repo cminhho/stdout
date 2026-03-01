@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button";
 
 export interface CopyButtonProps {
   text: string;
+  /** Button label when not copied; default "Copy". Use e.g. "Copy as Auth header" or "Copy as fetch". */
+  label?: string;
   className?: string;
 }
 
-const CopyButton = memo(function CopyButton({ text, className }: CopyButtonProps) {
+const CopyButton = memo(function CopyButton({ text, label = "Copy", className }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
   const handleCopy = useCallback(async () => {
     await navigator.clipboard.writeText(text);
@@ -17,9 +19,16 @@ const CopyButton = memo(function CopyButton({ text, className }: CopyButtonProps
   }, [text]);
 
   return (
-    <Button variant="outline" size="xs" onClick={handleCopy} disabled={copied} className={className}>
+    <Button
+      variant="outline"
+      size="xs"
+      onClick={handleCopy}
+      disabled={copied || !text}
+      className={className}
+      title={text ? (copied ? "Copied" : label) : undefined}
+    >
       {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-      {copied ? "Copied" : "Copy"}
+      {copied ? "Copied" : label}
     </Button>
   );
 });

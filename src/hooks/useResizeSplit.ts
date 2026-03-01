@@ -6,6 +6,10 @@ function clamp(min: number, max: number, value: number): number {
 
 const KEYBOARD_STEP = 5;
 
+export interface ResizeOptions {
+  onPercentChange?: (percent: number) => void;
+}
+
 /**
  * Resize split by dragging: horizontal (left pane width %). Use with a container ref.
  */
@@ -13,9 +17,15 @@ export function useHorizontalResize(
   initialPercent: number,
   minPercent: number,
   maxPercent: number,
-  containerRef: React.RefObject<HTMLDivElement | null>
+  containerRef: React.RefObject<HTMLDivElement | null>,
+  options?: ResizeOptions
 ) {
   const [percent, setPercent] = useState(initialPercent);
+  const onPercentChange = options?.onPercentChange;
+
+  useEffect(() => {
+    onPercentChange?.(percent);
+  }, [percent, onPercentChange]);
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
@@ -72,9 +82,15 @@ export function useVerticalResize(
   initialPercent: number,
   minPercent: number,
   maxPercent: number,
-  containerRef: React.RefObject<HTMLDivElement | null>
+  containerRef: React.RefObject<HTMLDivElement | null>,
+  options?: ResizeOptions
 ) {
   const [percent, setPercent] = useState(initialPercent);
+  const onPercentChange = options?.onPercentChange;
+
+  useEffect(() => {
+    onPercentChange?.(percent);
+  }, [percent, onPercentChange]);
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {

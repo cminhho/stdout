@@ -12,6 +12,8 @@ export interface SettingsContextType extends SettingsState {
   toggleTool: (path: string) => void;
   setAllToolsVisible: () => void;
   isToolVisible: (path: string) => boolean;
+  addRecentTool: (id: string) => void;
+  togglePin: (id: string) => void;
   setEditorFont: (font: string) => void;
   setWordWrap: (wrap: boolean) => void;
 }
@@ -28,6 +30,8 @@ const defaults: SettingsState = {
   sidebarCollapsed: false,
   sidebarWidth: SIDEBAR_WIDTH_DEFAULT,
   hiddenTools: [],
+  recentTools: [],
+  pinnedTools: [],
   editorFont: "ui-monospace, ui-serif, monospace",
   wordWrap: false,
 };
@@ -50,12 +54,24 @@ export function loadSettings(): SettingsState {
     if (raw) {
       const parsed = JSON.parse(raw) as Partial<SettingsState>;
       const w = typeof parsed.sidebarWidth === "number" ? parsed.sidebarWidth : defaults.sidebarWidth;
+      const recentTools =
+        Array.isArray(parsed.recentTools) && parsed.recentTools.every(
+          (e: unknown) => typeof e === "object" && e !== null && "id" in e && "lastUsed" in e
+        )
+          ? (parsed.recentTools as SettingsState["recentTools"]).slice(0, 10)
+          : defaults.recentTools;
+      const pinnedTools = Array.isArray(parsed.pinnedTools) && parsed.pinnedTools.every((p: unknown) => typeof p === "string")
+        ? (parsed.pinnedTools as string[])
+        : defaults.pinnedTools;
+
       return {
         theme: parsed.theme ?? defaults.theme,
         sidebarMode: parsed.sidebarMode ?? defaults.sidebarMode,
         sidebarCollapsed: parsed.sidebarCollapsed ?? defaults.sidebarCollapsed,
         sidebarWidth: clampSidebarWidth(w),
         hiddenTools: Array.isArray(parsed.hiddenTools) ? parsed.hiddenTools : defaults.hiddenTools,
+        recentTools,
+        pinnedTools,
         editorFont: typeof parsed.editorFont === "string" ? parsed.editorFont : defaults.editorFont,
         wordWrap: typeof parsed.wordWrap === "boolean" ? parsed.wordWrap : defaults.wordWrap,
       };

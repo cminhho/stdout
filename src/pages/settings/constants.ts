@@ -1,11 +1,12 @@
 import type { LucideIcon } from "lucide-react";
-import { Settings, Palette, Wrench } from "lucide-react";
+import { Settings, Palette, Wrench, FolderOpen } from "lucide-react";
 import type { SettingsTabId, Theme, SidebarMode } from "@/types/settings";
+import { SHORTCUT_COMMAND_PALETTE } from "@/constants/shortcuts";
 
 export const DEFAULT_TITLE = "Settings";
 export const UPDATE_BUTTON_LOADING_LABEL = "Checking…";
 export const UPDATE_BUTTON_LABEL = "Check for updates";
-export const SEARCH_PLACEHOLDER = "Search tools...";
+export const SEARCH_PLACEHOLDER = `Search tools… (${SHORTCUT_COMMAND_PALETTE} to open palette from anywhere)`;
 export const SHOW_ALL_LABEL = "Show All";
 
 export const SETTINGS_TABS: {
@@ -17,6 +18,7 @@ export const SETTINGS_TABS: {
   { id: "general", label: "General", icon: Settings, panelId: "settings-general" },
   { id: "appearance", label: "Appearance", icon: Palette, panelId: "settings-appearance" },
   { id: "tools", label: "Manage Tools", icon: Wrench, panelId: "settings-tools" },
+  { id: "sessions", label: "Sessions", icon: FolderOpen, panelId: "settings-sessions" },
 ];
 
 export const THEMES: { value: Theme; label: string; desc: string }[] = [

@@ -1,5 +1,6 @@
-import { useState, useEffect, ReactNode } from "react";
+import { useState, useEffect, useCallback, ReactNode } from "react";
 import { SettingsContext, loadSettings, saveSettings, clampSidebarWidth, SIDEBAR_MOBILE_BREAKPOINT_PX, type Theme, type SidebarMode } from "./settingsStore";
+import { useThemeSync } from "@/hooks/useThemeSync";
 
 export type { Theme, SidebarMode } from "./settingsStore";
 
@@ -21,26 +22,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     saveSettings(state);
   }, [state]);
 
-  useEffect(() => {
-    if (state.theme === "dark") {
-      applyResolvedTheme("dark");
-      return;
-    }
-    if (state.theme === "light") {
-      applyResolvedTheme("light");
-      return;
-    }
-    if (state.theme === "deep-dark") {
-      applyResolvedTheme("deep-dark");
-      return;
-    }
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const resolve = () => (mq.matches ? "dark" : "light");
-    applyResolvedTheme(resolve());
-    const handler = () => applyResolvedTheme(resolve());
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, [state.theme]);
+  useThemeSync(state.theme, applyResolvedTheme);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -67,20 +49,36 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   const setEditorFont = (editorFont: string) => setState((s) => ({ ...s, editorFont }));
   const setWordWrap = (wordWrap: boolean) => setState((s) => ({ ...s, wordWrap }));
 
-  const toggleTool = (path: string) =>
+  const toggleTool = useCallback((path: string) => {
     setState((s) => ({
       ...s,
       hiddenTools: s.hiddenTools.includes(path)
         ? s.hiddenTools.filter((p) => p !== path)
         : [...s.hiddenTools, path],
     }));
+  }, []);
 
-  const setAllToolsVisible = () => setState((s) => ({ ...s, hiddenTools: [] }));
-  const isToolVisible = (path: string) => !state.hiddenTools.includes(path);
+  const setAllToolsVisible = useCallback(() => setState((s) => ({ ...s, hiddenTools: [] })), []);
+
+  const isToolVisible = useCallback((path: string) => !state.hiddenTools.includes(path), [state.hiddenTools]);
+
+  const addRecentTool = useCallback((id: string) => {
+    setState((s) => ({
+      ...s,
+      recentTools: [{ id, lastUsed: Date.now() }, ...s.recentTools.filter((t) => t.id !== id)].slice(0, 10),
+    }));
+  }, []);
+
+  const togglePin = useCallback((id: string) => {
+    setState((s) => ({
+      ...s,
+      pinnedTools: s.pinnedTools.includes(id) ? s.pinnedTools.filter((p) => p !== id) : [...s.pinnedTools, id],
+    }));
+  }, []);
 
   return (
     <SettingsContext.Provider
-      value={{ ...state, setTheme, setSidebarMode, setSidebarCollapsed, toggleSidebar, setSidebarWidth, toggleTool, setAllToolsVisible, isToolVisible, setEditorFont, setWordWrap }}
+      value={{ ...state, setTheme, setSidebarMode, setSidebarCollapsed, toggleSidebar, setSidebarWidth, toggleTool, setAllToolsVisible, isToolVisible, addRecentTool, togglePin, setEditorFont, setWordWrap }}
     >
       {children}
     </SettingsContext.Provider>

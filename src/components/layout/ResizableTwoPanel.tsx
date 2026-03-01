@@ -1,5 +1,5 @@
 /** Resizable two-pane layout: input | resizer | output; side-by-side on lg+, stacked below. */
-import { memo, useMemo, useRef } from "react";
+import { memo, useEffect, useMemo, useRef } from "react";
 
 import PanelResizer from "@/components/layout/PanelResizer";
 import ToolPane from "@/components/layout/ToolPane";
@@ -19,6 +19,8 @@ export interface ResizableTwoPanelProps {
   minInputPercent?: number;
   maxInputPercent?: number;
   resizerWidth?: number;
+  /** Called when split percent changes (for workspace persistence). */
+  onPercentChange?: (percent: number) => void;
   className?: string;
 }
 
@@ -33,6 +35,7 @@ const ResizableTwoPanel = memo(function ResizableTwoPanel({
   minInputPercent = 20,
   maxInputPercent = 80,
   resizerWidth,
+  onPercentChange,
   className,
 }: ResizableTwoPanelProps) {
   const isLg = useIsLg();
@@ -50,6 +53,10 @@ const ResizableTwoPanel = memo(function ResizableTwoPanel({
     maxInputPercent,
     containerRef
   );
+
+  useEffect(() => {
+    onPercentChange?.(isLg ? horizontal.percent : vertical.percent);
+  }, [onPercentChange, isLg, horizontal.percent, vertical.percent]);
 
   const inputPaneProps = useMemo(
     () => ({ ...input, title: input.title ?? "Input" }),

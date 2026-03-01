@@ -1,5 +1,6 @@
 /** Two-panel tool layout with resizable input/output panes, top section (errors/options), and default toolbar. */
-import { useMemo, useState, type ReactNode } from "react";
+import { useCallback, useMemo, useState, type ReactNode } from "react";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import CodeEditor from "@/components/common/CodeEditor";
 import FileUploadButton from "@/components/common/FileUploadButton";
 import IndentSelect, { DEFAULT_INDENT, type IndentOption } from "@/components/common/IndentSelect";
@@ -7,16 +8,22 @@ import ResizableTwoPanel from "@/components/layout/ResizableTwoPanel";
 import type { PaneProps } from "@/components/layout/ToolPane";
 import TwoPanelTopSection from "@/components/layout/TwoPanelTopSection";
 import { ClearButton } from "@/components/common/ClearButton";
+import SampleDataDropdown from "@/components/common/SampleDataDropdown";
 import { SampleButton } from "@/components/common/SampleButton";
 import { SaveButton } from "@/components/common/SaveButton";
+import ShareSnippetButton from "@/components/common/ShareSnippetButton";
 import ToolLayout from "@/components/layout/ToolLayout";
+import type { PerToolState } from "@/types/workspace";
 import { useFormatOutput } from "@/hooks/useFormatOutput";
 import { cn } from "@/utils/cn";
 import type { ParseError } from "@/utils/validationTypes";
 
 /** Config for default input toolbar: Sample + Clear + File upload. */
 export interface DefaultInputToolbarConfig {
-  onSample: () => void;
+  /** When dropdown is used (samples provided), called with selected value; otherwise called with no args. */
+  onSample: (value?: string) => void;
+  /** When provided and non-empty, renders SampleDataDropdown instead of SampleButton. */
+  samples?: { id: string; label: string; value: string }[];
   /** Clear handler; when omitted, derived from setInput (clear = setInput("")). */
   onClear?: () => void;
   /** When set, Clear uses () => setInput("") internally. Ignored if onClear is provided. */
@@ -115,6 +122,12 @@ export interface TwoPanelToolLayoutProps {
   minInputPercent?: number;
   maxInputPercent?: number;
   resizerWidth?: number;
+  /** When set, split percent is restored from and saved to workspace. */
+  persistToolId?: string;
+  /** When set with persistToolId, shows Share snippet (copy link / download .stdout.json) in input toolbar. */
+  shareState?: PerToolState;
+  /** When true, Save/Share/Sessions are in the page toolbar; do not render Share in input pane. */
+  sessionShareInPageToolbar?: boolean;
   className?: string;
   inputPane: TwoPanelInputPaneConfig;
   outputPane: TwoPanelOutputPaneConfig;
@@ -133,15 +146,35 @@ function errorLinesFromParseErrors(errors: ParseError[]): Set<number> {
 
 function buildInputPaneProps(
   config: TwoPanelInputPaneConfig,
-  validationErrors?: ParseError[]
+  validationErrors?: ParseError[],
+  options?: { persistToolId?: string; shareState?: PerToolState; sessionShareInPageToolbar?: boolean }
 ): PaneProps {
   const clearHandler = resolveInputClear(config);
+  const hasSamples = (config.inputToolbar?.samples?.length ?? 0) > 0;
+  const showShare =
+    !options?.sessionShareInPageToolbar &&
+    options?.persistToolId != null &&
+    options?.persistToolId !== "" &&
+    options?.shareState != null;
   const toolbar =
     config.toolbar ??
     (config.inputToolbar ? (
       <>
         {config.inputToolbarExtra ?? null}
-        <SampleButton onClick={config.inputToolbar.onSample} />
+        {showShare ? (
+          <ShareSnippetButton
+            toolId={options!.persistToolId!}
+            state={options!.shareState!}
+          />
+        ) : null}
+        {hasSamples ? (
+          <SampleDataDropdown
+            items={config.inputToolbar.samples!}
+            onSelect={(value) => config.inputToolbar!.onSample(value)}
+          />
+        ) : (
+          <SampleButton onClick={() => config.inputToolbar!.onSample()} />
+        )}
         {clearHandler ? <ClearButton onClick={clearHandler} /> : null}
         <FileUploadButton
           accept={config.inputToolbar.fileAccept}
@@ -220,6 +253,8 @@ function buildOutputPaneProps(
             content={content!}
             filename={ot!.outputFilename!}
             mimeType={ot!.outputMimeType}
+            label="Download"
+            title="Download as file"
           />
         ) : null}
       </>
@@ -263,10 +298,26 @@ const TwoPanelToolLayout = ({
   minInputPercent,
   maxInputPercent,
   resizerWidth,
+  persistToolId,
+  shareState,
+  sessionShareInPageToolbar = false,
   className,
   inputPane,
   outputPane,
 }: TwoPanelToolLayoutProps) => {
+  const { getToolState, setToolState } = useWorkspace();
+  const restoredSplit = persistToolId ? getToolState(persistToolId).splitPercent : undefined;
+  const initialSplitPercent =
+    restoredSplit !== undefined && restoredSplit >= (minInputPercent ?? 20) && restoredSplit <= (maxInputPercent ?? 80)
+      ? restoredSplit
+      : defaultInputPercent ?? 40;
+  const onPercentChange = useCallback(
+    (percent: number) => {
+      if (persistToolId) setToolState(persistToolId, { splitPercent: percent });
+    },
+    [persistToolId, setToolState]
+  );
+
   const ot = outputPane.outputToolbar;
   const [internalIndent, setInternalIndent] = useState<IndentOption>(
     () => ot?.defaultIndent ?? DEFAULT_INDENT
@@ -322,12 +373,17 @@ const TwoPanelToolLayout = ({
         topSection={mergedTopSection}
       />
       <ResizableTwoPanel
-        defaultInputPercent={defaultInputPercent ?? 40}
+        defaultInputPercent={initialSplitPercent}
         minInputPercent={minInputPercent}
         maxInputPercent={maxInputPercent}
         resizerWidth={resizerWidth}
+        onPercentChange={persistToolId ? onPercentChange : undefined}
         className={cn(hasChromeAbove && "min-h-0", className)}
-        input={buildInputPaneProps(inputPane, effectiveValidationErrors)}
+        input={buildInputPaneProps(inputPane, effectiveValidationErrors, {
+          persistToolId,
+          shareState,
+          sessionShareInPageToolbar,
+        })}
         output={buildOutputPaneProps(outputPane, indentControl, derived)}
       />
     </ToolLayout>

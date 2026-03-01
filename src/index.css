@@ -52,7 +52,7 @@
     --secondary-foreground: 210 40% 98%;
 
     --muted: 215 14% 26%;
-    --muted-foreground: 215 9% 58%;
+    --muted-foreground: 215 9% 70%;
 
     --accent: var(--primary);
     --accent-foreground: var(--primary-foreground);
@@ -355,7 +355,7 @@
     /* Typography: inherits --text-nav, --text-ui, --text-content, --text-caption, --text-hero from :root */
   }
 
-  /* Deep dark: near-black (0°), OLED-friendly, WCAG AA muted text */
+  /* Deep dark: near-black (0°), OLED-friendly; muted text 70% for WCAG AA 4.5:1 */
   .deep-dark {
     color-scheme: dark;
     --background: 0 0% 7%;
@@ -374,7 +374,7 @@
     --secondary-foreground: 0 0% 98%;
 
     --muted: 0 0% 14%;
-    --muted-foreground: 0 0% 58%;
+    --muted-foreground: 0 0% 70%;
 
     --accent: var(--primary);
     --accent-foreground: var(--primary-foreground);
@@ -597,6 +597,13 @@
   .desktop-title-bar .title-bar-win-btn:focus-visible {
     outline: none;
     box-shadow: var(--focus-ring);
+  }
+  /* Title bar action group (Save, Share, Sessions) – compact, no wrap */
+  .desktop-title-bar .title-bar-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--title-bar-gap);
+    flex-shrink: 0;
   }
 
   /* Thin scrollbars in desktop window (--scrollbar-thumb / --scrollbar-thumb-hover per theme). Skip on macOS so system overlay scrollbars apply (Intel + ARM). */
@@ -1996,11 +2003,12 @@
     box-shadow: 0 0 0 1px hsl(var(--sidebar-ring));
   }
 
-  /* Sidebar search results label and empty state: macOS-style typography */
+  /* Sidebar search results label and section titles (Pinned, Recent): uppercase to match .sidebar-group-label */
   .sidebar-results-label {
     font-size: var(--text-nav);
-    font-weight: 500;
-    letter-spacing: 0.02em;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     color: hsl(var(--muted-foreground));
     padding: 0 var(--spacing-sidebar-x) var(--home-space-xs);
   }

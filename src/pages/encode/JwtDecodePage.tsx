@@ -1,5 +1,10 @@
-import { useState } from "react";
+import { useCallback, useState, useEffect } from "react";
+import ToolPageLayout from "@/components/layout/ToolPageLayout";
 import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
+import { useTitleBarActions } from "@/contexts/TitleBarActionsContext";
+import CopyButton from "@/components/common/CopyButton";
+import { useCurrentTool } from "@/hooks/useCurrentTool";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import {
   processJwtDecodeForLayout,
   JWT_DECODE_FILE_ACCEPT,
@@ -11,40 +16,77 @@ import {
 } from "@/utils/jwtDecode";
 
 const JwtDecodePage = () => {
+  const tool = useCurrentTool();
+  const { setToolState } = useWorkspace();
+  const { setTitleBarActions, clearTitleBarActions } = useTitleBarActions();
   const [input, setInput] = useState("");
 
+  const handleLoadSession = useCallback(
+    (state: { input?: string; scrollPosition?: number; splitPercent?: number }) => {
+      if (state.input !== undefined) setInput(state.input);
+      if (tool?.id) setToolState(tool.id, state);
+    },
+    [tool?.id, setToolState]
+  );
+
+  useEffect(() => {
+    if (tool?.id) {
+      setTitleBarActions({
+        toolId: tool.id,
+        toolName: tool.label,
+        shareState: { input },
+        onLoadSession: handleLoadSession,
+      });
+    } else {
+      clearTitleBarActions();
+    }
+    return () => clearTitleBarActions();
+  }, [tool?.id, tool?.label, input, handleLoadSession, setTitleBarActions, clearTitleBarActions]);
+
   return (
-    <TwoPanelToolLayout
-      inputPane={{
-        inputToolbar: {
-          onSample: () => setInput(JWT_DECODE_SAMPLE),
-          setInput,
-          fileAccept: JWT_DECODE_FILE_ACCEPT,
-          onFileText: setInput,
-        },
-        inputEditor: {
-          value: input,
-          onChange: setInput,
-          language: "text",
-          placeholder: JWT_DECODE_PLACEHOLDER_INPUT,
-        },
-      }}
-      outputPane={{
-        outputToolbar: {
-          format: processJwtDecodeForLayout,
-          outputFilename: JWT_DECODE_OUTPUT_FILENAME,
-          outputMimeType: JWT_DECODE_MIME_TYPE,
-          defaultIndent: 2,
-          indentSpaceOptions: [2, 4],
-          indentIncludeTab: false,
-        },
-        outputEditor: {
-          value: "",
-          language: "json",
-          placeholder: JWT_DECODE_PLACEHOLDER_OUTPUT,
-        },
-      }}
-    />
+    <ToolPageLayout>
+      <TwoPanelToolLayout
+        persistToolId={tool?.id}
+        shareState={{ input }}
+        sessionShareInPageToolbar
+        inputPane={{
+          inputToolbar: {
+            onSample: () => setInput(JWT_DECODE_SAMPLE),
+            setInput,
+            fileAccept: JWT_DECODE_FILE_ACCEPT,
+            onFileText: setInput,
+          },
+          inputEditor: {
+            value: input,
+            onChange: setInput,
+            language: "text",
+            placeholder: JWT_DECODE_PLACEHOLDER_INPUT,
+          },
+        }}
+        outputPane={{
+          outputToolbar: {
+            format: processJwtDecodeForLayout,
+            outputFilename: JWT_DECODE_OUTPUT_FILENAME,
+            outputMimeType: JWT_DECODE_MIME_TYPE,
+            defaultIndent: 2,
+            indentSpaceOptions: [2, 4],
+            indentIncludeTab: false,
+          },
+          outputToolbarExtra:
+            input.trim() ? (
+              <CopyButton
+                text={`Authorization: Bearer ${input.trim()}`}
+                label="Copy as Auth header"
+              />
+            ) : null,
+          outputEditor: {
+            value: "",
+            language: "json",
+            placeholder: JWT_DECODE_PLACEHOLDER_OUTPUT,
+          },
+        }}
+      />
+    </ToolPageLayout>
   );
 };
 
