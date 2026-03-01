@@ -52,7 +52,7 @@
     --secondary-foreground: 210 40% 98%;
 
     --muted: 215 14% 26%;
-    --muted-foreground: 215 9% 58%;
+    --muted-foreground: 215 9% 70%;
 
     --accent: var(--primary);
     --accent-foreground: var(--primary-foreground);
@@ -355,7 +355,7 @@
     /* Typography: inherits --text-nav, --text-ui, --text-content, --text-caption, --text-hero from :root */
   }
 
-  /* Deep dark: near-black (0°), OLED-friendly, WCAG AA muted text */
+  /* Deep dark: near-black (0°), OLED-friendly; muted text 70% for WCAG AA 4.5:1 */
   .deep-dark {
     color-scheme: dark;
     --background: 0 0% 7%;
@@ -374,7 +374,7 @@
     --secondary-foreground: 0 0% 98%;
 
     --muted: 0 0% 14%;
-    --muted-foreground: 0 0% 58%;
+    --muted-foreground: 0 0% 70%;
 
     --accent: var(--primary);
     --accent-foreground: var(--primary-foreground);
