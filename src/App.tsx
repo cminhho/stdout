@@ -71,7 +71,7 @@ const DesktopLayout = () => {
           onKeyDown={onKeyDown}
         />
       )}
-      <main className="flex-1 min-h-0 min-w-0 overflow-auto flex flex-col">
+      <main className="flex-1 min-h-0 min-w-0 overflow-hidden flex flex-col">
         <ToolRoutes />
       </main>
     </div>

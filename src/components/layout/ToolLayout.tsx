@@ -7,7 +7,7 @@ interface ToolLayoutProps {
 /** Single wrapper for all tools: no padding, content fills. */
 const ToolLayout = memo(function ToolLayout({ children }: ToolLayoutProps) {
   return (
-    <div className="tool-layout-content flex-1 flex flex-col min-h-0 overflow-auto w-full">
+    <div className="tool-layout-content flex-1 flex flex-col min-h-0 overflow-hidden w-full">
       {children}
     </div>
   );
