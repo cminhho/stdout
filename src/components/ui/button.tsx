@@ -5,6 +5,19 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/utils/cn";
 
+/**
+ * Standard button variants and sizes. Use these instead of ad-hoc color/size classes.
+ *
+ * Variants:
+ * - default / primary: Primary action (e.g. Format, Submit).
+ * - secondary: Secondary action.
+ * - outline: Tertiary, bordered (e.g. Copy, Add).
+ * - ghost: Minimal emphasis (e.g. icon-only, Clear in toolbar).
+ * - destructive: Delete, remove.
+ * - link: Text link style.
+ *
+ * Sizes: default, sm, xs, lg, icon, icon-sm, icon-xs (toolbar vs content).
+ */
 /* macOS-style: 8px grid spacing, --radius-button (--home-radius-card), typography tokens */
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-3.5 [&_svg]:shrink-0 rounded-[var(--radius-button)]",
@@ -12,6 +25,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        primary: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline: "border border-outlineButton-border bg-outlineButton-bg text-outlineButton-foreground hover:bg-muted hover:border-border hover:text-foreground",
         secondary: "border border-border bg-secondary text-secondary-foreground hover:bg-secondary/80",
