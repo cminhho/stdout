@@ -12,7 +12,6 @@ import { DEFAULT_TITLE, SETTINGS_TABS } from "./constants";
 import SettingsGeneralPanel from "./SettingsGeneralPanel";
 import SettingsAppearancePanel from "./SettingsAppearancePanel";
 import SettingsToolsPanel from "./SettingsToolsPanel";
-import SettingsSessionsPanel from "./SettingsSessionsPanel";
 
 const SettingsPage = () => {
   const navigate = useNavigate();
@@ -160,7 +159,6 @@ const SettingsPage = () => {
               )}
               {tab === "appearance" && <SettingsAppearancePanel />}
               {tab === "tools" && <SettingsToolsPanel />}
-              {tab === "sessions" && <SettingsSessionsPanel />}
             </div>
           </main>
         </div>

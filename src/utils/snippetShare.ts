@@ -3,8 +3,24 @@ import { downloadAsFile } from "@/utils/download";
 import type { PerToolState } from "@/types/workspace";
 import type { SnippetPayload } from "@/types/snippet";
 
-/** Max length for the encoded snippet query string; beyond this, share URL is not offered. */
-export const MAX_SNIPPET_URL_LENGTH = 2000;
+/** Max total share-URL length; beyond this, the link is not offered (use Download snippet instead). */
+export const MAX_SHARE_URL_LENGTH = 2048;
+
+/** Production web app where the /open route lives; used when sharing from the desktop app (no web origin). */
+const PRODUCTION_WEB_URL = "https://stdout-tools.web.app";
+
+/**
+ * Base URL (origin + base path, trailing slash) of the web app hosting the /open route.
+ * In a browser, derives from the current origin so links point to wherever the app is served
+ * (local, preview, prod). In Electron (file://app://), falls back to the production web URL.
+ */
+function webBaseUrl(): string {
+  if (typeof window !== "undefined" && /^https?:$/.test(window.location.protocol)) {
+    const base = import.meta.env.BASE_URL || "/";
+    return window.location.origin + (base.endsWith("/") ? base : `${base}/`);
+  }
+  return `${PRODUCTION_WEB_URL}/`;
+}
 
 function sanitizeState(state: PerToolState): PerToolState {
   const out: PerToolState = {};
@@ -38,14 +54,31 @@ function base64EncodeUnicode(str: string): string {
 }
 
 /**
- * Returns stdout:// URL with snippet param, or null if encoded length would exceed MAX_SNIPPET_URL_LENGTH.
+ * URL-safe snippet param for embedding in a share URL. Percent-encodes the base64 so chars
+ * like '+' survive the round-trip (URLSearchParams/new URL decode '+' to a space otherwise);
+ * readers (OpenRoutePage, parseDeepLinkUrl) decode it back to plain base64.
  */
-export function getShareableUrl(toolId: string, state: PerToolState): string | null {
+function encodeSnippetParam(toolId: string, state: PerToolState): string {
   const payload = createSnippetPayload(toolId, state);
-  const json = JSON.stringify(payload);
-  const encoded = base64EncodeUnicode(json);
-  if (encoded.length > MAX_SNIPPET_URL_LENGTH) return null;
-  return `stdout://${toolId}?snippet=${encoded}`;
+  return encodeURIComponent(base64EncodeUnicode(JSON.stringify(payload)));
+}
+
+/**
+ * Web share link (https://…/open?snippet=…) that opens the online tool in any browser.
+ * Returns null if the full URL would exceed MAX_SHARE_URL_LENGTH (use Download snippet instead).
+ */
+export function getWebShareUrl(toolId: string, state: PerToolState): string | null {
+  const url = `${webBaseUrl()}open?snippet=${encodeSnippetParam(toolId, state)}`;
+  return url.length > MAX_SHARE_URL_LENGTH ? null : url;
+}
+
+/**
+ * App deep-link (stdout://toolId?snippet=…) that opens the installed desktop app.
+ * Returns null if the full URL would exceed MAX_SHARE_URL_LENGTH (use Download snippet instead).
+ */
+export function getAppShareUrl(toolId: string, state: PerToolState): string | null {
+  const url = `stdout://${toolId}?snippet=${encodeSnippetParam(toolId, state)}`;
+  return url.length > MAX_SHARE_URL_LENGTH ? null : url;
 }
 
 /**

@@ -20,9 +20,28 @@ export interface ValidationResult<TStats = Record<string, unknown>> {
 }
 
 /**
- * Normalize a single error string (e.g. from XML/HTML parser) into one ParseError.
+ * Normalize a single error string (e.g. a DOMParser <parsererror> text) into one ParseError,
+ * extracting the real line/column when the message embeds it so the editor highlights the right
+ * line. Handles Blink/WebKit ("error on line 5 at column 12: …") and Firefox ("Line Number 5,
+ * Column 12") wording; falls back to 1:1 when no location is present.
  */
 export function singleErrorToParseErrors(error: string): ParseError[] {
   if (!error?.trim()) return [];
-  return [{ line: 1, column: 1, message: error.trim(), snippet: undefined }];
+  const text = error.trim();
+
+  const loc =
+    text.match(/line\s+(\d+)\s+at\s+column\s+(\d+)/i) ?? // Blink/WebKit
+    text.match(/line\s*number\s*(\d+),\s*column\s*(\d+)/i); // Firefox
+  const line = loc ? Number(loc[1]) : 1;
+  const column = loc ? Number(loc[2]) : 1;
+
+  // Clean Blink's boilerplate wrapper and keep the concise "…: <message>" part when present.
+  let message = text
+    .replace(/^This page contains the following errors:\s*/i, "")
+    .split(/\s*Below is a rendering/i)[0];
+  const concise = message.match(/column\s+\d+:\s*([\s\S]+)/i);
+  if (concise) message = concise[1];
+  message = message.replace(/\s+/g, " ").trim();
+
+  return [{ line, column, message: message || text, snippet: undefined }];
 }

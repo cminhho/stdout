@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback, ReactNode } from "react";
+import { useState, useEffect, useCallback, useMemo, ReactNode } from "react";
 import { SettingsContext, loadSettings, saveSettings, clampSidebarWidth, SIDEBAR_MOBILE_BREAKPOINT_PX, type Theme, type SidebarMode } from "./settingsStore";
+import type { IndentOption } from "@/components/common/IndentSelect";
 import { useThemeSync } from "@/hooks/useThemeSync";
 
 export type { Theme, SidebarMode } from "./settingsStore";
@@ -40,14 +41,16 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     return () => mq.removeEventListener("change", handler);
   }, []);
 
-  const setTheme = (theme: Theme) => setState((s) => ({ ...s, theme }));
-  const setSidebarMode = (sidebarMode: SidebarMode) => setState((s) => ({ ...s, sidebarMode }));
-  const setSidebarCollapsed = (sidebarCollapsed: boolean) => setState((s) => ({ ...s, sidebarCollapsed }));
-  const toggleSidebar = () => setState((s) => ({ ...s, sidebarCollapsed: !s.sidebarCollapsed }));
-  const setSidebarWidth = (sidebarWidth: number) =>
-    setState((s) => ({ ...s, sidebarWidth: clampSidebarWidth(sidebarWidth) }));
-  const setEditorFont = (editorFont: string) => setState((s) => ({ ...s, editorFont }));
-  const setWordWrap = (wordWrap: boolean) => setState((s) => ({ ...s, wordWrap }));
+  const setTheme = useCallback((theme: Theme) => setState((s) => ({ ...s, theme })), []);
+  const setSidebarMode = useCallback((sidebarMode: SidebarMode) => setState((s) => ({ ...s, sidebarMode })), []);
+  const setSidebarCollapsed = useCallback((sidebarCollapsed: boolean) => setState((s) => ({ ...s, sidebarCollapsed })), []);
+  const toggleSidebar = useCallback(() => setState((s) => ({ ...s, sidebarCollapsed: !s.sidebarCollapsed })), []);
+  const setSidebarWidth = useCallback(
+    (sidebarWidth: number) => setState((s) => ({ ...s, sidebarWidth: clampSidebarWidth(sidebarWidth) })),
+    []
+  );
+  const setEditorFont = useCallback((editorFont: string) => setState((s) => ({ ...s, editorFont })), []);
+  const setDefaultIndent = useCallback((defaultIndent: IndentOption) => setState((s) => ({ ...s, defaultIndent })), []);
 
   const toggleTool = useCallback((path: string) => {
     setState((s) => ({
@@ -62,25 +65,10 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
 
   const isToolVisible = useCallback((path: string) => !state.hiddenTools.includes(path), [state.hiddenTools]);
 
-  const addRecentTool = useCallback((id: string) => {
-    setState((s) => ({
-      ...s,
-      recentTools: [{ id, lastUsed: Date.now() }, ...s.recentTools.filter((t) => t.id !== id)].slice(0, 10),
-    }));
-  }, []);
-
-  const togglePin = useCallback((id: string) => {
-    setState((s) => ({
-      ...s,
-      pinnedTools: s.pinnedTools.includes(id) ? s.pinnedTools.filter((p) => p !== id) : [...s.pinnedTools, id],
-    }));
-  }, []);
-
-  return (
-    <SettingsContext.Provider
-      value={{ ...state, setTheme, setSidebarMode, setSidebarCollapsed, toggleSidebar, setSidebarWidth, toggleTool, setAllToolsVisible, isToolVisible, addRecentTool, togglePin, setEditorFont, setWordWrap }}
-    >
-      {children}
-    </SettingsContext.Provider>
+  const value = useMemo(
+    () => ({ ...state, setTheme, setSidebarMode, setSidebarCollapsed, toggleSidebar, setSidebarWidth, toggleTool, setAllToolsVisible, isToolVisible, setEditorFont, setDefaultIndent }),
+    [state, setTheme, setSidebarMode, setSidebarCollapsed, toggleSidebar, setSidebarWidth, toggleTool, setAllToolsVisible, isToolVisible, setEditorFont, setDefaultIndent]
   );
+
+  return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;
 };

@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
-import { Settings, Palette, Wrench, FolderOpen } from "lucide-react";
+import { Settings, Palette, Wrench } from "lucide-react";
 import type { SettingsTabId, Theme, SidebarMode } from "@/types/settings";
+import type { IndentOption } from "@/components/common/IndentSelect";
 import { SHORTCUT_COMMAND_PALETTE } from "@/constants/shortcuts";
 
 export const DEFAULT_TITLE = "Settings";
@@ -18,7 +19,6 @@ export const SETTINGS_TABS: {
   { id: "general", label: "General", icon: Settings, panelId: "settings-general" },
   { id: "appearance", label: "Appearance", icon: Palette, panelId: "settings-appearance" },
   { id: "tools", label: "Manage Tools", icon: Wrench, panelId: "settings-tools" },
-  { id: "sessions", label: "Sessions", icon: FolderOpen, panelId: "settings-sessions" },
 ];
 
 export const THEMES: { value: Theme; label: string; desc: string }[] = [
@@ -37,4 +37,11 @@ export const SIDEBAR_MODES: { value: SidebarMode; label: string; desc: string }[
 export const EDITOR_FONTS: { value: string; label: string }[] = [
   { value: "ui-monospace, ui-serif, monospace", label: "System monospace" },
   { value: "'Fira Code', monospace", label: "Fira Code" },
+];
+
+/** App-wide default indentation options (formatters that don't enforce their own convention). */
+export const INDENT_DEFAULT_OPTIONS: { value: IndentOption; label: string }[] = [
+  { value: 2, label: "2 spaces" },
+  { value: 4, label: "4 spaces" },
+  { value: "tab", label: "Tab" },
 ];

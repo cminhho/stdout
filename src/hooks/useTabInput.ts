@@ -32,7 +32,7 @@ export function useTabInput(initial = ""): UseTabInputResult {
   const tabId = tabCtx?.tabId ?? toolId; // fall back to toolId when rendered outside a tab
   const isActive = tabCtx?.isActive ?? true;
 
-  const { getToolState, setToolState } = useWorkspace();
+  const { getToolState } = useWorkspace();
   const { getTabInput, setTabInput } = useTabs();
   const { setTitleBarActions, clearTitleBarActions } = useTitleBarActions();
 
@@ -79,20 +79,16 @@ export function useTabInput(initial = ""): UseTabInputResult {
     };
   }, [persist, setTabInput]);
 
-  // Only the visible (active) tab owns the title-bar Save/Share/Sessions actions (keyed by toolId).
+  // Only the visible (active) tab owns the title-bar Share action (keyed by toolId).
   useEffect(() => {
     if (!isActive || !toolId) return;
     setTitleBarActions({
       toolId,
       toolName: tool?.label,
       shareState: { input },
-      onLoadSession: (state) => {
-        if (state.input !== undefined) setInputState(state.input);
-        setToolState(toolId, state);
-      },
     });
     return () => clearTitleBarActions();
-  }, [isActive, toolId, tool?.label, input, setTitleBarActions, clearTitleBarActions, setToolState]);
+  }, [isActive, toolId, tool?.label, input, setTitleBarActions, clearTitleBarActions]);
 
   return { input, setInput, toolId };
 }

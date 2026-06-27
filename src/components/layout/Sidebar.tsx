@@ -1,8 +1,8 @@
 import { memo, useState, useMemo } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
-  ArrowLeftRight, Braces, CheckCircle2, ChevronRight, Code2, FileCode, Globe, Home, Image, Lock,
-  Pin, PinOff, Search, Shuffle, TerminalSquare, Type, Coffee,
+  ArrowLeftRight, Braces, CheckCircle2, ChevronRight, Code2, FileCode, Globe, Home, Image, Layers, Lock,
+  Search, Shuffle, TerminalSquare, Type, Coffee, X,
 } from "lucide-react";
 
 import {
@@ -13,7 +13,10 @@ import {
 import { cn } from "@/utils/cn";
 import { useSettings } from "@/hooks/useSettings";
 import { useToolEngine } from "@/hooks/useToolEngine";
-import type { ToolDefinition, ToolGroup } from "@/tools/types";
+import { useTabs } from "@/contexts/TabsContext";
+import { useTabNavigation } from "@/hooks/useTabNavigation";
+import { tabDisplayLabels } from "@/utils/tabLabels";
+import type { ToolGroup } from "@/tools/types";
 import { getToolIcon } from "@/components/common/ToolIcons";
 import { SIDEBAR_SEARCH_PLACEHOLDER, SHORTCUT_COMMAND_PALETTE } from "@/constants/shortcuts";
 
@@ -150,8 +153,11 @@ export const Sidebar = memo(function Sidebar({ sidebarWidthPx, isOverlay = false
   const location = useLocation();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const { sidebarMode, sidebarCollapsed, setSidebarCollapsed, isToolVisible, recentTools, pinnedTools, togglePin } = useSettings();
+  const [openToolsExpanded, setOpenToolsExpanded] = useState(true);
+  const { sidebarMode, sidebarCollapsed, setSidebarCollapsed, isToolVisible } = useSettings();
   const { tools, groups, getToolById } = useToolEngine();
+  const { tabs, activeTabId } = useTabs();
+  const { selectTab, closeTabWithNav } = useTabNavigation();
   const closeOnNavigate = isOverlay ? () => setSidebarCollapsed(true) : undefined;
 
   const visibleItems = useMemo(
@@ -159,25 +165,7 @@ export const Sidebar = memo(function Sidebar({ sidebarWidthPx, isOverlay = false
     [tools, isToolVisible]
   );
 
-  const pinnedToolsList = useMemo(() => {
-    return pinnedTools
-      .map((id) => getToolById(id))
-      .filter((t): t is ToolDefinition => t != null && isToolVisible(t.path));
-  }, [pinnedTools, getToolById, isToolVisible]);
-
-  const pinnedIds = useMemo(() => new Set(pinnedToolsList.map((t) => t.id)), [pinnedToolsList]);
-
-  const recentToolsList = useMemo(() => {
-    return recentTools
-      .map(({ id }) => getToolById(id))
-      .filter((t): t is ToolDefinition => t != null && isToolVisible(t.path) && !pinnedIds.has(t.id));
-  }, [recentTools, getToolById, isToolVisible, pinnedIds]);
-
-  const recentIds = useMemo(() => new Set(recentToolsList.map((t) => t.id)), [recentToolsList]);
-  const visibleItemsWithoutPinnedRecent = useMemo(
-    () => visibleItems.filter((v) => !pinnedIds.has(v.id) && !recentIds.has(v.id)),
-    [visibleItems, pinnedIds, recentIds]
-  );
+  const tabLabels = useMemo(() => tabDisplayLabels(tabs), [tabs]);
 
   const searchResults = useMemo(() => {
     if (!search) return null;
@@ -236,22 +224,47 @@ export const Sidebar = memo(function Sidebar({ sidebarWidthPx, isOverlay = false
             <TooltipContent side="right">Tool overview and search ({SHORTCUT_COMMAND_PALETTE})</TooltipContent>
           </Tooltip>
         </div>
-        {!isCollapsed && !search && (pinnedToolsList.length > 0 || recentToolsList.length > 0) && (
-          <div className={cn("border-b border-sidebar-border", "mb-1.5 pb-1.5 space-y-1.5")}>
-            {pinnedToolsList.length > 0 && (
-              <section role="group" aria-label="Pinned tools" className="space-y-0.5">
-                <p className="sidebar-results-label">Pinned</p>
-                <ul role="list" className="space-y-0.5 list-none">
-                  {pinnedToolsList.map((tool) => (
-                    <li key={tool.path} className="flex items-center gap-0 w-full group">
-                      <span className="flex-1 min-w-0">
-                        <SidebarNavItem
-                          item={tool}
-                          isActive={location.pathname === tool.path}
-                          onNavigate={closeOnNavigate}
-                          onPrefetch={tool.preload ? () => tool.preload!() : undefined}
-                        />
-                      </span>
+        {!isCollapsed && !search && tabs.length > 0 && (
+          <div className={cn("border-b border-sidebar-border", "mb-1.5 pb-1.5")}>
+            <section role="group" aria-label="Open tools" className="space-y-0.5">
+              <button
+                type="button"
+                onClick={() => setOpenToolsExpanded((v) => !v)}
+                className="sidebar-link sidebar-group-trigger w-full justify-between"
+                aria-expanded={openToolsExpanded}
+                aria-controls="sidebar-open-tools"
+              >
+                <span className="flex items-center min-w-0 gap-1.5">
+                  <Layers className="h-4 w-4 shrink-0 opacity-90" />
+                  <span className="sidebar-group-label truncate text-left">Open Tools</span>
+                </span>
+                <ChevronRight
+                  className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-150", openToolsExpanded && "rotate-90")}
+                  aria-hidden
+                />
+              </button>
+              {openToolsExpanded && (
+              <ul id="sidebar-open-tools" role="list" className="space-y-0.5 list-none mt-1">
+                {tabs.map((tab) => {
+                  const tool = getToolById(tab.toolId);
+                  if (!tool) return null;
+                  const Icon = getToolIcon(tool.icon);
+                  const label = tabLabels.get(tab.id) ?? tool.label;
+                  const active = tab.id === activeTabId;
+                  return (
+                    <li key={tab.id} className="flex items-center gap-0 w-full group">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          selectTab(tab.id);
+                          closeOnNavigate?.();
+                        }}
+                        className={cn("sidebar-link flex-1 min-w-0", active && "active")}
+                        title={label}
+                      >
+                        <Icon className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
+                        <span className="min-w-0 truncate">{label}</span>
+                      </button>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <button
@@ -259,86 +272,27 @@ export const Sidebar = memo(function Sidebar({ sidebarWidthPx, isOverlay = false
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-                              togglePin(tool.id);
+                              closeTabWithNav(tab.id);
                             }}
                             className="shrink-0 p-1.5 rounded text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                            aria-label="Unpin"
+                            aria-label={`Close ${label}`}
                           >
-                            <PinOff className="h-4 w-4" aria-hidden />
+                            <X className="h-4 w-4" aria-hidden />
                           </button>
                         </TooltipTrigger>
-                        <TooltipContent side="right">Unpin</TooltipContent>
+                        <TooltipContent side="right">Close</TooltipContent>
                       </Tooltip>
                     </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-            {recentToolsList.length > 0 && (
-              <section role="group" aria-label="Recent tools" className="space-y-0.5">
-                <p className="sidebar-results-label">Recent</p>
-                <ul role="list" className="space-y-0.5 list-none">
-                  {recentToolsList.map((tool) => (
-                    <li key={tool.path} className="flex items-center gap-0 w-full group">
-                      <span className="flex-1 min-w-0">
-                        <SidebarNavItem
-                          item={tool}
-                          isActive={location.pathname === tool.path}
-                          onNavigate={closeOnNavigate}
-                          onPrefetch={tool.preload ? () => tool.preload!() : undefined}
-                        />
-                      </span>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              togglePin(tool.id);
-                            }}
-                            className="shrink-0 p-1.5 rounded text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                            aria-label="Pin"
-                          >
-                            <Pin className="h-4 w-4" aria-hidden />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent side="right">Pin to sidebar</TooltipContent>
-                      </Tooltip>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
+                  );
+                })}
+              </ul>
+              )}
+            </section>
           </div>
         )}
         {isCollapsed ? (
           <ul role="list" className="space-y-0.5 list-none">
-            {pinnedToolsList.map((item) => (
-              <li key={item.path}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div>
-                      <SidebarNavItem item={item} isActive={location.pathname === item.path} onNavigate={closeOnNavigate} onPrefetch={item.preload ? () => item.preload!() : undefined} iconOnly />
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent side="right">{item.label}</TooltipContent>
-                </Tooltip>
-              </li>
-            ))}
-            {recentToolsList.map((item) => (
-              <li key={item.path}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div>
-                      <SidebarNavItem item={item} isActive={location.pathname === item.path} onNavigate={closeOnNavigate} onPrefetch={item.preload ? () => item.preload!() : undefined} iconOnly />
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent side="right">{item.label}</TooltipContent>
-                </Tooltip>
-              </li>
-            ))}
-            {visibleItemsWithoutPinnedRecent.map((item) => (
+            {visibleItems.map((item) => (
               <li key={item.path}>
                 <Tooltip>
                   <TooltipTrigger asChild>

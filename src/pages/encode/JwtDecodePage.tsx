@@ -20,7 +20,7 @@ const JwtDecodePage = () => {
       <TwoPanelToolLayout
         persistToolId={toolId}
         shareState={{ input }}
-        sessionShareInPageToolbar
+        shareInTitleBar
         inputPane={{
           inputToolbar: {
             onSample: () => setInput(JWT_DECODE_SAMPLE),

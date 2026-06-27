@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useSettings } from "@/hooks/useSettings";
 import CodeEditor from "@/components/common/CodeEditor";
 import IndentSelect, { type IndentOption } from "@/components/common/IndentSelect";
 import { SelectWithOptions, type SelectOption } from "@/components/ui/select";
@@ -44,8 +45,10 @@ const DEFAULT_KEYWORD_CASE: SqlKeywordCase = "upper";
 const DEFAULT_IDENTIFIER_CASE: SqlIdentifierCase = "as-is";
 
 const SqlFormatterPage = () => {
+  const { defaultIndent } = useSettings();
   const [input, setInput] = useState("");
-  const [indent, setIndent] = useState<IndentOption>(2);
+  // SQL supports 2/4/8/tab; seed from the app-wide default (guard the formatter-only "minified").
+  const [indent, setIndent] = useState<IndentOption>(() => (defaultIndent === "minified" ? 2 : defaultIndent));
   const [keywordCase, setKeywordCase] = useState<SqlKeywordCase>(DEFAULT_KEYWORD_CASE);
   const [identifierCase, setIdentifierCase] = useState<SqlIdentifierCase>(DEFAULT_IDENTIFIER_CASE);
   const [dialect, setDialect] = useState<SqlDialect>(DEFAULT_DIALECT);

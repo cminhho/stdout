@@ -4,13 +4,13 @@
  * For format/beautify see beautifier.ts (Prettier).
  */
 
-import { minify as terserMinify } from "terser";
-
 /**
  * Minify JavaScript with Terser. Removes comments and collapses whitespace.
  * Mangle disabled for readability in internal tooling.
+ * Terser (~136 KB gzipped) is loaded on demand (first minify call) via dynamic import.
  */
 export async function jsMinify(js: string): Promise<string> {
+  const { minify: terserMinify } = await import("terser");
   const result = await terserMinify(js, {
     compress: { defaults: true },
     mangle: false,

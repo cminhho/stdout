@@ -32,7 +32,7 @@ const JsonFormatterPage = () => {
       <TwoPanelToolLayout
         persistToolId={toolId}
         shareState={{ input }}
-        sessionShareInPageToolbar
+        shareInTitleBar
         inputPane={{
           inputToolbar: {
             onSample: (value) => setInput(value ?? JSON_FORMATTER_SAMPLE),
@@ -53,6 +53,8 @@ const JsonFormatterPage = () => {
             format: (input, indent) => processJsonInput(input, indent),
             outputFilename: JSON_OUTPUT_FILENAME,
             outputMimeType: JSON_MIME_TYPE,
+            // No Beautify/Minify toggle for JSON; "Minified" stays available in the indent dropdown.
+            indentIncludeMinified: false,
           },
           outputEditor: {
             value: "",

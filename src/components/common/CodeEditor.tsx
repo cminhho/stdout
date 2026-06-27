@@ -1,5 +1,6 @@
-/** Code editor – textarea with optional line numbers, syntax highlighting, and error line markers. */
-import { memo, useRef, useCallback, useEffect, useMemo } from "react";
+/** Code editor – textarea with optional line numbers, syntax highlighting, error markers, and find (⌘F). */
+import { memo, useRef, useCallback, useEffect, useMemo, useState } from "react";
+import { ChevronDown, ChevronUp, X } from "lucide-react";
 import { cn } from "@/utils/cn";
 
 export type Language =
@@ -145,8 +146,12 @@ const tokenizeCss = (line: string): Token[] => {
   return tokens;
 };
 
-const REGEX_SQL_KEYWORDS =
-  /\b(SELECT|FROM|WHERE|INSERT|INTO|UPDATE|DELETE|SET|CREATE|ALTER|DROP|TABLE|INDEX|JOIN|LEFT|RIGHT|INNER|OUTER|ON|AND|OR|NOT|IN|IS|NULL|AS|ORDER|BY|GROUP|HAVING|LIMIT|OFFSET|UNION|ALL|DISTINCT|EXISTS|BETWEEN|LIKE|CASE|WHEN|THEN|ELSE|END|BEGIN|COMMIT|ROLLBACK|VALUES|PRIMARY|KEY|FOREIGN|REFERENCES|DEFAULT|CONSTRAINT|CHECK|UNIQUE|INT|VARCHAR|TEXT|BOOLEAN|DATE|TIMESTAMP|FLOAT|DOUBLE|DECIMAL|IF|GRANT|REVOKE|WITH|RECURSIVE|FETCH|CURSOR|DECLARE)\b/gi;
+/** SQL keywords (uppercase) for O(1) per-word lookup; matched case-insensitively. */
+const SQL_KEYWORDS = new Set(
+  "SELECT FROM WHERE INSERT INTO UPDATE DELETE SET CREATE ALTER DROP TABLE INDEX JOIN LEFT RIGHT INNER OUTER ON AND OR NOT IN IS NULL AS ORDER BY GROUP HAVING LIMIT OFFSET UNION ALL DISTINCT EXISTS BETWEEN LIKE CASE WHEN THEN ELSE END BEGIN COMMIT ROLLBACK VALUES PRIMARY KEY FOREIGN REFERENCES DEFAULT CONSTRAINT CHECK UNIQUE INT VARCHAR TEXT BOOLEAN DATE TIMESTAMP FLOAT DOUBLE DECIMAL IF GRANT REVOKE WITH RECURSIVE FETCH CURSOR DECLARE".split(
+    " "
+  )
+);
 const REGEX_SQL = /(--.*$)|(')([^']*)(')|(")([^"]*)(")|\b(\d+\.?\d*)\b|([(),;*=<>!+\-/.])|(\w+)|(\s+)/g;
 
 const tokenizeSql = (line: string): Token[] => {
@@ -164,12 +169,7 @@ const tokenizeSql = (line: string): Token[] => {
     } else if (match[8]) tokens.push({ type: "number", value: match[8] });
     else if (match[9]) tokens.push({ type: "punctuation", value: match[9] });
     else if (match[10]) {
-      REGEX_SQL_KEYWORDS.lastIndex = 0;
-      if (REGEX_SQL_KEYWORDS.test(match[10])) {
-        tokens.push({ type: "keyword", value: match[10] });
-      } else {
-        tokens.push({ type: "text", value: match[10] });
-      }
+      tokens.push({ type: SQL_KEYWORDS.has(match[10].toUpperCase()) ? "keyword" : "text", value: match[10] });
     } else if (match[11]) tokens.push({ type: "text", value: match[11] });
     lastIndex = REGEX_SQL.lastIndex;
   }
@@ -240,8 +240,12 @@ const tokenizeCsv = (line: string): Token[] => {
   return tokens;
 };
 
-const REGEX_CODE_KEYWORDS =
-  /\b(interface|type|class|function|const|let|var|import|export|from|return|if|else|for|while|switch|case|break|continue|new|this|extends|implements|public|private|protected|static|readonly|abstract|async|await|try|catch|throw|finally|void|null|undefined|true|false|struct|func|package|data|val|var|fun|override|companion|object|sealed|enum|int|string|boolean|number|float|double|long|byte|char|short)\b/g;
+/** Code keywords (case-sensitive) for O(1) per-word lookup. */
+const CODE_KEYWORDS = new Set(
+  "interface type class function const let var import export from return if else for while switch case break continue new this extends implements public private protected static readonly abstract async await try catch throw finally void null undefined true false struct func package data val fun override companion object sealed enum int string boolean number float double long byte char short".split(
+    " "
+  )
+);
 const REGEX_CODE = /(\/\/.*$|\/\*[\s\S]*?\*\/)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)|(\b\d+\.?\d*\b)|([{}[\]().,;:=<>!+\-*/&|?@])|(\w+)|(\s+)/g;
 
 const tokenizeCode = (line: string): Token[] => {
@@ -256,8 +260,7 @@ const tokenizeCode = (line: string): Token[] => {
     else if (match[3]) tokens.push({ type: "number", value: match[3] });
     else if (match[4]) tokens.push({ type: "bracket", value: match[4] });
     else if (match[5]) {
-      REGEX_CODE_KEYWORDS.lastIndex = 0;
-      tokens.push({ type: REGEX_CODE_KEYWORDS.test(match[5]) ? "keyword" : "text", value: match[5] });
+      tokens.push({ type: CODE_KEYWORDS.has(match[5]) ? "keyword" : "text", value: match[5] });
     } else if (match[6]) tokens.push({ type: "text", value: match[6] });
     lastIndex = REGEX_CODE.lastIndex;
   }
@@ -293,7 +296,7 @@ const tokenizeRandomString = (line: string): Token[] => {
 
 /** Log lines: timestamps, IPs, log levels, HTTP methods, status codes, quoted strings, app names (Apache, Nginx, Syslog, JSON, Docker). */
 const REGEX_LOG =
-  /("(?:[^"\\]|\\.)*")|(\d{4}-\d{2}-\d{2}T[\d.:Z+-]+)|(\[\d{2}\/\w+\/\d{4}:\d{2}:\d{2}:\d{2}[^\]]*\]|\d{2}:\d{2}:\d{2})|(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|(\b(?:INFO|WARN|WARNING|ERROR|DEBUG|emerg|alert|crit|err|notice|info|debug)\b)|(\b(?:GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\b)|(\b\d{3}\b)|(\b\d+\b)|([\[\]<>])|([|:,-])|([a-zA-Z][a-zA-Z0-9_.-]*(?:\.[a-zA-Z0-9_.-]+)*)|(\S+)/g;
+  /("(?:[^"\\]|\\.)*")|(\d{4}-\d{2}-\d{2}T[\d.:Z+-]+)|(\[\d{2}\/\w+\/\d{4}:\d{2}:\d{2}:\d{2}[^\]]*\]|\d{2}:\d{2}:\d{2})|(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|(\b(?:INFO|WARN|WARNING|ERROR|DEBUG|emerg|alert|crit|err|notice|info|debug)\b)|(\b(?:GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\b)|(\b\d{3}\b)|(\b\d+\b)|([[\]<>])|([|:,-])|([a-zA-Z][a-zA-Z0-9_.-]*(?:\.[a-zA-Z0-9_.-]+)*)|(\S+)/g;
 
 const tokenizeLog = (line: string): Token[] => {
   const tokens: Token[] = [];
@@ -402,6 +405,45 @@ const logTokenColors: Record<Token["type"], string> = {
   tag: "hsl(var(--code-log-app))",
 };
 
+/**
+ * One highlighted line in the overlay. Memoized so that, on a keystroke, only the line whose tokens
+ * actually changed re-renders — unchanged lines keep the same (cached) token array reference and skip.
+ */
+const HighlightLine = memo(function HighlightLine({
+  tokens,
+  isError,
+  isFindMatch,
+  colors,
+}: {
+  tokens: Token[];
+  isError: boolean;
+  isFindMatch: boolean;
+  colors: Record<Token["type"], string>;
+}) {
+  return (
+    <div
+      className="whitespace-pre"
+      style={{
+        height: "calc(var(--code-line-height) * 1em)",
+        lineHeight: "var(--code-line-height)",
+        background: isFindMatch
+          ? "hsl(var(--primary) / 0.18)"
+          : isError
+            ? "hsl(var(--destructive) / 0.08)"
+            : "transparent",
+      }}
+    >
+      {tokens.length === 0
+        ? "\n"
+        : tokens.map((token, j) => (
+            <span key={j} style={{ color: colors[token.type] }}>
+              {token.value}
+            </span>
+          ))}
+    </div>
+  );
+});
+
 // ── Hooks ───────────────────────────────────────────────────────────
 
 /** Syncs textarea scroll to highlight overlay and line gutter for aligned scrolling. */
@@ -454,11 +496,85 @@ const CodeEditor = memo(function CodeEditor({
 
   const lines = useMemo(() => (value ? value.split("\n") : [""]), [value]);
   const tokenizer = useMemo(() => getTokenizer(language), [language]);
-  const tokenizedLines = useMemo(() => lines.map((line) => tokenizer(line)), [lines, tokenizer]);
+  const colors = useMemo(
+    () =>
+      language === "randomstring"
+        ? randomStringTokenColors
+        : language === "log"
+          ? logTokenColors
+          : tokenColors,
+    [language]
+  );
+
+  // Per-line tokenization cache keyed by line text: a keystroke only re-tokenizes the changed
+  // line(s); unchanged lines reuse their cached token array (also keeps the row memo from re-rendering).
+  // The cache is rebuilt to hold only currently-present lines, so memory stays bounded by the document.
+  const cacheRef = useRef<Map<string, Token[]>>(new Map());
+  const lastTokenizerRef = useRef(tokenizer);
+  const tokenizedLines = useMemo(() => {
+    // Drop the cache when the language (tokenizer) changes so stale token types don't persist.
+    const prev = lastTokenizerRef.current === tokenizer ? cacheRef.current : new Map<string, Token[]>();
+    lastTokenizerRef.current = tokenizer;
+    const next = new Map<string, Token[]>();
+    const result = lines.map((line) => {
+      let toks = next.get(line) ?? prev.get(line);
+      if (!toks) toks = tokenizer(line);
+      next.set(line, toks);
+      return toks;
+    });
+    cacheRef.current = next;
+    return result;
+  }, [lines, tokenizer]);
 
   const textareaAriaLabel = ariaLabel ?? (readOnly ? `Code view, ${language}` : undefined);
 
   useCodeEditorScrollSync(textareaRef, highlightRef, gutterRef);
+
+  // ── Find (⌘F / Ctrl+F) ──
+  const [findOpen, setFindOpen] = useState(false);
+  const [findQuery, setFindQuery] = useState("");
+  const [activeMatch, setActiveMatch] = useState(0);
+  const findInputRef = useRef<HTMLInputElement>(null);
+
+  // Start offsets of every (case-insensitive) match in the document; capped to stay responsive.
+  const matches = useMemo(() => {
+    if (!findOpen || !findQuery) return [];
+    const out: number[] = [];
+    const hay = value.toLowerCase();
+    const needle = findQuery.toLowerCase();
+    let i = hay.indexOf(needle);
+    while (i !== -1 && out.length < 5000) {
+      out.push(i);
+      i = hay.indexOf(needle, i + needle.length);
+    }
+    return out;
+  }, [findOpen, findQuery, value]);
+  const activeIdx = matches.length ? Math.min(activeMatch, matches.length - 1) : 0;
+  const activeMatchLine = matches.length ? value.slice(0, matches[activeIdx]).split("\n").length : 0;
+
+  const openFind = useCallback(() => {
+    setFindOpen(true);
+    requestAnimationFrame(() => findInputRef.current?.select());
+  }, []);
+  const closeFind = useCallback(() => {
+    setFindOpen(false);
+    textareaRef.current?.focus();
+  }, []);
+  const gotoMatch = useCallback(
+    (dir: 1 | -1) => setActiveMatch((cur) => (matches.length ? (cur + dir + matches.length) % matches.length : 0)),
+    [matches.length]
+  );
+
+  // Reveal the active match: select it in the textarea and scroll its line into view.
+  useEffect(() => {
+    if (!findOpen || !matches.length) return;
+    const ta = textareaRef.current;
+    if (!ta) return;
+    const start = matches[activeIdx];
+    ta.setSelectionRange(start, start + findQuery.length);
+    const lh = parseFloat(getComputedStyle(ta).lineHeight) || 18;
+    ta.scrollTop = Math.max(0, (activeMatchLine - 4) * lh);
+  }, [findOpen, matches, activeIdx, activeMatchLine, findQuery.length]);
 
   const handleChange = useCallback(
     (newValue: string) => {
@@ -470,6 +586,11 @@ const CodeEditor = memo(function CodeEditor({
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "f") {
+        e.preventDefault();
+        openFind();
+        return;
+      }
       if (!readOnly && e.key === "Tab") {
         e.preventDefault();
         const ta = e.currentTarget;
@@ -483,7 +604,7 @@ const CodeEditor = memo(function CodeEditor({
       }
       onKeyDownProp?.(e);
     },
-    [readOnly, value, handleChange, onKeyDownProp]
+    [readOnly, value, handleChange, onKeyDownProp, openFind]
   );
 
   const gutterWidth = showLineNumbers ? Math.max(String(lines.length).length * 10 + 16, 36) : 0;
@@ -553,32 +674,13 @@ const CodeEditor = memo(function CodeEditor({
         style={{ left: gutterWidth, lineHeight: "var(--code-line-height)" }}
       >
         {tokenizedLines.map((tokens, i) => (
-          <div
+          <HighlightLine
             key={`L${i}`}
-            className="whitespace-pre"
-            style={{
-              height: "calc(var(--code-line-height) * 1em)",
-              lineHeight: "var(--code-line-height)",
-              background: errorLines?.has(i + 1) ? "hsl(var(--destructive) / 0.08)" : "transparent",
-            }}
-          >
-            {tokens.length === 0
-              ? "\n"
-              : tokens.map((token, j) => (
-                  <span
-                    key={j}
-                    style={{
-                      color: (language === "randomstring"
-                        ? randomStringTokenColors
-                        : language === "log"
-                          ? logTokenColors
-                          : tokenColors)[token.type],
-                    }}
-                  >
-                    {token.value}
-                  </span>
-                ))}
-          </div>
+            tokens={tokens}
+            isError={errorLines?.has(i + 1) ?? false}
+            isFindMatch={activeMatchLine === i + 1}
+            colors={colors}
+          />
         ))}
       </div>
 
@@ -586,7 +688,7 @@ const CodeEditor = memo(function CodeEditor({
         ref={textareaRef}
         value={value}
         onChange={(e) => handleChange(e.target.value)}
-        onKeyDown={readOnly ? undefined : handleKeyDown}
+        onKeyDown={handleKeyDown}
         readOnly={readOnly}
         placeholder={placeholder}
         spellCheck={false}
@@ -604,6 +706,63 @@ const CodeEditor = memo(function CodeEditor({
             : { minHeight: 680, maxHeight: "88vh" }),
         }}
       />
+
+      {findOpen && (
+        <div className="code-editor-find absolute top-2 right-3 z-[4] flex items-center gap-0.5 rounded-md border border-border bg-popover px-1.5 py-1 shadow-md">
+          <input
+            ref={findInputRef}
+            value={findQuery}
+            onChange={(e) => {
+              setFindQuery(e.target.value);
+              setActiveMatch(0);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                e.preventDefault();
+                closeFind();
+              } else if (e.key === "Enter") {
+                e.preventDefault();
+                gotoMatch(e.shiftKey ? -1 : 1);
+              } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "f") {
+                e.preventDefault();
+                findInputRef.current?.select();
+              }
+            }}
+            placeholder="Find"
+            aria-label="Find in editor"
+            className="w-32 bg-transparent px-1 text-xs outline-none placeholder:text-muted-foreground"
+          />
+          <span className="min-w-[3rem] px-1 text-center text-[11px] tabular-nums text-muted-foreground">
+            {findQuery ? `${matches.length ? activeIdx + 1 : 0}/${matches.length}` : ""}
+          </span>
+          <button
+            type="button"
+            onClick={() => gotoMatch(-1)}
+            disabled={!matches.length}
+            aria-label="Previous match"
+            className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-muted disabled:opacity-40"
+          >
+            <ChevronUp className="h-3.5 w-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => gotoMatch(1)}
+            disabled={!matches.length}
+            aria-label="Next match"
+            className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-muted disabled:opacity-40"
+          >
+            <ChevronDown className="h-3.5 w-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={closeFind}
+            aria-label="Close find"
+            className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-muted"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
     </div>
   );
 });

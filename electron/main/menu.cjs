@@ -3,6 +3,7 @@
  * Native app menu for macOS / Windows / Linux (Stdout context)
  */
 const { Menu, app, shell, BrowserWindow } = require("electron");
+const path = require("path");
 
 function getFocusedWindow() {
   return BrowserWindow.getFocusedWindow();
@@ -21,6 +22,7 @@ function createMenu(getAppVersion) {
       applicationVersion: version,
       copyright: "MIT License",
       website: "https://github.com/cminhho/stdout",
+      iconPath: path.join(__dirname, "..", "..", "build", "icon.png"),
     });
   }
 

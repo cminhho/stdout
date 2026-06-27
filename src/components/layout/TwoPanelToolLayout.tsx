@@ -1,7 +1,8 @@
 /** Two-panel tool layout with resizable input/output panes, top section (errors/options), and default toolbar. */
-import { useCallback, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useMemo, useRef, useState, type ReactNode } from "react";
 import { ChevronsDownUp, ChevronsUpDown } from "lucide-react";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { useSettings } from "@/hooks/useSettings";
 import CodeEditor from "@/components/common/CodeEditor";
 import JsonTreeView from "@/components/common/JsonTreeView";
 import { SegmentGroup } from "@/components/common/SegmentGroup";
@@ -62,6 +63,12 @@ export interface DefaultOutputToolbarConfig {
   /** Pass through to IndentSelect (e.g. includeTab: false for CSS). */
   indentIncludeTab?: boolean;
   indentSpaceOptions?: number[];
+  /**
+   * Show a Beautify/Minify mode toggle (default true when `format` is set). Minify maps to the
+   * "minified" indent and hides the indent-width select. Set false for formats where minifying
+   * is meaningless (e.g. a converter).
+   */
+  indentIncludeMinified?: boolean;
 }
 
 /** Config for default input CodeEditor; when set (and children not set), layout renders CodeEditor. */
@@ -135,8 +142,8 @@ export interface TwoPanelToolLayoutProps {
   persistToolId?: string;
   /** When set with persistToolId, shows Share snippet (copy link / download .stdout.json) in input toolbar. */
   shareState?: PerToolState;
-  /** When true, Save/Share/Sessions are in the page toolbar; do not render Share in input pane. */
-  sessionShareInPageToolbar?: boolean;
+  /** When true, Share lives in the title bar; do not render Share in the input pane. */
+  shareInTitleBar?: boolean;
   className?: string;
   inputPane: TwoPanelInputPaneConfig;
   outputPane: TwoPanelOutputPaneConfig;
@@ -153,15 +160,23 @@ function errorLinesFromParseErrors(errors: ParseError[]): Set<number> {
   return new Set(errors.map((e) => e.line));
 }
 
+/** Resolve the app-wide default indent to a value this output toolbar actually supports. */
+function clampIndent(desired: IndentOption, ot: DefaultOutputToolbarConfig | undefined): IndentOption {
+  if (desired === "minified") return DEFAULT_INDENT;
+  if (desired === "tab") return ot?.indentIncludeTab === false ? DEFAULT_INDENT : "tab";
+  const spaces = ot?.indentSpaceOptions ?? [2, 4, 8];
+  return spaces.includes(desired) ? desired : DEFAULT_INDENT;
+}
+
 function buildInputPaneProps(
   config: TwoPanelInputPaneConfig,
   validationErrors?: ParseError[],
-  options?: { persistToolId?: string; shareState?: PerToolState; sessionShareInPageToolbar?: boolean }
+  options?: { persistToolId?: string; shareState?: PerToolState; shareInTitleBar?: boolean }
 ): PaneProps {
   const clearHandler = resolveInputClear(config);
   const hasSamples = (config.inputToolbar?.samples?.length ?? 0) > 0;
   const showShare =
-    !options?.sessionShareInPageToolbar &&
+    !options?.shareInTitleBar &&
     options?.persistToolId != null &&
     options?.persistToolId !== "" &&
     options?.shareState != null;
@@ -229,6 +244,12 @@ function hasOutputToSave(content: string | undefined, filename: string | undefin
 export interface OutputPaneIndentControl {
   resolvedIndent: IndentOption;
   onIndentChange: (value: IndentOption) => void;
+  /** Show the Beautify/Minify toggle (format tools); when true the indent select hides in minify mode. */
+  showMinifyToggle: boolean;
+  /** Current mode derived from the resolved indent. */
+  mode: "beautify" | "minify";
+  /** Switch mode: "minify" → minified indent; "beautify" → restore last spacing width. */
+  onModeChange: (mode: string) => void;
 }
 
 export interface OutputPaneDerived {
@@ -310,11 +331,23 @@ function buildOutputPaneProps(
           </>
         ) : null}
         {config.outputToolbarExtra ?? null}
-        {ot && indentControl ? (
+        {ot && indentControl && indentControl.showMinifyToggle ? (
+          <SegmentGroup
+            value={indentControl.mode}
+            onValueChange={indentControl.onModeChange}
+            options={[
+              { value: "beautify", label: "Beautify" },
+              { value: "minify", label: "Minify" },
+            ]}
+            ariaLabel="Output format mode"
+          />
+        ) : null}
+        {ot && indentControl && (indentControl.showMinifyToggle ? indentControl.mode === "beautify" : true) ? (
           <IndentSelect
             value={indentControl.resolvedIndent}
             onChange={indentControl.onIndentChange}
             includeTab={ot.indentIncludeTab}
+            includeMinified={!indentControl.showMinifyToggle}
             spaceOptions={ot.indentSpaceOptions}
           />
         ) : null}
@@ -389,12 +422,13 @@ const TwoPanelToolLayout = ({
   resizerWidth,
   persistToolId,
   shareState,
-  sessionShareInPageToolbar = false,
+  shareInTitleBar = false,
   className,
   inputPane,
   outputPane,
 }: TwoPanelToolLayoutProps) => {
   const { getToolState, setToolState } = useWorkspace();
+  const { defaultIndent: settingsDefaultIndent } = useSettings();
   const restoredSplit = persistToolId ? getToolState(persistToolId).splitPercent : undefined;
   const initialSplitPercent =
     restoredSplit !== undefined && restoredSplit >= (minInputPercent ?? 20) && restoredSplit <= (maxInputPercent ?? 80)
@@ -409,7 +443,7 @@ const TwoPanelToolLayout = ({
 
   const ot = outputPane.outputToolbar;
   const [internalIndent, setInternalIndent] = useState<IndentOption>(
-    () => ot?.defaultIndent ?? DEFAULT_INDENT
+    () => ot?.defaultIndent ?? clampIndent(settingsDefaultIndent, ot)
   );
   const resolvedIndent = ot?.indent ?? internalIndent;
   const handleIndentChange = useMemo(() => {
@@ -419,9 +453,24 @@ const TwoPanelToolLayout = ({
       ot.onIndentChange?.(value);
     };
   }, [ot]);
+
+  // Beautify/Minify mode toggle (format tools only). Minify maps to the "minified" indent; toggling
+  // back to Beautify restores the last spacing width the user had chosen.
+  const showMinifyToggle = !!ot?.format && (ot?.indentIncludeMinified ?? true);
+  const indentMode: "beautify" | "minify" = resolvedIndent === "minified" ? "minify" : "beautify";
+  const lastBeautifyIndentRef = useRef<IndentOption>(
+    resolvedIndent === "minified" ? DEFAULT_INDENT : resolvedIndent
+  );
+  if (resolvedIndent !== "minified") lastBeautifyIndentRef.current = resolvedIndent;
+  const handleModeChange = useCallback(
+    (mode: string) =>
+      handleIndentChange?.(mode === "minify" ? "minified" : lastBeautifyIndentRef.current),
+    [handleIndentChange]
+  );
+
   const indentControl: OutputPaneIndentControl | undefined =
     ot && handleIndentChange
-      ? { resolvedIndent, onIndentChange: handleIndentChange }
+      ? { resolvedIndent, onIndentChange: handleIndentChange, showMinifyToggle, mode: indentMode, onModeChange: handleModeChange }
       : undefined;
 
   const inputValue = inputPane.inputEditor?.value ?? "";
@@ -507,7 +556,7 @@ const TwoPanelToolLayout = ({
         input={buildInputPaneProps(inputPane, effectiveValidationErrors, {
           persistToolId,
           shareState,
-          sessionShareInPageToolbar,
+          shareInTitleBar,
         })}
         output={buildOutputPaneProps(outputPane, indentControl, derived, outputViewControl)}
       />

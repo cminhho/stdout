@@ -1,59 +1,45 @@
 /**
- * VS Code–style tab strip, at the top of the content area (right of the sidebar). Tabs are tool
- * instances — the same tool can appear more than once (disambiguated by an ordinal). Click to switch,
- * X or middle-click to close, "+" to open a new instance of the active tool (data-processing tools only).
- * The active tab is `activeTabId` while on a tool route. Hidden entirely when no tabs are open.
+ * VS Code–style tab strip at the top of the content area. Click to switch, X/middle-click to close,
+ * drag to reorder, "+" to open a new instance of the active tool. Active tab = the one matching the URL.
  */
 import type React from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { X, Plus } from "lucide-react";
 import { getToolById, getToolByPath, toolAllowsMultiInstance } from "@/tools";
 import { getToolIcon } from "@/components/common/ToolIcons";
 import { useTabs } from "@/contexts/TabsContext";
+import { useTabNavigation } from "@/hooks/useTabNavigation";
+import { tabDisplayLabels } from "@/utils/tabLabels";
 import { cn } from "@/utils/cn";
 
 const noDrag = { WebkitAppRegion: "no-drag" } as React.CSSProperties;
 
 export default function TabBar() {
-  const { tabs, activeTabId, closeTab, activateTab, openNewInstance } = useTabs();
+  const { tabs, activeTabId, reorderTab, openNewInstance } = useTabs();
+  const { selectTab, closeTabWithNav } = useTabNavigation();
   const location = useLocation();
   const navigate = useNavigate();
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [overId, setOverId] = useState<string | null>(null);
 
   if (tabs.length === 0) return null;
 
   const routedTool = getToolByPath(location.pathname);
-  const onToolRoute = routedTool !== undefined;
+  const labels = tabDisplayLabels(tabs);
 
-  // Per-tool ordinals so duplicate instances read "JSON Format", "JSON Format 2", …
-  const totals = new Map<string, number>();
-  tabs.forEach((t) => totals.set(t.toolId, (totals.get(t.toolId) ?? 0) + 1));
-  const seen = new Map<string, number>();
-
-  const select = (tabId: string, toolId: string) => {
-    activateTab(tabId);
-    const tool = getToolById(toolId);
-    if (tool) navigate(tool.path); // no-op when already on this tool path (same-tool instance switch)
-  };
-
-  const close = (tabId: string) => {
-    const idx = tabs.findIndex((t) => t.id === tabId);
-    const wasActive = onToolRoute && tabId === activeTabId;
-    closeTab(tabId);
-    if (!wasActive) return;
-    const remaining = tabs.filter((t) => t.id !== tabId);
-    if (remaining.length === 0) {
-      navigate("/");
-      return;
-    }
-    const neighbor = remaining[Math.min(idx, remaining.length - 1)];
-    const tool = getToolById(neighbor.toolId);
-    if (tool) navigate(tool.path);
-  };
-
-  const canAddInstance = onToolRoute && toolAllowsMultiInstance(routedTool!.id);
+  const canAddInstance = routedTool !== undefined && toolAllowsMultiInstance(routedTool.id);
   const addInstance = () => {
-    openNewInstance(routedTool!.id);
-    navigate(routedTool!.path);
+    if (routedTool) {
+      openNewInstance(routedTool.id);
+      navigate(routedTool.path);
+    }
+  };
+
+  const onDrop = (targetId: string) => {
+    if (dragId && dragId !== targetId) reorderTab(dragId, targetId);
+    setDragId(null);
+    setOverId(null);
   };
 
   return (
@@ -62,10 +48,8 @@ export default function TabBar() {
         const tool = getToolById(tab.toolId);
         if (!tool) return null;
         const Icon = getToolIcon(tool.icon);
-        const active = onToolRoute && tab.id === activeTabId;
-        const n = (seen.get(tab.toolId) ?? 0) + 1;
-        seen.set(tab.toolId, n);
-        const label = (totals.get(tab.toolId) ?? 1) > 1 ? `${tool.label} ${n}` : tool.label;
+        const active = routedTool !== undefined && tab.id === activeTabId;
+        const label = labels.get(tab.id) ?? tool.label;
         return (
           <div
             key={tab.id}
@@ -73,18 +57,46 @@ export default function TabBar() {
             aria-selected={active}
             tabIndex={0}
             title={label}
-            className={cn("tab-bar__tab", active && "tab-bar__tab--active")}
-            onClick={() => select(tab.id, tab.toolId)}
+            draggable
+            onDragStart={(e) => {
+              setDragId(tab.id);
+              e.dataTransfer.effectAllowed = "move";
+              try {
+                e.dataTransfer.setData("text/plain", tab.id);
+              } catch {
+                /* some browsers restrict setData */
+              }
+            }}
+            onDragOver={(e) => {
+              e.preventDefault();
+              e.dataTransfer.dropEffect = "move";
+              if (overId !== tab.id) setOverId(tab.id);
+            }}
+            onDrop={(e) => {
+              e.preventDefault();
+              onDrop(tab.id);
+            }}
+            onDragEnd={() => {
+              setDragId(null);
+              setOverId(null);
+            }}
+            className={cn(
+              "tab-bar__tab",
+              active && "tab-bar__tab--active",
+              dragId && dragId !== tab.id && overId === tab.id && "tab-bar__tab--dragover",
+              dragId === tab.id && "tab-bar__tab--dragging"
+            )}
+            onClick={() => selectTab(tab.id)}
             onAuxClick={(e) => {
               if (e.button === 1) {
                 e.preventDefault();
-                close(tab.id);
+                closeTabWithNav(tab.id);
               }
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();
-                select(tab.id, tab.toolId);
+                selectTab(tab.id);
               }
             }}
           >
@@ -93,10 +105,11 @@ export default function TabBar() {
             <button
               type="button"
               className="tab-bar__close"
+              draggable={false}
               aria-label={`Close ${label}`}
               onClick={(e) => {
                 e.stopPropagation();
-                close(tab.id);
+                closeTabWithNav(tab.id);
               }}
             >
               <X aria-hidden />
@@ -108,6 +121,7 @@ export default function TabBar() {
         <button
           type="button"
           className="tab-bar__add"
+          draggable={false}
           aria-label={`New ${routedTool!.label} tab`}
           title={`New ${routedTool!.label} tab`}
           onClick={addInstance}

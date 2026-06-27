@@ -9,12 +9,8 @@ import {
 } from "@/components/ui/select";
 import { PrefSection, PrefGroup, PrefRow, PrefDescription } from "@/components/settings";
 import type { Theme, SidebarMode } from "@/contexts/settingsStore";
-import { THEMES, EDITOR_FONTS } from "./constants";
-
-const SIDEBAR_NAV_OPTIONS: { value: SidebarMode; label: string }[] = [
-  { value: "grouped", label: "Grouped" },
-  { value: "flat", label: "Flat" },
-];
+import type { IndentOption } from "@/components/common/IndentSelect";
+import { THEMES, EDITOR_FONTS, SIDEBAR_MODES, INDENT_DEFAULT_OPTIONS } from "./constants";
 
 const DEFAULT_EDITOR_FONT = EDITOR_FONTS[0].value;
 
@@ -59,7 +55,7 @@ const SettingsAppearancePanel = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {SIDEBAR_NAV_OPTIONS.map((o) => (
+                  {SIDEBAR_MODES.map((o) => (
                     <SelectItem key={o.value} value={o.value}>
                       {o.label}
                     </SelectItem>
@@ -92,6 +88,32 @@ const SettingsAppearancePanel = () => {
             }
           />
         </PrefGroup>
+      </PrefSection>
+
+      <PrefSection heading="Formatting" headingId="settings-formatting-heading">
+        <PrefGroup>
+          <PrefRow
+            label="Default indentation"
+            control={
+              <Select
+                value={typeof settings.defaultIndent === "number" ? String(settings.defaultIndent) : settings.defaultIndent}
+                onValueChange={(v) => settings.setDefaultIndent(v === "tab" ? "tab" : (Number(v) as IndentOption))}
+              >
+                <SelectTrigger size="sm" className="w-auto min-w-[10rem] focus:ring-0 focus:ring-offset-0">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {INDENT_DEFAULT_OPTIONS.map((o) => (
+                    <SelectItem key={String(o.value)} value={typeof o.value === "number" ? String(o.value) : o.value}>
+                      {o.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            }
+          />
+        </PrefGroup>
+        <PrefDescription>Default indent for new formatter tabs. Tools with their own convention keep it (e.g. JSON↔YAML stays 2-space); you can still change indentation per tool.</PrefDescription>
       </PrefSection>
     </div>
   );

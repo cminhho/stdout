@@ -11,7 +11,6 @@ export interface TitleBarActions {
   toolId?: string;
   toolName?: string;
   shareState?: PerToolState;
-  onLoadSession?: (state: PerToolState) => void;
 }
 
 interface TitleBarActionsContextValue {
