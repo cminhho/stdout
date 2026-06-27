@@ -1,6 +1,6 @@
-/** Share snippet: popover with Copy link and Download snippet. */
+/** Share snippet: popover with Copy web link, Copy app link, and Download snippet. */
 import { memo, useCallback, useState } from "react";
-import { Share2, Link, Download } from "lucide-react";
+import { Share2, Globe, AppWindow, Download, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useSnippetShare } from "@/hooks/useSnippetShare";
@@ -13,20 +13,29 @@ export interface ShareSnippetButtonProps {
   className?: string;
 }
 
+type CopyTarget = "web" | "app";
+
 const ShareSnippetButton = memo(function ShareSnippetButton({
   toolId,
   state,
   className,
 }: ShareSnippetButtonProps) {
-  const { shareUrl, downloadSnippet, copyLink } = useSnippetShare(toolId, state);
-  const [copied, setCopied] = useState(false);
+  const { webUrl, appUrl, downloadSnippet, copyWebLink, copyAppLink } = useSnippetShare(
+    toolId,
+    state
+  );
+  const [copied, setCopied] = useState<CopyTarget | null>(null);
 
-  const handleCopyLink = useCallback(async () => {
-    if (shareUrl == null) return;
-    await copyLink();
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  }, [shareUrl, copyLink]);
+  const handleCopy = useCallback(
+    async (target: CopyTarget) => {
+      const url = target === "web" ? webUrl : appUrl;
+      if (url == null) return;
+      await (target === "web" ? copyWebLink() : copyAppLink());
+      setCopied(target);
+      setTimeout(() => setCopied(null), 1500);
+    },
+    [webUrl, appUrl, copyWebLink, copyAppLink]
+  );
 
   return (
     <Popover>
@@ -42,25 +51,51 @@ const ShareSnippetButton = memo(function ShareSnippetButton({
           <Share2 className="h-3.5 w-3.5" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-56">
+      <PopoverContent align="end" className="w-60">
         <div className="flex flex-col gap-1.5">
           <Button
             type="button"
             size="xs"
             variant="ghost"
             className="justify-start gap-2"
-            onClick={handleCopyLink}
-            disabled={shareUrl == null}
+            onClick={() => handleCopy("web")}
+            disabled={webUrl == null}
             title={
-              shareUrl == null
+              webUrl == null
                 ? "Link too long; use Download snippet"
-                : copied
+                : copied === "web"
                   ? "Copied"
-                  : "Copy link"
+                  : "Open in browser (online tool)"
             }
           >
-            <Link className="h-3.5 w-3.5 shrink-0" />
-            {copied ? "Copied" : "Copy link"}
+            {copied === "web" ? (
+              <Check className="h-3.5 w-3.5 shrink-0" />
+            ) : (
+              <Globe className="h-3.5 w-3.5 shrink-0" />
+            )}
+            {copied === "web" ? "Copied" : "Copy web link"}
+          </Button>
+          <Button
+            type="button"
+            size="xs"
+            variant="ghost"
+            className="justify-start gap-2"
+            onClick={() => handleCopy("app")}
+            disabled={appUrl == null}
+            title={
+              appUrl == null
+                ? "Link too long; use Download snippet"
+                : copied === "app"
+                  ? "Copied"
+                  : "Open in the desktop app"
+            }
+          >
+            {copied === "app" ? (
+              <Check className="h-3.5 w-3.5 shrink-0" />
+            ) : (
+              <AppWindow className="h-3.5 w-3.5 shrink-0" />
+            )}
+            {copied === "app" ? "Copied" : "Copy app link"}
           </Button>
           <Button
             type="button"

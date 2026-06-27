@@ -1,5 +1,6 @@
 import { createContext } from "react";
 import type { Theme, SidebarMode, SettingsState } from "@/types/settings";
+import type { IndentOption } from "@/components/common/IndentSelect";
 
 export type { Theme, SidebarMode, SettingsState };
 
@@ -12,10 +13,8 @@ export interface SettingsContextType extends SettingsState {
   toggleTool: (path: string) => void;
   setAllToolsVisible: () => void;
   isToolVisible: (path: string) => boolean;
-  addRecentTool: (id: string) => void;
-  togglePin: (id: string) => void;
   setEditorFont: (font: string) => void;
-  setWordWrap: (wrap: boolean) => void;
+  setDefaultIndent: (indent: IndentOption) => void;
 }
 
 const STORAGE_KEY = "stdout-settings";
@@ -30,14 +29,17 @@ const defaults: SettingsState = {
   sidebarCollapsed: false,
   sidebarWidth: SIDEBAR_WIDTH_DEFAULT,
   hiddenTools: [],
-  recentTools: [],
-  pinnedTools: [],
   editorFont: "ui-monospace, ui-serif, monospace",
-  wordWrap: false,
+  defaultIndent: 4,
 };
 
 function clampSidebarWidth(w: number): number {
   return Math.min(SIDEBAR_WIDTH_MAX, Math.max(SIDEBAR_WIDTH_MIN, w));
+}
+
+/** Coerce a stored value to a valid default indent (never "minified" as a default). */
+function parseDefaultIndent(v: unknown): IndentOption {
+  return v === 2 || v === 4 || v === 8 || v === "tab" ? v : defaults.defaultIndent;
 }
 
 /** Mobile breakpoint: sidebar collapsed by default below this width. */
@@ -54,15 +56,6 @@ export function loadSettings(): SettingsState {
     if (raw) {
       const parsed = JSON.parse(raw) as Partial<SettingsState>;
       const w = typeof parsed.sidebarWidth === "number" ? parsed.sidebarWidth : defaults.sidebarWidth;
-      const recentTools =
-        Array.isArray(parsed.recentTools) && parsed.recentTools.every(
-          (e: unknown) => typeof e === "object" && e !== null && "id" in e && "lastUsed" in e
-        )
-          ? (parsed.recentTools as SettingsState["recentTools"]).slice(0, 10)
-          : defaults.recentTools;
-      const pinnedTools = Array.isArray(parsed.pinnedTools) && parsed.pinnedTools.every((p: unknown) => typeof p === "string")
-        ? (parsed.pinnedTools as string[])
-        : defaults.pinnedTools;
 
       return {
         theme: parsed.theme ?? defaults.theme,
@@ -70,10 +63,8 @@ export function loadSettings(): SettingsState {
         sidebarCollapsed: parsed.sidebarCollapsed ?? defaults.sidebarCollapsed,
         sidebarWidth: clampSidebarWidth(w),
         hiddenTools: Array.isArray(parsed.hiddenTools) ? parsed.hiddenTools : defaults.hiddenTools,
-        recentTools,
-        pinnedTools,
         editorFont: typeof parsed.editorFont === "string" ? parsed.editorFont : defaults.editorFont,
-        wordWrap: typeof parsed.wordWrap === "boolean" ? parsed.wordWrap : defaults.wordWrap,
+        defaultIndent: parseDefaultIndent(parsed.defaultIndent),
       };
     }
     /* First load: on mobile viewport, default sidebar to collapsed so content gets full width. */

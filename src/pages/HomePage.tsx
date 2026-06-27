@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import { useSettings } from "@/hooks/useSettings";
-import { useRecentTools } from "@/hooks/useRecentTools";
 import { matchTool } from "@/tools/matchTool";
 import type { ToolDefinition } from "@/tools/types";
 import { SEARCH_TOOLS_PLACEHOLDER } from "@/constants/shortcuts";
@@ -50,7 +49,6 @@ const ToolCardLink = ({
 const HomePage = () => {
   const { tools } = useToolEngine();
   const { isToolVisible } = useSettings();
-  const recentTools = useRecentTools();
   const [searchQuery, setSearchQuery] = useState("");
 
   const visibleTools = useMemo(
@@ -106,27 +104,6 @@ const HomePage = () => {
               </div>
             </section>
           </header>
-
-          {/* Recently visited: same grid + list layout as All tools */}
-          {recentTools.length > 0 && (
-            <section className="home-recent-section" aria-labelledby="home-recent-heading">
-              <div className="home-recent-header">
-                <h2 id="home-recent-heading" className="home-section-label">
-                  Recently visited
-                </h2>
-                <span className="home-recent-count" aria-hidden="true">
-                  {recentTools.length}
-                </span>
-              </div>
-              <ul className="grid grid-cols-1 tool-content-grid home-tools-grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 list-none p-0 m-0" role="list">
-                {recentTools.map((t, i) => (
-                  <li key={t.id}>
-                    <ToolCardLink tool={t} index={i} />
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
 
           {/* Tools: one bar = label + search + count (wraps on small screens) */}
           <section className="home-tools-section" aria-labelledby="home-tools-heading">

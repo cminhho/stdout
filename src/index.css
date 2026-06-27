@@ -527,6 +527,21 @@
     background: radial-gradient(ellipse 100% 120% at 80% 30%, hsl(var(--desktop-layout-start)), hsl(var(--desktop-layout-end)));
   }
 
+  /* macOS native vibrancy (Electron `vibrancy: under-window`): let the system blur
+     show behind the translucent title bar and content backdrop. Tool panels keep
+     their own solid background, so text contrast is unaffected. */
+  html.desktop.mac,
+  html.desktop.mac body {
+    background: transparent;
+  }
+  html.desktop.mac .desktop-layout {
+    background: radial-gradient(
+      ellipse 100% 120% at 80% 30%,
+      hsl(var(--desktop-layout-start) / 0.82),
+      hsl(var(--desktop-layout-end) / 0.9)
+    );
+  }
+
   /* Title bar: Liquid Glass – specular, theme tint, layered edge; macOS-style layout (left | center title | right) */
   .desktop-title-bar {
     background:
@@ -599,7 +614,7 @@
     outline: none;
     box-shadow: var(--focus-ring);
   }
-  /* Title bar action group (Save, Share, Sessions) – compact, no wrap */
+  /* Title bar action group (Share) – compact, no wrap */
   .desktop-title-bar .title-bar-actions {
     display: flex;
     align-items: center;
@@ -912,6 +927,13 @@
     background: hsl(var(--header-tab-bg));
     color: hsl(var(--foreground));
     box-shadow: inset 0 -2px 0 0 hsl(var(--primary));
+  }
+  /* Drag-to-reorder feedback */
+  .tab-bar__tab--dragging {
+    opacity: 0.45;
+  }
+  .tab-bar__tab--dragover {
+    box-shadow: inset 2px 0 0 0 hsl(var(--primary));
   }
   .tab-bar__icon {
     width: 0.95em;

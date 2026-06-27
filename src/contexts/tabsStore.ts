@@ -17,6 +17,8 @@ export const MAX_TAB_INPUT_LENGTH = 100_000;
 export interface Tab {
   id: string;
   toolId: string;
+  /** Stable per-instance number for label disambiguation; assigned at creation, moves with the tab. */
+  ordinal?: number;
   input?: string;
 }
 
@@ -43,7 +45,8 @@ function parseTabs(raw: unknown): Tab[] {
     seen.add(id);
     const input =
       typeof o.input === "string" ? o.input.slice(0, MAX_TAB_INPUT_LENGTH) : undefined;
-    out.push({ id, toolId, ...(input !== undefined && { input }) });
+    const ordinal = typeof o.ordinal === "number" ? o.ordinal : undefined;
+    out.push({ id, toolId, ...(ordinal !== undefined && { ordinal }), ...(input !== undefined && { input }) });
   }
   return out;
 }
@@ -77,6 +80,7 @@ export function saveTabs(state: TabsState): void {
     const tabs = state.tabs.slice(-MAX_OPEN_TABS).map((t) => ({
       id: t.id,
       toolId: t.toolId,
+      ...(typeof t.ordinal === "number" && { ordinal: t.ordinal }),
       ...(typeof t.input === "string" && { input: t.input.slice(0, MAX_TAB_INPUT_LENGTH) }),
     }));
     const activeTabId = clampActive(tabs, state.activeTabId);

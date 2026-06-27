@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from "react";
 
 import { CommandPalette } from "@/components/CommandPalette";
 
@@ -20,9 +20,13 @@ export function CommandPaletteProvider({ children }: { children: ReactNode }) {
 
   const openCommandPalette = useCallback(() => setOpen(true), []);
   const closeCommandPalette = useCallback(() => setOpen(false), []);
+  const value = useMemo(
+    () => ({ openCommandPalette, closeCommandPalette }),
+    [openCommandPalette, closeCommandPalette]
+  );
 
   return (
-    <CommandPaletteContext.Provider value={{ openCommandPalette, closeCommandPalette }}>
+    <CommandPaletteContext.Provider value={value}>
       {children}
       <CommandPalette open={open} onOpenChange={setOpen} />
     </CommandPaletteContext.Provider>

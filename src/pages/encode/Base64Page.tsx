@@ -43,7 +43,7 @@ const Base64Page = () => {
       <TwoPanelToolLayout
         persistToolId={toolId}
         shareState={{ input }}
-        sessionShareInPageToolbar
+        shareInTitleBar
         inputPane={{
           inputToolbar: {
             onSample: () => setInput(mode === "encode" ? BASE64_SAMPLE : BASE64_SAMPLE_DECODE),

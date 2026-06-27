@@ -25,6 +25,8 @@ export interface TabsContextType extends TabsState {
   closeTab: (tabId: string) => void;
   /** Make an already-open tab active. */
   activateTab: (tabId: string) => void;
+  /** Move tab `fromId` to the slot of `toId` (drag-to-reorder). */
+  reorderTab: (fromId: string, toId: string) => void;
   /** Update a tab's persisted content. */
   setTabInput: (tabId: string, input: string) => void;
   /** Read a tab's persisted content (undefined if unset). */
@@ -57,6 +59,15 @@ function appendCapped(tabs: Tab[], tab: Tab, prevActive: string | null): Tab[] {
   return next;
 }
 
+/** Next stable per-tool instance number (1-based), so duplicate-tab labels survive reordering. */
+function nextOrdinal(tabs: Tab[], toolId: string): number {
+  let max = 0;
+  for (const t of tabs) {
+    if (t.toolId === toolId && typeof t.ordinal === "number" && t.ordinal > max) max = t.ordinal;
+  }
+  return max + 1;
+}
+
 export function TabsProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<TabsState>(() => reconcile(loadTabs()));
 
@@ -72,7 +83,11 @@ export function TabsProvider({ children }: { children: ReactNode }) {
         return prev.activeTabId === active ? prev : { ...prev, activeTabId: active };
       }
       // Primary instance uses id === toolId (backward-compatible with stored content / deep-links).
-      const tabs = appendCapped(prev.tabs, { id: toolId, toolId }, prev.activeTabId);
+      const tabs = appendCapped(
+        prev.tabs,
+        { id: toolId, toolId, ordinal: nextOrdinal(prev.tabs, toolId) },
+        prev.activeTabId
+      );
       return { tabs, activeTabId: toolId };
     });
   }, []);
@@ -83,7 +98,11 @@ export function TabsProvider({ children }: { children: ReactNode }) {
       // If no instance exists yet, the new one is the primary (id === toolId); else a fresh uuid.
       const exists = prev.tabs.some((t) => t.toolId === toolId);
       const id = exists ? `${toolId}~${crypto.randomUUID()}` : toolId;
-      const tabs = appendCapped(prev.tabs, { id, toolId }, prev.activeTabId);
+      const tabs = appendCapped(
+        prev.tabs,
+        { id, toolId, ordinal: nextOrdinal(prev.tabs, toolId) },
+        prev.activeTabId
+      );
       return { tabs, activeTabId: id };
     });
   }, []);
@@ -107,6 +126,19 @@ export function TabsProvider({ children }: { children: ReactNode }) {
         ? { ...prev, activeTabId: tabId }
         : prev
     );
+  }, []);
+
+  const reorderTab = useCallback((fromId: string, toId: string) => {
+    if (fromId === toId) return;
+    setState((prev) => {
+      const from = prev.tabs.findIndex((t) => t.id === fromId);
+      const to = prev.tabs.findIndex((t) => t.id === toId);
+      if (from === -1 || to === -1) return prev;
+      const tabs = prev.tabs.slice();
+      const [moved] = tabs.splice(from, 1);
+      tabs.splice(tabs.findIndex((t) => t.id === toId), 0, moved); // insert before target
+      return { ...prev, tabs };
+    });
   }, []);
 
   const setTabInput = useCallback((tabId: string, input: string) => {
@@ -146,10 +178,11 @@ export function TabsProvider({ children }: { children: ReactNode }) {
       openNewInstance,
       closeTab,
       activateTab,
+      reorderTab,
       setTabInput,
       getTabInput,
     }),
-    [state, openTab, openNewInstance, closeTab, activateTab, setTabInput, getTabInput]
+    [state, openTab, openNewInstance, closeTab, activateTab, reorderTab, setTabInput, getTabInput]
   );
 
   return <TabsContext.Provider value={value}>{children}</TabsContext.Provider>;

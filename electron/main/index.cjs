@@ -2,10 +2,11 @@
  * Electron Main Process Entry
  * Window creation, app protocol, menu, IPC, and auto-updater.
  */
-const { app, BrowserWindow, protocol, dialog } = require("electron");
+const { app, BrowserWindow, protocol, dialog, shell, nativeTheme, session } = require("electron");
 const path = require("path");
 const fs = require("fs");
 
+const { getWindowState, manageWindowState, MIN_WIDTH, MIN_HEIGHT } = require("./window-state.cjs");
 const { createMenu } = require("./menu.cjs");
 const {
   getAutoUpdater,
@@ -75,7 +76,7 @@ if (!isDev) {
 if (!isDev) {
   app.on("open-url", (event, url) => {
     event.preventDefault();
-    if (url && url.startsWith("stdout://")) {
+    if (url && url.startsWith("stdout://") && url.length <= 2048) {
       const win = getMainWindow();
       if (win && !win.isDestroyed() && win.webContents) {
         win.webContents.send("open-url", url);
@@ -124,20 +125,79 @@ function createWindow() {
     "favicon.svg"
   );
 
+  const state = getWindowState();
+
   mainWindow = new BrowserWindow({
-    width: 1280,
-    height: 800,
+    width: state.width,
+    height: state.height,
+    ...(state.x !== undefined ? { x: state.x, y: state.y } : {}),
+    minWidth: MIN_WIDTH,
+    minHeight: MIN_HEIGHT,
     title: APP_NAME,
     icon: iconPath,
+    // Avoid white flash on launch: don't show until the first paint is ready.
+    show: false,
     ...(isMac
-      ? { titleBarStyle: "hiddenInset" }
-      : { frame: false }),
-    trafficLightPosition: isMac ? { x: 14, y: 14 } : undefined,
+      ? {
+          // hiddenInset title bar + real macOS vibrancy (native blur behind translucent chrome).
+          titleBarStyle: "hiddenInset",
+          trafficLightPosition: { x: 14, y: 13 },
+          vibrancy: "under-window",
+          visualEffectState: "active",
+          backgroundColor: "#00000000", // transparent so vibrancy shows through
+        }
+      : {
+          frame: false,
+          // Theme-matched solid background prevents a white flash on Win/Linux.
+          backgroundColor: nativeTheme.shouldUseDarkColors ? "#15171c" : "#faf8f6",
+        }),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
+      sandbox: true,
       preload: path.join(__dirname, "..", "preload", "index.cjs"),
     },
+  });
+
+  // Restore maximized / fullscreen, then reveal once content has painted.
+  mainWindow.once("ready-to-show", () => {
+    if (state.isFullScreen) mainWindow.setFullScreen(true);
+    else if (state.isMaximized) mainWindow.maximize();
+    mainWindow.show();
+  });
+
+  // Persist size / position / maximized / fullscreen across launches.
+  manageWindowState(mainWindow);
+
+  // Open external links in the system browser, never inside the app window.
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (/^https?:\/\//i.test(url)) shell.openExternal(url);
+    return { action: "deny" };
+  });
+  mainWindow.webContents.on("will-navigate", (ev, url) => {
+    const internal = url.startsWith("app://") || url.startsWith("http://localhost");
+    if (!internal) {
+      ev.preventDefault();
+      if (/^https?:\/\//i.test(url)) shell.openExternal(url);
+    }
+  });
+
+  // Recover from a renderer crash instead of leaving a frozen/blank window.
+  mainWindow.webContents.on("render-process-gone", (_ev, details) => {
+    logError("render-process-gone", new Error(`renderer gone: ${details?.reason ?? "unknown"}`));
+    if (isDev || !mainWindow || mainWindow.isDestroyed()) return;
+    dialog
+      .showMessageBox(mainWindow, {
+        type: "error",
+        title: APP_NAME,
+        message: "The app stopped responding and needs to reload.",
+        buttons: ["Reload", "Quit"],
+        defaultId: 0,
+      })
+      .then(({ response }) => {
+        if (response === 0 && mainWindow && !mainWindow.isDestroyed()) mainWindow.reload();
+        else app.quit();
+      });
   });
 
   mainWindow.setTitle(APP_NAME);
@@ -185,7 +245,7 @@ function createWindow() {
       pendingDeepLinkUrl = null;
     }
     const argvUrl = process.argv.find((a) => typeof a === "string" && a.startsWith("stdout://"));
-    if (argvUrl) mainWindow.webContents.send("open-url", argvUrl);
+    if (argvUrl && argvUrl.length <= 2048) mainWindow.webContents.send("open-url", argvUrl);
   });
 
   // Auto-update: silent background check + download (no native notification; in-app toast when ready)
@@ -227,15 +287,39 @@ app.on("second-instance", (_event, commandLine) => {
   const win = getMainWindow();
   if (win && !win.isDestroyed() && win.webContents) {
     const url = commandLine.find((arg) => typeof arg === "string" && arg.startsWith("stdout://"));
-    if (url) win.webContents.send("open-url", url);
+    if (url && url.length <= 2048) win.webContents.send("open-url", url);
     if (win.isMinimized()) win.restore();
     win.focus();
   }
 });
 
+/** Strict-ish CSP for the packaged app:// origin. Inline styles/scripts are needed
+ *  (theme bootstrap + injected styles); remote script/object/frame loading is blocked. */
+function applyContentSecurityPolicy() {
+  const csp = [
+    "default-src 'self' app:",
+    "script-src 'self' app: 'unsafe-inline'",
+    "style-src 'self' app: 'unsafe-inline'",
+    "img-src 'self' app: data: blob:",
+    "font-src 'self' app: data:",
+    "connect-src 'self' app: https://api.github.com https://github.com https://*.githubusercontent.com",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "frame-ancestors 'none'",
+  ].join("; ");
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: { ...details.responseHeaders, "Content-Security-Policy": [csp] },
+    });
+  });
+}
+
 app.whenReady().then(() => {
   try {
-    if (!isDev) registerAppProtocol();
+    if (!isDev) {
+      registerAppProtocol();
+      applyContentSecurityPolicy();
+    }
     createWindow();
   } catch (err) {
     logError("createWindow", err);

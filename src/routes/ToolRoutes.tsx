@@ -5,7 +5,6 @@ import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { useToolEngine } from "@/hooks/useToolEngine";
 import { useToolTracking } from "@/hooks/useToolTracking";
 import { useTabRouterSync } from "@/hooks/useTabRouterSync";
-import { getRecentPaths } from "@/tools/recentTools";
 import RouteSurface from "@/routes/RouteSurface";
 import TabHost from "@/components/layout/TabHost";
 
@@ -38,18 +37,6 @@ export function ToolRoutes() {
   // Preload critical tool chunks immediately for faster startup / first tool open
   useEffect(() => {
     CRITICAL_TOOL_PATHS.forEach((p) => getToolByPath(p)?.preload?.());
-  }, [getToolByPath]);
-
-  // Preload recent tools in idle time so they open instantly when revisited
-  useEffect(() => {
-    if (typeof requestIdleCallback === "undefined") return;
-    const id = requestIdleCallback(
-      () => {
-        getRecentPaths().forEach((path) => getToolByPath(path)?.preload?.());
-      },
-      { timeout: 2000 }
-    );
-    return () => cancelIdleCallback(id);
   }, [getToolByPath]);
 
   useEffect(() => {
