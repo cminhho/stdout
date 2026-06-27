@@ -213,6 +213,7 @@
     --title-bar-font-size: var(--text-ui);         /* 13px – macOS/VS Code title */
     --title-bar-traffic-light-width: 72px;        /* macOS: reserve for system controls */
     --title-bar-end-spacer: var(--home-space-xl); /* 32px right drag region */
+    --tab-strip-height: 36px;          /* VS Code–style open-tabs row, below the title bar */
     --panel-resizer-width: 0;        /* visual width/height: 0, only border line; hit area via padding */
     --panel-min-width: 120px;        /* min width per pane when side-by-side */
     --spacing-two-panel-gap: var(--home-space-sm); /* 8px gap between panes and resizer */
@@ -878,6 +879,282 @@
   /* Content area left = gutter width + this padding (matches --spacing-code-editor for alignment) */
   .code-editor-wrapper .code-editor-content {
     padding-left: var(--spacing-code-editor);
+  }
+
+  /* Open-tabs strip (VS Code–style), rendered as a row directly under the title bar. */
+  .tab-bar {
+    height: var(--tab-strip-height);
+    min-height: var(--tab-strip-height);
+    background: hsl(var(--header-bg));
+    border-bottom: 1px solid hsl(var(--border));
+    scrollbar-width: thin;
+  }
+  .tab-bar__tab {
+    display: flex;
+    align-items: center;
+    gap: var(--home-space-xs);
+    height: 100%;
+    padding: 0 var(--home-space-sm);
+    max-width: 220px;
+    border-right: 1px solid hsl(var(--border) / 0.5);
+    color: hsl(var(--muted-foreground));
+    font-size: var(--text-ui);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color var(--transition-default), color var(--transition-default);
+  }
+  .tab-bar__tab:hover {
+    background: hsl(var(--muted) / 0.5);
+    color: hsl(var(--foreground));
+  }
+  .tab-bar__tab--active {
+    background: hsl(var(--header-tab-bg));
+    color: hsl(var(--foreground));
+    box-shadow: inset 0 -2px 0 0 hsl(var(--primary));
+  }
+  .tab-bar__icon {
+    width: 0.95em;
+    height: 0.95em;
+    flex: none;
+    opacity: 0.9;
+  }
+  .tab-bar__label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .tab-bar__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.15em;
+    height: 1.15em;
+    flex: none;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.55;
+    transition: opacity var(--transition-default), background-color var(--transition-default);
+  }
+  .tab-bar__close:hover {
+    opacity: 1;
+    background: hsl(var(--muted));
+  }
+  .tab-bar__close svg {
+    width: 0.85em;
+    height: 0.85em;
+  }
+  .tab-bar__add {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--tab-strip-height);
+    flex: none;
+    border: none;
+    background: transparent;
+    color: hsl(var(--muted-foreground));
+    cursor: pointer;
+    transition: background-color var(--transition-default), color var(--transition-default);
+  }
+  .tab-bar__add:hover {
+    background: hsl(var(--muted) / 0.5);
+    color: hsl(var(--foreground));
+  }
+  .tab-bar__add svg {
+    width: 1em;
+    height: 1em;
+  }
+
+  /* JSON tree view container: pinned search bar + scrollable tree body. */
+  .json-tree-root {
+    background: hsl(var(--workbench-editor-bg));
+  }
+  .json-tree-scroll {
+    position: relative;
+  }
+  .json-tree-search {
+    display: flex;
+    align-items: center;
+    gap: var(--home-space-xs);
+    height: var(--tab-strip-height);
+    padding: 0 var(--home-space-sm);
+    border-bottom: 1px solid hsl(var(--code-border));
+    background: hsl(var(--code-bg));
+  }
+  .json-tree-search__icon {
+    width: 0.9em;
+    height: 0.9em;
+    flex: none;
+    color: hsl(var(--muted-foreground));
+  }
+  .json-tree-search__input {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 100%;
+    border: none;
+    background: transparent;
+    outline: none;
+    color: hsl(var(--foreground));
+    font-size: var(--text-ui);
+  }
+  .json-tree-search__input::placeholder {
+    color: hsl(var(--muted-foreground));
+  }
+  .json-tree-search__count {
+    flex: none;
+    font-size: var(--text-ui);
+    color: hsl(var(--muted-foreground));
+    font-variant-numeric: tabular-nums;
+  }
+  .json-tree-search__nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.4em;
+    height: 1.4em;
+    flex: none;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: hsl(var(--muted-foreground));
+    cursor: pointer;
+  }
+  .json-tree-search__nav:hover:not(:disabled) {
+    background: hsl(var(--muted));
+    color: hsl(var(--foreground));
+  }
+  .json-tree-search__nav:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  .json-tree-search__nav svg {
+    width: 0.9em;
+    height: 0.9em;
+  }
+
+  /* JSON tree view: collapsible read-only tree; inherits font/size/line-height from .code-editor-wrapper.
+     Two columns: a sticky line-number gutter (matches CodeEditor) + the scrollable content. */
+  .json-tree {
+    display: flex;
+    align-items: flex-start;
+    min-width: max-content;
+    color: hsl(var(--foreground));
+    white-space: nowrap;
+  }
+  /* Line-number gutter: pinned on horizontal scroll, mirrors .code-editor-gutter. */
+  .json-tree__linenos {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    flex: none;
+    background: hsl(var(--workbench-editor-bg));
+    border-right: 1px solid hsl(var(--code-border));
+    padding-top: var(--spacing-code-editor);
+    padding-bottom: var(--spacing-code-editor);
+  }
+  .json-tree__num {
+    height: calc(var(--code-line-height) * 1em);
+    line-height: var(--code-line-height);
+    padding-right: var(--home-space-sm);
+    text-align: right;
+    color: hsl(var(--code-gutter-foreground));
+    user-select: none;
+  }
+  .json-tree__content {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: var(--spacing-code-editor);
+  }
+  .json-tree__row {
+    display: flex;
+    align-items: center;
+    height: calc(var(--code-line-height) * 1em);
+    line-height: var(--code-line-height);
+    border-radius: var(--radius-button);
+  }
+  .json-tree__row--container:hover {
+    background: hsl(var(--muted) / 0.5);
+  }
+  /* Fixed-width slot so primitive rows align with container rows (chevron column). */
+  .json-tree__caret {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.1em;
+    flex: none;
+  }
+  .json-tree__chevron {
+    color: hsl(var(--code-gutter-foreground));
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    padding: 0;
+  }
+  .json-tree__chevron:hover {
+    color: hsl(var(--foreground));
+  }
+  .json-tree__chevron-icon {
+    width: 0.85em;
+    height: 0.85em;
+    transition: transform var(--transition-default);
+  }
+  .json-tree__chevron-icon--open {
+    transform: rotate(90deg);
+  }
+  .json-tree__index {
+    color: hsl(var(--code-comment));
+  }
+  .json-tree__summary {
+    color: hsl(var(--code-comment));
+  }
+  /* Search match highlights. */
+  .json-tree__row--match {
+    background: hsl(var(--primary) / 0.12);
+  }
+  .json-tree__row--current {
+    background: hsl(var(--primary) / 0.22);
+    box-shadow: inset 2px 0 0 0 hsl(var(--primary));
+  }
+  .json-tree__mark {
+    background: hsl(var(--primary) / 0.35);
+    color: inherit;
+    border-radius: 2px;
+  }
+  /* Per-row hover actions: copy path / copy value. */
+  .json-tree__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    margin-left: var(--home-space-sm);
+    opacity: 0;
+    transition: opacity var(--transition-default);
+  }
+  .json-tree__row:hover .json-tree__actions,
+  .json-tree__row:focus-within .json-tree__actions {
+    opacity: 1;
+  }
+  .json-tree__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.3em;
+    height: 1.3em;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: hsl(var(--muted-foreground));
+    cursor: pointer;
+  }
+  .json-tree__action:hover {
+    background: hsl(var(--muted));
+    color: hsl(var(--foreground));
+  }
+  .json-tree__action svg {
+    width: 0.8em;
+    height: 0.8em;
   }
 
   /* Use with grid/flex for consistent gap from --spacing-grid-gap */

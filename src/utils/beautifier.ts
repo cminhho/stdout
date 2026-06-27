@@ -3,11 +3,11 @@
  * For minification see minify.ts (Terser / simple CSS).
  */
 
-import * as prettier from "prettier/standalone";
-import babelPlugin from "prettier/plugins/babel";
-import estreePlugin from "prettier/plugins/estree";
-import postcssPlugin from "prettier/plugins/postcss";
-import htmlPlugin from "prettier/plugins/html";
+import * as prettier from "prettier/standalone.js";
+import babelPlugin from "prettier/plugins/babel.js";
+import estreePlugin from "prettier/plugins/estree.js";
+import postcssPlugin from "prettier/plugins/postcss.js";
+import htmlPlugin from "prettier/plugins/html.js";
 
 /**
  * Format JavaScript with Prettier. Uses tabWidth for indent, or useTabs for tab character.

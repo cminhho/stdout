@@ -1,9 +1,6 @@
-import { useCallback, useState, useEffect } from "react";
 import ToolPageLayout from "@/components/layout/ToolPageLayout";
 import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
-import { useWorkspace } from "@/contexts/WorkspaceContext";
-import { useTitleBarActions } from "@/contexts/TitleBarActionsContext";
+import { useTabInput } from "@/hooks/useTabInput";
 import {
   JSON_FILE_ACCEPT,
   JSON_FORMATTER_SAMPLE,
@@ -28,37 +25,12 @@ const INPUT_SAMPLES = [
 ];
 
 const JsonFormatterPage = () => {
-  const tool = useCurrentTool();
-  const { setToolState } = useWorkspace();
-  const { setTitleBarActions, clearTitleBarActions } = useTitleBarActions();
-  const [input, setInput] = useState("");
-
-  const handleLoadSession = useCallback(
-    (state: { input?: string; scrollPosition?: number; splitPercent?: number }) => {
-      if (state.input !== undefined) setInput(state.input);
-      if (tool?.id) setToolState(tool.id, state);
-    },
-    [tool?.id, setToolState]
-  );
-
-  useEffect(() => {
-    if (tool?.id) {
-      setTitleBarActions({
-        toolId: tool.id,
-        toolName: tool.label,
-        shareState: { input },
-        onLoadSession: handleLoadSession,
-      });
-    } else {
-      clearTitleBarActions();
-    }
-    return () => clearTitleBarActions();
-  }, [tool?.id, tool?.label, input, handleLoadSession, setTitleBarActions, clearTitleBarActions]);
+  const { input, setInput, toolId } = useTabInput();
 
   return (
     <ToolPageLayout>
       <TwoPanelToolLayout
-        persistToolId={tool?.id}
+        persistToolId={toolId}
         shareState={{ input }}
         sessionShareInPageToolbar
         inputPane={{

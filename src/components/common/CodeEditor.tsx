@@ -55,6 +55,8 @@ export interface CodeEditorProps {
   showLineNumbers?: boolean;
   /** When set, renders this content instead of the code textarea (e.g. JSON tree view). Same wrapper/border/scroll. */
   customContent?: React.ReactNode;
+  /** When true with customContent, drops the inner padding so the content can manage its own layout (e.g. a flush gutter). */
+  customContentNoPad?: boolean;
   /** Optional aria-label for the code textarea (defaults to code view + language when readOnly). */
   ariaLabel?: string;
 }
@@ -443,6 +445,7 @@ const CodeEditor = memo(function CodeEditor({
   onKeyDown: onKeyDownProp,
   showLineNumbers = true,
   customContent,
+  customContentNoPad = false,
   ariaLabel,
 }: CodeEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -494,7 +497,7 @@ const CodeEditor = memo(function CodeEditor({
         style={fillHeight ? { height: "100%", minHeight: 0 } : undefined}
       >
         <div
-          className="code-editor-pad overflow-auto"
+          className={cn("overflow-auto", !customContentNoPad && "code-editor-pad")}
           style={
             fillHeight
               ? { height: "100%", minHeight: 0 }

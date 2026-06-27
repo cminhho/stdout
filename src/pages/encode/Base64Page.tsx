@@ -1,11 +1,9 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import ToolPageLayout from "@/components/layout/ToolPageLayout";
 import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
-import { useTitleBarActions } from "@/contexts/TitleBarActionsContext";
 import { SegmentGroup } from "@/components/common/SegmentGroup";
 import type { IndentOption } from "@/components/common/IndentSelect";
-import { useCurrentTool } from "@/hooks/useCurrentTool";
-import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { useTabInput } from "@/hooks/useTabInput";
 import {
   processBase64ForLayout,
   type Base64Mode,
@@ -24,23 +22,15 @@ const MODE_OPTIONS: { value: Base64Mode; label: string }[] = [
 ];
 
 const Base64Page = () => {
-  const tool = useCurrentTool();
-  const { setToolState } = useWorkspace();
-  const { setTitleBarActions, clearTitleBarActions } = useTitleBarActions();
-  const [input, setInput] = useState("");
+  const { input, setInput, toolId } = useTabInput();
   const [mode, setMode] = useState<Base64Mode>("encode");
 
-  const setModeWithCleanup = useCallback((next: Base64Mode) => {
-    setMode(next);
-    setInput("");
-  }, []);
-
-  const handleLoadSession = useCallback(
-    (state: { input?: string; scrollPosition?: number; splitPercent?: number }) => {
-      if (state.input !== undefined) setInput(state.input);
-      if (tool?.id) setToolState(tool.id, state);
+  const setModeWithCleanup = useCallback(
+    (next: Base64Mode) => {
+      setMode(next);
+      setInput("");
     },
-    [tool?.id, setToolState]
+    [setInput]
   );
 
   const format = useCallback(
@@ -48,24 +38,10 @@ const Base64Page = () => {
     [mode]
   );
 
-  useEffect(() => {
-    if (tool?.id) {
-      setTitleBarActions({
-        toolId: tool.id,
-        toolName: tool.label,
-        shareState: { input },
-        onLoadSession: handleLoadSession,
-      });
-    } else {
-      clearTitleBarActions();
-    }
-    return () => clearTitleBarActions();
-  }, [tool?.id, tool?.label, input, handleLoadSession, setTitleBarActions, clearTitleBarActions]);
-
   return (
     <ToolPageLayout>
       <TwoPanelToolLayout
-        persistToolId={tool?.id}
+        persistToolId={toolId}
         shareState={{ input }}
         sessionShareInPageToolbar
         inputPane={{
