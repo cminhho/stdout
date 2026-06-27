@@ -1,7 +1,11 @@
 /** Two-panel tool layout with resizable input/output panes, top section (errors/options), and default toolbar. */
 import { useCallback, useMemo, useState, type ReactNode } from "react";
+import { ChevronsDownUp, ChevronsUpDown } from "lucide-react";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import CodeEditor from "@/components/common/CodeEditor";
+import JsonTreeView from "@/components/common/JsonTreeView";
+import { SegmentGroup } from "@/components/common/SegmentGroup";
+import { Button } from "@/components/ui/button";
 import FileUploadButton from "@/components/common/FileUploadButton";
 import IndentSelect, { DEFAULT_INDENT, type IndentOption } from "@/components/common/IndentSelect";
 import ResizableTwoPanel from "@/components/layout/ResizableTwoPanel";
@@ -101,6 +105,11 @@ export interface TwoPanelOutputPaneConfig {
   outputToolbarExtra?: ReactNode;
   /** When set (and children not set), layout renders read-only CodeEditor. Override with children if needed. */
   outputEditor?: OutputEditorConfig;
+  /**
+   * Tree view toggle: when the output language is "json" and the output parses, the output pane
+   * shows a Text ⇄ Tree switch (with Expand-all / Collapse-all in Tree mode). Set true to opt out.
+   */
+  disableTreeView?: boolean;
   /** Pane body; when set, overrides outputEditor. */
   children?: ReactNode;
 }
@@ -229,30 +238,91 @@ export interface OutputPaneDerived {
   loading?: boolean;
 }
 
+export type OutputViewMode = "text" | "tree";
+
+/** Drives the Text ⇄ Tree output toggle; only meaningful when `available` (JSON output that parses). */
+export interface OutputViewControl {
+  available: boolean;
+  mode: OutputViewMode;
+  onModeChange: (mode: OutputViewMode) => void;
+  /** Parsed output value for the tree (stable reference; memoized by the layout). */
+  treeData: unknown;
+  expandAllNonce?: number;
+  collapseAllNonce?: number;
+  onExpandAll: () => void;
+  onCollapseAll: () => void;
+}
+
+const OUTPUT_VIEW_OPTIONS: { value: OutputViewMode; label: string }[] = [
+  { value: "text", label: "Text" },
+  { value: "tree", label: "Tree" },
+];
+
 function buildOutputPaneProps(
   config: TwoPanelOutputPaneConfig,
   indentControl?: OutputPaneIndentControl,
-  derived?: OutputPaneDerived
+  derived?: OutputPaneDerived,
+  outputView?: OutputViewControl
 ): PaneProps {
   const ot = config.outputToolbar;
   const content = derived?.outputContent ?? ot?.outputContent;
   const editorValue = derived?.outputEditorValue ?? config.outputEditor?.value;
+  const treeMode = outputView?.available && outputView.mode === "tree";
+  const hasDefaultToolbar = (ot && indentControl) || outputView?.available;
   const toolbar =
     config.toolbar ??
-    (ot && indentControl ? (
+    (hasDefaultToolbar ? (
       <>
+        {outputView?.available ? (
+          <>
+            <SegmentGroup
+              value={outputView.mode}
+              onValueChange={outputView.onModeChange}
+              options={OUTPUT_VIEW_OPTIONS}
+              ariaLabel="Output view mode"
+            />
+            {treeMode ? (
+              <>
+                <Button
+                  type="button"
+                  size="xs"
+                  variant="ghost"
+                  onClick={outputView.onExpandAll}
+                  title="Expand all nodes"
+                  aria-label="Expand all nodes"
+                >
+                  <ChevronsUpDown />
+                  Expand all
+                </Button>
+                <Button
+                  type="button"
+                  size="xs"
+                  variant="ghost"
+                  onClick={outputView.onCollapseAll}
+                  title="Collapse all nodes"
+                  aria-label="Collapse all nodes"
+                >
+                  <ChevronsDownUp />
+                  Collapse all
+                </Button>
+              </>
+            ) : null}
+          </>
+        ) : null}
         {config.outputToolbarExtra ?? null}
-        <IndentSelect
-          value={indentControl.resolvedIndent}
-          onChange={indentControl.onIndentChange}
-          includeTab={ot.indentIncludeTab}
-          spaceOptions={ot.indentSpaceOptions}
-        />
-        {hasOutputToSave(content, ot?.outputFilename) ? (
+        {ot && indentControl ? (
+          <IndentSelect
+            value={indentControl.resolvedIndent}
+            onChange={indentControl.onIndentChange}
+            includeTab={ot.indentIncludeTab}
+            spaceOptions={ot.indentSpaceOptions}
+          />
+        ) : null}
+        {ot && hasOutputToSave(content, ot.outputFilename) ? (
           <SaveButton
             content={content!}
-            filename={ot!.outputFilename!}
-            mimeType={ot!.outputMimeType}
+            filename={ot.outputFilename!}
+            mimeType={ot.outputMimeType}
             label="Download"
             title="Download as file"
           />
@@ -265,15 +335,34 @@ function buildOutputPaneProps(
   const children =
     config.children ??
     (config.outputEditor ? (
-      <div className="flex-1 min-h-0 flex flex-col" key={outputKey}>
-        <CodeEditor
-          value={editorValue ?? ""}
-          readOnly
-          language={config.outputEditor.language as never}
-          placeholder={outputPlaceholder}
-          fillHeight
-        />
-      </div>
+      treeMode ? (
+        <div className="flex-1 min-h-0 flex flex-col">
+          <CodeEditor
+            value=""
+            readOnly
+            language="json"
+            fillHeight
+            customContentNoPad
+            customContent={
+              <JsonTreeView
+                data={outputView!.treeData}
+                expandAllNonce={outputView!.expandAllNonce}
+                collapseAllNonce={outputView!.collapseAllNonce}
+              />
+            }
+          />
+        </div>
+      ) : (
+        <div className="flex-1 min-h-0 flex flex-col" key={outputKey}>
+          <CodeEditor
+            value={editorValue ?? ""}
+            readOnly
+            language={config.outputEditor.language as never}
+            placeholder={outputPlaceholder}
+            fillHeight
+          />
+        </div>
+      )
     ) : undefined);
 
   return {
@@ -352,6 +441,42 @@ const TwoPanelToolLayout = ({
         }
       : undefined;
 
+  // Output view mode (Text ⇄ Tree). Available only when output language is JSON and the output parses.
+  const outputEditorValue = derived?.outputEditorValue ?? outputPane.outputEditor?.value ?? "";
+  const treeViewEnabled =
+    !outputPane.disableTreeView && outputPane.outputEditor?.language === "json";
+  const parsedTree = useMemo<{ ok: boolean; value: unknown }>(() => {
+    if (!treeViewEnabled) return { ok: false, value: undefined };
+    const text = outputEditorValue.trim();
+    if (!text) return { ok: false, value: undefined };
+    try {
+      return { ok: true, value: JSON.parse(text) };
+    } catch {
+      return { ok: false, value: undefined };
+    }
+  }, [treeViewEnabled, outputEditorValue]);
+
+  const [outputViewMode, setOutputViewMode] = useState<OutputViewMode>("text");
+  const [expandAllNonce, setExpandAllNonce] = useState<number | undefined>(undefined);
+  const [collapseAllNonce, setCollapseAllNonce] = useState<number | undefined>(undefined);
+  const onExpandAll = useCallback(() => setExpandAllNonce((n) => (n ?? 0) + 1), []);
+  const onCollapseAll = useCallback(() => setCollapseAllNonce((n) => (n ?? 0) + 1), []);
+
+  const treeAvailable = treeViewEnabled && parsedTree.ok;
+  const outputViewControl: OutputViewControl | undefined = treeViewEnabled
+    ? {
+        available: treeAvailable,
+        // Fall back to text when the tree is unavailable (e.g. invalid/empty output).
+        mode: treeAvailable ? outputViewMode : "text",
+        onModeChange: setOutputViewMode,
+        treeData: parsedTree.value,
+        expandAllNonce,
+        collapseAllNonce,
+        onExpandAll,
+        onCollapseAll,
+      }
+    : undefined;
+
   const resultSection = topSectionFromResult?.(formatResult ?? null);
   const hasChromeAbove = Boolean(formatError || showValidationListResolved || topSection || resultSection);
   const mergedTopSection =
@@ -384,7 +509,7 @@ const TwoPanelToolLayout = ({
           shareState,
           sessionShareInPageToolbar,
         })}
-        output={buildOutputPaneProps(outputPane, indentControl, derived)}
+        output={buildOutputPaneProps(outputPane, indentControl, derived, outputViewControl)}
       />
     </ToolLayout>
   );

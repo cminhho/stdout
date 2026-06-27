@@ -6,11 +6,13 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, HashRouter } from "react-router-dom";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import { WorkspaceProvider } from "@/contexts/WorkspaceContext";
+import { TabsProvider } from "@/contexts/TabsContext";
 import { runWorkspaceToSessionsMigration } from "@/contexts/sessionMigration";
 import { CommandPaletteProvider } from "@/contexts/CommandPaletteContext";
 import { TitleBarActionsProvider } from "@/contexts/TitleBarActionsContext";
 import { SIDEBAR_WIDTH_MIN, SIDEBAR_WIDTH_MAX } from "@/contexts/settingsStore";
 import TitleBar from "@/components/layout/TitleBar";
+import TabBar from "@/components/layout/TabBar";
 import Sidebar from "@/components/layout/Sidebar";
 import PanelResizer from "@/components/layout/PanelResizer";
 import { ToolRoutes } from "@/routes/ToolRoutes";
@@ -72,6 +74,7 @@ const DesktopLayout = () => {
         />
       )}
       <main className="flex-1 min-h-0 min-w-0 overflow-hidden flex flex-col">
+        <TabBar />
         <ToolRoutes />
       </main>
     </div>
@@ -90,21 +93,23 @@ const App = () => {
     <TooltipProvider>
       <Router future={ROUTER_FUTURE}>
         <WorkspaceProvider>
-          <SessionMigrationRunner />
-          <SettingsProvider>
-            <CommandPaletteProvider>
-              <GlobalShortcuts />
-              <DeepLinkHandler />
-              <ElectronUpdateToast />
-              <Toaster />
-              <TitleBarActionsProvider>
-                <div className="flex flex-col h-screen overflow-hidden min-w-0">
-                  <TitleBar />
-                  <DesktopLayout />
-                </div>
-              </TitleBarActionsProvider>
-            </CommandPaletteProvider>
-          </SettingsProvider>
+          <TabsProvider>
+            <SessionMigrationRunner />
+            <SettingsProvider>
+              <CommandPaletteProvider>
+                <GlobalShortcuts />
+                <DeepLinkHandler />
+                <ElectronUpdateToast />
+                <Toaster />
+                <TitleBarActionsProvider>
+                  <div className="flex flex-col h-screen overflow-hidden min-w-0">
+                    <TitleBar />
+                    <DesktopLayout />
+                  </div>
+                </TitleBarActionsProvider>
+              </CommandPaletteProvider>
+            </SettingsProvider>
+          </TabsProvider>
         </WorkspaceProvider>
       </Router>
     </TooltipProvider>

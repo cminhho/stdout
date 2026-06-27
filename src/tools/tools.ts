@@ -29,3 +29,24 @@ export function getToolByPath(path: string): ToolDefinition | undefined {
 export function getToolById(id: string): ToolDefinition | undefined {
   return idToTool.get(id);
 }
+
+/** Tool groups where opening multiple instances (tabs) of the same tool is useful. */
+const MULTI_INSTANCE_GROUPS = new Set<string>([
+  "Formatters",
+  "Converters",
+  "Encode & Crypto",
+  "Validators",
+]);
+
+/** Tools allowed to have multiple instances despite not being in a multi-instance group (e.g. diff). */
+const MULTI_INSTANCE_TOOL_IDS = new Set<string>(["text-diff"]);
+
+/**
+ * Whether a tool may be opened in multiple tabs at once. Data-processing tools (format/convert/
+ * encode/validate/diff) benefit; generators, reference, and calculators do not.
+ */
+export function toolAllowsMultiInstance(toolId: string): boolean {
+  const tool = idToTool.get(toolId);
+  if (!tool) return false;
+  return MULTI_INSTANCE_GROUPS.has(tool.group) || MULTI_INSTANCE_TOOL_IDS.has(tool.id);
+}
