@@ -25,8 +25,6 @@ const useHashRouter =
   (window.location?.protocol === "file:" || window.location?.protocol === "app:");
 const Router = useHashRouter ? HashRouter : BrowserRouter;
 
-const ROUTER_FUTURE = { v7_startTransition: true, v7_relativeSplatPath: true } as const;
-
 function GlobalShortcuts() {
   useGlobalShortcuts();
   return null;
@@ -83,7 +81,7 @@ const DesktopLayout = () => {
 const App = () => {
   return (
     <TooltipProvider>
-      <Router future={ROUTER_FUTURE}>
+      <Router>
         <WorkspaceProvider>
           <TabsProvider>
             <SettingsProvider>
