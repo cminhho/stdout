@@ -1,6 +1,6 @@
 # Tools Overview
 
-stdout includes **59 tools** in one app. They are grouped by category in the sidebar and in the command palette.
+stdout includes **62 tools** in one app. They are grouped by category in the sidebar and in the command palette.
 
 ---
 
@@ -9,6 +9,7 @@ stdout includes **59 tools** in one app. They are grouped by category in the sid
 | Tool | Description |
 |------|-------------|
 | JSON Format/Validate | Format, validate and beautify JSON with strict RFC compliance |
+| JSON Repair | Repair relaxed JSON, JSONC, and JS-like object text into strict JSON |
 | XML Format/Validate | Beautify, minify and validate XML |
 | HTML Format/Validate | Beautify, minify and validate HTML |
 | SQL Formatter | Format and beautify SQL queries |
@@ -44,7 +45,7 @@ stdout includes **59 tools** in one app. They are grouped by category in the sid
 | CSV ↔ JSON | Convert between CSV and JSON formats |
 | XML ↔ JSON | Convert between XML and JSON |
 | Number Base Converter | Convert numbers between bases (bin, oct, dec, hex) |
-| Color Converter | Convert colors between HEX, RGB, HSL formats |
+| Color Converter | Convert CSS colors with alpha, contrast, and scales |
 | Image ↔ Base64 | Convert images to/from Base64 strings |
 | JSON → Table | Visualize JSON data as a table |
 | JSON → Types | Generate TypeScript types from JSON |
@@ -63,6 +64,7 @@ stdout includes **59 tools** in one app. They are grouped by category in the sid
 |------|-------------|
 | Regex Tester | Test regular expressions with live matching |
 | JSONPath Tester | Test JSONPath expressions against JSON data |
+| JSON Schema Validator | Validate JSON payloads against JSON Schema contracts |
 | Credit Card Validator | Luhn check and generate test card numbers |
 | XPath Tester | Run XPath expressions against XML |
 | Schema Diff | Compare two JSON schemas side by side |
@@ -88,7 +90,7 @@ stdout includes **59 tools** in one app. They are grouped by category in the sid
 |------|-------------|
 | UUID Generator | Generate UUIDs (v1, v4, v7) |
 | Password Generator | Generate secure passwords with custom rules |
-| Random String Generator | Cryptographically secure random strings |
+| Random String Generator | Secure passwords, API tokens, secrets, OTPs, and readable codes |
 | Mock Data Generator | Generate mock JSON data from a schema |
 | ASCII Art Generator | Turn text into ASCII art |
 | Log Generator | Generate synthetic log data for testing |
@@ -112,6 +114,7 @@ stdout includes **59 tools** in one app. They are grouped by category in the sid
 |------|-------------|
 | cURL Builder | Build cURL commands visually |
 | HAR Viewer | Inspect HAR (HTTP Archive) files |
+| OpenAPI/Swagger Inspector | Validate, format, and extract endpoints from OpenAPI or Swagger specs |
 | CSV Viewer | View and search CSV files in a table |
 | Math Calculator | Evaluate math expressions |
 

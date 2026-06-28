@@ -28,7 +28,7 @@ const CertificatePage = () => {
         inputEditor: {
           value: input,
           onChange: setInput,
-          language: "plaintext",
+          language: "pem",
           placeholder: CERTIFICATE_PLACEHOLDER_INPUT,
         },
       }}

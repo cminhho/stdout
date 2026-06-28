@@ -11,8 +11,8 @@ import {
 /** Canonical indent option: spaces (2, 4, 8), tab, or minified. */
 export type IndentOption = 2 | 4 | 8 | "tab" | "minified";
 
-/** Default indent when not defined (4 spaces). */
-export const DEFAULT_INDENT: IndentOption = 4;
+/** Default indent when not defined (2 spaces). */
+export const DEFAULT_INDENT: IndentOption = 2;
 
 const DEFAULT_SPACE_OPTIONS: number[] = [2, 4, 8];
 

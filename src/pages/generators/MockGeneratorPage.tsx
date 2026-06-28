@@ -91,14 +91,16 @@ const MockGeneratorPage = () => {
   }, [schema, count, indent]);
 
   useEffect(() => {
-    if (!output.trim()) return;
-    try {
-      const parsed = JSON.parse(output);
-      const space = indent === "minified" ? undefined : indent === "tab" ? "\t" : (indent as number);
-      setOutput(JSON.stringify(parsed, null, space));
-    } catch {
-      // leave as-is
-    }
+    setOutput((current) => {
+      if (!current.trim()) return current;
+      try {
+        const parsed = JSON.parse(current);
+        const space = indent === "minified" ? undefined : indent === "tab" ? "\t" : (indent as number);
+        return JSON.stringify(parsed, null, space);
+      } catch {
+        return current;
+      }
+    });
   }, [indent]);
 
   const outputPaneContent = (

@@ -1,7 +1,7 @@
 {
   "name": "stdout",
   "private": true,
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Your standard output for dev tools—format, convert, encode, generate. All run locally without server dependency.",
   "type": "module",
   "repository": {

@@ -1,6 +1,7 @@
 import { createContext } from "react";
 import type { Theme, SidebarMode, SettingsState } from "@/types/settings";
 import type { IndentOption } from "@/components/common/IndentSelect";
+import { DEFAULT_EDITOR_FONT, normalizeEditorFont } from "@/constants/editorFonts";
 
 export type { Theme, SidebarMode, SettingsState };
 
@@ -18,19 +19,21 @@ export interface SettingsContextType extends SettingsState {
 }
 
 const STORAGE_KEY = "stdout-settings";
+const SETTINGS_VERSION = 2;
 
 const SIDEBAR_WIDTH_MIN = 200;
 const SIDEBAR_WIDTH_MAX = 480;
 const SIDEBAR_WIDTH_DEFAULT = 272;
 
 const defaults: SettingsState = {
+  settingsVersion: SETTINGS_VERSION,
   theme: "system",
   sidebarMode: "grouped",
   sidebarCollapsed: false,
   sidebarWidth: SIDEBAR_WIDTH_DEFAULT,
   hiddenTools: [],
-  editorFont: "ui-monospace, ui-serif, monospace",
-  defaultIndent: 4,
+  editorFont: DEFAULT_EDITOR_FONT,
+  defaultIndent: 2,
 };
 
 function clampSidebarWidth(w: number): number {
@@ -40,6 +43,13 @@ function clampSidebarWidth(w: number): number {
 /** Coerce a stored value to a valid default indent (never "minified" as a default). */
 function parseDefaultIndent(v: unknown): IndentOption {
   return v === 2 || v === 4 || v === 8 || v === "tab" ? v : defaults.defaultIndent;
+}
+
+function migrateDefaultIndent(parsed: Partial<SettingsState>): IndentOption {
+  const parsedIndent = parseDefaultIndent(parsed.defaultIndent);
+  const parsedVersion = typeof parsed.settingsVersion === "number" ? parsed.settingsVersion : 1;
+  if (parsedVersion < SETTINGS_VERSION && parsedIndent === 4) return defaults.defaultIndent;
+  return parsedIndent;
 }
 
 /** Mobile breakpoint: sidebar collapsed by default below this width. */
@@ -58,13 +68,14 @@ export function loadSettings(): SettingsState {
       const w = typeof parsed.sidebarWidth === "number" ? parsed.sidebarWidth : defaults.sidebarWidth;
 
       return {
+        settingsVersion: SETTINGS_VERSION,
         theme: parsed.theme ?? defaults.theme,
         sidebarMode: parsed.sidebarMode ?? defaults.sidebarMode,
         sidebarCollapsed: parsed.sidebarCollapsed ?? defaults.sidebarCollapsed,
         sidebarWidth: clampSidebarWidth(w),
         hiddenTools: Array.isArray(parsed.hiddenTools) ? parsed.hiddenTools : defaults.hiddenTools,
-        editorFont: typeof parsed.editorFont === "string" ? parsed.editorFont : defaults.editorFont,
-        defaultIndent: parseDefaultIndent(parsed.defaultIndent),
+        editorFont: normalizeEditorFont(parsed.editorFont),
+        defaultIndent: migrateDefaultIndent(parsed),
       };
     }
     /* First load: on mobile viewport, default sidebar to collapsed so content gets full width. */

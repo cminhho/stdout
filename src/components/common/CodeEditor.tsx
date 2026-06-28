@@ -14,6 +14,9 @@ export type Language =
   | "markdown"
   | "text"
   | "env"
+  | "toml"
+  | "dockerfile"
+  | "pem"
   | "csv"
   | "curl"
   | "javascript"
@@ -177,32 +180,78 @@ const tokenizeSql = (line: string): Token[] => {
   return tokens;
 };
 
-const REGEX_YAML = /(#.*$)|([a-zA-Z_][\w.-]*)(\s*:)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(true|false|yes|no|on|off)\b|(null|~)\b|([-+]?\d+\.?\d*(?:[eE][+-]?\d+)?)\b|(-\s)|([|>][-+]?)|(.+)/g;
+const REGEX_YAML_KEY = /^(\s*(?:-\s*)?)((?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|[^\s:[\]#][^:[\]#]*?))(\s*:)(.*)$/;
+const REGEX_YAML_SCALAR = /(#.*$)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(true|false|yes|no|on|off)\b|(null|~)\b|([-+]?\d+\.?\d*(?:[eE][+-]?\d+)?)\b|(-\s)|([|>][-+]?)|([[\]{},])|(\S+)/g;
 
-const tokenizeYaml = (line: string): Token[] => {
+function appendYamlPrefix(tokens: Token[], prefix: string) {
+  if (!prefix) return;
+  const marker = prefix.match(/^(\s*)(-\s*)$/);
+  if (!marker) {
+    tokens.push({ type: "text", value: prefix });
+    return;
+  }
+  if (marker[1]) tokens.push({ type: "text", value: marker[1] });
+  tokens.push({ type: "punctuation", value: marker[2] });
+}
+
+const tokenizeYamlScalars = (line: string): Token[] => {
   const tokens: Token[] = [];
-  REGEX_YAML.lastIndex = 0;
+  REGEX_YAML_SCALAR.lastIndex = 0;
   let match: RegExpExecArray | null;
   let lastIndex = 0;
-  while ((match = REGEX_YAML.exec(line)) !== null) {
+  while ((match = REGEX_YAML_SCALAR.exec(line)) !== null) {
     if (match.index > lastIndex) tokens.push({ type: "text", value: line.slice(lastIndex, match.index) });
     if (match[1]) tokens.push({ type: "comment", value: match[1] });
-    else if (match[2]) { tokens.push({ type: "key", value: match[2] }); tokens.push({ type: "punctuation", value: match[3] }); }
-    else if (match[4]) tokens.push({ type: "string", value: match[4] });
-    else if (match[5]) tokens.push({ type: "boolean", value: match[5] });
-    else if (match[6]) tokens.push({ type: "null", value: match[6] });
-    else if (match[7]) tokens.push({ type: "number", value: match[7] });
-    else if (match[8]) tokens.push({ type: "punctuation", value: match[8] });
-    else if (match[9]) tokens.push({ type: "keyword", value: match[9] });
-    else if (match[10]) tokens.push({ type: "text", value: match[10] });
-    lastIndex = REGEX_YAML.lastIndex;
+    else if (match[2]) tokens.push({ type: "string", value: match[2] });
+    else if (match[3]) tokens.push({ type: "boolean", value: match[3] });
+    else if (match[4]) tokens.push({ type: "null", value: match[4] });
+    else if (match[5]) tokens.push({ type: "number", value: match[5] });
+    else if (match[6]) tokens.push({ type: "punctuation", value: match[6] });
+    else if (match[7]) tokens.push({ type: "keyword", value: match[7] });
+    else if (match[8]) tokens.push({ type: "bracket", value: match[8] });
+    else if (match[9]) tokens.push({ type: "text", value: match[9] });
+    lastIndex = REGEX_YAML_SCALAR.lastIndex;
   }
   if (lastIndex < line.length) tokens.push({ type: "text", value: line.slice(lastIndex) });
   return tokens;
 };
 
-const tokenizeXml = tokenizeHtml;
-const tokenizeSvg = tokenizeHtml;
+const tokenizeYaml = (line: string): Token[] => {
+  const keyMatch = line.match(REGEX_YAML_KEY);
+  if (!keyMatch) return tokenizeYamlScalars(line);
+
+  const tokens: Token[] = [];
+  appendYamlPrefix(tokens, keyMatch[1]);
+  tokens.push({ type: "key", value: keyMatch[2] });
+  tokens.push({ type: "punctuation", value: keyMatch[3] });
+  tokens.push(...tokenizeYamlScalars(keyMatch[4]));
+  return tokens;
+};
+
+const REGEX_XML =
+  /(<!--[\s\S]*?-->)|(<!\[CDATA\[[\s\S]*?\]\]>)|(<\?[\s\S]*?\?>)|(<!DOCTYPE[\s\S]*?>)|(<\/?[A-Za-z_][\w:.-]*)|(\s[A-Za-z_:][\w:.-]*)(?==)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(>|\/>)|([^<>"']+)/g;
+
+const tokenizeXml = (line: string): Token[] => {
+  const tokens: Token[] = [];
+  REGEX_XML.lastIndex = 0;
+  let match: RegExpExecArray | null;
+  let lastIndex = 0;
+  while ((match = REGEX_XML.exec(line)) !== null) {
+    if (match.index > lastIndex) tokens.push({ type: "text", value: line.slice(lastIndex, match.index) });
+    if (match[1] || match[2]) tokens.push({ type: "comment", value: match[1] ?? match[2]! });
+    else if (match[3] || match[4]) tokens.push({ type: "keyword", value: match[3] ?? match[4]! });
+    else if (match[5]) tokens.push({ type: "tag", value: match[5] });
+    else if (match[6]) tokens.push({ type: "attr", value: match[6] });
+    else if (match[7]) tokens.push({ type: "string", value: match[7] });
+    else if (match[8]) tokens.push({ type: "tag", value: match[8] });
+    else if (match[9]) tokens.push({ type: "text", value: match[9] });
+    lastIndex = REGEX_XML.lastIndex;
+  }
+  if (lastIndex < line.length) tokens.push({ type: "text", value: line.slice(lastIndex) });
+  return tokens;
+};
+
+const tokenizeSvg = tokenizeXml;
 
 const tokenizeMarkdown = (line: string): Token[] => {
   const tokens: Token[] = [];
@@ -228,6 +277,32 @@ const tokenizeEnv = (line: string): Token[] => {
   ];
 };
 
+const REGEX_TOML =
+  /(#.*$)|(\[[^\]]+\])|([A-Za-z0-9_.-]+)(\s*=)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(true|false)\b|([-+]?\d+\.?\d*(?:[eE][+-]?\d+)?)\b|([[\]{},=])|(\S+)/g;
+
+const tokenizeToml = (line: string): Token[] => {
+  const tokens: Token[] = [];
+  REGEX_TOML.lastIndex = 0;
+  let match: RegExpExecArray | null;
+  let lastIndex = 0;
+  while ((match = REGEX_TOML.exec(line)) !== null) {
+    if (match.index > lastIndex) tokens.push({ type: "text", value: line.slice(lastIndex, match.index) });
+    if (match[1]) tokens.push({ type: "comment", value: match[1] });
+    else if (match[2]) tokens.push({ type: "tag", value: match[2] });
+    else if (match[3]) {
+      tokens.push({ type: "key", value: match[3] });
+      tokens.push({ type: "punctuation", value: match[4] });
+    } else if (match[5]) tokens.push({ type: "string", value: match[5] });
+    else if (match[6]) tokens.push({ type: "boolean", value: match[6] });
+    else if (match[7]) tokens.push({ type: "number", value: match[7] });
+    else if (match[8]) tokens.push({ type: "bracket", value: match[8] });
+    else if (match[9]) tokens.push({ type: "text", value: match[9] });
+    lastIndex = REGEX_TOML.lastIndex;
+  }
+  if (lastIndex < line.length) tokens.push({ type: "text", value: line.slice(lastIndex) });
+  return tokens;
+};
+
 const tokenizeCsv = (line: string): Token[] => {
   const tokens: Token[] = [];
   const parts = line.split(",");
@@ -238,6 +313,41 @@ const tokenizeCsv = (line: string): Token[] => {
     else tokens.push({ type: "text", value: part });
   });
   return tokens;
+};
+
+const DOCKERFILE_INSTRUCTIONS = new Set(
+  "FROM RUN CMD LABEL MAINTAINER EXPOSE ENV ADD COPY ENTRYPOINT VOLUME USER WORKDIR ARG ONBUILD STOPSIGNAL HEALTHCHECK SHELL".split(
+    " "
+  )
+);
+const REGEX_DOCKERFILE =
+  /(#.*$)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(--[A-Za-z][\w-]*)(?=\s|=)|(\b\d+\b)|([[\]{}(),=])|([A-Za-z_][A-Za-z0-9_-]*)(?=\s|$)|(\S+)/g;
+
+const tokenizeDockerfile = (line: string): Token[] => {
+  const tokens: Token[] = [];
+  REGEX_DOCKERFILE.lastIndex = 0;
+  let match: RegExpExecArray | null;
+  let lastIndex = 0;
+  while ((match = REGEX_DOCKERFILE.exec(line)) !== null) {
+    if (match.index > lastIndex) tokens.push({ type: "text", value: line.slice(lastIndex, match.index) });
+    if (match[1]) tokens.push({ type: "comment", value: match[1] });
+    else if (match[2]) tokens.push({ type: "string", value: match[2] });
+    else if (match[3]) tokens.push({ type: "keyword", value: match[3] });
+    else if (match[4]) tokens.push({ type: "number", value: match[4] });
+    else if (match[5]) tokens.push({ type: "bracket", value: match[5] });
+    else if (match[6]) {
+      tokens.push({ type: DOCKERFILE_INSTRUCTIONS.has(match[6].toUpperCase()) ? "keyword" : "text", value: match[6] });
+    } else if (match[7]) tokens.push({ type: "text", value: match[7] });
+    lastIndex = REGEX_DOCKERFILE.lastIndex;
+  }
+  if (lastIndex < line.length) tokens.push({ type: "text", value: line.slice(lastIndex) });
+  return tokens;
+};
+
+const tokenizePem = (line: string): Token[] => {
+  if (/^-----BEGIN [A-Z0-9 ]+-----$|^-----END [A-Z0-9 ]+-----$/.test(line)) return [{ type: "keyword", value: line }];
+  if (/^[A-Za-z0-9+/=]+$/.test(line)) return [{ type: "string", value: line }];
+  return [{ type: "text", value: line }];
 };
 
 /** Code keywords (case-sensitive) for O(1) per-word lookup. */
@@ -361,6 +471,9 @@ const getTokenizer = (lang: Language) => {
     case "yaml": return tokenizeYaml;
     case "markdown": return tokenizeMarkdown;
     case "env": return tokenizeEnv;
+    case "toml": return tokenizeToml;
+    case "dockerfile": return tokenizeDockerfile;
+    case "pem": return tokenizePem;
     case "csv": return tokenizeCsv;
     case "curl": return tokenizeCurl;
     case "javascript": case "typescript": case "go": case "java": case "kotlin": return tokenizeCode;
@@ -370,6 +483,13 @@ const getTokenizer = (lang: Language) => {
     default: return tokenizePlain;
   }
 };
+
+const LANGUAGE_LABELS: Partial<Record<Language, string>> = {
+  dockerfile: "Dockerfile",
+  pem: "PEM",
+};
+
+const getLanguageLabel = (language: Language): string => LANGUAGE_LABELS[language] ?? language;
 
 /* Token colors from CSS variables (key, string green, number orange, boolean/keyword purple, comment gray) */
 const tokenColors: Record<Token["type"], string> = {
@@ -526,7 +646,7 @@ const CodeEditor = memo(function CodeEditor({
     return result;
   }, [lines, tokenizer]);
 
-  const textareaAriaLabel = ariaLabel ?? (readOnly ? `Code view, ${language}` : undefined);
+  const textareaAriaLabel = ariaLabel ?? (readOnly ? `Code view, ${getLanguageLabel(language)}` : undefined);
 
   useCodeEditorScrollSync(textareaRef, highlightRef, gutterRef);
 

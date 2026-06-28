@@ -23,6 +23,8 @@ export interface TabsContextType extends TabsState {
   openNewInstance: (toolId: string) => void;
   /** Close a tab; if it was active, activate the right neighbor (else left), or null when empty. */
   closeTab: (tabId: string) => void;
+  /** Close every open tab. */
+  closeAllTabs: () => void;
   /** Make an already-open tab active. */
   activateTab: (tabId: string) => void;
   /** Move tab `fromId` to the slot of `toId` (drag-to-reorder). */
@@ -120,6 +122,10 @@ export function TabsProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const closeAllTabs = useCallback(() => {
+    setState((prev) => (prev.tabs.length === 0 ? prev : { tabs: [], activeTabId: null }));
+  }, []);
+
   const activateTab = useCallback((tabId: string) => {
     setState((prev) =>
       prev.tabs.some((t) => t.id === tabId) && prev.activeTabId !== tabId
@@ -177,12 +183,13 @@ export function TabsProvider({ children }: { children: ReactNode }) {
       openTab,
       openNewInstance,
       closeTab,
+      closeAllTabs,
       activateTab,
       reorderTab,
       setTabInput,
       getTabInput,
     }),
-    [state, openTab, openNewInstance, closeTab, activateTab, reorderTab, setTabInput, getTabInput]
+    [state, openTab, openNewInstance, closeTab, closeAllTabs, activateTab, reorderTab, setTabInput, getTabInput]
   );
 
   return <TabsContext.Provider value={value}>{children}</TabsContext.Provider>;

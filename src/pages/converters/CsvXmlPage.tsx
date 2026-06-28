@@ -82,7 +82,7 @@ const CsvXmlPage = () => {
         inputEditor: {
           value: input,
           onChange: setInput,
-          language: "text",
+          language: "csv",
           placeholder: CSV_XML_PLACEHOLDER_CSV,
         },
       }}

@@ -9,6 +9,7 @@ function lazyTool(loader: () => Promise<{ default: ComponentType<unknown> }>) {
 export const tools: ToolDefinition[] = [
   // ─── Formatters (top group; JSON formatter top of group) ───
   { id: "json-formatter", path: "/formatters/json", label: "JSON Format/Validate", description: "Format, validate & beautify JSON with strict RFC compliance", group: "Formatters", icon: "Braces", ...lazyTool(() => import("@/pages/formatters/JsonFormatterPage")) },
+  { id: "json-repair", path: "/formatters/json-repair", label: "JSON Repair", description: "Repair relaxed JSON, JSONC, and JS-like object text into strict JSON", group: "Formatters", icon: "Wand2", ...lazyTool(() => import("@/pages/formatters/JsonRepairPage")) },
   { id: "xml-formatter", path: "/formatters/xml", label: "XML Format/Validate", description: "Beautify, minify & validate XML", group: "Formatters", icon: "FileJson", ...lazyTool(() => import("@/pages/formatters/XmlFormatterPage")) },
   { id: "html-formatter", path: "/formatters/html", label: "HTML Format/Validate", description: "Beautify, minify & validate HTML", group: "Formatters", icon: "Code2", ...lazyTool(() => import("@/pages/formatters/HtmlFormatterPage")) },
   { id: "sql-formatter", path: "/formatters/sql", label: "SQL Formatter", description: "Format and beautify SQL queries", group: "Formatters", icon: "Database", ...lazyTool(() => import("@/pages/formatters/SqlFormatterPage")) },
@@ -34,7 +35,7 @@ export const tools: ToolDefinition[] = [
   { id: "csv-json", path: "/converters/csv-json", label: "CSV ↔ JSON", description: "Convert between CSV and JSON formats", group: "Converters", icon: "FileSpreadsheet", ...lazyTool(() => import("@/pages/converters/CsvJsonPage")) },
   { id: "xml-json", path: "/converters/xml-json", label: "XML ↔ JSON", description: "Convert between XML and JSON", group: "Converters", icon: "Braces", ...lazyTool(() => import("@/pages/converters/XmlJsonPage")) },
   { id: "number-base", path: "/converters/number-base", label: "Number Base Converter", description: "Convert numbers between bases (bin, oct, dec, hex)", group: "Converters", icon: "Binary", ...lazyTool(() => import("@/pages/converters/NumberBasePage")) },
-  { id: "color-converter", path: "/converters/color", label: "Color Converter", description: "Convert colors between HEX, RGB, HSL formats", group: "Converters", icon: "Palette", ...lazyTool(() => import("@/pages/converters/ColorConverterPage")) },
+  { id: "color-converter", path: "/converters/color", label: "Color Converter", description: "Convert CSS colors with alpha, contrast, and scales", group: "Converters", icon: "Palette", ...lazyTool(() => import("@/pages/converters/ColorConverterPage")) },
   { id: "image-base64", path: "/converters/image-base64", label: "Image ↔ Base64", description: "Convert images to/from Base64 strings", group: "Converters", icon: "Image", ...lazyTool(() => import("@/pages/converters/ImageBase64Page")) },
   { id: "json-table", path: "/converters/json-table", label: "JSON → Table", description: "Visualize JSON data as a table", group: "Converters", icon: "Table2", ...lazyTool(() => import("@/pages/converters/JsonTablePage")) },
   { id: "json-types", path: "/converters/json-types", label: "JSON → Types", description: "Generate TypeScript types from JSON", group: "Converters", icon: "FileOutput", ...lazyTool(() => import("@/pages/converters/JsonTypescriptPage")) },
@@ -48,6 +49,7 @@ export const tools: ToolDefinition[] = [
   // ─── Validators (regex, JSONPath most used) ─────────────────
   { id: "regex-tester", path: "/validators/regex", label: "Regex Tester", description: "Test regular expressions with live matching (JS engine; Java-style \\ escapes supported)", group: "Validators", icon: "Regex", ...lazyTool(() => import("@/pages/validators/RegexTesterPage")) },
   { id: "jsonpath", path: "/validators/jsonpath", label: "JSONPath Tester", description: "Test JSONPath expressions against JSON data", group: "Validators", icon: "Braces", ...lazyTool(() => import("@/pages/validators/JsonPathPage")) },
+  { id: "json-schema-validator", path: "/validators/json-schema", label: "JSON Schema Validator", description: "Validate JSON payloads against JSON Schema contracts", group: "Validators", icon: "ShieldCheck", ...lazyTool(() => import("@/pages/validators/JsonSchemaValidatorPage")) },
   { id: "credit-card", path: "/validators/credit-card", label: "Credit Card Validator", description: "Luhn check and generate test card numbers", group: "Validators", icon: "KeyRound", ...lazyTool(() => import("@/pages/validators/CreditCardPage")) },
   { id: "xpath-tester", path: "/validators/xpath", label: "XPath Tester", description: "Run XPath expressions against XML", group: "Validators", icon: "Braces", ...lazyTool(() => import("@/pages/validators/XpathTesterPage")) },
   { id: "schema-diff", path: "/validators/schema-diff", label: "Schema Diff", description: "Compare two JSON schemas side by side", group: "Validators", icon: "Diff", ...lazyTool(() => import("@/pages/validators/SchemaDiffPage")) },
@@ -63,7 +65,7 @@ export const tools: ToolDefinition[] = [
   // ─── Generators (UUID, password, lorem very common) ────────
   { id: "uuid-generator", path: "/generators/uuid", label: "UUID Generator", description: "Generate UUIDs (v1, v4, v7)", group: "Generators", icon: "Fingerprint", ...lazyTool(() => import("@/pages/generators/UuidPage")) },
   { id: "password-generator", path: "/generators/password", label: "Password Generator", description: "Generate secure passwords with custom rules", group: "Generators", icon: "KeyRound", ...lazyTool(() => import("@/pages/generators/PasswordPage")) },
-  { id: "random-string", path: "/generators/random-string", label: "Random String Generator", description: "Generate cryptographically secure random strings (password, PIN, license key, hex, …)", group: "Generators", icon: "Dices", ...lazyTool(() => import("@/pages/generators/RandomStringPage")) },
+  { id: "random-string", path: "/generators/random-string", label: "Random String Generator", description: "Generate secure passwords, API tokens, secrets, OTPs, and readable codes", group: "Generators", icon: "Dices", ...lazyTool(() => import("@/pages/generators/RandomStringPage")) },
   { id: "mock-generator", path: "/generators/mock", label: "Mock Data Generator", description: "Generate mock JSON data from a schema", group: "Generators", icon: "Boxes", ...lazyTool(() => import("@/pages/generators/MockGeneratorPage")) },
   { id: "ascii-art", path: "/generators/ascii-art", label: "ASCII Art Generator", description: "Turn text into ASCII art", group: "Generators", icon: "LetterText", ...lazyTool(() => import("@/pages/generators/AsciiArtPage")) },
   { id: "log-generator", path: "/generators/log", label: "Log Generator", description: "Generate synthetic log data for testing", group: "Generators", icon: "ScrollText", ...lazyTool(() => import("@/pages/generators/LogGeneratorPage")) },
@@ -74,9 +76,10 @@ export const tools: ToolDefinition[] = [
   { id: "url-parser", path: "/web/url-parser", label: "URL Parser", description: "Parse and inspect URL / query string", group: "Web Resources", icon: "Globe", ...lazyTool(() => import("@/pages/web-resources/UrlParserPage")) },
   { id: "mime-types", path: "/web/mime-types", label: "MIME Types Reference", description: "Reference table of common MIME types", group: "Web Resources", icon: "FileText", ...lazyTool(() => import("@/pages/web-resources/MimeTypesPage")) },
 
-  // ─── Networking & Other (cURL, HAR, CSV viewer, math) ───────
+  // ─── Networking & Other (cURL, HAR, OpenAPI, CSV viewer, math) ───────
   { id: "curl-builder", path: "/networking/curl", label: "cURL Builder", description: "Build cURL commands visually", group: "Networking & Other", icon: "TerminalSquare", ...lazyTool(() => import("@/pages/networking/CurlBuilderPage")) },
   { id: "har-viewer", path: "/networking/har", label: "HAR Viewer", description: "Inspect HAR (HTTP Archive) files", group: "Networking & Other", icon: "FileArchive", ...lazyTool(() => import("@/pages/networking/HarViewerPage")) },
+  { id: "openapi-inspector", path: "/networking/openapi", label: "OpenAPI/Swagger Inspector", description: "Validate, format, and extract endpoints from OpenAPI or Swagger specs", group: "Networking & Other", icon: "FileJson", ...lazyTool(() => import("@/pages/networking/OpenApiInspectorPage")) },
   { id: "csv-viewer", path: "/networking/csv-viewer", label: "CSV Viewer", description: "View and search CSV files in a table", group: "Networking & Other", icon: "TableProperties", ...lazyTool(() => import("@/pages/networking/CsvViewerPage")) },
   { id: "math-calculator", path: "/networking/math", label: "Math Calculator", description: "Evaluate math expressions", group: "Networking & Other", icon: "Calculator", ...lazyTool(() => import("@/pages/networking/MathCalculatorPage")) },
 

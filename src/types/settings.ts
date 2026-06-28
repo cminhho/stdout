@@ -17,6 +17,8 @@ export type SidebarMode = "grouped" | "flat";
 
 /** Persisted settings state (stored in localStorage). */
 export interface SettingsState {
+  /** Settings schema version for one-time default migrations. */
+  settingsVersion: number;
   theme: Theme;
   sidebarMode: SidebarMode;
   sidebarCollapsed: boolean;

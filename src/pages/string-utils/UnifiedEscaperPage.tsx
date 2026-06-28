@@ -19,7 +19,7 @@ const UnifiedEscaperPage = () => {
     <EscaperPage
       type={type}
       formatSelector={
-        <SelectWithOptions
+        <SelectWithOptions<EscaperType>
           size="xs"
           variant="secondary"
           value={type}

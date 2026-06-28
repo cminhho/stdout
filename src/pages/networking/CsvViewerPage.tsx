@@ -75,7 +75,7 @@ const CsvViewerPage = () => {
         inputEditor: {
           value: csv,
           onChange: setCsv,
-          language: "text",
+          language: "csv",
           placeholder: CSV_PLACEHOLDER,
         },
       }}
