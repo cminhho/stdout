@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import type { Language } from "@/components/common/CodeEditor";
 import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
 import { SegmentGroup } from "@/components/common/SegmentGroup";
 import type { IndentOption } from "@/components/common/IndentSelect";
@@ -28,7 +29,8 @@ const EnvNetlifyPage = () => {
     [outputFormat]
   );
 
-  const outputLang = outputFormat === "yaml" ? "yaml" : "env";
+  const outputLang: Language =
+    outputFormat === "yaml" ? "yaml" : outputFormat === "docker" ? "dockerfile" : "toml";
 
   return (
     <TwoPanelToolLayout

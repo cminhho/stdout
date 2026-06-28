@@ -82,7 +82,7 @@ const PasswordPage = () => {
     }
     const batch = Array.from({ length: count }, () => generatePassword(length, opts));
     setPasswords(batch);
-  }, [presetId, count, length, opts.upper, opts.lower, opts.digits, opts.symbols, regenerateKey]);
+  }, [count, length, opts, regenerateKey]);
 
   const passwordText = passwords.join("\n");
   const strength = passwords.length === 1 && passwords[0] ? getStrength(passwords[0]) : null;

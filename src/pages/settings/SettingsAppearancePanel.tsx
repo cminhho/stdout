@@ -10,15 +10,15 @@ import {
 import { PrefSection, PrefGroup, PrefRow, PrefDescription } from "@/components/settings";
 import type { Theme, SidebarMode } from "@/contexts/settingsStore";
 import type { IndentOption } from "@/components/common/IndentSelect";
-import { THEMES, EDITOR_FONTS, SIDEBAR_MODES, INDENT_DEFAULT_OPTIONS } from "./constants";
-
-const DEFAULT_EDITOR_FONT = EDITOR_FONTS[0].value;
+import { DEFAULT_EDITOR_FONT, EDITOR_FONTS, getEditorFontFamily, isKnownEditorFont } from "@/constants/editorFonts";
+import { THEMES, SIDEBAR_MODES, INDENT_DEFAULT_OPTIONS } from "./constants";
 
 const SettingsAppearancePanel = () => {
   const settings = useSettings();
   const fontValue = settings.editorFont;
-  const isValidFont = EDITOR_FONTS.some((f) => f.value === fontValue);
+  const isValidFont = isKnownEditorFont(fontValue);
   const effectiveFont = isValidFont ? fontValue : DEFAULT_EDITOR_FONT;
+  const effectiveFontFamily = getEditorFontFamily(effectiveFont);
 
   useEffect(() => {
     if (!isValidFont && fontValue !== effectiveFont) {
@@ -87,6 +87,16 @@ const SettingsAppearancePanel = () => {
               </Select>
             }
           />
+          <div className="border-t border-border/40 px-4 py-3">
+            <div
+              className="overflow-x-auto rounded-[var(--radius)] border border-border/60 bg-background/70 px-3 py-2 text-xs leading-relaxed text-foreground"
+              style={{ fontFamily: effectiveFontFamily }}
+            >
+              <div className="whitespace-pre">{`const token = "stdout_123";`}</div>
+              <div className="whitespace-pre">{`{ "indent": 2, "syntax": "json" }`}</div>
+              <div className="whitespace-pre">{`<node value="xml" />`}</div>
+            </div>
+          </div>
         </PrefGroup>
       </PrefSection>
 

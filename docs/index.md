@@ -12,7 +12,7 @@ Welcome to the stdout documentation hub.
 - [FAQ](getting-started/faq.md) - Frequently asked questions
 
 ### Features
-- [Tools Overview](features/tools-overview.md) - All 59 tools
+- [Tools Overview](features/tools-overview.md) - All 62 tools
 - [Session Management](features/session-management.md) - Save and load sessions
 - [Shareable Snippets](features/shareable-snippets.md) - Share your work
 - [Keyboard Shortcuts](features/keyboard-shortcuts.md) - All shortcuts

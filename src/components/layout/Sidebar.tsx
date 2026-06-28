@@ -2,7 +2,7 @@ import { memo, useState, useMemo } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   ArrowLeftRight, Braces, CheckCircle2, ChevronRight, Code2, FileCode, Globe, Home, Image, Layers, Lock,
-  Search, Shuffle, TerminalSquare, Type, Coffee, X,
+  Search, Shuffle, TerminalSquare, Type, Coffee, X, XCircle,
 } from "lucide-react";
 
 import {
@@ -157,7 +157,7 @@ export const Sidebar = memo(function Sidebar({ sidebarWidthPx, isOverlay = false
   const { sidebarMode, sidebarCollapsed, setSidebarCollapsed, isToolVisible } = useSettings();
   const { tools, groups, getToolById } = useToolEngine();
   const { tabs, activeTabId } = useTabs();
-  const { selectTab, closeTabWithNav } = useTabNavigation();
+  const { selectTab, closeTabWithNav, closeAllTabsWithNav } = useTabNavigation();
   const closeOnNavigate = isOverlay ? () => setSidebarCollapsed(true) : undefined;
 
   const visibleItems = useMemo(
@@ -227,22 +227,53 @@ export const Sidebar = memo(function Sidebar({ sidebarWidthPx, isOverlay = false
         {!isCollapsed && !search && tabs.length > 0 && (
           <div className={cn("border-b border-sidebar-border", "mb-1.5 pb-1.5")}>
             <section role="group" aria-label="Open tools" className="space-y-0.5">
-              <button
-                type="button"
-                onClick={() => setOpenToolsExpanded((v) => !v)}
-                className="sidebar-link sidebar-group-trigger w-full justify-between"
-                aria-expanded={openToolsExpanded}
-                aria-controls="sidebar-open-tools"
-              >
-                <span className="flex items-center min-w-0 gap-1.5">
-                  <Layers className="h-4 w-4 shrink-0 opacity-90" />
-                  <span className="sidebar-group-label truncate text-left">Open Tools</span>
-                </span>
-                <ChevronRight
-                  className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-150", openToolsExpanded && "rotate-90")}
-                  aria-hidden
-                />
-              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setOpenToolsExpanded((v) => !v)}
+                  className="sidebar-link sidebar-group-trigger min-w-0 flex-1 justify-start"
+                  aria-expanded={openToolsExpanded}
+                  aria-controls="sidebar-open-tools"
+                >
+                  <span className="flex items-center min-w-0 gap-1.5">
+                    <Layers className="h-4 w-4 shrink-0 opacity-90" />
+                    <span className="sidebar-group-label truncate text-left">Open Tools</span>
+                  </span>
+                </button>
+                {tabs.length > 1 && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          closeAllTabsWithNav();
+                          closeOnNavigate?.();
+                        }}
+                        className="shrink-0 p-1.5 rounded text-muted-foreground hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        aria-label="Close all open tools"
+                      >
+                        <XCircle className="h-4 w-4" aria-hidden />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">Close all</TooltipContent>
+                  </Tooltip>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setOpenToolsExpanded((v) => !v)}
+                  className="shrink-0 p-1.5 rounded text-muted-foreground hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  aria-expanded={openToolsExpanded}
+                  aria-controls="sidebar-open-tools"
+                  aria-label={openToolsExpanded ? "Collapse open tools" : "Expand open tools"}
+                >
+                  <ChevronRight
+                    className={cn("h-4 w-4 shrink-0 transition-transform duration-150", openToolsExpanded && "rotate-90")}
+                    aria-hidden
+                  />
+                </button>
+              </div>
               {openToolsExpanded && (
               <ul id="sidebar-open-tools" role="list" className="space-y-0.5 list-none mt-1">
                 {tabs.map((tab) => {

@@ -4,7 +4,7 @@ import CodeEditor from "@/components/common/CodeEditor";
 import CopyButton from "@/components/common/CopyButton";
 import { hashText, type HashAlgorithm } from "@/utils/crypto";
 
-const ALGOS: HashAlgorithm[] = ["SHA-1", "SHA-256", "SHA-384", "SHA-512"];
+const ALGOS: HashAlgorithm[] = ["MD5", "SHA-1", "SHA-256", "SHA-384", "SHA-512"];
 const SAMPLE_INPUT = "Hello, world!";
 const HASH_FILE_ACCEPT = ".txt,text/plain";
 

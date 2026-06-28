@@ -44,7 +44,7 @@ function tokenize(expr: string): string[] {
       let num = "";
       while (i < expr.length && /[\d.eE]/.test(expr[i])) { num += expr[i++]; }
       tokens.push(num);
-    } else if (/[+\-*/^%()]/.test(expr[i])) {
+    } else if (/[+\-*/^%(),]/.test(expr[i])) {
       tokens.push(expr[i++]);
     } else if (/[a-z]/i.test(expr[i])) {
       let fn = "";

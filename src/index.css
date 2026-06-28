@@ -113,7 +113,7 @@
     --outline-button-border: 216 12% 32%;
     --outline-button-foreground: 210 40% 98%;
 
-    --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
     --font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
     /* Typography scale (across pages, macOS-style) */
     --text-nav: 0.75rem;
@@ -880,6 +880,12 @@
     font-size: var(--code-font-size);
     line-height: var(--code-line-height);
     transition: border-color var(--transition-default), background var(--transition-default);
+  }
+  .code-editor-wrapper .code-editor-pad,
+  .code-editor-wrapper .code-editor-gutter,
+  .code-editor-wrapper .code-editor-gutter__cell,
+  .code-editor-wrapper .code-editor-content {
+    font-family: var(--font-mono);
   }
   .code-editor-wrapper .code-editor-pad {
     padding: var(--spacing-code-editor);

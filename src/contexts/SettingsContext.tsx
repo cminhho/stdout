@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo, ReactNode } from "react";
 import { SettingsContext, loadSettings, saveSettings, clampSidebarWidth, SIDEBAR_MOBILE_BREAKPOINT_PX, type Theme, type SidebarMode } from "./settingsStore";
 import type { IndentOption } from "@/components/common/IndentSelect";
 import { useThemeSync } from "@/hooks/useThemeSync";
+import { getEditorFontFamily } from "@/constants/editorFonts";
 
 export type { Theme, SidebarMode } from "./settingsStore";
 
@@ -27,7 +28,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const root = document.documentElement;
-    const value = state.editorFont?.trim() || "ui-monospace, ui-serif, monospace";
+    const value = getEditorFontFamily(state.editorFont);
     root.style.setProperty("--font-mono", value);
   }, [state.editorFont]);
 

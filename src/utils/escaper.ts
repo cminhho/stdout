@@ -31,6 +31,8 @@ function unescapeJavaDotNet(s: string): string {
 }
 
 // ── JavaScript (string literal) ────────────────────────────────────────
+const BACKSPACE_CHAR = String.fromCharCode(8);
+
 function escapeJavaScript(s: string): string {
   return s
     .replace(/\\/g, "\\\\")
@@ -41,7 +43,7 @@ function escapeJavaScript(s: string): string {
     .replace(/\t/g, "\\t")
     .replace(/\f/g, "\\f")
     .replace(/\v/g, "\\v")
-    .replace(/\b/g, "\\b")
+    .split(BACKSPACE_CHAR).join("\\b")
     .replace(/'/g, "\\'")
     .replace(/"/g, '\\"');
 }
@@ -51,9 +53,22 @@ function unescapeJavaScript(s: string): string {
   return s.replace(/\\(.)/gs, (_, c) => map[c] ?? c);
 }
 
-// ── JSON (same as JS for string content) ───────────────────────────────
-const escapeJson = escapeJavaScript;
-const unescapeJson = unescapeJavaScript;
+// ── JSON string content ────────────────────────────────────────────────
+function escapeJson(s: string): string {
+  return JSON.stringify(s).slice(1, -1);
+}
+
+function unescapeJson(s: string): string {
+  try {
+    return JSON.parse(`"${s}"`);
+  } catch {
+    try {
+      return JSON.parse(`"${s.replace(/"/g, '\\"')}"`);
+    } catch {
+      return unescapeJavaScript(s);
+    }
+  }
+}
 
 // ── CSV (RFC 4180: double quote and wrap if needed) ─────────────────────
 function escapeCsv(s: string): string {

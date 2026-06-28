@@ -41,7 +41,7 @@
 
 ## Overview
 
-**Stdout** is a client-side developer tools app for formatting, converting, encoding, and generating data. It runs in the browser or as a desktop app. No backend, no signup, no data collection — everything stays on your machine. Use it to format JSON/XML/HTML, convert units and encodings, generate test data, and more. 59 tools in one place, works offline.
+**Stdout** is a client-side developer tools app for formatting, converting, encoding, and generating data. It runs in the browser or as a desktop app. No backend, no signup, no data collection — everything stays on your machine. Use it to format JSON/XML/HTML, convert units and encodings, generate test data, and more. 62 tools in one place, works offline.
 
 ---
 
@@ -64,7 +64,7 @@
 | Need | Stdout |
 |------|--------|
 | Format or convert without sending data anywhere | 100% client-side; nothing leaves your device |
-| One place for JSON, XML, Base64, hashes, etc. | 59 tools in a single app (web or desktop) |
+| One place for JSON, XML, Base64, hashes, etc. | 62 tools in a single app (web or desktop) |
 | No signup, no API keys | Run locally; works offline after first load |
 | Quick dev tasks (decode JWT, test regex, build cURL) | Focused tools with copy/paste and samples |
 
@@ -75,6 +75,7 @@
 | Tool | Description |
 |------|-------------|
 | JSON Format/Validate | Format, validate & beautify JSON with strict RFC compliance |
+| JSON Repair | Repair relaxed JSON, JSONC, and JS-like object text into strict JSON |
 | XML Format/Validate | Beautify, minify & validate XML |
 | HTML Beautify/Minify | Beautify, minify & validate HTML |
 | SQL Formatter | Format and beautify SQL queries |
@@ -82,6 +83,7 @@
 | JS Beautifier/Minifier | Beautify or minify JavaScript (format/minify) |
 | CSS Inliner (Email) | Inline CSS styles into HTML for email templates |
 | JSONPath Tester | Test JSONPath expressions against JSON data |
+| JSON Schema Validator | Validate JSON payloads against JSON Schema contracts |
 | Schema Diff | Compare two JSON schemas side by side |
 | Payload Comparator | Compare two JSON payloads and highlight differences |
 | Regex Tester | Test regular expressions with live matching (JS engine; Java-style \ escapes supported) |
@@ -95,7 +97,7 @@
 | JSON ↔ Query String | Convert between JSON and URL query strings |
 | Epoch Timestamp | Convert between Unix timestamps and dates |
 | Number Base | Convert numbers between bases (bin, oct, dec, hex) |
-| Color Converter | Convert colors between HEX, RGB, HSL formats |
+| Color Converter | Convert CSS colors with alpha, contrast, and scales |
 | Image ↔ Base64 | Convert images to/from Base64 strings |
 | .env Converter | Convert .env files to Netlify, Docker, YAML formats |
 | CSS Units | Convert between CSS units (px, rem, em, vw) |
@@ -123,7 +125,7 @@
 | Markdown Preview | Live preview of Markdown with GFM support |
 | UUID Generator | Generate UUIDs (v1, v4, v7) |
 | Password Generator | Generate secure passwords with custom rules |
-| Random String Generator | Generate cryptographically secure random strings (password, PIN, license key, hex, …) |
+| Random String Generator | Generate secure passwords, API tokens, secrets, OTPs, and readable codes |
 | Mock Payload | Generate mock JSON data from a schema |
 | ASCII Art | Turn text into ASCII art |
 | Log Generator | Generate synthetic log data for testing |
@@ -131,6 +133,7 @@
 | Image Resizer | Resize images with format conversion |
 | cURL Builder | Build cURL commands visually |
 | HAR Viewer | Inspect HAR (HTTP Archive) files |
+| OpenAPI/Swagger Inspector | Validate, format, and extract endpoints from OpenAPI or Swagger specs |
 | CSV Viewer | View and search CSV files in a table |
 | Math Calculator | Evaluate math expressions |
 
@@ -179,7 +182,7 @@ For setup, commands, tech stack, and project structure, see **[Development](docs
 
 | Question | Answer |
 |----------|--------|
-| **What is Stdout?** | Stdout is a client-side developer tools app: format (JSON, XML, HTML, SQL, CSS, JS), convert (units, encodings, bases), encode/decode (Base64, URL, JWT, Gzip), and generate (UUIDs, passwords, mock data). One app, 59 tools, no server. |
+| **What is Stdout?** | Stdout is a client-side developer tools app: format (JSON, XML, HTML, SQL, CSS, JS), convert (units, encodings, bases), encode/decode (Base64, URL, JWT, Gzip), and generate (UUIDs, passwords, mock data). One app, 62 tools, no server. |
 | **Is Stdout free?** | Yes. MIT license; free to use, modify, and distribute. |
 | **Does Stdout send my data anywhere?** | No. 100% client-side; nothing leaves your device. Works offline. |
 | **What platforms are supported?** | Web (any browser), macOS, Windows, Linux. Desktop builds via Electron. |

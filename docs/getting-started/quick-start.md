@@ -21,7 +21,7 @@ Get started with stdout in about 5 minutes.
 ## 3. Use a tool (example: JSON Formatter)
 
 1. Open **JSON Format/Validate** from the sidebar or command palette.
-2. Paste or type JSON in the **Input** pane (e.g. `{"name":"stdout","tools":59}`).
+2. Paste or type JSON in the **Input** pane (e.g. `{"name":"stdout","tools":62}`).
 3. The **Output** pane shows formatted (pretty-printed) JSON.
 4. Use **Copy** or **Download** in the output toolbar to use the result elsewhere.
 
@@ -48,6 +48,6 @@ Tools that support **sessions** (JSON Formatter, Base64, JWT Debugger) let you s
 
 ## Next steps
 
-- [Tools Overview](../features/tools-overview.md) - List of all 59 tools
+- [Tools Overview](../features/tools-overview.md) - List of all 62 tools
 - [Session Management](../features/session-management.md) - Save and load sessions
 - [Settings](../features/settings.md) - Theme, sidebar, and more

@@ -9,7 +9,7 @@ import { useTabs } from "@/contexts/TabsContext";
  * Home when the last tab closes.
  */
 export function useTabNavigation() {
-  const { tabs, closeTab, activateTab } = useTabs();
+  const { tabs, closeTab, closeAllTabs, activateTab } = useTabs();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -45,5 +45,11 @@ export function useTabNavigation() {
     [tabs, closeTab, navigate, location.pathname]
   );
 
-  return { selectTab, closeTabWithNav };
+  const closeAllTabsWithNav = useCallback(() => {
+    if (tabs.length === 0) return;
+    closeAllTabs();
+    navigate("/");
+  }, [tabs.length, closeAllTabs, navigate]);
+
+  return { selectTab, closeTabWithNav, closeAllTabsWithNav };
 }

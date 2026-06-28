@@ -36,7 +36,7 @@ const JsonTypescriptPage = () => {
           onFileText: setInput,
         },
         inputToolbarExtra: (
-          <SelectWithOptions
+          <SelectWithOptions<JsonTypescriptLang>
             size="xs"
             variant="secondary"
             value={lang}

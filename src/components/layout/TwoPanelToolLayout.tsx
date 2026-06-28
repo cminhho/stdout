@@ -3,7 +3,7 @@ import { useCallback, useMemo, useRef, useState, type ReactNode } from "react";
 import { ChevronsDownUp, ChevronsUpDown } from "lucide-react";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { useSettings } from "@/hooks/useSettings";
-import CodeEditor from "@/components/common/CodeEditor";
+import CodeEditor, { type Language } from "@/components/common/CodeEditor";
 import JsonTreeView from "@/components/common/JsonTreeView";
 import { SegmentGroup } from "@/components/common/SegmentGroup";
 import { Button } from "@/components/ui/button";
@@ -75,7 +75,7 @@ export interface DefaultOutputToolbarConfig {
 export interface InputEditorConfig {
   value: string;
   onChange: (value: string) => void;
-  language: string;
+  language: Language;
   placeholder?: string;
   errorLines?: Set<number>;
 }
@@ -97,7 +97,7 @@ export interface TwoPanelInputPaneConfig {
 /** Config for default output CodeEditor; when set (and children not set), layout renders read-only CodeEditor. */
 export interface OutputEditorConfig {
   value: string;
-  language: string;
+  language: Language;
   placeholder?: string;
   /** Key for React (e.g. indent) to force re-mount when options change. */
   outputKey?: string | number;
@@ -220,7 +220,7 @@ function buildInputPaneProps(
         <CodeEditor
           value={config.inputEditor.value}
           onChange={config.inputEditor.onChange}
-          language={config.inputEditor.language as never}
+          language={config.inputEditor.language}
           placeholder={config.inputEditor.placeholder}
           errorLines={resolvedErrorLines}
           fillHeight
@@ -390,7 +390,7 @@ function buildOutputPaneProps(
           <CodeEditor
             value={editorValue ?? ""}
             readOnly
-            language={config.outputEditor.language as never}
+            language={config.outputEditor.language}
             placeholder={outputPlaceholder}
             fillHeight
           />
@@ -505,7 +505,7 @@ const TwoPanelToolLayout = ({
     }
   }, [treeViewEnabled, outputEditorValue]);
 
-  const [outputViewMode, setOutputViewMode] = useState<OutputViewMode>("text");
+  const [outputViewMode, setOutputViewMode] = useState<OutputViewMode>("tree");
   const [expandAllNonce, setExpandAllNonce] = useState<number | undefined>(undefined);
   const [collapseAllNonce, setCollapseAllNonce] = useState<number | undefined>(undefined);
   const onExpandAll = useCallback(() => setExpandAllNonce((n) => (n ?? 0) + 1), []);

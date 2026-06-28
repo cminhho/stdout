@@ -13,7 +13,7 @@ export interface TwoPanelComparePaneConfig {
   placeholder?: string;
   sample: string;
   fileAccept: string;
-  language?: "json" | "text";
+  language?: Language;
 }
 
 export interface EditorPaneConfig {

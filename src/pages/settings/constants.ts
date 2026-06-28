@@ -3,6 +3,7 @@ import { Settings, Palette, Wrench } from "lucide-react";
 import type { SettingsTabId, Theme, SidebarMode } from "@/types/settings";
 import type { IndentOption } from "@/components/common/IndentSelect";
 import { SHORTCUT_COMMAND_PALETTE } from "@/constants/shortcuts";
+export { EDITOR_FONTS } from "@/constants/editorFonts";
 
 export const DEFAULT_TITLE = "Settings";
 export const UPDATE_BUTTON_LOADING_LABEL = "Checking…";
@@ -31,12 +32,6 @@ export const THEMES: { value: Theme; label: string; desc: string }[] = [
 export const SIDEBAR_MODES: { value: SidebarMode; label: string; desc: string }[] = [
   { value: "grouped", label: "Grouped", desc: "Tools organized in collapsible groups" },
   { value: "flat", label: "Flat", desc: "All tools listed without group headers" },
-];
-
-/** Font options for code/editor (1–2 only). Value is CSS font-family; applied via --font-mono. */
-export const EDITOR_FONTS: { value: string; label: string }[] = [
-  { value: "ui-monospace, ui-serif, monospace", label: "System monospace" },
-  { value: "'Fira Code', monospace", label: "Fira Code" },
 ];
 
 /** App-wide default indentation options (formatters that don't enforce their own convention). */

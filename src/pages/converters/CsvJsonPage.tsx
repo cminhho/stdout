@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import type { Language } from "@/components/common/CodeEditor";
 import TwoPanelToolLayout from "@/components/layout/TwoPanelToolLayout";
 import { SegmentGroup } from "@/components/common/SegmentGroup";
 import type { IndentOption } from "@/components/common/IndentSelect";
@@ -38,8 +39,8 @@ const CsvJsonPage = () => {
 
   const sampleInput = mode === "csv2json" ? CSV_JSON_SAMPLE_CSV : CSV_JSON_SAMPLE_JSON;
   const inputPlaceholder = mode === "csv2json" ? CSV_JSON_PLACEHOLDER_CSV : CSV_JSON_PLACEHOLDER_JSON;
-  const inputLang = mode === "csv2json" ? "text" : "json";
-  const outputLang = mode === "csv2json" ? "json" : "text";
+  const inputLang: Language = mode === "csv2json" ? "csv" : "json";
+  const outputLang: Language = mode === "csv2json" ? "json" : "csv";
 
   return (
     <TwoPanelToolLayout

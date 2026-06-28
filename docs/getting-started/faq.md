@@ -6,7 +6,7 @@ Frequently asked questions about stdout.
 
 ## What is stdout?
 
-Stdout is a **client-side developer tools app**: format (JSON, XML, HTML, SQL, CSS, JS), convert (units, encodings, bases), encode/decode (Base64, URL, JWT, Gzip), and generate (UUIDs, passwords, mock data). One app, 59 tools, no server. The name comes from *standard output* — the stream where results go.
+Stdout is a **client-side developer tools app**: format (JSON, XML, HTML, SQL, CSS, JS), convert (units, encodings, bases), encode/decode (Base64, URL, JWT, Gzip), and generate (UUIDs, passwords, mock data). One app, 62 tools, no server. The name comes from *standard output* — the stream where results go.
 
 ---
 
@@ -38,7 +38,7 @@ Tools are registered in the source code at `src/tools/registry.ts`. Each tool is
 ## Web vs desktop: what’s the difference?
 
 - **Web**: Run in the browser; no install. Best for quick use or when you can’t install software.
-- **Desktop (Electron)**: Native app; can use system features (e.g. deep links `stdout://`), auto-updates, and feels like a local app. Same 59 tools and behavior.
+- **Desktop (Electron)**: Native app; can use system features (e.g. deep links `stdout://`), auto-updates, and feels like a local app. Same 62 tools and behavior.
 
 ---
 
